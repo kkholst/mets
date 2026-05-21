@@ -1,7 +1,7 @@
 # Summary for dependence models for competing risks
 
 Computes concordance and casewise concordance for dependence models for
-competing risks models of the type cor.cif, rr.cif or or.cif for the
+competing risks models of the type cor_cif, rr_cif or or_cif for the
 given cumulative incidences and the different dependence measures in the
 object.
 
@@ -16,7 +16,7 @@ summary(object, marg.cif = NULL, marg.cif2 = NULL, digits = 3, ...)
 
 - object:
 
-  object from cor.cif rr.cif or or.cif for dependence between competing
+  object from cor_cif rr_cif or or_cif for dependence between competing
   risks data for two causes.
 
 - marg.cif:
@@ -82,7 +82,7 @@ Thomas Scheike
 ## add <- timereg::comp.risk(Event(time,cause)~+1+cluster(id),
 ##                           data=multcif,n.sim=0,times=times,cause=1)
 ###
-## out1<-cor.cif(add,data=multcif,cause1=1,cause2=1,theta=log(2+1))
+## out1<- cor_cif(add,data=multcif,cause1=1,cause2=1,theta=log(2+1))
 ## summary(out1)
 ## 
 ## pad <- predict(add,X=1,se=0,uniform=0)

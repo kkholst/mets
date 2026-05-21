@@ -76,7 +76,7 @@ Klaus K. Holst
 
 ``` r
 set.seed(1)
-d <- subset(simClaytonOakes(500,4,2,1,stoptime=2,left=2),truncated)
+d <- subset(sim_ClaytonOakes(500,4,2,1,stoptime=2,left=2),truncated)
 e <- ClaytonOakes(survival::Surv(lefttime,time,status)~x+cluster(~1,cluster),
                   cuts=c(0,0.5,1,2),data=d)
 e
@@ -91,7 +91,7 @@ e
 #>             Variance    2.5%   97.5% Kendall's tau    2.5%  97.5%
 #> (Intercept)  0.39762 0.31060 0.50902       0.16584 0.13442 0.2029
 
-d2 <- simClaytonOakes(500,4,2,1,stoptime=2,left=0)
+d2 <- sim_ClaytonOakes(500,4,2,1,stoptime=2,left=0)
 d2$z <- rep(1,nrow(d2)); d2$z[d2$cluster%in%sample(d2$cluster,100)] <- 0
 ## Marginal=Cox Proportional Hazards model:
 ## ts <- ClaytonOakes(survival::Surv(time,status)~timereg::prop(x)+cluster(~1,cluster),
@@ -116,14 +116,12 @@ e2
 #> factor(z)0  0.55826 0.38483 0.80983       0.21822 0.16137 0.2882
 #> factor(z)1  0.59282 0.49149 0.71505       0.22864 0.19727 0.2634
 
-
 e0 <- ClaytonOakes(survival::Surv(time,status)~cluster(~-1+factor(z),cluster),
                    cuts=c(0,0.5,1,2),data=d2)
 ##ts0 <- ClaytonOakes(survival::Surv(time,status)~cluster(~1,cluster),
 ##                   data=d2,type="two.stage")
 ##plot(ts0)
-plot(e0)
-#> Error in plot.xy(xy.coords(x, y), type = type, ...): plot.new has not been called yet
+##plot(e0)
 
 e3 <- ClaytonOakes(survival::Surv(time,status)~x+cluster(~1,cluster),cuts=c(0,0.5,1,2),
                    data=d,var.invlink=identity)

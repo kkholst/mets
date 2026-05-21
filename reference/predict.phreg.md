@@ -1,6 +1,8 @@
-# Predictions from proportional hazards model
+# Predictions from Proportional Hazards Model
 
-Predictions from proportional hazards model
+Computes predictions for survival probability, cumulative hazard, or
+risk at specified time points for new data or existing data. Includes
+standard errors and confidence intervals.
 
 ## Usage
 
@@ -25,50 +27,81 @@ predict(
 
 - object:
 
-  phreg object
+  Object of class `"phreg"`.
 
 - newdata:
 
-  data.frame
+  Data frame for prediction. If `NULL`, predictions are made for the
+  original data.
 
 - times:
 
-  Time where to predict variable, default is all time-points from the
-  object sorted
+  Time points for prediction. Defaults to all unique event times in the
+  model.
 
 - individual.time:
 
-  to use one (individual) time per subject, and then newdata and times
-  have same length and makes only predictions for these individual
-  times.
+  Logical; if `TRUE`, uses one time per subject (requires `newdata` and
+  `times` to be same length).
 
 - tminus:
 
-  to make predictions in T- that is strictly before given times, useful
-  for IPCW techniques
+  Logical; if `TRUE`, predicts at \\t-\\ (strictly before \\t\\).
 
 - se:
 
-  with standard errors and upper and lower confidence intervals.
+  Logical; if `TRUE`, computes standard errors and confidence intervals.
 
 - robust:
 
-  to get robust se's also default for most functions (uses robse.cumhaz
-  otherwise se.cumhaz).
+  Logical; if `TRUE`, uses robust standard errors (default for most
+  functions).
 
 - conf.type:
 
-  transformation for suvival estimates, default is log
+  Transformation for survival estimates: `"log"` (default) or `"plain"`.
 
 - conf.int:
 
-  significance level
+  Confidence level (default 0.95).
 
 - km:
 
-  to use Kaplan-Meier product-limit for baseline \$\$S\_{s0}(t)= (1 -
-  dA\_{s0}(t))\$\$, otherwise take exp of cumulative baseline.
+  Logical; if `TRUE`, uses Kaplan-Meier product-limit for baseline;
+  otherwise uses exponential of cumulative baseline.
 
 - ...:
 
-  Additional arguments to plot functions
+  Additional arguments for plotting functions.
+
+## Value
+
+An object of class `"predictphreg"` containing:
+
+- surr:
+
+  Matrix of survival probabilities.
+
+- cumhaz:
+
+  Matrix of cumulative hazards.
+
+- cif:
+
+  Matrix of cumulative incidence functions (if applicable).
+
+- times:
+
+  Vector of time points.
+
+- surv.upper, surv.lower:
+
+  Confidence bounds for survival.
+
+- RR:
+
+  Relative risks.
+
+## Author
+
+Thomas Scheike

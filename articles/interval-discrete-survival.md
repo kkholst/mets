@@ -1,35 +1,31 @@
 # Discrete Interval Censored Survival Models
 
-## Discrete Inteval Censored survival times
+## Discrete Interval Censored survival times
 
 We consider the cumulative odds model for the probability of dying
-before time t: $$\begin{aligned}
-{\text{logit}\left( P\left( T \leq t|x \right) \right)} & {= \log\left( G(t) \right) + x^{T}\beta} \\
-{P\left( T \leq t|x \right)} & {= \frac{G(t)exp\left( x^{T}\beta \right)}{1 + G(t)exp\left( x^{T}\beta \right)}} \\
-{P\left( T > t|x \right)} & {= \frac{1}{1 + G(t)exp\left( x^{T}\beta \right)}}
-\end{aligned}$$
+before time t: \begin{align\*} \mbox{logit}(P(T \leq t \| x)) & =
+\log(G(t)) + x^T \beta \\ P(T \leq t \| x) & = \frac{G(t) exp( x^T
+\beta)}{1 + G(t) exp( x^T \beta) } \\ P(T \>t \| x) & = \frac{1}{1 +
+G(t) exp( x^T \beta) } \end{align\*}
 
-Input are intervals given by $\rbrack t_{l},t_{r}\rbrack$ where t_r can
-be infinity for right-censored intervals. When the data is discrete, in
-contrast to grouping of continuous data, $\rbrack 0,1\rbrack$ then the
-intervals $\rbrack j,j + 1\rbrack$ will be equvilant to an observation
-at j+1 (see below example).
+Input are intervals given by \]t_l,t_r\] where t_r can be infinity for
+right-censored intervals. When the data is discrete, in contrast to
+grouping of continuous data, \]0,1\] then the intervals \]j,j+1\] will
+be equivalent to an observation at j+1 (see below example).
 
-Likelihood is maximized: $$\begin{array}{r}
-{\prod\limits_{i}P\left( T_{i} > t_{il}|x \right) - P\left( T_{i} > t_{ir}|x \right).}
-\end{array}$$
+Likelihood is maximized: \begin{align\*} \prod_i P(T_i \>t\_{il} \| x) -
+P(T_i\> t\_{ir}\| x). \end{align\*}
 
-This model is also called the cumulative odds model $$\begin{aligned}
-{P\left( T \leq t|x \right)} & {= \frac{G(t)exp\left( x^{T}\beta \right)}{1 + G(t)exp\left( x^{T}\beta \right)}.}
-\end{aligned}$$ and $\beta$ says something about the OR of probability
-of being before $t$.
+This model is also called the cumulative odds model \begin{align\*} P(T
+\leq t \| x) & = \frac{ G(t) exp( x^T \beta) }{1 + G(t) exp( x^T \beta)
+}. \end{align\*} and \beta captures the odds ratio for the probability
+of being before t.
 
-The baseline is parametrized as $$\begin{aligned}
-{G(t)} & {= \sum\limits_{j \leq t}\exp\left( \alpha_{j} \right)}
-\end{aligned}$$
+The baseline is parametrized as \begin{align\*} G(t) & = \sum\_{j \leq
+t} \exp( \alpha_j ) \end{align\*}
 
-An important consequence of the model is that for all cut-points $t$ we
-have the same OR parameters for the OR of being early or later than $t$.
+An important consequence of the model is that for all cut-points t we
+have the same OR parameters for the OR of being early or later than t.
 
 ## Discrete TTP
 
@@ -38,6 +34,7 @@ survival data) that is right-censored, and set it up to fit the
 cumulative odds model by constructing the intervals appropriately:
 
 ``` r
+
 library(mets)
 
 data(ttpd) 
@@ -52,7 +49,7 @@ dtable(ttpd,~entry+time2)
 #> 4             0   0   0   0  90   0   0
 #> 5             0   0   0   0   0  68   0
 #> 6             0   0   0   0   0   0 220
-out <- interval.logitsurv.discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
+out <- interval_logitsurv_discrete(Interval(entry,time2)~X1+X2+X3+X4,ttpd)
 summary(out)
 #> $baseline
 #>       Estimate Std.Err   2.5%   97.5%   P-value
@@ -104,20 +101,21 @@ summary(out)
 #> X4 1.380231 1.101503 1.729490
 ```
 
-We note that the probability of dying is increased considerably for all
-covariates.
+We note that the probability of an event (pregnancy) is considerably
+higher for all covariates.
 
 Now using this discrete survival model we simulate some data from this
 model
 
 ``` r
-set.seed(1000) # to control output in simulatins for p-values below.
+
+set.seed(1000) # to control output in simulations for p-values below.
 n <- 200
 Z <- matrix(rbinom(n*4,1,0.5),n,4)
 outsim <- simlogitSurvd(out$coef,Z)
 outsim <- transform(outsim,left=time,right=time+1)
 outsim <- dtransform(outsim,right=Inf,status==0)
-outss <- interval.logitsurv.discrete(Interval(left,right)~+X1+X2+X3+X4,outsim)
+outss <- interval_logitsurv_discrete(Interval(left,right)~+X1+X2+X3+X4,outsim)
 summary(outss)
 #> $baseline
 #>       Estimate Std.Err    2.5%   97.5%   P-value
@@ -149,15 +147,16 @@ plotSurvd(pred,se=TRUE)
 ![](interval-discrete-survival_files/figure-html/unnamed-chunk-3-1.png)
 
 Finally, we look at some data and compare with the icenReg package that
-can also fit the proportional odds model for continous or discrete data.
-We make the data fully interval censored/discrete by letting also exact
-obsevations be only observed to be in an interval.
+can also fit the proportional odds model for continuous or discrete
+data. We make the data fully interval censored/discrete by letting also
+exact observations be only observed to be in an interval.
 
 We consider the interval censored survival times for time from onset of
-diabetes to to diabetic nephronpathy, then modify it to observe only
-that the event times are in certain intervals.
+diabetes to diabetic nephropathy, then modify it to observe only that
+the event times are in certain intervals.
 
 ``` r
+
 test <- 0 
 if (test==1) {
 
@@ -175,6 +174,7 @@ ints <- with(IRdia,dInterval(left,right,cuts=c(0,5,10,20,30,40,Inf),show=TRUE) )
 We note that the gender effect is equivalent for the two approaches.
 
 ``` r
+
 if (test==1) {
 ints$Ileft <- ints$left
 ints$Iright <- ints$right
@@ -221,16 +221,17 @@ fit <- ic_sp(cbind(Ileft, Iright) ~ gender, data = IRdia, model = "po")
 summary(fit)
 
 ## sometimes NR-algorithm needs modifications of stepsize to run 
-## outss <- interval.logitsurv.discrete(Interval(Ileft,Iright)~+gender,IRdia,control=list(trace=TRUE,stepsize=1.0))
+## outss <- interval_logitsurv_discrete(Interval(Ileft,Iright)~+gender,IRdia,control=list(trace=TRUE,stepsize=1.0))
 }
 ```
 
-Also agrees with the cumulative link regression of the ordinal package,
-although the baseline is parametrized differently. In additon the clm is
-describing the probability of surviving rather than the probabibility of
+This also agrees with the cumulative link regression of the `ordinal`
+package, although the baseline is parametrised differently. Note that
+`clm` models the probability of surviving rather than the probability of
 dying.
 
 ``` r
+
 
 data(ttpd) 
 dtable(ttpd,~entry+time2)
@@ -307,10 +308,11 @@ if (test==1) {
 ## SessionInfo
 
 ``` r
+
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -329,22 +331,22 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] mets_1.3.9
+#> [1] mets_1.3.10
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           
-#>  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        
-#>  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            
-#> [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           
-#> [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
+#>  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        
+#>  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            
+#> [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           
+#> [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        
 #> [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   
-#> [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       
-#> [22] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      
-#> [25] fs_1.6.6               htmlwidgets_1.6.4      Rcpp_1.1.1            
-#> [28] future_1.68.0          lattice_0.22-7         systemfonts_1.3.1     
-#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.46.1     
-#> [34] parallel_4.5.2         splines_4.5.2          Matrix_1.7-4          
-#> [37] bslib_0.9.0            tools_4.5.2            RcppArmadillo_15.2.3-1
-#> [40] globals_0.18.0         survival_3.8-3         pkgdown_2.2.0         
+#> [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       
+#> [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      
+#> [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        
+#> [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     
+#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     
+#> [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
+#> [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1
+#> [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         
 #> [43] cachem_1.1.0           desc_1.4.3
 ```

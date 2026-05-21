@@ -2,60 +2,55 @@
 
 ## Overview
 
-We here describe how to do regression modelling for cumulative cost
-\$\$\begin{align\*} {\cal U}(t) & = \int_0^t Z(s) dN(s)
-\end{align\*}\$\$ where $N(s)$ is a counting process that registers the
-times at which the cost is realized and accumulated, and $Z(t)$ is the
-cost (or marks) at the event times. The counting process can be a mix of
-random and fixed times. The data would thus be represented in counting
-process format with the marks/costs going along with the event times.
-There are many additional uses of such cumulative process, for example,
-when considering time-lost in a recurrent events setting, that we return
-to below.
+We describe how to perform regression modelling for cumulative cost
+\begin{align\*} {\cal U}(t) & = \int_0^t Z(s) dN(s) \end{align\*} where
+N(s) is a counting process that registers the times at which costs are
+realised and accumulated, and Z(t) is the cost (or mark) at the event
+times. The counting process can be a mix of random and fixed times, and
+the data are represented in counting process format with the marks/costs
+attached to the event times. There are many additional uses of such
+cumulative processes; for example, when considering time lost in a
+recurrent events setting, which we return to below.
 
 We can estimate the marginal mean of the cumulative process
-\$\$\begin{align\*} \nu(t) & = E ( {\cal U}(t) ) \end{align\*}\$\$
-possibly for strata with standard errors based on the derived influence
-function.
+\begin{align\*} \nu(t) & = E ( {\cal U}(t) ) \end{align\*} possibly for
+strata with standard errors based on the derived influence function.
 
 We provide semi-parametric regression modelling using the proportional
-model \$\$\begin{align\*} E ( {\cal U}(t) \| X) & = \Lambda_0(t) \exp(
-X^T \beta). \end{align\*}\$\$
+model \begin{align\*} E ( {\cal U}(t) \| X) & = \Lambda_0(t) \exp( X^T
+\beta). \end{align\*}
 
-In addition for a fixed time-point $t \in \lbrack 0,\tau\rbrack$ we can
-estimate the mean given covariates \$\$\begin{align\*} E ( {\cal U}(t)
-\| X) & = \exp( X^T \beta) \end{align\*}\$\$ where $\tau$ is some
-maximum follow-up time.
+In addition for a fixed time-point t \in \[0,\tau\] we can estimate the
+mean given covariates \begin{align\*} E ( {\cal U}(t) \| X) & = \exp(
+X^T \beta) \end{align\*} where \tau is some maximum follow-up time.
 
-- These quantities are estimated in a setting with independent
-  right-censoring given $X$, and based on IPCW adjusted estimating
-  equations.
-  - similarly to the Ghosh-Lin model for recurrent events
+- These quantities are estimated under independent right-censoring given
+  X, using IPCW-adjusted estimating equations,
+  - similarly to the Ghosh-Lin model for recurrent events.
 - A terminal event can be specified.
 
 We also estimate the probability of exceeding thresholds over time
-\$\$\begin{align\*} P ( {\cal U}(t) \> k ) & = \mu_k(t),
-\end{align\*}\$\$ and in the situation with a terminal this is based on
-a derived competing risks data that keeps track of the competing
+\begin{align\*} P ( {\cal U}(t) \> k ) & = \mu_k(t), \end{align\*} and
+in the setting with a terminal event this is based on a derived
+competing risks data structure that keeps track of the competing
 terminal event.
 
 Regression modelling of this quantity is also possible using competing
-risks regression models, using for example, the cifreg function of mets.
+risks regression models, for example via the `cifreg` function in mets.
 
 ## HF-action data
 
-Considering the HF-action data we simulate a severity score for each
-event.
+Using the HF-action data, we simulate a severity score for each event.
 
 ``` r
+
 library(mets)
 data(hfactioncpx12)
 hf <- hfactioncpx12
 hf$severity <- abs((5+rnorm(741)*2))[hf$id]
 
-proc_design <- mets:::proc_design
 ## marginal mean using formula  
-outNZ <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id)
+outNZ <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(id)
              +marks(severity),hf,cause=1,death.code=2)
 plot(outNZ,se=TRUE)
 summary(outNZ,times=3) 
@@ -67,7 +62,7 @@ summary(outNZ,times=3)
 #>     new.time     mean        se  CI-2.5% CI-97.5% strata
 #> 601        3 9.454503 0.6950555 8.185815 10.91982      1
 
-outN <- recurrentMarginal(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,
+outN <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,
                cause=1,death.code=2)
 plot(outN,se=TRUE,add=TRUE)
 ```
@@ -75,6 +70,7 @@ plot(outN,se=TRUE,add=TRUE)
 ![](cumulative-cost_files/figure-html/unnamed-chunk-2-1.png)
 
 ``` r
+
 summary(outN,times=3) 
 #> [[1]]
 #>     new.time     mean        se  CI-2.5% CI-97.5% strata
@@ -86,11 +82,12 @@ summary(outN,times=3)
 ```
 
 For comparison we also compute the IPCW estimates with and without marks
-at time 3, using the linear model, and note that they are identical.
-Standard errors are however based on different formula that are
-asymptotically equivalent, and we note that they are very similar.
+at time 3 using the linear model, and note that they are identical.
+Standard errors are based on different formulae that are asymptotically
+equivalent, and we note that they are very similar.
 
 ``` r
+
 outNZ3 <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id)+marks(severity),data=hf,
           cause=1,death.code=2,time=3,cens.model=~strata(treatment),model="lin")
 summary(outNZ3)
@@ -136,6 +133,7 @@ We also apply the semiparametric proportional cost model with IPCW
 adjustment:
 
 ``` r
+
 propNZ <- recreg(Event(entry,time,status)~treatment+marks(severity)+cluster(id),data=hf,cause=1,death.code=2)
 summary(propNZ) 
 #> 
@@ -143,11 +141,11 @@ summary(propNZ)
 #>  2132   1391
 #> 
 #>  741 clusters
-#> coeffients:
+#> coefficients:
 #>             Estimate      S.E.   dU^-1/2 P-value
 #> treatment1 -0.102856  0.090464  0.024319  0.2555
 #> 
-#> exp(coeffients):
+#> exp(coefficients):
 #>            Estimate    2.5%  97.5%
 #> treatment1  0.90226 0.75566 1.0773
 plot(propNZ,main="Baselines")
@@ -159,27 +157,28 @@ summary(GL)
 #>  2132   1391
 #> 
 #>  741 clusters
-#> coeffients:
+#> coefficients:
 #>             Estimate      S.E.   dU^-1/2 P-value
 #> treatment1 -0.110404  0.078656  0.053776  0.1604
 #> 
-#> exp(coeffients):
+#> exp(coefficients):
 #>            Estimate    2.5%  97.5%
 #> treatment1  0.89547 0.76754 1.0447
 plot(GL,add=TRUE,col=2)
 ```
 
 ![](cumulative-cost_files/figure-html/unnamed-chunk-4-1.png) Those
-treated have 14 % lower cumulative severity and 11% lower number of
-expected events.
+treated have 14% lower cumulative severity and 11% lower expected number
+of events.
 
 ## Exceed threshold
 
-Finally, we also estimate the probability of exceeding a cumulative
-severity at 1,5,10
+Finally, we estimate the probability of exceeding cumulative severity
+thresholds of 1, 5, and 10:
 
 ``` r
-ooNZ <- prob.exceed.recurrent(Event(entry,time,status)~strata(treatment)+cluster(id)+marks(severity),data=hf,
+
+ooNZ <- prob_exceed_recurrent(Event(entry,time,status)~strata(treatment)+cluster(id)+marks(severity),data=hf,
                   cause=1,death.code=2,exceed=c(1,5,10,20))
 plot(ooNZ,strata=1)
 plot(ooNZ,strata=2,add=TRUE)
@@ -188,6 +187,7 @@ plot(ooNZ,strata=2,add=TRUE)
 ![](cumulative-cost_files/figure-html/unnamed-chunk-5-1.png)
 
 ``` r
+
 summary(ooNZ,times=3)
 #> $`0`
 #> $`0`$prob
@@ -267,13 +267,13 @@ summary(ooNZ,times=3)
 
 ## Cumulative time lost for recurrent events
 
-The cumulative time lost for recurrent events has been defined as
-\$\$\begin{align\*} {\cal M}(t) = E\[ \int_0^\tau (\tau-s) dN(s) \] =
-\int_0^\tau \mu(s) ds \end{align\*}\$\$ where
-$\mu(t) = E\left( N(t) \right)$ is the marginal mean of the recurrent
-events at time $t$.
+The cumulative time lost for recurrent events is defined as
+\begin{align\*} {\cal M}(t) = E\left\[ \int_0^\tau (\tau-s) dN(s)
+\right\] = \int_0^\tau \mu(s) ds \end{align\*} where \mu(t) = E( N(t) )
+is the marginal mean of the recurrent events at time t.
 
 ``` r
+
 hf$lost5 <- 5-hf$time
 
 RecLost <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id)+marks(lost5),data=hf,
@@ -300,10 +300,11 @@ head(iid(RecLost))
 ## SessionInfo
 
 ``` r
+
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -322,22 +323,22 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] mets_1.3.9
+#> [1] mets_1.3.10
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           
-#>  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        
-#>  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            
-#> [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           
-#> [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
+#>  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        
+#>  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            
+#> [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           
+#> [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        
 #> [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   
-#> [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       
-#> [22] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      
-#> [25] fs_1.6.6               htmlwidgets_1.6.4      Rcpp_1.1.1            
-#> [28] future_1.68.0          lattice_0.22-7         systemfonts_1.3.1     
-#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.46.1     
-#> [34] parallel_4.5.2         splines_4.5.2          Matrix_1.7-4          
-#> [37] bslib_0.9.0            tools_4.5.2            RcppArmadillo_15.2.3-1
-#> [40] globals_0.18.0         survival_3.8-3         pkgdown_2.2.0         
+#> [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       
+#> [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      
+#> [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        
+#> [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     
+#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     
+#> [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
+#> [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1
+#> [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         
 #> [43] cachem_1.1.0           desc_1.4.3
 ```

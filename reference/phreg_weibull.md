@@ -3,7 +3,7 @@
 Fits a Cox-Weibull with cumulative hazard given by \$\$ \Lambda(t) =
 \lambda \cdot t^s \$\$ where \\s\\ is the shape parameter, and
 \\\lambda\\ the rate parameter. We here allow a regression model for
-both parameters \$\$\lambda := \exp(\beta^\top X)\$\$ \$\$s :=e
+both parameters \$\$\lambda := \exp(\beta^\top X)\$\$ \$\$s :=
 \exp(\gamma^\top Z)\$\$ as defined by \`formula\` and \`shape.formula\`
 respectively.
 

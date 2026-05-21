@@ -6,9 +6,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Randomization for Cox Type rate models  • mets</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="../katex-auto.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Randomization for Cox Type rate models ">
 </head>
@@ -20,7 +21,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,10 +38,10 @@
     <li><a class="dropdown-item" href="../articles/binomial-family.html">Analysis of multivariate binomial data: family analysis</a></li>
     <li><a class="dropdown-item" href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a></li>
     <li><a class="dropdown-item" href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a></li>
-    <li><a class="dropdown-item" href="../articles/binreg-TRS.html">Two-Stage Randomization for for Competing risks and Survival outcomes</a></li>
+    <li><a class="dropdown-item" href="../articles/binreg-TRS.html">Two-Stage Randomization for Competing risks and Survival outcomes</a></li>
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
-    <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">Cooking Survival Data: 5-Minute Recipes</a></li>
     <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
@@ -80,7 +81,7 @@
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2026-01-14</h4>
+            <h4 data-toc-skip class="date">2026-05-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/phreg_rct.Rmd" class="external-link"><code>vignettes/phreg_rct.Rmd</code></a></small>
       <div class="d-none name"><code>phreg_rct.Rmd</code></div>
@@ -91,121 +92,112 @@
 <div class="section level2">
 <h2 id="two-stage-randomization-for-counting-process-outcomes">Two-Stage Randomization for counting process outcomes<a class="anchor" aria-label="anchor" href="#two-stage-randomization-for-counting-process-outcomes"></a>
 </h2>
-<p>Specify rate models of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">N_1(t)</annotation></semantics></math>.</p>
+<p>Rate models are specified for <span class="math inline">N_1(t)</span>, covering:</p>
 <ul>
 <li>survival data</li>
-<li>competing risks, cause specific hazards.</li>
+<li>competing risks, cause-specific hazards</li>
 <li>recurrent events data</li>
 </ul>
 <p>Under simple randomization we can estimate the rate Cox model</p>
 <ul>
-<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>A</mi><mn>0</mn></msub><msub><mi>β</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\lambda_0(t) \exp(A_0 \beta_0)</annotation></semantics></math></li>
+<li><span class="math inline">\lambda_0(t) \exp(A_0 \beta_0)</span></li>
 </ul>
 <p>Under two-stage randomization we can estimate the rate Cox model</p>
 <ul>
-<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>A</mi><mn>0</mn></msub><msub><mi>β</mi><mn>0</mn></msub><mo>+</mo><msub><mi>A</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>β</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\lambda_0(t) \exp(A_0 \beta_0 + A_1(t) \beta_1 )</annotation></semantics></math></li>
+<li><span class="math inline">\lambda_0(t) \exp(A_0 \beta_0 + A_1(t)
+\beta_1 )</span></li>
 </ul>
-<p>Starting point is that Cox’s partial likelihood score can be used for
-estimating parameters
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>U</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mo>∫</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>e</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msub><mi>N</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+<p>The starting point is that Cox’s partial likelihood score can be used
+for estimating parameters: <span class="math display">\begin{align*}
    U(\beta) &amp; = \int (A(t) - e(t)) dN_1(t)
- \end{align*}</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">A(t)</annotation></semantics></math>
-is the combined treatments over time.</p>
+\end{align*}</span> where <span class="math inline">A(t)</span> is the
+combined treatment vector over time.</p>
 <ul>
-<li>the solution will converge to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>β</mi><mo>*</mo></msup><annotation encoding="application/x-tex">\beta^*</annotation></semantics></math>
-the Struthers-Kalbfleisch solution of the score and will have robust
-standard errors Lin-Wei.</li>
+<li>The solution will converge to <span class="math inline">\beta^*</span>, the Struthers-Kalbfleisch solution
+of the score, with robust Lin-Wei standard errors.</li>
 </ul>
-<p>The estimator can be agumented in different ways using additional
+<p>The estimator can be augmented in different ways using additional
 covariates at the time of randomization and a censoring augmentation.
-The solved estimating eqution is
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><munder><mo>∑</mo><mi>i</mi></munder><msub><mi>U</mi><mi>i</mi></msub><mo>−</mo><mi>A</mi><mi>U</mi><msub><mi>G</mi><mn>0</mn></msub><mo>−</mo><mi>A</mi><mi>U</mi><msub><mi>G</mi><mn>1</mn></msub><mo>+</mo><mi>A</mi><mi>U</mi><msub><mi>G</mi><mi>C</mi></msub><mo>=</mo><mn>0</mn></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
- \sum_i   U_i - AUG_0 - AUG_1 + AUG_C   = 0 
- \end{align*}</annotation></semantics></math> using the covariates from
-augmentR0 to augment with
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>A</mi><mi>U</mi><msub><mi>G</mi><mn>0</mn></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>A</mi><mn>0</mn></msub><mo>−</mo><msub><mi>π</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>X</mi><mn>0</mn></msub><msub><mi>γ</mi><mn>0</mn></msub></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
- AUG_0 = ( A_0 - \pi_0(X_0) ) X_0 \gamma_0
- \end{align*}</annotation></semantics></math> where possibly
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>A</mi><mn>0</mn></msub><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><msub><mi>X</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>π</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">P(A_0=1|X_0)=\pi_0(X_0)</annotation></semantics></math>
-but does not depend on covariates under randomization, and furhter using
-the covariates from augmentR1, to augment with R indiciating that the
-randomization takes place or not,
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>A</mi><mi>U</mi><msub><mi>G</mi><mn>1</mn></msub><mo>=</mo><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>A</mi><mn>1</mn></msub><mo>−</mo><msub><mi>π</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>X</mi><mn>1</mn></msub><msub><mi>γ</mi><mn>1</mn></msub></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
- AUG_1 = R ( A_1 - \pi_1(X_1))  X_1 \gamma_1
- \end{align*}</annotation></semantics></math> and the dynamic censoring
-augmenting<br><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>A</mi><mi>U</mi><msub><mi>G</mi><mi>C</mi></msub><mo>=</mo><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><msub><mi>γ</mi><mi>c</mi></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>e</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mover><mi>e</mi><mo accent="true">‾</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mfrac><mn>1</mn><mrow><msub><mi>G</mi><mi>c</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mi>d</mi><msub><mi>M</mi><mi>c</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-  AUG_C =  \int_0^t \gamma_c(s)^T (e(s) - \bar e(s))  \frac{1}{G_c(s) } dM_c(s) 
- \end{align*}</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>γ</mi><mi>c</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\gamma_c(s)</annotation></semantics></math>
-is chosen to minimize the variance given the dynamic covariates
-specified by augmentC.</p>
-<p>The propensity score models are always estimated unless it is
-requested to use some fixed number
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>π</mi><mn>0</mn></msub><mo>=</mo><mn>1</mn><mi>/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">\pi_0=1/2</annotation></semantics></math>
-for example, but always better to be adaptive and estimate
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>π</mi><mn>0</mn></msub><annotation encoding="application/x-tex">\pi_0</annotation></semantics></math>.
-Also
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>γ</mi><mn>0</mn></msub><annotation encoding="application/x-tex">\gamma_0</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>γ</mi><mn>1</mn></msub><annotation encoding="application/x-tex">\gamma_1</annotation></semantics></math>
-are estimated to reduce variance of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>U</mi><mi>i</mi></msub><annotation encoding="application/x-tex">U_i</annotation></semantics></math>.</p>
+The solved estimating equation is <span class="math display">\begin{align*}
+\sum_i   U_i - AUG_0 - AUG_1 + AUG_C   = 0
+\end{align*}</span> using covariates from <code>augmentR0</code> to
+augment with <span class="math display">\begin{align*}
+AUG_0 = ( A_0 - \pi_0(X_0) ) X_0 \gamma_0
+\end{align*}</span> where <span class="math inline">P(A_0=1|X_0)=\pi_0(X_0)</span> (which does not
+depend on covariates under randomization), and using covariates from
+<code>augmentR1</code> to augment with <span class="math inline">R</span> indicating whether the second randomization
+takes place: <span class="math display">\begin{align*}
+AUG_1 = R ( A_1 - \pi_1(X_1))  X_1 \gamma_1
+\end{align*}</span> and the dynamic censoring augmentation <span class="math display">\begin{align*}
+  AUG_C =  \int_0^t \gamma_c(s)^T (e(s) - \bar e(s))  \frac{1}{G_c(s) }
+dM_c(s)
+\end{align*}</span> where <span class="math inline">\gamma_c(s)</span>
+is chosen to minimise the variance given the dynamic covariates
+specified by <code>augmentC</code>.</p>
+<p>Propensity score models are always estimated unless a fixed value
+such as <span class="math inline">\pi_0=1/2</span> is requested, though
+it is generally better to estimate <span class="math inline">\pi_0</span> adaptively. Similarly, <span class="math inline">\gamma_0</span> and <span class="math inline">\gamma_1</span> are estimated to reduce the variance
+of <span class="math inline">U_i</span>.</p>
 <ul>
-<li>The treatment’s must be given as factors.</li>
-<li>Treatment for 2nd randomization may depend on response.
+<li>Treatments must be given as factors.</li>
+<li>The treatment for the 2nd randomization may depend on the response.
 <ul>
 <li>Treatment probabilities are estimated by default and uncertainty
-from this adjusted for.</li>
-<li>treat.model must then typically allow for interaction with treatment
-number and covariates</li>
+from this is adjusted for.</li>
+<li>
+<code>treat.model</code> must typically allow for interaction
+between treatment number and covariates.</li>
 </ul>
 </li>
-<li>Randomization augmentation for 1’st and 2’nd randomization possible.
+<li>Randomization augmentation for the 1st and 2nd randomization is
+possible.
 <ul>
-<li>typesR=c(“R0”,“R1”,“R01”)</li>
+<li><code>typesR=c("R0","R1","R01")</code></li>
 </ul>
 </li>
-<li>Censoring model possibly stratified on observed covariates (at time
-0).
+<li>The censoring model can be stratified on observed baseline
+covariates.
 <ul>
-<li>default model is to stratify after randomization R0</li>
-<li>cens.model can be specified</li>
+<li>Default model stratifies on randomization <code>R0</code>.</li>
+<li>
+<code>cens.model</code> can be specified.</li>
 </ul>
 </li>
-<li>Censoring augmentation done dynamically over time with
+<li>Censoring augmentation is done dynamically over time with
 time-dependent covariates.
 <ul>
-<li>typesC=c(“C”,“dynC”), C fixed coefficients and dynC dynamic</li>
-<li>done for each strata in censoring model</li>
+<li>
+<code>typesC=c("C","dynC")</code>: <code>C</code> for fixed
+coefficients and <code>dynC</code> for dynamic.</li>
+<li>Applied separately within each stratum of the censoring model.</li>
 </ul>
 </li>
 </ul>
-<p>Standard errors are estimated using the influence function of all
-estimators and tests of differences can therefore be computed
-subsequently.</p>
+<p>Standard errors are estimated using the influence functions of all
+estimators, so tests of differences can be computed subsequently.</p>
 <ul>
-<li>variance adjustment for censoring augmentation computed subtracting
-variance gain</li>
-<li>influence functions given for case with R0 only</li>
+<li>Variance adjustment for censoring augmentation is computed by
+subtracting the variance gain.</li>
+<li>Influence functions are given for the case with <code>R0</code>
+only.</li>
 </ul>
-<p>The times of randomization is specified by</p>
+<p>The times of randomization are specified by:</p>
 <ul>
-<li>treat.var is “1” when a randomization is given
+<li>
+<code>treat.var</code> is <code>"1"</code> when a randomization
+occurs.
 <ul>
-<li>default is to assume that all time-points corresponds to a
-treatment, the survival case without time-dependent covariates</li>
-<li>recurrent events situation must be specified as first record of each
-subject, see below example.</li>
+<li>Default assumes all time points correspond to a treatment (the
+survival case without time-dependent covariates).</li>
+<li>For recurrent events, this must be specified as the first record for
+each subject; see example below.</li>
 </ul>
 </li>
 </ul>
-<p>Data must be given on start,stop,status survival format with</p>
+<p>Data must be provided in start-stop-status survival format with:</p>
 <ul>
-<li>one code of status indicating events of interest</li>
-<li>one code for the censorings</li>
+<li>one status code indicating events of interest</li>
+<li>one code for censorings</li>
 </ul>
 <p>The phreg_rct can be used for counting process style data, and thus
 covers situations with</p>
@@ -249,7 +241,7 @@ covers situations with</p>
 <span><span class="co">#&gt; [1] "summary.phreg_rct"</span></span>
 <span><span class="co">###out &lt;- phreg_rct(Surv(time,status)~Z.f,data=data,augmentR0=~X,augmentC=~X)</span></span>
 <span><span class="co">###out &lt;- phreg_rct(Surv(time,status)~Z.f,data=data,augmentR0=~X,augmentC=~factor(Z):X,cens.model=~+1)</span></span></code></pre></div>
-<p>Results consitent with speff of library(speff2trial)</p>
+<p>Results consistent with speff of library(speff2trial)</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">###library(speff2trial) </span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
@@ -279,9 +271,9 @@ covers situations with</p>
 <span><span class="co">#&gt; R0_dynC:arms.f1  -0.7204699 0.1196158 -0.9549125 -0.4860272 1.710025e-09</span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.phreg_rct"</span></span></code></pre></div>
-<p>The study is actually block-randomized according (?) so the standard
-should be computed with an adjustment that is equivalent to augmenting
-with this block as factor</p>
+<p>The study is actually block-randomized, so the standard errors should
+be computed with an adjustment equivalent to augmenting with the block
+as a factor:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">data</span>,<span class="op">~</span><span class="va">strat</span><span class="op">+</span><span class="va">arms</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -302,79 +294,39 @@ with this block as factor</p>
 <div class="section level2">
 <h2 id="two-stage-randomization-calgb-9823-for-survival-outcomes">Two-Stage Randomization CALGB-9823 for survival outcomes<a class="anchor" aria-label="anchor" href="#two-stage-randomization-calgb-9823-for-survival-outcomes"></a>
 </h2>
-<p>We here illustrate some analysis of one SMART conducted by Cancer and
-Leukemia Group B Protocol 8923 (CALGB 8923), Stone and others (2001).
-388 patients were randomized to an initial treatment of GM-CSF (A1 ) or
-standard chemotherapy (A2 ). Patients with complete remission and
-informed consent to second stage were then re-randomized to only
-cytarabine (B1 ) or cytarabine plus mitoxantrone (B2 ).</p>
+<p>We illustrate an analysis of one SMART (Sequential Multiple
+Assignment Randomised Trial) conducted by Cancer and Leukemia Group B
+Protocol 8923 (CALGB 8923), Stone and others (2001). 388 patients were
+randomised to an initial treatment of GM-CSF (<span class="math inline">A_1</span>) or standard chemotherapy (<span class="math inline">A_2</span>). Patients with complete remission and
+informed consent were then re-randomised to cytarabine only (<span class="math inline">B_1</span>) or cytarabine plus mitoxantrone (<span class="math inline">B_2</span>).</p>
 <p>We first compute the weighted risk-set estimator based on estimated
-weights
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>Λ</mi><mrow><mi>A</mi><mn>1</mn><mo>,</mo><mi>B</mi><mn>1</mn></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munder><mo>∑</mo><mi>i</mi></munder><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><mfrac><mrow><msub><mi>w</mi><mi>i</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msup><mi>Y</mi><mi>w</mi></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mi>d</mi><msub><mi>N</mi><mi>i</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+weights <span class="math display">\begin{align*}
 \Lambda_{A1,B1}(t) &amp; = \sum_i \int_0^t \frac{w_i(s)}{Y^w(s)} dN_i(s)
-\end{align*}</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mi>i</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><msub><mn>0</mn><mi>i</mi></msub><mo>=</mo><mi>A</mi><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>&gt;</mo><msub><mi>T</mi><mi>R</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><msub><mn>1</mn><mi>i</mi></msub><mo>=</mo><mi>B</mi><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><msub><mi>π</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">w_i(s) = I(A0_i=A1) + (t&gt;T_R) I(A1_i=B1)/\pi_1(X_i)</annotation></semantics></math>,
-that is 1 when you start on treatment
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">A1</annotation></semantics></math>
-and then for those that changes to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">B1</annotation></semantics></math>
-at time
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mi>R</mi></msub><annotation encoding="application/x-tex">T_R</annotation></semantics></math>
-then is scaled up with the proportion doing this. This is equivalent to
-the IPTW (inverse probability of treatment weighted estimator). We
-estimate the treatment regimes
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>1</mn><mo>,</mo><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">A1, B1</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>2</mn><mo>,</mo><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">A2, B1</annotation></semantics></math>
-by letting
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>10</mn></mrow><annotation encoding="application/x-tex">A10</annotation></semantics></math>
-indicate those that are consistent with ending on
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">B1</annotation></semantics></math>.
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>10</mn></mrow><annotation encoding="application/x-tex">A10</annotation></semantics></math>
-then starts being
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>
-and becomes
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0</mn><annotation encoding="application/x-tex">0</annotation></semantics></math>
-if the subject is treated with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">B2</annotation></semantics></math>,
-but stays
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>
-if the subject is treated with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">B1</annotation></semantics></math>.
-We can then look at the two strata where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>0</mn><mo>=</mo><mn>0</mn><mo>,</mo><mi>A</mi><mn>10</mn><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">A0=0,A10=1</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>0</mn><mo>=</mo><mn>1</mn><mo>,</mo><mi>A</mi><mn>10</mn><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">A0=1,A10=1</annotation></semantics></math>.
-Similary, for those that end being consistent with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">B2</annotation></semantics></math>.
-Thus defining
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>11</mn></mrow><annotation encoding="application/x-tex">A11</annotation></semantics></math>
-to start being
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>,
-then stays
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>
-if
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">B2</annotation></semantics></math>
-is taken, and becomes
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0</mn><annotation encoding="application/x-tex">0</annotation></semantics></math>
-if the second randomization is
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">B1</annotation></semantics></math>.</p>
+\end{align*}</span> where <span class="math inline">w_i(s) = I(A0_i=A1)
++ (t&gt;T_R) I(A1_i=B1)/\pi_1(X_i)</span>, that is 1 when you start on
+treatment <span class="math inline">A1</span> and then for those that
+changes to <span class="math inline">B1</span> at time <span class="math inline">T_R</span> then is scaled up with the proportion
+doing this. This is equivalent to the IPTW (inverse probability of
+treatment weighted estimator). We estimate the treatment regimes <span class="math inline">A1, B1</span> and <span class="math inline">A2,
+B1</span> by letting <span class="math inline">A10</span> indicate those
+that are consistent with ending on <span class="math inline">B1</span>.
+<span class="math inline">A10</span> then starts being <span class="math inline">1</span> and becomes <span class="math inline">0</span> if the subject is treated with <span class="math inline">B2</span>, but stays <span class="math inline">1</span> if the subject is treated with <span class="math inline">B1</span>. We can then look at the two strata where
+<span class="math inline">A0=0,A10=1</span> and <span class="math inline">A0=1,A10=1</span>. Similarly, for those that end
+being consistent with <span class="math inline">B2</span>. Thus defining
+<span class="math inline">A11</span> to start being <span class="math inline">1</span>, then stays <span class="math inline">1</span> if <span class="math inline">B2</span> is
+taken, and becomes <span class="math inline">0</span> if the second
+randomization is <span class="math inline">B1</span>.</p>
 <ul>
-<li>the treatment models are for all time-points, unless the weight.var
-variable is given (1 for treatments, 0 otherwise) to accomodate a
-general start,stop format</li>
+<li>the treatment models are for all time-points, unless the
+<code>weight.var</code> variable is given (1 for treatments, 0
+otherwise) to accommodate a general start-stop format</li>
 <li>the treatment model may also depend on a response value</li>
 <li>standard errors are based on influence functions and is also
 computed for the baseline</li>
 </ul>
-<p>We here use the propensity score model
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mn>1</mn><mo>=</mo><mi>B</mi><mn>1</mn><mo stretchy="false" form="prefix">|</mo><mi>A</mi><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">P(A1=B1|A0)</annotation></semantics></math>
-that uses the observed frequencies on arm
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">B1</annotation></semantics></math>
-among those starting out on either
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">A1</annotation></semantics></math>
-or
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">A2</annotation></semantics></math>.</p>
+<p>We here use the propensity score model <span class="math inline">P(A1=B1|A0)</span> that uses the observed
+frequencies on arm <span class="math inline">B1</span> among those
+starting out on either <span class="math inline">A1</span> or <span class="math inline">A2</span>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">calgb8923</span><span class="op">)</span></span>
 <span><span class="va">calgt</span> <span class="op">&lt;-</span> <span class="va">calgb8923</span></span>
@@ -410,94 +362,73 @@ or
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">pll1</span>,times<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $pred</span></span>
-<span><span class="co">#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]</span></span>
-<span><span class="co">#&gt; [1,] 0.8022569 0.7119656 0.6675967 0.6471848 0.6369788 0.6164021 0.5770105</span></span>
-<span><span class="co">#&gt; [2,] 0.8568499 0.7871414 0.7456444 0.7133504 0.6878999 0.6623719 0.6400970</span></span>
-<span><span class="co">#&gt;           [,8]      [,9]     [,10]</span></span>
-<span><span class="co">#&gt; [1,] 0.5427705 0.5154506 0.5103024</span></span>
-<span><span class="co">#&gt; [2,] 0.6109335 0.5646244 0.5543596</span></span>
+<span><span class="co">#&gt; Predictions of type 'surv'</span></span>
+<span><span class="co">#&gt;   Showing subjects: 1, 2</span></span>
+<span><span class="co">#&gt;   Showing times:    1, 2, 3, 4, 5, 6, 7, 8, 9, 10</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $se.pred</span></span>
-<span><span class="co">#&gt;            [,1]       [,2]       [,3]       [,4]       [,5]       [,6]</span></span>
-<span><span class="co">#&gt; [1,] 0.02861524 0.03101141 0.03283701 0.03265187 0.03255301 0.03229413</span></span>
-<span><span class="co">#&gt; [2,] 0.02491113 0.02819870 0.02918381 0.03134551 0.03175905 0.03205534</span></span>
-<span><span class="co">#&gt;            [,7]       [,8]       [,9]      [,10]</span></span>
-<span><span class="co">#&gt; [1,] 0.03387985 0.03486639 0.03785952 0.03806234</span></span>
-<span><span class="co">#&gt; [2,] 0.03345603 0.03601502 0.03946837 0.03959668</span></span>
+<span><span class="co">#&gt; -- Subject 1 --</span></span>
+<span><span class="co">#&gt;  time   surv     se  lower  upper</span></span>
+<span><span class="co">#&gt;     1 0.8023 0.0286 0.7481 0.8603</span></span>
+<span><span class="co">#&gt;     2 0.7120 0.0310 0.6537 0.7754</span></span>
+<span><span class="co">#&gt;     3 0.6676 0.0328 0.6062 0.7352</span></span>
+<span><span class="co">#&gt;     4 0.6472 0.0327 0.5863 0.7145</span></span>
+<span><span class="co">#&gt;     5 0.6370 0.0326 0.5763 0.7041</span></span>
+<span><span class="co">#&gt;     6 0.6164 0.0323 0.5562 0.6831</span></span>
+<span><span class="co">#&gt;     7 0.5770 0.0339 0.5143 0.6474</span></span>
+<span><span class="co">#&gt;     8 0.5428 0.0349 0.4786 0.6156</span></span>
+<span><span class="co">#&gt;     9 0.5155 0.0379 0.4463 0.5953</span></span>
+<span><span class="co">#&gt;    10 0.5103 0.0381 0.4409 0.5906</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $lower</span></span>
-<span><span class="co">#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]</span></span>
-<span><span class="co">#&gt; [1,] 0.7480876 0.6537066 0.6062423 0.5862506 0.5762674 0.5562481 0.5142857</span></span>
-<span><span class="co">#&gt; [2,] 0.8093900 0.7337687 0.6905840 0.6544855 0.6283866 0.6024322 0.5777713</span></span>
-<span><span class="co">#&gt;           [,8]      [,9]     [,10]</span></span>
-<span><span class="co">#&gt; [1,] 0.4785606 0.4463411 0.4408982</span></span>
-<span><span class="co">#&gt; [2,] 0.5442707 0.4923330 0.4819390</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $upper</span></span>
-<span><span class="co">#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]</span></span>
-<span><span class="co">#&gt; [1,] 0.8603486 0.7754168 0.7351604 0.7144523 0.7040864 0.6830613 0.6473856</span></span>
-<span><span class="co">#&gt; [2,] 0.9070927 0.8443964 0.8050947 0.7775096 0.7530497 0.7282753 0.7091460</span></span>
-<span><span class="co">#&gt;           [,8]      [,9]     [,10]</span></span>
-<span><span class="co">#&gt; [1,] 0.6155957 0.5952608 0.5906319</span></span>
-<span><span class="co">#&gt; [2,] 0.6857613 0.6475306 0.6376627</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $times</span></span>
-<span><span class="co">#&gt;  [1]  1  2  3  4  5  6  7  8  9 10</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; attr(,"class")</span></span>
-<span><span class="co">#&gt; [1] "summarypredictrecreg"</span></span>
+<span><span class="co">#&gt; -- Subject 2 --</span></span>
+<span><span class="co">#&gt;  time   surv     se  lower  upper</span></span>
+<span><span class="co">#&gt;     1 0.8568 0.0249 0.8094 0.9071</span></span>
+<span><span class="co">#&gt;     2 0.7871 0.0282 0.7338 0.8444</span></span>
+<span><span class="co">#&gt;     3 0.7456 0.0292 0.6906 0.8051</span></span>
+<span><span class="co">#&gt;     4 0.7134 0.0313 0.6545 0.7775</span></span>
+<span><span class="co">#&gt;     5 0.6879 0.0318 0.6284 0.7530</span></span>
+<span><span class="co">#&gt;     6 0.6624 0.0321 0.6024 0.7283</span></span>
+<span><span class="co">#&gt;     7 0.6401 0.0335 0.5778 0.7091</span></span>
+<span><span class="co">#&gt;     8 0.6109 0.0360 0.5443 0.6858</span></span>
+<span><span class="co">#&gt;     9 0.5646 0.0395 0.4923 0.6475</span></span>
+<span><span class="co">#&gt;    10 0.5544 0.0396 0.4819 0.6377</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">pll0</span>,times<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $pred</span></span>
-<span><span class="co">#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]</span></span>
-<span><span class="co">#&gt; [1,] 0.8017327 0.7008265 0.6523029 0.6158134 0.5923768 0.5659830 0.5329907</span></span>
-<span><span class="co">#&gt; [2,] 0.8560743 0.7740713 0.7153512 0.6690102 0.6272139 0.5642496 0.5412531</span></span>
-<span><span class="co">#&gt;           [,8]      [,9]     [,10]</span></span>
-<span><span class="co">#&gt; [1,] 0.4856035 0.4751084 0.4580125</span></span>
-<span><span class="co">#&gt; [2,] 0.5244200 0.5014231 0.4784263</span></span>
+<span><span class="co">#&gt; Predictions of type 'surv'</span></span>
+<span><span class="co">#&gt;   Showing subjects: 1, 2</span></span>
+<span><span class="co">#&gt;   Showing times:    1, 2, 3, 4, 5, 6, 7, 8, 9, 10</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $se.pred</span></span>
-<span><span class="co">#&gt;            [,1]       [,2]       [,3]       [,4]       [,5]       [,6]</span></span>
-<span><span class="co">#&gt; [1,] 0.02874374 0.03363964 0.03593932 0.03745772 0.03849765 0.03905568</span></span>
-<span><span class="co">#&gt; [2,] 0.02508408 0.03053222 0.03382459 0.03662354 0.03831324 0.04083119</span></span>
-<span><span class="co">#&gt;            [,7]       [,8]       [,9]      [,10]</span></span>
-<span><span class="co">#&gt; [1,] 0.03953451 0.04080406 0.04110910 0.04157512</span></span>
-<span><span class="co">#&gt; [2,] 0.04145722 0.04203299 0.04238077 0.04269490</span></span>
+<span><span class="co">#&gt; -- Subject 1 --</span></span>
+<span><span class="co">#&gt;  time   surv     se  lower  upper</span></span>
+<span><span class="co">#&gt;     1 0.8017 0.0287 0.7473 0.8601</span></span>
+<span><span class="co">#&gt;     2 0.7008 0.0336 0.6379 0.7700</span></span>
+<span><span class="co">#&gt;     3 0.6523 0.0359 0.5855 0.7267</span></span>
+<span><span class="co">#&gt;     4 0.6158 0.0375 0.5466 0.6938</span></span>
+<span><span class="co">#&gt;     5 0.5924 0.0385 0.5215 0.6728</span></span>
+<span><span class="co">#&gt;     6 0.5660 0.0391 0.4944 0.6479</span></span>
+<span><span class="co">#&gt;     7 0.5330 0.0395 0.4609 0.6164</span></span>
+<span><span class="co">#&gt;     8 0.4856 0.0408 0.4119 0.5725</span></span>
+<span><span class="co">#&gt;     9 0.4751 0.0411 0.4010 0.5629</span></span>
+<span><span class="co">#&gt;    10 0.4580 0.0416 0.3834 0.5472</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $lower</span></span>
-<span><span class="co">#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]</span></span>
-<span><span class="co">#&gt; [1,] 0.7473298 0.6379004 0.5855331 0.5466050 0.5215305 0.4943860 0.4608737</span></span>
-<span><span class="co">#&gt; [2,] 0.8082955 0.7164839 0.6520354 0.6009461 0.5564424 0.4896381 0.4658035</span></span>
-<span><span class="co">#&gt;           [,8]      [,9]     [,10]</span></span>
-<span><span class="co">#&gt; [1,] 0.4118674 0.4009976 0.3833640</span></span>
-<span><span class="co">#&gt; [2,] 0.4481818 0.4248738 0.4016554</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $upper</span></span>
-<span><span class="co">#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]</span></span>
-<span><span class="co">#&gt; [1,] 0.8600959 0.7699599 0.7266867 0.6937847 0.6728470 0.6479486 0.6163926</span></span>
-<span><span class="co">#&gt; [2,] 0.9066774 0.8362873 0.7848152 0.7447834 0.7069865 0.6502305 0.6289239</span></span>
-<span><span class="co">#&gt;           [,8]      [,9]     [,10]</span></span>
-<span><span class="co">#&gt; [1,] 0.5725404 0.5629159 0.5471966</span></span>
-<span><span class="co">#&gt; [2,] 0.6136267 0.5917643 0.5698710</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $times</span></span>
-<span><span class="co">#&gt;  [1]  1  2  3  4  5  6  7  8  9 10</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; attr(,"class")</span></span>
-<span><span class="co">#&gt; [1] "summarypredictrecreg"</span></span></code></pre></div>
-<p>The propensity score mode can be extended to use covariates to get
-increased efficiency. Note also that the propensity scores for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>0</mn></mrow><annotation encoding="application/x-tex">A0</annotation></semantics></math>
-will cancel out in the different strata.</p>
-<p>We now illustrate how to fit a Cox model of the form
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><msub><mi>λ</mi><mrow><mi>A</mi><mn>0</mn></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>B</mi><mn>1</mn><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>β</mi><mn>1</mn></msub><mo>+</mo><mi>B</mi><mn>2</mn><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>β</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+<span><span class="co">#&gt; -- Subject 2 --</span></span>
+<span><span class="co">#&gt;  time   surv     se  lower  upper</span></span>
+<span><span class="co">#&gt;     1 0.8561 0.0251 0.8083 0.9067</span></span>
+<span><span class="co">#&gt;     2 0.7741 0.0305 0.7165 0.8363</span></span>
+<span><span class="co">#&gt;     3 0.7154 0.0338 0.6520 0.7848</span></span>
+<span><span class="co">#&gt;     4 0.6690 0.0366 0.6009 0.7448</span></span>
+<span><span class="co">#&gt;     5 0.6272 0.0383 0.5564 0.7070</span></span>
+<span><span class="co">#&gt;     6 0.5642 0.0408 0.4896 0.6502</span></span>
+<span><span class="co">#&gt;     7 0.5413 0.0415 0.4658 0.6289</span></span>
+<span><span class="co">#&gt;     8 0.5244 0.0420 0.4482 0.6136</span></span>
+<span><span class="co">#&gt;     9 0.5014 0.0424 0.4249 0.5918</span></span>
+<span><span class="co">#&gt;    10 0.4784 0.0427 0.4017 0.5699</span></span></code></pre></div>
+<p>The propensity score model can be extended to use covariates to get
+increased efficiency. Note also that the propensity scores for <span class="math inline">A0</span> will cancel out in the different
+strata.</p>
+<p>We now illustrate how to fit a Cox model of the form <span class="math display">\begin{align*}
   &amp; \lambda_{A0}(t) \exp( B1(t) \beta_1 + B2(t) \beta_2)
-\end{align*}</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mn>0</mn></msub><annotation encoding="application/x-tex">\beta_0</annotation></semantics></math>
-is the effect of treatment
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">A2</annotation></semantics></math>
-and the effect of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">B1</annotation></semantics></math></p>
+\end{align*}</span> where <span class="math inline">\beta_0</span> is
+the effect of treatment <span class="math inline">A2</span> and the
+effect of <span class="math inline">B1</span></p>
 <p>Now comparing only those starting on A1/A2 to compare the effect of
 B1 versus B2</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -557,7 +488,7 @@ very reasonable based on the above,</p>
 <div class="section level2">
 <h2 id="recurrent-events-simple-randomization">Recurrent events: Simple Randomization<a class="anchor" aria-label="anchor" href="#recurrent-events-simple-randomization"></a>
 </h2>
-<p>Recurrents events simulation with death and censoring.</p>
+<p>Recurrent events simulation with death and censoring.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
 <span><span class="va">beta</span> <span class="op">&lt;-</span> <span class="fl">0.15</span>; </span>
@@ -572,7 +503,7 @@ very reasonable based on the above,</p>
 <span><span class="va">varz</span> <span class="op">&lt;-</span> <span class="fl">1</span>; <span class="va">dep</span><span class="op">=</span><span class="fl">4</span>; <span class="va">X</span> <span class="op">&lt;-</span> <span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/GammaDist.html" class="external-link">rgamma</a></span><span class="op">(</span><span class="va">n</span>,<span class="fl">1</span><span class="op">/</span><span class="va">varz</span><span class="op">)</span><span class="op">*</span><span class="va">varz</span></span>
 <span><span class="va">Z0</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
 <span><span class="va">px</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="va">betao1</span><span class="op">!=</span><span class="fl">0</span><span class="op">)</span> <span class="va">px</span> <span class="op">&lt;-</span> <span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="http://kkholst.github.io/lava/reference/internal.html" class="external-link">expit</a></span><span class="op">(</span><span class="va">betao1</span><span class="op">*</span><span class="va">X</span><span class="op">)</span>      </span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="va">betao1</span><span class="op">!=</span><span class="fl">0</span><span class="op">)</span> <span class="va">px</span> <span class="op">&lt;-</span> <span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/internal.html" class="external-link">expit</a></span><span class="op">(</span><span class="va">betao1</span><span class="op">*</span><span class="va">X</span><span class="op">)</span>      </span>
 <span><span class="va">A0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="va">n</span>,<span class="fl">1</span>,<span class="va">px</span><span class="op">)</span></span>
 <span><span class="va">r1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">A0</span><span class="op">*</span><span class="va">beta</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">rd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span> <span class="va">A0</span> <span class="op">*</span> <span class="fl">0.15</span><span class="op">)</span></span>
@@ -586,7 +517,7 @@ very reasonable based on the above,</p>
 <span><span class="va">rr</span><span class="op">$</span><span class="va">lX</span> <span class="op">&lt;-</span> <span class="va">rr</span><span class="op">$</span><span class="va">z1</span></span>
 <span><span class="va">rr</span><span class="op">$</span><span class="va">statusD</span> <span class="op">&lt;-</span> <span class="va">rr</span><span class="op">$</span><span class="va">status</span></span>
 <span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">rr</span>,statusD<span class="op">=</span><span class="fl">2</span>,<span class="va">death</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/count.history.html">count.history</a></span><span class="op">(</span><span class="va">rr</span><span class="op">)</span></span>
+<span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/count_history.html">count_history</a></span><span class="op">(</span><span class="va">rr</span><span class="op">)</span></span>
 <span><span class="va">rr</span><span class="op">$</span><span class="va">Z</span> <span class="op">&lt;-</span> <span class="va">rr</span><span class="op">$</span><span class="va">A0</span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">rr</span></span>
 <span><span class="va">data</span><span class="op">$</span><span class="va">Z.f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Z</span><span class="op">)</span></span>
@@ -644,7 +575,7 @@ very reasonable based on the above,</p>
 <span><span class="va">rr</span><span class="op">$</span><span class="va">A1</span> <span class="op">&lt;-</span> <span class="va">A1</span><span class="op">[</span><span class="va">rr</span><span class="op">$</span><span class="va">id</span><span class="op">]</span></span>
 <span><span class="va">rr</span><span class="op">$</span><span class="va">A0</span> <span class="op">&lt;-</span> <span class="va">A0</span><span class="op">[</span><span class="va">rr</span><span class="op">$</span><span class="va">id</span><span class="op">]</span></span>
 <span><span class="va">rr</span><span class="op">$</span><span class="va">lz1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">rr</span><span class="op">$</span><span class="va">z1</span><span class="op">)</span></span>
-<span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/count.history.html">count.history</a></span><span class="op">(</span><span class="va">rr</span>,types<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/count_history.html">count_history</a></span><span class="op">(</span><span class="va">rr</span>,types<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="va">rr</span><span class="op">$</span><span class="va">A1t</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
 <span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">rr</span>,A1t<span class="op">=</span><span class="va">A1</span>,<span class="va">Count2</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> </span>
 <span><span class="va">rr</span><span class="op">$</span><span class="va">At.f</span> <span class="op">&lt;-</span> <span class="va">rr</span><span class="op">$</span><span class="va">A0</span></span>
@@ -702,60 +633,58 @@ values 0.3 and 0.3)</p>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.phreg_rct"</span></span></code></pre></div>
 <ul>
-<li>treat.model has A0 and A1 coded as At.f and we here allow a model
-that depends on the randomization to be as adaptive as possible.</li>
-<li>for the observational case one can here also adjust for
-covarites.</li>
-<li>Censoring model was stratified on A0.f</li>
+<li>
+<code>treat.model</code> codes <span class="math inline">A_0</span>
+and <span class="math inline">A_1</span> as <code>At.f</code>; here we
+allow a model that depends on the randomization to be as adaptive as
+possible.</li>
+<li>For the observational case one can also adjust for covariates
+here.</li>
+<li>The censoring model was stratified on <code>A0.f</code>.</li>
 </ul>
 </div>
 <div class="section level2">
-<h2 id="causal-assumptions-for-twostage-randomization-recurrent-events">Causal assumptions for Twostage Randomization: Recurrent events<a class="anchor" aria-label="anchor" href="#causal-assumptions-for-twostage-randomization-recurrent-events"></a>
+<h2 id="causal-assumptions-for-two-stage-randomization-recurrent-events">Causal assumptions for Two-Stage Randomization: Recurrent
+events<a class="anchor" aria-label="anchor" href="#causal-assumptions-for-two-stage-randomization-recurrent-events"></a>
 </h2>
-<p>We take interest in
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>N</mi><mn>1</mn></msub><annotation encoding="application/x-tex">N_1</annotation></semantics></math>
-but also have death
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>N</mi><mi>d</mi></msub><annotation encoding="application/x-tex">N_d</annotation></semantics></math>.</p>
-<p>Now we need that given
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mn>0</mn></msub><annotation encoding="application/x-tex">X_0</annotation></semantics></math></p>
+<p>We are interested in <span class="math inline">N_1</span> and also
+have death <span class="math inline">N_d</span>.</p>
+<p>Given <span class="math inline">X_0</span>, we require:</p>
 <ul>
-<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mn>0</mn></msub><mo>⊥</mo><msubsup><mi>N</mi><mn>1</mn><mn>0</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msubsup><mi>N</mi><mn>1</mn><mn>1</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msubsup><mi>N</mi><mi>d</mi><mn>0</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msubsup><mi>N</mi><mi>d</mi><mn>1</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="prefix">|</mo><msub><mi>X</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">A_0 \perp  N_1^0(), N_1^1(), N_d^0(), N_d^1() | X_0</annotation></semantics></math></li>
-<li>positivity
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>&gt;</mo><msub><mi>π</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">1 &gt; \pi_0(X_0) &gt; 0</annotation></semantics></math>
+<li><span class="math inline">A_0 \perp  N_1^0(), N_1^1(), N_d^0(),
+N_d^1() | X_0</span></li>
+<li>positivity: <span class="math inline">1 &gt; \pi_0(X_0) &gt;
+0</span>
 </li>
 </ul>
-<p>and given
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>X</mi><mo accent="true">‾</mo></mover><mn>1</mn></msub><annotation encoding="application/x-tex">\bar X_1</annotation></semantics></math>
-the history accumulated at time
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mi>R</mi></msub><annotation encoding="application/x-tex">T_R</annotation></semantics></math>
-of 2nd randomization</p>
+<p>Given <span class="math inline">\bar X_1</span>, the history
+accumulated up to the time <span class="math inline">T_R</span> of the
+second randomization:</p>
 <ul>
-<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mn>1</mn></msub><mo>⊥</mo><msubsup><mi>N</mi><mn>1</mn><mn>0</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msubsup><mi>N</mi><mn>1</mn><mn>1</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msubsup><mi>N</mi><mi>d</mi><mn>0</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msubsup><mi>N</mi><mi>d</mi><mn>1</mn></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="prefix">|</mo><msub><mover><mi>X</mi><mo accent="true">‾</mo></mover><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">A_1 \perp  N_1^0(), N_1^1(), N_d^0(), N_d^1() | \bar X_1</annotation></semantics></math></li>
-<li>positivity
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>&gt;</mo><msub><mi>π</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">1 &gt; \pi_1(X_1) &gt; 0</annotation></semantics></math>
+<li><span class="math inline">A_1 \perp  N_1^0(), N_1^1(), N_d^0(),
+N_d^1() | \bar X_1</span></li>
+<li>positivity: <span class="math inline">1 &gt; \pi_1(X_1) &gt;
+0</span>
 </li>
 </ul>
-<p>and</p>
+<p>And consistency, to link counterfactual quantities to observed
+data.</p>
+<p>We must use an IPTW-weighted Cox score and augment as before.</p>
+<p>In addition we require that censoring is independent given, for
+example, <span class="math inline">A_0</span>:</p>
 <ul>
-<li>consistency</li>
+<li>Independent censoring.</li>
 </ul>
-<p>to link the counterfactual quantities to observed data.</p>
-<p>We must use IPTW weighted Cox score and augment as before</p>
-<p>In addition we need that the censoring is independent given for
-example
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mn>0</mn></msub><annotation encoding="application/x-tex">A_0</annotation></semantics></math></p>
+<p>To use <code>phreg_rct</code> in this setting:</p>
 <ul>
-<li>Independent censoring</li>
-</ul>
-<p>To use the phreg_rct in this situation</p>
+<li>Set <code>RCT=FALSE</code>.</li>
+<li>Propensity score models must be specified.</li>
+<li>The marginal estimate is based on the IPTW Cox model
+<code>phreg_IPTW</code>.
 <ul>
-<li>RCT=FALSE</li>
-<li>propensity score models must be specified</li>
-<li>marginal estimate is based on IPTW cox model phreg_IPTW
-<ul>
-<li>when the same model is used for the propensity scores and the
-augmentation models the augmentation models are not needed due to the
-adaptive nature from fitting the propensity score models.</li>
+<li>When the same model is used for both the propensity scores and the
+augmentation models, the augmentation models are not needed due to the
+adaptive nature of fitting the propensity score models.</li>
 </ul>
 </li>
 </ul>
@@ -815,9 +744,9 @@ adaptive nature from fitting the propensity score models.</li>
 </h2>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.5.2 (2025-10-31)</span></span>
+<span><span class="co">#&gt; R version 4.6.0 (2026-04-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.3 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -836,23 +765,23 @@ adaptive nature from fitting the propensity score models.</li>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.9</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.10</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           </span></span>
-<span><span class="co">#&gt;  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        </span></span>
-<span><span class="co">#&gt;  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            </span></span>
-<span><span class="co">#&gt; [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           </span></span>
-<span><span class="co">#&gt; [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        </span></span>
+<span><span class="co">#&gt;  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           </span></span>
+<span><span class="co">#&gt;  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        </span></span>
+<span><span class="co">#&gt;  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            </span></span>
+<span><span class="co">#&gt; [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           </span></span>
+<span><span class="co">#&gt; [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        </span></span>
 <span><span class="co">#&gt; [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   </span></span>
-<span><span class="co">#&gt; [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       </span></span>
-<span><span class="co">#&gt; [22] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      </span></span>
-<span><span class="co">#&gt; [25] fs_1.6.6               htmlwidgets_1.6.4      Rcpp_1.1.1            </span></span>
-<span><span class="co">#&gt; [28] future_1.68.0          lattice_0.22-7         systemfonts_1.3.1     </span></span>
-<span><span class="co">#&gt; [31] digest_0.6.39          R6_2.6.1               parallelly_1.46.1     </span></span>
-<span><span class="co">#&gt; [34] parallel_4.5.2         splines_4.5.2          Matrix_1.7-4          </span></span>
-<span><span class="co">#&gt; [37] bslib_0.9.0            tools_4.5.2            RcppArmadillo_15.2.3-1</span></span>
-<span><span class="co">#&gt; [40] globals_0.18.0         survival_3.8-3         pkgdown_2.2.0         </span></span>
+<span><span class="co">#&gt; [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       </span></span>
+<span><span class="co">#&gt; [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      </span></span>
+<span><span class="co">#&gt; [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        </span></span>
+<span><span class="co">#&gt; [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     </span></span>
+<span><span class="co">#&gt; [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     </span></span>
+<span><span class="co">#&gt; [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          </span></span>
+<span><span class="co">#&gt; [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1</span></span>
+<span><span class="co">#&gt; [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         </span></span>
 <span><span class="co">#&gt; [43] cachem_1.1.0           desc_1.4.3</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

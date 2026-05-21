@@ -1,8 +1,8 @@
-# Average Treatment effect for censored competing risks data using Binomial Regression
+# Average Treatment Effect for Censored Competing Risks Data using Binomial Regression
 
-Under the standard causal assumptions we can estimate the average
-treatment effect E(Y(1) - Y(0)). We need Consistency, ignorability (
-Y(1), Y(0) indep A given X), and positivity.
+Estimates the average treatment effect (ATE) \\E(Y(1) - Y(0))\\ for
+censored competing risks data using binomial regression with Inverse
+Probability of Censoring Weighting (IPCW).
 
 ## Usage
 
@@ -37,119 +37,188 @@ binregATE(
 
 - formula:
 
-  formula with outcome (see `coxph`)
+  A formula object specifying the outcome and covariates (see `coxph`).
+  The first covariate should be the treatment variable coded as a
+  factor.
 
 - data:
 
-  data frame
+  A data frame containing the variables in the formula.
 
 - cause:
 
-  cause of interest
+  Numeric scalar indicating the cause of interest for competing risks.
 
 - time:
 
-  time of interest
+  Numeric scalar indicating the time point of interest.
 
 - beta:
 
-  starting values
+  Optional numeric vector of starting values for the coefficients.
 
 - treat.model:
 
-  logistic treatment model given covariates
+  A formula specifying the logistic treatment model given covariates
+  (e.g., `treatment ~ covariate1 + covariate2`).
 
 - cens.model:
 
-  only stratified cox model without covariates
+  A formula specifying the censoring model. Only stratified Cox models
+  without covariates are supported (e.g., `~ strata(group)`).
 
 - offset:
 
-  offsets for partial likelihood
+  Optional numeric vector of offsets for the partial likelihood.
 
 - weights:
 
-  for score equations
+  Optional numeric vector of weights for the score equations.
 
 - cens.weights:
 
-  censoring weights
+  Optional numeric vector of pre-calculated censoring weights. If
+  `NULL`, weights are estimated internally.
 
 - se:
 
-  to compute se's with IPCW adjustment, otherwise assumes that IPCW
-  weights are known
+  Logical. If `TRUE`, computes standard errors with IPCW adjustment. If
+  `FALSE`, assumes IPCW weights are known.
 
 - type:
 
-  "II" adds augmentation term, and "I" classic binomial regression
+  Character string. Either `"I"` (classic binomial regression) or `"II"`
+  (adds augmentation term for efficiency).
 
 - kaplan.meier:
 
-  uses Kaplan-Meier for IPCW in contrast to exp(-Baseline)
+  Logical. If `TRUE`, uses Kaplan-Meier for IPCW weights; otherwise uses
+  \\\exp(-\text{Baseline})\\.
 
 - cens.code:
 
-  gives censoring code
+  Numeric code representing censored observations in the status
+  variable.
 
 - no.opt:
 
-  to not optimize
+  Logical. If `TRUE`, optimization is skipped and starting values are
+  used.
 
 - method:
 
-  for optimization
+  Character string. Optimization method: `"nr"` (Newton-Raphson) or
+  `"nlm"`.
 
 - augmentation:
 
-  for augment binomial regression
+  Optional numeric vector for augmenting binomial regression.
 
 - outcome:
 
-  can do CIF regression "cif"=F(t\|X), "rmst"=E( min(T, t) \| X) , or E(
-  I(epsilon==cause) ( t - mint(T,t)) ) \| X) depending on the number of
-  the number of causes.
+  Character string. Outcome type: `"cif"` (Cumulative Incidence
+  Function, \\F(t\|X)\\), `"rmst"` (Restricted Mean Survival Time,
+  \\E(\min(T, t) \| X)\\), or `"rmtl"` (Restricted Mean Time Lost,
+  \\E(I(\epsilon=\text{cause})(t - \min(T,t)) \| X)\\).
 
 - model:
 
-  exp or linear model for E( min(T, t) \| X)=exp(X^t beta), or E(
-  I(epsilon==cause) ( t - mint(T,t)) ) \| X)=exp(X^t beta)
+  Character string. Link function for the outcome model: `"exp"` or
+  `"lin"` (identity). For `"cif"`, `"logit"` is typically used.
 
 - Ydirect:
 
-  use this outcome Y with IPCW vesion
+  Optional numeric vector. Use this outcome Y with IPCW version instead
+  of constructing one from `outcome`.
 
 - typeATE:
 
-  "II" to censor augment the estimating equation
+  Character string. Either `"II"` (censoring augmentation of the
+  estimating equation) or `"I"` (standard).
 
 - ...:
 
-  Additional arguments to lower level funtions (binreg that fits outcome
-  model)
+  Additional arguments passed to lower-level functions (e.g., `binreg`
+  that fits the outcome model).
+
+## Value
+
+An object of class `c("binreg", "ATE")` containing:
+
+- coef:
+
+  Estimated coefficients from the outcome model.
+
+- riskDR:
+
+  Double-robust marginal risk estimates for each treatment level.
+
+- riskG:
+
+  G-formula marginal risk estimates for each treatment level.
+
+- difriskDR:
+
+  Difference in risks (ATE) using double-robust estimator.
+
+- difriskG:
+
+  Difference in risks (ATE) using G-formula estimator.
+
+- riskDR.iid, riskG.iid:
+
+  Influence functions for marginal risk estimates.
+
+- var, var.riskDR, var.riskG:
+
+  Variance-covariance matrices.
+
+- se.coef, se.riskDR, se.riskG:
+
+  Standard errors.
 
 ## Details
 
-The first covariate in the specification of the competing risks
-regression model must be the treatment variable that should be coded as
-a factor. If the factor has more than two levels then it uses the mlogit
-for propensity score modelling. If there are no censorings this is the
-same as ordinary logistic regression modelling.
+Under standard causal assumptions, the ATE can be estimated. These
+assumptions include:
 
-Estimates the ATE using the the standard binary double robust estimating
-equations that are IPCW censoring adjusted. Rather than binomial
-regression we also consider a IPCW weighted version of standard logistic
-regression logitIPCWATE.
+- **Consistency**: The observed outcome equals the potential outcome
+  under the observed treatment.
 
-typeATE="II" will augment the estimating equation with \$\$ (A/\pi(X))
-\int E( O(t) \| T \geq t, S(X))/ G_c(t,S(X)) d \hat M_c(s) \$\$ when
-estimating the mean outcome for the treated.
+- **Ignorability**: \\(Y(1), Y(0)) \perp A \| X\\ (treatment assignment
+  is independent of potential outcomes given covariates).
+
+- **Positivity**: All treatment levels have non-zero probability given
+  covariates.
+
+The first covariate in the competing risks regression model must be the
+treatment variable, which should be coded as a factor. If the factor has
+more than two levels, multinomial logistic regression (`mlogit`) is used
+for propensity score modeling. In the absence of censoring, this reduces
+to ordinary logistic regression.
+
+The ATE is estimated using standard doubly robust estimating equations
+that are IPCW-censoring adjusted. As an alternative to binomial
+regression, `logitIPCWATE` provides an IPCW-weighted version of standard
+logistic regression.
+
+When `typeATE = "II"`, the estimating equation is augmented with: \$\$
+(A/\pi(X)) \int E( O(t) \| T \geq t, S(X))/ G_c(t,S(X)) d \hat M_c(s)
+\$\$ when estimating the mean outcome for the treated group.
 
 ## References
 
-Blanche PF, Holt A, Scheike T (2022). “On logistic regression with right
-censored data, with or without competing risks, and its use for
-estimating treatment effects.” Lifetime data analysis, 29, 441–482.
+- Blanche PF, Holt A, Scheike T (2022). "On logistic regression with
+  right censored data, with or without competing risks, and its use for
+  estimating treatment effects." *Lifetime Data Analysis*, 29, 441–482.
+
+## See also
+
+[`binreg`](http://kkholst.github.io/mets/reference/binreg.md),
+`logitIPCWATE`, `logitATE`,
+[`binregG`](http://kkholst.github.io/mets/reference/binregG.md)
+
+\[kumarsim()\] \[kumarsimRCT()\]
 
 ## Author
 
@@ -158,7 +227,7 @@ Thomas Scheike
 ## Examples
 
 ``` r
-library(mets); data(bmt)
+data(bmt)
 dfactor(bmt)  <-  ~.
 
 brs <- binregATE(Event(time,cause)~tcell.f+platelet+age,bmt,time=50,cause=1,
@@ -266,5 +335,4 @@ head(brs$riskG.iid)
 #> [4,] -0.001350560  0.0006678242
 #> [5,] -0.001164390 -0.0002837983
 #> [6,] -0.001403991  0.0009473264
-
 ```

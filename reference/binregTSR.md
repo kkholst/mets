@@ -1,10 +1,9 @@
-# 2 Stage Randomization for Survival Data or competing Risks Data
+# Two-Stage Randomization for Survival or Competing Risks Data
 
-Under two-stage randomization we can estimate the average treatment
-effect E(Y(i,j)) of treatment regime (i,j). The estimator can be
-agumented in different ways: using the two randomizations and the
-dynamic censoring augmetatation. The treatment's must be given as
-factors.
+Estimates the average treatment effect \\E(Y(i,j))\\ of treatment regime
+\\(i,j)\\ under two-stage randomization. The estimator can be augmented
+using information from both randomizations and dynamic censoring
+augmentation to improve efficiency.
 
 ## Usage
 
@@ -49,155 +48,211 @@ binregTSR(
 
 - formula:
 
-  formula with outcome (see `coxph`)
+  Formula with outcome (see `coxph`), typically
+  `Event(entry,time,status)~+1+cluster(id)`.
 
 - data:
 
-  data frame
+  Data frame containing all variables.
 
 - cause:
 
-  cause of interest
+  Cause of interest for competing risks (default 1).
 
 - time:
 
-  time of interest
+  Time point for estimation.
 
 - cens.code:
 
-  gives censoring code
+  Censoring code (default 0).
 
 - response.code:
 
-  code of status of survival data that indicates a response at which 2nd
-  randomization is performed
+  Code of status indicating response at which 2nd randomization occurs.
 
 - augmentR0:
 
-  augmentation model for 1st randomization
+  Covariates for augmentation model of the first randomization.
 
 - treat.model0:
 
-  logistic treatment model for 1st randomization
+  Logistic treatment model for the first randomization.
 
 - augmentR1:
 
-  augmentation model for 2nd randomization
+  Covariates for augmentation model of the second randomization.
 
 - treat.model1:
 
-  logistic treatment model for 2ndrandomization
+  Logistic treatment model for the second randomization.
 
 - augmentC:
 
-  augmentation model for censoring
+  Covariates for censoring augmentation model.
 
 - cens.model:
 
-  stratification for censoring model based on observed covariates
+  Stratification for censoring model based on observed covariates.
 
 - estpr:
 
-  estimate randomization probabilities using model
+  Logical; estimate randomization probabilities using model (default
+  TRUE).
 
 - response.name:
 
-  can give name of response variable, otherwise reads this as first
-  variable of treat.model1
+  Name of response variable (reads from `treat.model1` if NULL).
 
 - offset:
 
-  not implemented
+  Not implemented.
 
 - weights:
 
-  not implemented
+  Not implemented.
 
 - cens.weights:
 
-  can be given
+  Can be provided externally.
 
 - beta:
 
-  starting values
+  Starting values for optimization.
 
 - kaplan.meier:
 
-  for censoring weights, rather than exp cumulative hazard
+  Logical; use Kaplan-Meier for censoring weights rather than exp
+  cumulative hazard.
 
 - no.opt:
 
-  not implemented
+  Not implemented.
 
 - method:
 
-  not implemented
+  Not implemented.
 
 - augmentation:
 
-  not implemented
+  Not implemented.
 
 - outcome:
 
-  can be c("cif","rmst","rmst-cause")
+  Outcome type: `"cif"` (cumulative incidence), `"rmst"` (restricted
+  mean survival time), or `"rmst-cause"` (restricted mean time lost for
+  cause).
 
 - model:
 
-  not implemented, uses linear regression for augmentation
+  Not implemented, uses linear regression for augmentation.
 
 - Ydirect:
 
-  use this Y instead of outcome constructed inside the program (e.g.
-  I(T\< t, epsilon=1)), see binreg for more on this
+  Use this Y instead of outcome constructed inside the program.
 
 - return.dataw:
 
-  to return weighted data for all treatment regimes
+  Logical; return weighted data for all treatment regimes.
 
 - pi0:
 
-  set up known randomization probabilities
+  Known randomization probabilities for first randomization.
 
 - pi1:
 
-  set up known randomization probabilities
+  Known randomization probabilities for second randomization.
 
 - cens.time.fixed:
 
-  to use time-dependent weights for censoring estimation using weights
+  Logical; use time-dependent weights for censoring estimation.
 
 - outcome.iid:
 
-  to get iid contribution from outcome model (here linear regression
-  working models).
+  Logical; get iid contribution from outcome model.
 
 - meanCs:
 
-  \(0\) indicates that censoring augmentation is centered by
-  CensAugment.times/n
+  Logical; indicates censoring augmentation is centered by
+  `CensAugment.times/n`.
 
 - ...:
 
-  Additional arguments to lower level funtions
+  Additional arguments to lower-level functions.
+
+## Value
+
+An object of class `"binregTSR"` containing:
+
+- riskG:
+
+  Simple estimator results (coefficient, SE).
+
+- riskG0:
+
+  First randomization augmentation results.
+
+- riskG1:
+
+  Second randomization augmentation results.
+
+- riskG01:
+
+  Both randomizations augmentation results.
+
+- riskG.iid:
+
+  Influence functions for all estimators.
+
+- varG:
+
+  Variance-covariance matrices.
+
+- MGc:
+
+  Censoring martingale contributions.
+
+- CensAugment.times:
+
+  Censoring augmentation terms.
+
+- dynCens.coef:
+
+  Dynamic censoring coefficients.
+
+- dataW:
+
+  Weighted data (if `return.dataw=TRUE`).
 
 ## Details
 
-The solved estimating eqution is \$\$ ( I(min(T_i,t) \< G_i)/G_c(min(T_i
-,t)) I(T \leq t, \epsilon=1 ) - AUG_0 - AUG_1 + AUG_C - p(i,j)) = 0 \$\$
-where using the covariates from augmentR0 \$\$ AUG_0 = \frac{A_0(i) -
-\pi_0(i)}{ \pi_0(i)} X_0 \gamma_0\$\$ and using the covariates from
-augmentR1 \$\$ AUG_1 = \frac{A_0(i)}{\pi_0(i)} \frac{A_1(j) - \pi_1(j)}{
-\pi_1(j)} X_1 \gamma_1\$\$ and the censoring augmentation is \$\$ AUG_C
-= \int_0^t \gamma_c(s)^T (e(s) - \bar e(s)) \frac{1}{G_c(s) } dM_c(s)
-\$\$ where \$\$ \gamma_c(s)\$\$ is chosen to minimize the variance given
-the dynamic covariates specified by augmentC.
+The method solves the estimating equation: \$\$ \frac{I(\min(T_i,t) \<
+G_i)}{G_c(\min(T_i,t))} I(T \leq t, \epsilon=1) - AUG_0 - AUG_1 +
+AUG_C - p(i,j) = 0 \$\$ where:
 
-In the observational case, we can use propensity score modelling and
-outcome modelling (using linear regression).
+- \\AUG_0 = \frac{A_0(i) - \pi_0(i)}{\pi_0(i)} X_0 \gamma_0\\ uses
+  covariates from `augmentR0`
+
+- \\AUG_1 = \frac{A_0(i)}{\pi_0(i)} \frac{A_1(j) - \pi_1(j)}{\pi_1(j)}
+  X_1 \gamma_1\\ uses covariates from `augmentR1`
+
+- \\AUG_C = \int_0^t \gamma_c(s)^T (e(s) - \bar e(s)) \frac{1}{G_c(s)}
+  dM_c(s)\\ is the censoring augmentation
 
 Standard errors are estimated using the influence function of all
-estimators and tests of differences can therefore be computed
-subsequently.
+estimators, enabling tests of differences to be computed subsequently.
+The method handles both survival data and competing risks data, and
+supports multiple treatment levels.
+
+## References
+
+Scheike, T. H. (2024). Two-stage randomization analysis for survival
+data. mets package documentation.
+
+## See also
+
+[`binreg`](http://kkholst.github.io/mets/reference/binreg.md),
+[`phreg_rct`](http://kkholst.github.io/mets/reference/phreg_rct.md)
 
 ## Author
 
@@ -206,7 +261,6 @@ Thomas Scheike
 ## Examples
 
 ``` r
-library(mets)
 ddf <- mets:::gsim(200,covs=1,null=0,cens=1,ce=2)
 
 bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),ddf$datat,time=2,cause=c(1),
@@ -217,30 +271,30 @@ bb <- binregTSR(Event(entry,time,status)~+1+cluster(id),ddf$datat,time=2,cause=c
 summary(bb) 
 #> Simple estimator :
 #>                              coef           
-#> A0.f=1, response*A1.f=1 0.6513604 0.05894890
-#> A0.f=1, response*A1.f=2 0.8454786 0.06940480
-#> A0.f=2, response*A1.f=1 0.3381049 0.07717948
-#> A0.f=2, response*A1.f=2 0.1536713 0.05861389
+#> A0.f=1, response*A1.f=1 0.7965990 0.06876063
+#> A0.f=1, response*A1.f=2 0.7290403 0.05904496
+#> A0.f=2, response*A1.f=1 0.2652459 0.08526775
+#> A0.f=2, response*A1.f=2 0.3463623 0.07507682
 #> 
 #> First Randomization Augmentation :
 #>                              coef           
-#> A0.f=1, response*A1.f=1 0.6509532 0.05841946
-#> A0.f=1, response*A1.f=2 0.8466905 0.06961735
-#> A0.f=2, response*A1.f=1 0.3372760 0.07745806
-#> A0.f=2, response*A1.f=2 0.1539456 0.05837829
+#> A0.f=1, response*A1.f=1 0.8020553 0.07037422
+#> A0.f=1, response*A1.f=2 0.7380517 0.05897235
+#> A0.f=2, response*A1.f=1 0.2643500 0.08356227
+#> A0.f=2, response*A1.f=2 0.3392007 0.07533492
 #> 
 #> Second Randomization Augmentation :
 #>                              coef           
-#> A0.f=1, response*A1.f=1 0.6575295 0.05738919
-#> A0.f=1, response*A1.f=2 0.8256192 0.06904964
-#> A0.f=2, response*A1.f=1 0.3298011 0.07878161
-#> A0.f=2, response*A1.f=2 0.1492153 0.05848652
+#> A0.f=1, response*A1.f=1 0.8270658 0.05679816
+#> A0.f=1, response*A1.f=2 0.7414130 0.06070947
+#> A0.f=2, response*A1.f=1 0.2497165 0.09169221
+#> A0.f=2, response*A1.f=2 0.3645886 0.07180896
 #> 
 #> 1st and 2nd Randomization Augmentation :
 #>                              coef           
-#> A0.f=1, response*A1.f=1 0.6614013 0.05563921
-#> A0.f=1, response*A1.f=2 0.8295814 0.06803427
-#> A0.f=2, response*A1.f=1 0.3304605 0.07864288
-#> A0.f=2, response*A1.f=2 0.1502968 0.05795214
+#> A0.f=1, response*A1.f=1 0.8352750 0.05697325
+#> A0.f=1, response*A1.f=2 0.7531912 0.05912032
+#> A0.f=2, response*A1.f=1 0.2495341 0.08954463
+#> A0.f=2, response*A1.f=2 0.3630083 0.07086160
 #> 
 ```

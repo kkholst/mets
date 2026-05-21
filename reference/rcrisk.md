@@ -2,7 +2,7 @@
 
 Simulates data from piecwise constant baseline hazard that can also be
 of Cox type. Censor data at highest value of the break points for either
-of the cumulatives, see also sim.phregs
+of the cumulatives, see also sim_phregs
 
 ## Usage
 
@@ -72,7 +72,6 @@ Thomas Scheike
 ## Examples
 
 ``` r
-library(mets)
 data(bmt); 
 n <- 100
 cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
@@ -101,9 +100,9 @@ plot(cox1); plot(scox1,add=TRUE,col=2)
 plot(cox2); plot(scox2,add=TRUE,col=2)
 
 cbind(cox1$coef,scox1$coef,cox2$coef,scox2$coef)
-#>                [,1]        [,2]       [,3]      [,4]
-#> tcell    -0.4232606 -12.1354452  0.3991068 1.2674840
-#> platelet -0.5654438  -0.3064046 -0.2461474 0.5558998
+#>                [,1]       [,2]       [,3]      [,4]
+#> tcell    -0.4232606 -0.6578676  0.3991068 0.6638699
+#> platelet -0.5654438 -0.1569024 -0.2461474 0.1614852
 
 # 3 causes and censoring 
 d3 <-  rcrisk(list(cox1$cum,cox2$cum,cox1$cum),NULL,n=100,cens=cbind(c(1,30,68),c(.01,1,3)))
@@ -111,6 +110,6 @@ dtable(d3,~status)
 #> 
 #> status
 #>  0  1  2  3 
-#> 19 37 13 31 
+#> 25 34 12 29 
 #> 
 ```

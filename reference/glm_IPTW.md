@@ -1,4 +1,4 @@
-# IPTW GLM, Inverse Probaibilty of Treatment Weighted GLM
+# IPTW GLM, Inverse Probabibilty of Treatment Weighted GLM
 
 Fits GLM model with treatment weights \$\$ w(A)= \sum_a I(A=a)/P(A=a\|X)
 \$\$, computes standard errors via influence functions that are returned

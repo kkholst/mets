@@ -6,9 +6,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Discrete Interval Censored Survival Models • mets</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="../katex-auto.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Discrete Interval Censored Survival Models">
 </head>
@@ -20,7 +21,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,10 +38,10 @@
     <li><a class="dropdown-item" href="../articles/binomial-family.html">Analysis of multivariate binomial data: family analysis</a></li>
     <li><a class="dropdown-item" href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a></li>
     <li><a class="dropdown-item" href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a></li>
-    <li><a class="dropdown-item" href="../articles/binreg-TRS.html">Two-Stage Randomization for for Competing risks and Survival outcomes</a></li>
+    <li><a class="dropdown-item" href="../articles/binreg-TRS.html">Two-Stage Randomization for Competing risks and Survival outcomes</a></li>
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
-    <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">Cooking Survival Data: 5-Minute Recipes</a></li>
     <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
@@ -80,7 +81,7 @@
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2026-01-14</h4>
+            <h4 data-toc-skip class="date">2026-05-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/interval-discrete-survival.Rmd" class="external-link"><code>vignettes/interval-discrete-survival.Rmd</code></a></small>
       <div class="d-none name"><code>interval-discrete-survival.Rmd</code></div>
@@ -89,42 +90,36 @@
     
     
 <div class="section level2">
-<h2 id="discrete-inteval-censored-survival-times">Discrete Inteval Censored survival times<a class="anchor" aria-label="anchor" href="#discrete-inteval-censored-survival-times"></a>
+<h2 id="discrete-interval-censored-survival-times">Discrete Interval Censored survival times<a class="anchor" aria-label="anchor" href="#discrete-interval-censored-survival-times"></a>
 </h2>
 <p>We consider the cumulative odds model for the probability of dying
-before time t:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mtext mathvariant="normal">logit</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo stretchy="false" form="prefix">|</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msup><mi>x</mi><mi>T</mi></msup><mi>β</mi></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo stretchy="false" form="prefix">|</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>x</mi><mi>T</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mn>1</mn><mo>+</mo><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>x</mi><mi>T</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>&gt;</mo><mi>t</mi><mo stretchy="false" form="prefix">|</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>x</mi><mi>T</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-   \mbox{logit}(P(T \leq t | x)) &amp; = \log(G(t)) + x^T \beta              \\
-                P(T \leq t | x)  &amp; =  \frac{G(t) exp( x^T \beta)}{1 + G(t) exp( x^T \beta) }          \\
-                P(T &gt;t | x)  &amp; =  \frac{1}{1 + G(t) exp( x^T \beta) }          
-\end{align*}</annotation></semantics></math></p>
-<p>Input are intervals given by
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="postfix">]</mo><msub><mi>t</mi><mi>l</mi></msub><mo>,</mo><msub><mi>t</mi><mi>r</mi></msub><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">]t_l,t_r]</annotation></semantics></math>
-where t_r can be infinity for right-censored intervals. When the data is
-discrete, in contrast to grouping of continuous data,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="postfix">]</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">]0,1]</annotation></semantics></math>
-then the intervals
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="postfix">]</mo><mi>j</mi><mo>,</mo><mi>j</mi><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">]j,j+1]</annotation></semantics></math>
-will be equvilant to an observation at j+1 (see below example).</p>
-<p>Likelihood is maximized:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><munder><mo>∏</mo><mi>i</mi></munder><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>T</mi><mi>i</mi></msub><mo>&gt;</mo><msub><mi>t</mi><mrow><mi>i</mi><mi>l</mi></mrow></msub><mo stretchy="false" form="prefix">|</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>T</mi><mi>i</mi></msub><mo>&gt;</mo><msub><mi>t</mi><mrow><mi>i</mi><mi>r</mi></mrow></msub><mo stretchy="false" form="prefix">|</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+before time t: <span class="math display">\begin{align*}
+   \mbox{logit}(P(T \leq t | x)) &amp; = \log(G(t)) + x^T
+\beta              \\
+                P(T \leq t | x)  &amp; =  \frac{G(t) exp( x^T \beta)}{1
++ G(t) exp( x^T \beta) }          \\
+                P(T &gt;t | x)  &amp; =  \frac{1}{1 + G(t) exp( x^T
+\beta) }          
+\end{align*}</span></p>
+<p>Input are intervals given by <span class="math inline">]t_l,t_r]</span> where t_r can be infinity for
+right-censored intervals. When the data is discrete, in contrast to
+grouping of continuous data, <span class="math inline">]0,1]</span> then
+the intervals <span class="math inline">]j,j+1]</span> will be
+equivalent to an observation at j+1 (see below example).</p>
+<p>Likelihood is maximized: <span class="math display">\begin{align*}
     \prod_i  P(T_i &gt;t_{il} | x) - P(T_i&gt; t_{ir}| x).            
-\end{align*}</annotation></semantics></math></p>
-<p>This model is also called the cumulative odds model
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo stretchy="false" form="prefix">|</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mfrac><mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>x</mi><mi>T</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mn>1</mn><mo>+</mo><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>x</mi><mi>T</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-     P(T \leq t | x)  &amp; =  \frac{ G(t) exp( x^T \beta) }{1 + G(t) exp( x^T \beta) }.
-\end{align*}</annotation></semantics></math> and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
-says something about the OR of probability of being before
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>.</p>
-<p>The baseline is parametrized as
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munder><mo>∑</mo><mrow><mi>j</mi><mo>≤</mo><mi>t</mi></mrow></munder><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>α</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-       G(t)  &amp; =  \sum_{j \leq t} \exp( \alpha_j ) 
-\end{align*}</annotation></semantics></math></p>
+\end{align*}</span></p>
+<p>This model is also called the cumulative odds model <span class="math display">\begin{align*}
+     P(T \leq t | x)  &amp; =  \frac{ G(t) exp( x^T \beta) }{1 + G(t)
+exp( x^T \beta) }.
+\end{align*}</span> and <span class="math inline">\beta</span> captures
+the odds ratio for the probability of being before <span class="math inline">t</span>.</p>
+<p>The baseline is parametrized as <span class="math display">\begin{align*}
+       G(t)  &amp; =  \sum_{j \leq t} \exp( \alpha_j )
+\end{align*}</span></p>
 <p>An important consequence of the model is that for all cut-points
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>
-we have the same OR parameters for the OR of being early or later than
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>.</p>
+<span class="math inline">t</span> we have the same OR parameters for
+the OR of being early or later than <span class="math inline">t</span>.</p>
 </div>
 <div class="section level2">
 <h2 id="discrete-ttp">Discrete TTP<a class="anchor" aria-label="anchor" href="#discrete-ttp"></a>
@@ -147,7 +142,7 @@ cumulative odds model by constructing the intervals appropriately:</p>
 <span><span class="co">#&gt; 4             0   0   0   0  90   0   0</span></span>
 <span><span class="co">#&gt; 5             0   0   0   0   0  68   0</span></span>
 <span><span class="co">#&gt; 6             0   0   0   0   0   0 220</span></span>
-<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">interval.logitsurv.discrete</a></span><span class="op">(</span><span class="fu"><a href="../reference/interval.logitsurv.discrete.html">Interval</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time2</span><span class="op">)</span><span class="op">~</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="va">X3</span><span class="op">+</span><span class="va">X4</span>,<span class="va">ttpd</span><span class="op">)</span></span>
+<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval_logitsurv_discrete.html">interval_logitsurv_discrete</a></span><span class="op">(</span><span class="fu"><a href="../reference/interval_logitsurv_discrete.html">Interval</a></span><span class="op">(</span><span class="va">entry</span>,<span class="va">time2</span><span class="op">)</span><span class="op">~</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="va">X3</span><span class="op">+</span><span class="va">X4</span>,<span class="va">ttpd</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $baseline</span></span>
 <span><span class="co">#&gt;       Estimate Std.Err   2.5%   97.5%   P-value</span></span>
@@ -173,7 +168,7 @@ cumulative odds model by constructing the intervals appropriately:</p>
 <span><span class="co">#&gt; X4 1.380231 1.101503 1.729490</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/drelevel.html">dfactor</a></span><span class="op">(</span><span class="va">ttpd</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">entry.f</span><span class="op">~</span><span class="va">entry</span></span>
-<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">cumoddsreg</a></span><span class="op">(</span><span class="va">entry.f</span><span class="op">~</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="va">X3</span><span class="op">+</span><span class="va">X4</span>,<span class="va">ttpd</span><span class="op">)</span></span>
+<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cumoddsreg.html">cumoddsreg</a></span><span class="op">(</span><span class="va">entry.f</span><span class="op">~</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="va">X3</span><span class="op">+</span><span class="va">X4</span>,<span class="va">ttpd</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $baseline</span></span>
 <span><span class="co">#&gt;       Estimate Std.Err   2.5%   97.5%   P-value</span></span>
@@ -197,18 +192,18 @@ cumulative odds model by constructing the intervals appropriately:</p>
 <span><span class="co">#&gt; X2 2.006032 1.597554 2.518953</span></span>
 <span><span class="co">#&gt; X3 1.414239 1.126834 1.774950</span></span>
 <span><span class="co">#&gt; X4 1.380231 1.101503 1.729490</span></span></code></pre></div>
-<p>We note that the probability of dying is increased considerably for
-all covariates.</p>
+<p>We note that the probability of an event (pregnancy) is considerably
+higher for all covariates.</p>
 <p>Now using this discrete survival model we simulate some data from
 this model</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span> <span class="co"># to control output in simulatins for p-values below.</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span> <span class="co"># to control output in simulations for p-values below.</span></span>
 <span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">200</span></span>
 <span><span class="va">Z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="va">n</span><span class="op">*</span><span class="fl">4</span>,<span class="fl">1</span>,<span class="fl">0.5</span><span class="op">)</span>,<span class="va">n</span>,<span class="fl">4</span><span class="op">)</span></span>
-<span><span class="va">outsim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">simlogitSurvd</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">coef</span>,<span class="va">Z</span><span class="op">)</span></span>
+<span><span class="va">outsim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mets-simulation.html">simlogitSurvd</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">coef</span>,<span class="va">Z</span><span class="op">)</span></span>
 <span><span class="va">outsim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">outsim</span>,left<span class="op">=</span><span class="va">time</span>,right<span class="op">=</span><span class="va">time</span><span class="op">+</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">outsim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">outsim</span>,right<span class="op">=</span><span class="cn">Inf</span>,<span class="va">status</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span></span>
-<span><span class="va">outss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">interval.logitsurv.discrete</a></span><span class="op">(</span><span class="fu"><a href="../reference/interval.logitsurv.discrete.html">Interval</a></span><span class="op">(</span><span class="va">left</span>,<span class="va">right</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="va">X3</span><span class="op">+</span><span class="va">X4</span>,<span class="va">outsim</span><span class="op">)</span></span>
+<span><span class="va">outss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval_logitsurv_discrete.html">interval_logitsurv_discrete</a></span><span class="op">(</span><span class="fu"><a href="../reference/interval_logitsurv_discrete.html">Interval</a></span><span class="op">(</span><span class="va">left</span>,<span class="va">right</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="va">X3</span><span class="op">+</span><span class="va">X4</span>,<span class="va">outsim</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">outss</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $baseline</span></span>
 <span><span class="co">#&gt;       Estimate Std.Err    2.5%   97.5%   P-value</span></span>
@@ -233,16 +228,16 @@ this model</p>
 <span><span class="co">#&gt; X3 0.913858 0.5572845 1.498582</span></span>
 <span><span class="co">#&gt; X4 1.230798 0.7355301 2.059553</span></span>
 <span></span>
-<span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">predictlogitSurvd</a></span><span class="op">(</span><span class="va">out</span>,se<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/interval.logitsurv.discrete.html">plotSurvd</a></span><span class="op">(</span><span class="va">pred</span>,se<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval_logitsurv_discrete.html">predictlogitSurvd</a></span><span class="op">(</span><span class="va">out</span>,se<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/interval_logitsurv_discrete.html">plotSurvd</a></span><span class="op">(</span><span class="va">pred</span>,se<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interval-discrete-survival_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="700"></p>
 <p>Finally, we look at some data and compare with the icenReg package
-that can also fit the proportional odds model for continous or discrete
+that can also fit the proportional odds model for continuous or discrete
 data. We make the data fully interval censored/discrete by letting also
-exact obsevations be only observed to be in an interval.</p>
+exact observations be only observed to be in an interval.</p>
 <p>We consider the interval censored survival times for time from onset
-of diabetes to to diabetic nephronpathy, then modify it to observe only
-that the event times are in certain intervals.</p>
+of diabetes to diabetic nephropathy, then modify it to observe only that
+the event times are in certain intervals.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test</span> <span class="op">&lt;-</span> <span class="fl">0</span> </span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">test</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
@@ -254,7 +249,7 @@ that the event times are in certain intervals.</p>
 <span><span class="va">IRdia</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dtransform.html">dtransform</a></span><span class="op">(</span><span class="va">IRdia</span>,left<span class="op">=</span><span class="va">left</span><span class="op">-</span><span class="fl">1</span>,<span class="va">left</span><span class="op">==</span><span class="va">right</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">IRdia</span>,<span class="op">~</span><span class="va">left</span><span class="op">+</span><span class="va">right</span>,level<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">ints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">IRdia</span>,<span class="fu"><a href="../reference/interval.logitsurv.discrete.html">dInterval</a></span><span class="op">(</span><span class="va">left</span>,<span class="va">right</span>,cuts<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">5</span>,<span class="fl">10</span>,<span class="fl">20</span>,<span class="fl">30</span>,<span class="fl">40</span>,<span class="cn">Inf</span><span class="op">)</span>,show<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span></span>
+<span><span class="va">ints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">IRdia</span>,<span class="fu"><a href="../reference/interval_logitsurv_discrete.html">dInterval</a></span><span class="op">(</span><span class="va">left</span>,<span class="va">right</span>,cuts<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">5</span>,<span class="fl">10</span>,<span class="fl">20</span>,<span class="fl">30</span>,<span class="fl">40</span>,<span class="cn">Inf</span><span class="op">)</span>,show<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>We note that the gender effect is equivalent for the two
 approaches.</p>
@@ -274,7 +269,7 @@ approaches.</p>
 <span><span class="co"># 4              0   0   0   0  21   0</span></span>
 <span><span class="co"># 5              0   0   0   0   0   2</span></span>
 <span></span>
-<span><span class="va">outss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">interval.logitsurv.discrete</a></span><span class="op">(</span><span class="fu"><a href="../reference/interval.logitsurv.discrete.html">Interval</a></span><span class="op">(</span><span class="va">Ileft</span>,<span class="va">Iright</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="va">gender</span>,<span class="va">IRdia</span><span class="op">)</span></span>
+<span><span class="va">outss</span> <span class="op">&lt;-</span> <span class="fu">interval.logitsurv.discrete</span><span class="op">(</span><span class="fu"><a href="../reference/interval_logitsurv_discrete.html">Interval</a></span><span class="op">(</span><span class="va">Ileft</span>,<span class="va">Iright</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="va">gender</span>,<span class="va">IRdia</span><span class="op">)</span></span>
 <span><span class="co">#            Estimate Std.Err    2.5%    97.5%   P-value</span></span>
 <span><span class="co"># time1        -3.934  0.3316 -4.5842 -3.28418 1.846e-32</span></span>
 <span><span class="co"># time2        -2.042  0.1693 -2.3742 -1.71038 1.710e-33</span></span>
@@ -305,12 +300,12 @@ approaches.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## sometimes NR-algorithm needs modifications of stepsize to run </span></span>
-<span><span class="co">## outss &lt;- interval.logitsurv.discrete(Interval(Ileft,Iright)~+gender,IRdia,control=list(trace=TRUE,stepsize=1.0))</span></span>
+<span><span class="co">## outss &lt;- interval_logitsurv_discrete(Interval(Ileft,Iright)~+gender,IRdia,control=list(trace=TRUE,stepsize=1.0))</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>Also agrees with the cumulative link regression of the ordinal
-package, although the baseline is parametrized differently. In additon
-the clm is describing the probability of surviving rather than the
-probabibility of dying.</p>
+<p>This also agrees with the cumulative link regression of the
+<code>ordinal</code> package, although the baseline is parametrised
+differently. Note that <code>clm</code> models the probability of
+surviving rather than the probability of dying.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">ttpd</span><span class="op">)</span> </span>
@@ -326,7 +321,7 @@ probabibility of dying.</p>
 <span><span class="co">#&gt; 5             0   0   0   0   0  68   0</span></span>
 <span><span class="co">#&gt; 6             0   0   0   0   0   0 220</span></span>
 <span><span class="va">ttpd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/drelevel.html">dfactor</a></span><span class="op">(</span><span class="va">ttpd</span>,<span class="va">fentry</span><span class="op">~</span><span class="va">entry</span><span class="op">)</span></span>
-<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interval.logitsurv.discrete.html">cumoddsreg</a></span><span class="op">(</span><span class="va">fentry</span><span class="op">~</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="va">X3</span><span class="op">+</span><span class="va">X4</span>,<span class="va">ttpd</span><span class="op">)</span></span>
+<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cumoddsreg.html">cumoddsreg</a></span><span class="op">(</span><span class="va">fentry</span><span class="op">~</span><span class="va">X1</span><span class="op">+</span><span class="va">X2</span><span class="op">+</span><span class="va">X3</span><span class="op">+</span><span class="va">X4</span>,<span class="va">ttpd</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $baseline</span></span>
 <span><span class="co">#&gt;       Estimate Std.Err   2.5%   97.5%   P-value</span></span>
@@ -389,9 +384,9 @@ probabibility of dying.</p>
 </h2>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.5.2 (2025-10-31)</span></span>
+<span><span class="co">#&gt; R version 4.6.0 (2026-04-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.3 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -410,23 +405,23 @@ probabibility of dying.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.9</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.10</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           </span></span>
-<span><span class="co">#&gt;  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        </span></span>
-<span><span class="co">#&gt;  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            </span></span>
-<span><span class="co">#&gt; [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           </span></span>
-<span><span class="co">#&gt; [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        </span></span>
+<span><span class="co">#&gt;  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           </span></span>
+<span><span class="co">#&gt;  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        </span></span>
+<span><span class="co">#&gt;  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            </span></span>
+<span><span class="co">#&gt; [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           </span></span>
+<span><span class="co">#&gt; [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        </span></span>
 <span><span class="co">#&gt; [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   </span></span>
-<span><span class="co">#&gt; [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       </span></span>
-<span><span class="co">#&gt; [22] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      </span></span>
-<span><span class="co">#&gt; [25] fs_1.6.6               htmlwidgets_1.6.4      Rcpp_1.1.1            </span></span>
-<span><span class="co">#&gt; [28] future_1.68.0          lattice_0.22-7         systemfonts_1.3.1     </span></span>
-<span><span class="co">#&gt; [31] digest_0.6.39          R6_2.6.1               parallelly_1.46.1     </span></span>
-<span><span class="co">#&gt; [34] parallel_4.5.2         splines_4.5.2          Matrix_1.7-4          </span></span>
-<span><span class="co">#&gt; [37] bslib_0.9.0            tools_4.5.2            RcppArmadillo_15.2.3-1</span></span>
-<span><span class="co">#&gt; [40] globals_0.18.0         survival_3.8-3         pkgdown_2.2.0         </span></span>
+<span><span class="co">#&gt; [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       </span></span>
+<span><span class="co">#&gt; [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      </span></span>
+<span><span class="co">#&gt; [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        </span></span>
+<span><span class="co">#&gt; [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     </span></span>
+<span><span class="co">#&gt; [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     </span></span>
+<span><span class="co">#&gt; [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          </span></span>
+<span><span class="co">#&gt; [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1</span></span>
+<span><span class="co">#&gt; [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         </span></span>
 <span><span class="co">#&gt; [43] cachem_1.1.0           desc_1.4.3</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

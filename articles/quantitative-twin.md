@@ -3,6 +3,11 @@
 This document provides a brief tutorial to analyzing twin data using the
 **`mets`** package:
 
+\newcommand{\cov}{\mathbb{C}\text{ov}}
+\newcommand{\cor}{\mathbb{C}\text{or}}
+\newcommand{\var}{\mathbb{V}\text{ar}} \newcommand{\E}{\mathbb{E}}
+\newcommand{\unitfrac}\[2\]{#1/#2} \newcommand{\n}{}
+
 ## Twin analysis, continuous traits
 
 In the following we examine the heritability of Body Mass
@@ -11,6 +16,7 @@ based on data on self-reported BMI-values from a random sample of 11,411
 same-sex twins. First, we will load data
 
 ``` r
+
 library(mets)
 data("twinbmi")
 head(twinbmi)
@@ -26,7 +32,7 @@ head(twinbmi)
 The data is on *long* format with one subject per row.
 
 - **`tvparnr`:** twin id
-- **`bmi`:** Body Mass Index (${kg}/m^{2}$)
+- **`bmi`:** Body Mass Index (\mathrm{kg}/{\mathrm{m}^2})
 - **`age`:** Age (years)
 - **`gender`:** Gender factor (male,female)
 - **`zyg`:** zygosity (MZ, DZ)
@@ -34,6 +40,7 @@ The data is on *long* format with one subject per row.
 We transpose the data allowing us to do pairwise analyses
 
 ``` r
+
 twinwide <- fast.reshape(twinbmi, id="tvparnr",varying=c("bmi"))
 head(twinwide)
 #>    tvparnr     bmi1      age gender zyg id num     bmi2
@@ -47,11 +54,12 @@ head(twinwide)
 
 Next we plot the association within each zygosity group
 
-We here show the log-transformed data which is slightly more symmetric
-and more appropiate for the twin analysis (see Figure @ref(fig:scatter1)
-and @ref(fig:scatter2))
+We show the log-transformed data here, which is slightly more symmetric
+and more appropriate for the twin analysis (see Figure
+@ref(fig:scatter1) and @ref(fig:scatter2)).
 
 ``` r
+
 mz <- log(subset(twinwide, zyg=="MZ")[,c("bmi1","bmi2")])
 plot_twin(mz)
 ```
@@ -62,6 +70,7 @@ twins](quantitative-twin_files/figure-html/scatter1-1.png)
 Scatter plot of logarithmic BMI measurements in MZ twins
 
 ``` r
+
 dz <- log(subset(twinwide, zyg=="DZ")[,c("bmi1","bmi2")])
 plot_twin(dz)
 ```
@@ -71,11 +80,11 @@ twins](quantitative-twin_files/figure-html/scatter2-1.png)
 
 Scatter plot of logarithmic BMI measurements in DZ twins
 
-The plots and raw association measures shows considerable stronger
-dependence in the MZ twins, thus indicating genetic influence of the
-trait
+The plots and raw association measures show considerably stronger
+dependence in the MZ twins, indicating genetic influence on the trait.
 
 ``` r
+
 cor.test(mz[,1],mz[,2], method="spearman")
 #> 
 #>  Spearman's rank correlation rho
@@ -89,6 +98,7 @@ cor.test(mz[,1],mz[,2], method="spearman")
 ```
 
 ``` r
+
 cor.test(dz[,1],dz[,2], method="spearman")
 #> 
 #>  Spearman's rank correlation rho
@@ -101,10 +111,11 @@ cor.test(dz[,1],dz[,2], method="spearman")
 #> 0.4012686
 ```
 
-Ńext we examine the marginal distribution (GEE model with working
-independence)
+Next we examine the marginal distribution (GEE model with working
+independence):
 
 ``` r
+
 l0 <- lm(bmi ~ gender + I(age-40), data=twinbmi)
 estimate(l0, id=twinbmi$tvparnr)
 #>             Estimate  Std.Err    2.5%   97.5%    P-value
@@ -114,12 +125,14 @@ estimate(l0, id=twinbmi$tvparnr)
 ```
 
 ``` r
+
 library("splines")
 l1 <- lm(bmi ~ gender*ns(age,3), data=twinbmi)
 marg1 <- estimate(l1, id=twinbmi$tvparnr)
 ```
 
 ``` r
+
 dm <- lava::Expand(twinbmi,
         bmi=0,
         gender=c("male"),
@@ -147,40 +160,37 @@ Marginal association between BMI and Age for males and females.
 
 We can decompose the trait into the following variance components
 
-$$\begin{array}{r}
-{Y_{i} = A_{i} + D_{i} + C + E_{i},\quad i = 1,2}
-\end{array}$$
+\begin{align\*} Y_i = A_i + D_i + C + E_i, \quad i=1,2 \end{align\*}
 
-- **$A$:** Additive genetic effects of alleles
-- **$D$:** Dominante genetic effects of alleles
-- **$C$:** Shared environmental effects
-- **$E$:** Unique environmental genetic effects
+- **A:** Additive genetic effects of alleles
+- **D:** Dominant genetic effects of alleles
+- **C:** Shared environmental effects
+- **E:** Unique environmental effects
 
 Dissimilarity of MZ twins arises from unshared environmental effects
-only, \$\cor(E_1,E_2)=0\$ and
+only, \cor(E_1,E_2)=0 and
 
-\$\$\begin{align\*} \cor(A_1^{MZ},A_2^{MZ}) = 1, \quad
-\cor(D_1^{MZ},D_2^{MZ}) = 1, \end{align\*}\$\$
+\begin{align\*} \cor(A_1^{MZ},A_2^{MZ}) = 1, \quad
+\cor(D_1^{MZ},D_2^{MZ}) = 1, \end{align\*}
 
-\$\$\begin{align\*} \cor(A_1^{DZ},A_2^{DZ}) = 0.5, \quad
-\cor(D_1^{DZ},D_2^{DZ}) = 0.25, \end{align\*}\$\$
+\begin{align\*} \cor(A_1^{DZ},A_2^{DZ}) = 0.5, \quad
+\cor(D_1^{DZ},D_2^{DZ}) = 0.25, \end{align\*}
 
-$$\begin{array}{r}
-{Y_{i} = A_{i} + C_{i} + D_{i} + E_{i}}
-\end{array}$$
+\begin{align\*} Y_i = A_i + C_i + D_i + E_i \end{align\*}
 
-$$\begin{array}{r}
-{A_{i} \sim \mathcal{N}\left( 0,\sigma_{A}^{2} \right),C_{i} \sim \mathcal{N}\left( 0,\sigma_{C}^{2} \right),D_{i} \sim \mathcal{N}\left( 0,\sigma_{D}^{2} \right),E_{i} \sim \mathcal{N}\left( 0,\sigma_{E}^{2} \right)}
-\end{array}$$
+\begin{align\*} A_i \sim\mathcal{N}(0,\sigma_A^2), C_i
+\sim\mathcal{N}(0,\sigma_C^2), D_i \sim\mathcal{N}(0,\sigma_D^2), E_i
+\sim\mathcal{N}(0,\sigma_E^2) \end{align\*}
 
-\$\$\begin{gather\*} \cov(Y\_{1},Y\_{2}) = \\ \begin{pmatrix} \sigma_A^2
-& 2\Phi\sigma_A^2 \\ 2\Phi\sigma_A^2 & \sigma_A^2 \end{pmatrix} +
+\begin{gather\*} \cov(Y\_{1},Y\_{2}) = \\ \begin{pmatrix} \sigma_A^2 &
+2\Phi\sigma_A^2 \\ 2\Phi\sigma_A^2 & \sigma_A^2 \end{pmatrix} +
 \begin{pmatrix} \sigma_C^2 & \sigma_C^2 \\ \sigma_C^2 & \sigma_C^2
 \end{pmatrix} + \begin{pmatrix} \sigma_D^2 & \Delta\_{7}\sigma_D^2 \\
 \Delta\_{7}\sigma_D^2 & \sigma_D^2 \end{pmatrix} + \begin{pmatrix}
-\sigma_E^2 & 0 \\ 0 & \sigma_E^2 \end{pmatrix} \end{gather\*}\$\$
+\sigma_E^2 & 0 \\ 0 & \sigma_E^2 \end{pmatrix} \end{gather\*}
 
 ``` r
+
 dd <- na.omit(twinbmi)
 ```
 
@@ -188,6 +198,7 @@ Saturated model (different marginals in MZ and DZ twins and different
 marginals for twin 1 and twin 2):
 
 ``` r
+
 l0 <- twinlm(bmi ~ age+gender, data=dd, DZ="DZ", zyg="zyg", id="tvparnr", type="sat")
 ```
 
@@ -195,12 +206,14 @@ Different marginals for MZ and DZ twins (but same marginals within a
 pair)
 
 ``` r
+
 lf <- twinlm(bmi ~ age+gender, data=dd,DZ="DZ", zyg="zyg", id="tvparnr", type="flex")
 ```
 
 Same marginals but free correlation with MZ, DZ
 
 ``` r
+
 lu <- twinlm(bmi ~ age+gender, data=dd, DZ="DZ", zyg="zyg", id="tvparnr", type="eqmarg")
 estimate(lu)
 #>                      Estimate  Std.Err    2.5%   97.5%    P-value
@@ -216,17 +229,21 @@ A formal test of genetic effects can be obtained by comparing the MZ and
 DZ correlation:
 
 ``` r
+
 estimate(lu,lava::contr(5:6,6))
 #>                           Estimate Std.Err   2.5%  97.5%   P-value
 #> [atanh(rhoMZ)@1] - [a....   0.4816 0.04177 0.3997 0.5635 9.431e-31
-#> 
-#>  Null Hypothesis: 
-#>   [atanh(rhoMZ)@1] - [atanh(rhoDZ)@2] = 0
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
+#>   [atanh(rhoMZ)@1] - [atanh(rhoDZ)@2] = 0 
+#>  
+#> chisq = 132.9162, df = 1, p-value < 2.2e-16
 ```
 
 We also consider the ACE model
 
 ``` r
+
 ace0 <- twinlm(bmi ~ age+gender, data=dd, DZ="DZ", zyg="zyg", id="tvparnr", type="ace")
 summary(ace0)
 #>                  Estimate Std. Error Z value Pr(>|z|)

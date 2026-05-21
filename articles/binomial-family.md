@@ -2,14 +2,14 @@
 
 ## Overview
 
-When looking at multivariate binomial data with the aim of learning
-about the dependence that is present, possibly after correcting for some
-covariates many models and methods are available:
+When analysing multivariate binomial data with the aim of learning about
+the dependence present, possibly after adjusting for covariates, many
+models and methods are available:
 
-- Random-effects models logistic regression covered elsewhere (glmer in
-  lme4).
+- Random-effects logistic regression models covered elsewhere (`glmer`
+  in `lme4`).
 
-in the mets package you can fit the
+In the mets package you can fit the
 
 - Pairwise odds ratio model
 
@@ -29,16 +29,17 @@ composite likelihoods based on pairs within clusters. The models can be
 fitted specifically based on specifying which pairs one wants to use for
 the composite score.
 
-The models are described in futher details in the binomial-twin
+The models are described in further details in the binomial-twin
 vignette.
 
 ## Simulated family data
 
-We start by simulating family data with and additive gamma structure on
+We start by simulating family data with an additive gamma structure on
 ACE form. Here 10000 families consisting of two parents and two
 children. The response is ybin and there is one covariate x.
 
 ``` r
+
  library(mets)
  library(timereg)
 #> Loading required package: survival
@@ -46,9 +47,9 @@ children. The response is ybin and there is one covariate x.
 #> Attaching package: 'timereg'
 #> The following objects are masked from 'package:mets':
 #> 
-#>     Event, event.split, kmplot, plotConfregion
+#>     Event, kmplot, plotConfregion
  set.seed(100)
- data <- simbinClaytonOakes.family.ace(500,2,1,beta=NULL,alpha=NULL)
+ data <- sim_binClaytonOakes_family_ace(500,2,1,beta=NULL,alpha=NULL)
  data$number <- c(1,2,3,4)
  data$child <- 1*(data$number==3)
  head(data)
@@ -65,6 +66,7 @@ We fit the marginal models, and here find a covariate effect at 0.3 for
 x. The marginals can be specified as desired.
 
 ``` r
+
  aa <- margbin <- glm(ybin~x,data=data,family=binomial())
  summary(aa)
 #> 
@@ -93,7 +95,7 @@ For the Additive Gamma model we set-up the random effects included in
 such a family to make the ACE valid using some special functions for
 this.
 
-The model is constructed with one enviromental effect shared by all in
+The model is constructed with one environmental effect shared by all in
 the family and 8 genetic random effects with size 1/4 genetic variance.
 Looking at the first family we see that the mother and father both share
 half the genes with the children and that the two children also share
@@ -101,8 +103,9 @@ half their genes with this specification. Below we also show an
 alternative specification of this model using all pairs.
 
 ``` r
+
 # make ace random effects design
-out <- ace.family.design(data,member="type",id="cluster")
+out <- ace_family_design(data,member="type",id="cluster")
 out$pardes
 #>       [,1] [,2]
 #>  [1,] 0.25    0
@@ -125,8 +128,9 @@ head(out$des.rv,4)
 We can now fit the model calling the two-stage function
 
 ``` r
+
 # fitting ace model for family structure
-ts <- binomial.twostage(margbin,data=data,clusters=data$cluster,
+ts <- binomial_twostage(margbin,data=data,clusters=data$cluster,
 theta=c(2,1),random.design=out$des.rv,theta.des=out$pardes)
 summary(ts)
 #> Dependence parameter for Clayton-Oakes model
@@ -163,16 +167,17 @@ c(2,1)
 
 ## Pairwise fitting
 
-We now specify the same model via extracting all pairs.  
-The random effecs structure is typically simpler when just looking at
-pairs, but we start by specifying the random effects jointly for whole
-family. A special function writes up all combinations of pairs. There
-are 6 pairs within each family, and we keep track of who belongs to the
-different families. We first simply give the pairs and we then should
-get the same result as before.
+We now specify the same model by extracting all pairs. The random
+effects structure is typically simpler when looking at pairs only, but
+we start by specifying the random effects jointly for the whole family.
+A special function writes up all combinations of pairs. There are 6
+pairs within each family, and we keep track of which family each belongs
+to. We first simply supply the pairs and should get the same result as
+before.
 
 ``` r
-mm <- familycluster.index(data$cluster)
+
+mm <- familycluster_index(data$cluster)
 head(mm$familypairindex,n=20)
 #>  [1] 1 2 1 3 1 4 2 3 2 4 3 4 5 6 5 7 5 8 6 7
 pairs <- mm$pairs
@@ -197,7 +202,8 @@ head(pairs,12)
 Now with the pairs we fit the model
 
 ``` r
-tsp <- binomial.twostage(margbin,data=data,clusters=data$cluster,theta=c(2,1),detail=0,
+
+tsp <- binomial_twostage(margbin,data=data,clusters=data$cluster,theta=c(2,1),detail=0,
         random.design=out$des.rv,theta.des=out$pardes,pairs=pairs)
 summary(tsp)
 #> Dependence parameter for Clayton-Oakes model
@@ -230,9 +236,10 @@ Here a random sample of pairs are given instead and we get other
 estimates.
 
 ``` r
+
 set.seed(100)
 ssid <- sort(sample(1:nrow(pairs),nrow(pairs)/2))
-tsd <- binomial.twostage(aa,data=data,clusters=data$cluster,
+tsd <- binomial_twostage(aa,data=data,clusters=data$cluster,
                theta=c(2,1),step=1.0,
                random.design=out$des.rv,iid=1,Nit=10,
                theta.des=out$pardes,pairs=pairs[ssid,])
@@ -268,12 +275,13 @@ specify the model. We here use the same marginal “aa” to make the
 results comparable. The marginal can also be fitted based on available
 data.
 
-We start by selecting the data related to the pairs, and sets up new
-id’s and to start we specify the model using the full design with 9
-random effects. Below we show how one can use with only the random
-effects needed for each pair, which is typically simpler.
+We start by selecting the data related to the pairs, setting up new ids,
+and specifying the model using the full design with 9 random effects.
+Below we also show how to use only the random effects needed for each
+pair, which is typically simpler.
 
 ``` r
+
 head(pairs[ssid,])
 #>      [,1] [,2]
 #> [1,]    1    2
@@ -296,7 +304,7 @@ head(pair.new)
 #> [6,]    5    7
 
 dataid <- dsort(data[ids,],"cluster")
-outid <- ace.family.design(dataid,member="type",id="cluster")
+outid <- ace_family_design(dataid,member="type",id="cluster")
 outid$pardes
 #>       [,1] [,2]
 #>  [1,] 0.25    0
@@ -321,8 +329,9 @@ head(outid$des.rv)
 Now fitting the model with the data set up
 
 ``` r
+
 aa <- glm(ybin~x,data=dataid,family=binomial())
-tsdid <- binomial.twostage(aa,data=dataid,clusters=dataid$cluster,
+tsdid <- binomial_twostage(aa,data=dataid,clusters=dataid$cluster,
          theta=c(2,1),random.design=outid$des.rv,theta.des=outid$pardes,pairs=pair.new)
 summary(tsdid)
 #> Dependence parameter for Clayton-Oakes model
@@ -359,6 +368,7 @@ to give the number of random effects for each pair. These basic things
 are constructed by certain functions for the ACE design.
 
 ``` r
+
 pair.types <-  matrix(dataid[c(t(pair.new)),"type"],byrow=T,ncol=2)
 head(pair.new,7)
 #>      [,1] [,2]
@@ -389,25 +399,25 @@ mf <- 1*(pair.types[,1]=="mother" & pair.types[,2]=="father")
 pairs.new <- cbind(pair.new,(mf==1)*1+(mf==0)*3,(mf==1)*2+(mf==0)*4,(mf==1)*1+(mf==0)*2,(mf==1)*3+(mf==0)*4)
 ```
 
-pairs.new is matrix with
+`pairs.new` is a matrix with
 
-- columns 1:2 giving the indeces of the data points
+- columns 1:2 giving the indices of the data points
 
-- columns 3:4 giving the indeces of the random.design for the different
-  pairs
+- columns 3:4 giving the indices of the `random.design` for the
+  different pairs
 
-- columns 5 giving the indeces of the theta.des written as rows
+- column 5 giving the indices of `theta.des` written as rows
 
-- columns 6 giving the number of random variables for this pair
+- column 6 giving the number of random variables for this pair
 
 The length of all rows of theta.des are the maximum number of random
-effects $\times$ the number of parameters. These two numbers are given
-in the call. In this case 4 $\times$ 2. So theta.des has rows of length
-$8$, possibly including some 0’s for rows not relevant due to fewer
-random effects, as is the case here for pairs that do not share genetic
+effects \times the number of parameters. These two numbers are given in
+the call. In this case 4 \times 2. So theta.des has rows of length 8,
+possibly including some 0’s for rows not relevant due to fewer random
+effects, as is the case here for pairs that do not share genetic
 effects.
 
-For pair 1 that is a mother/farther pair, we see that they share 1
+For pair 1 that is a mother/father pair, we see that they share 1
 environmental random effect of size 1. There are also two genetic
 effects that are unshared between the two. So a total of 3 random
 effects are needed here. The theta.des relates the 3 random effects to
@@ -418,6 +428,7 @@ with (1/2) gene variance. We there need 4 random effects, 2 non-shared
 half-gene, 1 shared half-gene, and one shared full environmental effect.
 
 ``` r
+
 # 3 rvs here 
 random.des
 #>      [,1] [,2] [,3] [,4]
@@ -445,7 +456,8 @@ fewer random effects needed for pairs. We need to also specify the
 number of parameters in this case.
 
 ``` r
-tsdid2 <- binomial.twostage(aa,data=dataid,clusters=dataid$cluster, theta=c(2,1),
+
+tsdid2 <- binomial_twostage(aa,data=dataid,clusters=dataid$cluster, theta=c(2,1),
            random.design=random.des,theta.des=theta.des,pairs=pairs.new,dim.theta=2)
 summary(tsdid2)
 #> Dependence parameter for Clayton-Oakes model
@@ -475,22 +487,24 @@ summary(tsdid2)
 ```
 
 The same model can be specifed even simpler via the kinship coefficient.
-For this speicification there are 4 random effects for each pair, but
+For this specification there are 4 random effects for each pair, but
 some have variance 0. The mother-father pair, here shares a random
 effect with variance 0, and have two non-shared genetic effects with
 full variance, in addition to a fully shared environmental effect.
 
 ``` r
+
 kinship  <- rep(0.5,nrow(pair.types))
 kinship[pair.types[,1]=="mother" & pair.types[,2]=="father"] <- 0
 head(kinship,n=10)
 #>  [1] 0.0 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5
 
-out <- make.pairwise.design(pair.new,kinship,type="ace") 
+out <- make_pairwise_design(pair.new,kinship,type="ace") 
 ```
 
 ``` r
-tsdid3 <- binomial.twostage(aa,data=dataid,clusters=dataid$cluster,
+
+tsdid3 <- binomial_twostage(aa,data=dataid,clusters=dataid$cluster,
              theta=c(2,1)/9,random.design=out$random.design,
              theta.des=out$theta.des,pairs=out$new.pairs,dim.theta=2)
 summary(tsdid3)
@@ -523,9 +537,10 @@ summary(tsdid3)
 ### Pairwise dependence modelling
 
 ``` r
+
 library(mets)
 set.seed(1000)
-data <- simbinClaytonOakes.family.ace(500,2,1,beta=NULL,alpha=NULL)
+data <- sim_binClaytonOakes_family_ace(500,2,1,beta=NULL,alpha=NULL)
 head(data)
 #>   ybin x   type cluster
 #> 1    0 1 mother       1
@@ -537,7 +552,7 @@ head(data)
 data$number <- c(1,2,3,4)
 data$child <- 1*(data$number==3)
 
-mm <- familycluster.index(data$cluster)
+mm <- familycluster_index(data$cluster)
 head(mm$familypairindex,n=20)
 #>  [1] 1 2 1 3 1 4 2 3 2 4 3 4 5 6 5 7 5 8 6 7
 pairs <- mm$pairs
@@ -560,6 +575,7 @@ head(pairs,12)
 ```
 
 ``` r
+
  dtypes <- interaction( data[pairs[,1],"type"], data[pairs[,2],"type"])
  dtypes <- droplevels(dtypes)
  table(dtypes)
@@ -572,9 +588,10 @@ head(pairs,12)
 Now with the pairs we fit the model
 
 ``` r
+
 aa <- glm(ybin~x,data=data,family=binomial())
 
-tsp <- binomial.twostage(aa,data=data, clusters=data$cluster,
+tsp <- binomial_twostage(aa,data=data, clusters=data$cluster,
          theta.des=dm,pairs=cbind(pairs,1:nrow(dm)))
 summary(tsp)
 #> Dependence parameter for Odds-Ratio (Plackett) model
@@ -621,6 +638,7 @@ groups, by grouping together the factor levels 4:9, and then we
 construct the design.
 
 ``` r
+
 tdp <-cbind( dataid[pair.new[,1],],dataid[pair.new[,2],])
 names(tdp) <- c(paste(names(dataid),"1",sep=""),
         paste(names(dataid),"2",sep=""))
@@ -644,16 +662,17 @@ dtable(tdp,~tt+obs.types)
 tdp <- model.matrix(~-1+factor(obs.types),tdp)
 ```
 
-We then can fit the pairwise model using the pairs and the pair-design
-for descrbing the OR. The results are consistent with the the ACE model
-as the mother-father have a lower dependence as is due only the
-environmental effects. All other combinations should have the same
-dependence as also seem to be the case.
+We can then fit the pairwise model using the pairs and the pair-design
+for describing the OR. The results are consistent with the ACE model:
+mother-father pairs have a lower dependence since it is driven only by
+environmental effects. All other combinations appear to have the same
+dependence, as expected.
 
 To fit the OR model it is generally recommended to use the var.link to
-use the parmetrization with log-odd-ratio regression.
+use the parametrization with log-odd-ratio regression.
 
 ``` r
+
 ###porpair <- binomial.twostage(aa,data=dataid,clusters=dataid$cluster,
 ###           theta.des=tdp,pairs=pair.new,model="or",var.link=1)
 ###summary(porpair)
@@ -662,10 +681,11 @@ use the parmetrization with log-odd-ratio regression.
 ## SessionInfo
 
 ``` r
+
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -684,21 +704,21 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] timereg_2.0.7  survival_3.8-3 mets_1.3.9    
+#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.10   
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           
-#>  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        
-#>  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            
-#> [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           
-#> [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
+#>  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        
+#>  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            
+#> [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           
+#> [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        
 #> [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   
-#> [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       
-#> [22] compiler_4.5.2         codetools_0.2-20       fs_1.6.6              
-#> [25] htmlwidgets_1.6.4      Rcpp_1.1.1             future_1.68.0         
-#> [28] lattice_0.22-7         systemfonts_1.3.1      digest_0.6.39         
-#> [31] R6_2.6.1               parallelly_1.46.1      parallel_4.5.2        
-#> [34] splines_4.5.2          Matrix_1.7-4           bslib_0.9.0           
-#> [37] tools_4.5.2            RcppArmadillo_15.2.3-1 globals_0.18.0        
+#> [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       
+#> [22] compiler_4.6.0         codetools_0.2-20       fs_2.1.0              
+#> [25] htmlwidgets_1.6.4      Rcpp_1.1.1-1.1         future_1.70.0         
+#> [28] lattice_0.22-9         systemfonts_1.3.2      digest_0.6.39         
+#> [31] R6_2.6.1               parallelly_1.47.0      parallel_4.6.0        
+#> [34] splines_4.6.0          Matrix_1.7-5           bslib_0.11.0          
+#> [37] tools_4.6.0            RcppArmadillo_15.2.6-1 globals_0.19.1        
 #> [40] pkgdown_2.2.0          cachem_1.1.0           desc_1.4.3
 ```

@@ -21,6 +21,8 @@ Useful links:
 
 - <https://kkholst.github.io/mets/>
 
+- <https://github.com/kkholst/mets>
+
 - Report bugs at <https://github.com/kkholst/mets/issues>
 
 ## Author
@@ -29,12 +31,8 @@ Useful links:
 
 Authors:
 
+- Klaus K. Holst <klaus@holst.it>
+
 - Thomas Scheike
 
 Klaus K. Holst and Thomas Scheike
-
-## Examples
-
-``` r
-## To appear
-```

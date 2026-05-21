@@ -1,9 +1,9 @@
-# Multinomial regression based on phreg regression
+# Multinomial Regression Based on phreg
 
-Fits multinomial regression model \$\$ P_i = \frac{ \exp( X^\beta_i ) }{
-\sum\_{j=1}^K \exp( X^\beta_j ) }\$\$ for \$\$i=1,..,K\$\$ where
-\$\$\beta_1 = 0\$\$, such that \$\$\sum_j P_j = 1\$\$ using phreg
-function. Thefore the ratio \$\$\frac{P_i}{P_1} = \exp( X^\beta_i )\$\$
+Fits a multinomial regression model for a categorical outcome with \\K\\
+levels: \$\$ P_i = \frac{ \exp( X^\top \beta_i ) }{ \sum\_{j=1}^K \exp(
+X^\top \beta_j ) } \$\$ for \\i=1, \dots, K\\, where \\\beta_1 = 0\\
+(baseline category).
 
 ## Usage
 
@@ -15,39 +15,75 @@ mlogit(formula, data, offset = NULL, weights = NULL, fix.X = FALSE, ...)
 
 - formula:
 
-  formula with outcome (see `coxph`)
+  Formula with the outcome (similar to `coxph`). The outcome must be a
+  factor.
 
 - data:
 
-  data frame
+  Data frame containing the variables.
 
 - offset:
 
-  offsets for partial likelihood
+  Offsets for the partial likelihood.
 
 - weights:
 
-  for score equations
+  Weights for the score equations.
 
 - fix.X:
 
-  to have same coefficients for all categories
+  Logical; if `TRUE`, forces the same coefficients for all categories
+  (except intercepts).
 
 - ...:
 
-  Additional arguments to lower level funtions
+  Additional arguments passed to lower-level functions.
+
+## Value
+
+An object of class `"mlogit"` (extending `"phreg"`) containing:
+
+- coef:
+
+  Matrix of estimated coefficients (rows correspond to categories,
+  columns to covariates).
+
+- var:
+
+  Robust variance-covariance matrix.
+
+- iid:
+
+  Influence functions for the coefficients.
+
+- nlev:
+
+  Number of levels in the outcome.
+
+- px:
+
+  Number of covariates.
 
 ## Details
 
-Coefficients give log-Relative-Risk relative to baseline group (first
-level of factor, so that it can reset by relevel command). Standard
-errors computed based on sandwhich form \$\$ DU^-1 \sum U_i^2 DU^-1\$\$.
+This ensures that \\\sum_j P_j = 1\\. The model is fitted using the
+`phreg` function by expanding the data into a long format with strata
+for each category.
 
-Can also get influence functions (possibly robust) via iid() function,
-response should be a factor.
+The coefficients represent the log-Relative-Risk (log-RR) relative to
+the baseline group (the first level of the factor, which can be reset
+using `relevel`).
 
-Can fit cumulative odds model as a special case of
-interval.logitsurv.discrete
+Standard errors are computed based on the sandwich form: \$\$ D U^{-1}
+\left( \sum U_i^2 \right) D U^{-1} \$\$ where \\U\\ is the score vector
+and \\D\\ is the derivative matrix.
+
+Influence functions (possibly robust) can be obtained via the
+[`iid()`](https://kkholst.github.io/lava/reference/iid.html) function.
+The response variable should be a factor.
+
+Can also fit a cumulative odds model as a special case of
+`interval_logitsurv_discrete`.
 
 ## Author
 
@@ -56,7 +92,6 @@ Thomas Scheike
 ## Examples
 
 ``` r
-library(mets)
 data(bmt)
 bmt$id <- sample(200,408,replace=TRUE)
 dfactor(bmt) <- cause1f~cause
@@ -76,26 +111,26 @@ summary(mreg)
 #>  1224    408
 #> 
 #>  1224 clusters
-#> coeffients:
+#> coefficients:
 #>              Estimate       S.E.    dU^-1/2 P-value
-#> Intercept2  0.0062305  0.1187375  0.1116297  0.9582
-#> Intercept3 -0.6092657  0.1414469  0.1332076  0.0000
+#> Intercept2  0.0062305  0.1048289  0.1116297  0.9526
+#> Intercept3 -0.6092657  0.1439164  0.1332076  0.0000
 #> 
-#> exp(coeffients):
+#> exp(coefficients):
 #>            Estimate    2.5%  97.5%
-#> Intercept2  1.00625 0.79733 1.2699
-#> Intercept3  0.54375 0.41210 0.7175
+#> Intercept2  1.00625 0.81936 1.2358
+#> Intercept3  0.54375 0.41011 0.7209
 #> 
 head(iid(mreg))
 #>      Intercept2    Intercept3
-#> 1 -6.288820e-03 -1.005747e-03
-#> 2  1.692758e-17  1.149425e-02
+#> 1  2.484472e-02 -5.367040e-17
+#> 2  6.211180e-03 -1.353524e-17
 #> 3  6.172360e-03 -6.250000e-03
-#> 4  6.211180e-03  2.298851e-02
-#> 5  1.242236e-02 -2.801584e-17
-#> 6  3.246739e-17  2.298851e-02
+#> 4  1.242236e-02  1.149425e-02
+#> 5  6.211180e-03  1.149425e-02
+#> 6 -3.881988e-05 -6.250000e-03
 dim(iid(mreg))
-#> [1] 174   2
+#> [1] 173   2
 
 mreg <- mlogit(cause1f~tcell+platelet,bmt)
 summary(mreg)
@@ -104,7 +139,7 @@ summary(mreg)
 #>  1224    408
 #> 
 #>  1224 clusters
-#> coeffients:
+#> coefficients:
 #>            Estimate     S.E.  dU^-1/2 P-value
 #> Intercept2  0.25002  0.13906  0.13858  0.0722
 #> tcell2     -0.28389  0.36431  0.36285  0.4358
@@ -113,7 +148,7 @@ summary(mreg)
 #> tcell3      0.50505  0.36481  0.36226  0.1662
 #> platelet3  -0.35890  0.29130  0.28727  0.2179
 #> 
-#> exp(coeffients):
+#> exp(coefficients):
 #>            Estimate    2.5%  97.5%
 #> Intercept2  1.28406 0.97773 1.6864
 #> tcell2      0.75285 0.36864 1.5375
@@ -140,7 +175,7 @@ summary(mreg3)
 #>  1224    408
 #> 
 #>  1224 clusters
-#> coeffients:
+#> coefficients:
 #>            Estimate     S.E.  dU^-1/2 P-value
 #> Intercept2  0.56565  0.16921  0.17078  0.0008
 #> tcell2     -0.50505  0.36481  0.36226  0.1662
@@ -149,7 +184,7 @@ summary(mreg3)
 #> tcell3     -0.78894  0.39244  0.38890  0.0444
 #> platelet3  -0.32721  0.30423  0.30139  0.2821
 #> 
-#> exp(coeffients):
+#> exp(coefficients):
 #>            Estimate    2.5%  97.5%
 #> Intercept2  1.76059 1.26364 2.4530
 #> tcell2      0.60347 0.29521 1.2336
@@ -180,21 +215,21 @@ head(predict(mreg,response=FALSE))
 #> 5 0.3506254 0.4502227 0.1991519
 #> 6 0.3506254 0.4502227 0.1991519
 head(predict(mreg))
-#>        pred         se    lower      upper
-#> 1 0.1991519 0.06681508 0.330107 0.06819674
-#> 2 0.1991519 0.06681508 0.330107 0.06819674
-#> 3 0.1991519 0.06681508 0.330107 0.06819674
-#> 4 0.1991519 0.06681508 0.330107 0.06819674
-#> 5 0.1991519 0.06681508 0.330107 0.06819674
-#> 6 0.1991519 0.06681508 0.330107 0.06819674
+#>        pred         se      lower    upper
+#> 1 0.1991519 0.06681508 0.06819674 0.330107
+#> 2 0.1991519 0.06681508 0.06819674 0.330107
+#> 3 0.1991519 0.06681508 0.06819674 0.330107
+#> 4 0.1991519 0.06681508 0.06819674 0.330107
+#> 5 0.1991519 0.06681508 0.06819674 0.330107
+#> 6 0.1991519 0.06681508 0.06819674 0.330107
 ## using newdata 
 newdata <- data.frame(tcell=c(1,1,1),platelet=c(0,1,1),cause1f=c("2","2","0"))
 ## only probability of seen response 
 predict(mreg,newdata)
-#>        pred         se     lower      upper
-#> 1 0.3236700 0.13603308 0.5902900 0.05705011
-#> 2 0.3065921 0.10966904 0.5215395 0.09164473
-#> 3 0.4663875 0.07376361 0.6109615 0.32181348
+#>        pred         se      lower     upper
+#> 1 0.3236700 0.13603308 0.05705011 0.5902900
+#> 2 0.3065921 0.10966904 0.09164473 0.5215395
+#> 3 0.4663875 0.07376361 0.32181348 0.6109615
 ## without response
 predict(mreg,newdata,response=FALSE)
 #>           0         1         2
@@ -203,10 +238,10 @@ predict(mreg,newdata,response=FALSE)
 #> 3 0.4663875 0.2270204 0.3065921
 ## given indexx of P(Y=j)
 predict(mreg,newdata,Y=c(1,2,3))
-#>        pred         se     lower       upper
-#> 1 0.3438904 0.06916812 0.4794574  0.20832337
-#> 2 0.2270204 0.12225406 0.4666340 -0.01259315
-#> 3 0.3065921 0.10966904 0.5215395  0.09164473
+#>        pred         se       lower     upper
+#> 1 0.3438904 0.06916812  0.20832337 0.4794574
+#> 2 0.2270204 0.12225406 -0.01259315 0.4666340
+#> 3 0.3065921 0.10966904  0.09164473 0.5215395
 ##  reponse not given 
 newdata <- data.frame(tcell=c(1,1,1),platelet=c(0,1,1))
 predict(mreg,newdata)

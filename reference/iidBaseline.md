@@ -1,7 +1,8 @@
-# Influence functions or IID decomposition of baseline for recrec/phreg/cifregFG
+# Influence Functions or IID Decomposition of Baseline
 
-Influence functions or IID decomposition of baseline for
-recrec/phreg/cifregFG
+Computes the influence functions for the baseline cumulative hazard (and
+optionally regression coefficients) for `phreg`, `recreg`, or `cifregFG`
+objects.
 
 ## Usage
 
@@ -21,31 +22,69 @@ iidBaseline(
 
 - object:
 
-  phreg/recreg/cifregFG object
+  Object of class `"phreg"`, `"recreg"`, or `"cifregFG"`.
 
 - time:
 
-  for baseline IID
+  Time point for baseline IID (required).
 
 - ft:
 
-  function to compute IID of baseline integrated against f(t)
+  Function to compute IID of baseline integrated against \\f(t)\\.
 
 - fixbeta:
 
-  to fix the coefficients
+  Logical; if `TRUE`, fixes the coefficients (useful for specific
+  tests).
 
 - beta.iid:
 
-  to use these iid of beta
+  Optional matrix of beta influence functions to use.
 
 - tminus:
 
-  to get predictions in t-
+  Logical; if `TRUE`, computes predictions at \\t-\\ (strictly before
+  \\t\\), useful for IPCW techniques.
 
 - ...:
 
-  additional arguments to lower level functions
+  Additional arguments passed to lower-level functions.
+
+## Value
+
+An object of class `"iidBaseline"` containing:
+
+- time:
+
+  Time point.
+
+- base.iid:
+
+  Influence functions for the baseline.
+
+- beta.iid:
+
+  Influence functions for the regression coefficients.
+
+- cumhaz.time:
+
+  Cumulative hazard at the specified time.
+
+- strata:
+
+  Strata indices.
+
+## Details
+
+The decomposition is based on the formula: \$\$ \sum_i \int_0^t
+\frac{f(s)}{S_0(s)} dM\_{ki}(s) - P(t) \beta_k \$\$ where \\k\\ denotes
+the stratum and \\i\\ the cluster.
+
+## See also
+
+[`phreg`](http://kkholst.github.io/mets/reference/phreg.md),
+[`recreg`](http://kkholst.github.io/mets/reference/recreg.md),
+[`cifreg`](http://kkholst.github.io/mets/reference/cifreg.md)
 
 ## Author
 

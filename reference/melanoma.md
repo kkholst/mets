@@ -45,6 +45,7 @@ Scand. J. Plast. Reconstru. Surg. 14, 141-144.
 ## Examples
 
 ``` r
+
 data(melanoma)
 names(melanoma)
 #> [1] "no"     "status" "days"   "ulc"    "thick"  "sex"   

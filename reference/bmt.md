@@ -40,6 +40,7 @@ NN
 ## Examples
 
 ``` r
+
 data(bmt)
 names(bmt)
 #> [1] "time"     "cause"    "platelet" "age"      "tcell"   

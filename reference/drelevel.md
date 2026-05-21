@@ -64,6 +64,7 @@ Klaus K. Holst and Thomas Scheike
 ## Examples
 
 ``` r
+
 data(mena)
 dstr(mena)
 #> 'data.frame':    2000 obs. of  7 variables:

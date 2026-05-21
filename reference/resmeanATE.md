@@ -1,8 +1,8 @@
-# Average Treatment effect for Restricted Mean for censored competing risks data using IPCW
+# Average Treatment Effect for Restricted Mean Time
 
-Under the standard causal assumptions we can estimate the average
-treatment effect E(Y(1) - Y(0)). We need Consistency, ignorability (
-Y(1), Y(0) indep A given X), and positivity.
+Estimates the Average Treatment Effect (ATE) for Restricted Mean
+Survival Time (RMST) or Restricted Mean Time Lost (RMTL) in censored
+competing risks data using IPCW.
 
 ## Usage
 
@@ -14,41 +14,74 @@ resmeanATE(formula, data, model = "exp", outcome = c("rmst", "rmtl"), ...)
 
 - formula:
 
-  formula with 'Event' outcome
+  Formula with an `Event` outcome. The first covariate must be the
+  treatment factor.
 
 - data:
 
-  data-frame
+  Data frame.
 
 - model:
 
-  exp ("exp") or identity link ("lin")
+  Link function: `"exp"` (exponential) or `"lin"` (identity).
 
 - outcome:
 
-  restricted mean time (rmst) or restricted mean time lost (rmtl)
+  Outcome type: `"rmst"` or `"rmtl"`.
 
 - ...:
 
-  Additional arguments to pass to binregATE
+  Additional arguments passed to `binregATE`, such as `time`,
+  `treat.model`, `augmentR0`, `augmentC`, etc.
+
+## Value
+
+An object of class `"binregATE"` containing:
+
+- riskG:
+
+  Simple IPCW estimator results.
+
+- riskDR:
+
+  Double Robust estimator results.
+
+- riskG.iid, riskDR.iid:
+
+  Influence functions.
+
+- coef:
+
+  Treatment effect estimates.
+
+- se:
+
+  Standard errors.
 
 ## Details
 
-The first covariate in the specification of the competing risks
-regression model must be the treatment effect that is a factor. If the
-factor has more than two levels then it uses the mlogit for propensity
-score modelling. We consider the outcome mint(T;tau) or
-I(epsion==cause1)(t- min(T;t)) that gives years lost due to cause
-"cause" depending on the number of causes. The default model is the
-exp(X^ beta) and otherwise a linear model is used.
+Under standard causal assumptions (Consistency, Ignorability,
+Positivity), the ATE is estimated as \\E(Y(1) - Y(0))\\, where \\Y(a)\\
+is the potential outcome under treatment \\a\\. The method uses double
+robust estimating equations that are IPCW-adjusted for censoring.
 
-Estimates the ATE using the the standard binary double robust estimating
-equations that are IPCW censoring adjusted.
+The first covariate in the formula must be the treatment effect (a
+factor). If the factor has more than two levels, multinomial logistic
+regression (mlogit) is used for propensity score modeling.
 
 ## References
 
-Scheike, T. and Holst, K. K. Restricted mean time lost for survival and
-competing risks data using mets in R, WIP
+Scheike, T. and Holst, K. K. (2024). Restricted mean time lost for
+survival and competing risks data using mets in R. WIP.
+
+Scheike, T. and Tanaka, S. (2025). Restricted mean time lost ratio
+regression: Percentage of restricted mean time lost due to specific
+cause. WIP.
+
+## See also
+
+[`binregATE`](http://kkholst.github.io/mets/reference/binregATE.md),
+[`ratioATE`](http://kkholst.github.io/mets/reference/ratioATE.md)
 
 ## Author
 
@@ -57,8 +90,10 @@ Thomas Scheike
 ## Examples
 
 ``` r
-library(mets); data(bmt); bmt$event <- bmt$cause!=0; dfactor(bmt) <- tcell~tcell
-out <- resmeanATE(Event(time,event)~tcell+platelet,data=bmt,time=40,treat.model=tcell~platelet)
+data(bmt); bmt$event <- bmt$cause!=0; dfactor(bmt) <- tcell~tcell
+
+out <- resmeanATE(Event(time,event)~tcell+platelet, data=bmt, time=40, 
+                  treat.model=tcell~platelet, outcome="rmtl")
 summary(out)
 #>    n events
 #>  408    241
@@ -66,32 +101,32 @@ summary(out)
 #>  408 clusters
 #> coeffients:
 #>              Estimate   Std.Err      2.5%     97.5% P-value
-#> (Intercept)  2.852563  0.062496  2.730074  2.975052  0.0000
-#> tcell1       0.021286  0.122983 -0.219757  0.262329  0.8626
-#> platelet     0.303306  0.090772  0.125396  0.481215  0.0008
+#> (Intercept)  3.121409  0.048611  3.026134  3.216684  0.0000
+#> tcell1      -0.022691  0.131519 -0.280465  0.235082  0.8630
+#> platelet    -0.318830  0.106383 -0.527336 -0.110324  0.0027
 #> 
 #> exp(coeffients):
-#>             Estimate     2.5%  97.5%
-#> (Intercept) 17.33214 15.33402 19.591
-#> tcell1       1.02151  0.80271  1.300
-#> platelet     1.35433  1.13360  1.618
+#>             Estimate     2.5%   97.5%
+#> (Intercept) 22.67831 20.61737 24.9453
+#> tcell1       0.97756  0.75543  1.2650
+#> platelet     0.72700  0.59018  0.8955
 #> 
 #> Average Treatment effects (G-formula) :
 #>           Estimate  Std.Err     2.5%    97.5% P-value
-#> treat0    19.25882  0.95918 17.37887 21.13877  0.0000
-#> treat1    19.67316  2.22868 15.30502 24.04129  0.0000
-#> treat:1-0  0.41434  2.41151 -4.31213  5.14081  0.8636
+#> treat0    20.73597  0.95653 18.86121 22.61073  0.0000
+#> treat1    20.27074  2.47786 15.41422 25.12726  0.0000
+#> treat:1-0 -0.46523  2.67400 -5.70617  4.77572  0.8619
 #> 
 #> Average Treatment effects (double robust) :
 #>           Estimate  Std.Err     2.5%    97.5% P-value
-#> treat0    19.27793  0.95799 17.40030 21.15556  0.0000
-#> treat1    20.34004  2.54146 15.35887 25.32122  0.0000
-#> treat:1-0  1.06211  2.71020 -4.24979  6.37402  0.6951
+#> treat0    20.71846  0.95824 18.84035 22.59657  0.0000
+#> treat1    19.65975  2.50069 14.75848 24.56102  0.0000
+#> treat:1-0 -1.05871  2.67373 -6.29913  4.18171  0.6921
 #> 
 #> 
 
-out1 <- resmeanATE(Event(time,cause)~tcell+platelet,data=bmt,cause=1,time=40,
-                   treat.model=tcell~platelet)
+out1 <- resmeanATE(Event(time,cause)~tcell+platelet, data=bmt, cause=1, time=40,
+                   treat.model=tcell~platelet, outcome="rmtl")
 summary(out1)
 #>    n events
 #>  408    157
@@ -121,37 +156,5 @@ summary(out1)
 #> treat1      9.36465   2.41708   4.62727  14.10203  0.0001
 #> treat:1-0  -5.14890   2.59798 -10.24084  -0.05696  0.0475
 #> 
-#> 
-
-ratioATE(out,out1,h=function(x) log(x))
-#> $ratioG
-#>            Estimate Std.Err    2.5%    97.5%   P-value
-#> [treat0]    -0.2816  0.1075 -0.4924 -0.07093 9.150e-33
-#> [treat1]    -0.6771  0.3183 -1.3008 -0.05328 1.369e-07
-#> [treat0].1  -0.3954  0.3363 -1.0545  0.26370 3.333e-05
-#> [treat1].1   0.3954  0.3363 -0.2637  1.05454 7.221e-02
-#> 
-#>  Null Hypothesis: 
-#>   [treat0] = 1
-#>   [treat1] = 1
-#>   [treat0] = 1
-#>   [treat1] = 1 
-#>  
-#> chisq = 170.3366, df = 4, p-value < 2.2e-16
-#> 
-#> $ratioDR
-#>            Estimate Std.Err    2.5%    97.5%   P-value
-#> [treat0]    -0.2839  0.1075 -0.4947 -0.07310 7.454e-33
-#> [treat1]    -0.7756  0.3460 -1.4538 -0.09753 2.865e-07
-#> [treat0].1  -0.4918  0.3619 -1.2011  0.21754 3.756e-05
-#> [treat1].1   0.4918  0.3619 -0.2175  1.20109 1.602e-01
-#> 
-#>  Null Hypothesis: 
-#>   [treat0] = 1
-#>   [treat1] = 1
-#>   [treat0] = 1
-#>   [treat1] = 1 
-#>  
-#> chisq = 168.3765, df = 4, p-value < 2.2e-16
 #> 
 ```

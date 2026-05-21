@@ -2,89 +2,84 @@
 
 ## Two-Stage Randomization for counting process outcomes
 
-Specify rate models of $N_{1}(t)$.
+Rate models are specified for N_1(t), covering:
 
 - survival data
-- competing risks, cause specific hazards.
+- competing risks, cause-specific hazards
 - recurrent events data
 
 Under simple randomization we can estimate the rate Cox model
 
-- $\lambda_{0}(t)\exp\left( A_{0}\beta_{0} \right)$
+- \lambda_0(t) \exp(A_0 \beta_0)
 
 Under two-stage randomization we can estimate the rate Cox model
 
-- $\lambda_{0}(t)\exp\left( A_{0}\beta_{0} + A_{1}(t)\beta_{1} \right)$
+- \lambda_0(t) \exp(A_0 \beta_0 + A_1(t) \beta_1 )
 
-Starting point is that Cox’s partial likelihood score can be used for
-estimating parameters $$\begin{aligned}
-{U(\beta)} & {= \int\left( A(t) - e(t) \right)dN_{1}(t)}
-\end{aligned}$$ where $A(t)$ is the combined treatments over time.
+The starting point is that Cox’s partial likelihood score can be used
+for estimating parameters: \begin{align\*} U(\beta) & = \int (A(t) -
+e(t)) dN_1(t) \end{align\*} where A(t) is the combined treatment vector
+over time.
 
-- the solution will converge to $\beta^{*}$ the Struthers-Kalbfleisch
-  solution of the score and will have robust standard errors Lin-Wei.
+- The solution will converge to \beta^\*, the Struthers-Kalbfleisch
+  solution of the score, with robust Lin-Wei standard errors.
 
-The estimator can be agumented in different ways using additional
+The estimator can be augmented in different ways using additional
 covariates at the time of randomization and a censoring augmentation.
-The solved estimating eqution is $$\begin{array}{r}
-{\sum\limits_{i}U_{i} - AUG_{0} - AUG_{1} + AUG_{C} = 0}
-\end{array}$$ using the covariates from augmentR0 to augment with
-$$\begin{array}{r}
-{AUG_{0} = \left( A_{0} - \pi_{0}\left( X_{0} \right) \right)X_{0}\gamma_{0}}
-\end{array}$$ where possibly
-$P\left( A_{0} = 1|X_{0} \right) = \pi_{0}\left( X_{0} \right)$ but does
-not depend on covariates under randomization, and furhter using the
-covariates from augmentR1, to augment with R indiciating that the
-randomization takes place or not, $$\begin{array}{r}
-{AUG_{1} = R\left( A_{1} - \pi_{1}\left( X_{1} \right) \right)X_{1}\gamma_{1}}
-\end{array}$$ and the dynamic censoring augmenting  
-$$\begin{array}{r}
-{AUG_{C} = \int_{0}^{t}\gamma_{c}(s)^{T}\left( e(s) - \bar{e}(s) \right)\frac{1}{G_{c}(s)}dM_{c}(s)}
-\end{array}$$ where $\gamma_{c}(s)$ is chosen to minimize the variance
-given the dynamic covariates specified by augmentC.
+The solved estimating equation is \begin{align\*} \sum_i U_i - AUG_0 -
+AUG_1 + AUG_C = 0 \end{align\*} using covariates from `augmentR0` to
+augment with \begin{align\*} AUG_0 = ( A_0 - \pi_0(X_0) ) X_0 \gamma_0
+\end{align\*} where P(A_0=1\|X_0)=\pi_0(X_0) (which does not depend on
+covariates under randomization), and using covariates from `augmentR1`
+to augment with R indicating whether the second randomization takes
+place: \begin{align\*} AUG_1 = R ( A_1 - \pi_1(X_1)) X_1 \gamma_1
+\end{align\*} and the dynamic censoring augmentation \begin{align\*}
+AUG_C = \int_0^t \gamma_c(s)^T (e(s) - \bar e(s)) \frac{1}{G_c(s) }
+dM_c(s) \end{align\*} where \gamma_c(s) is chosen to minimise the
+variance given the dynamic covariates specified by `augmentC`.
 
-The propensity score models are always estimated unless it is requested
-to use some fixed number $\pi_{0} = 1/2$ for example, but always better
-to be adaptive and estimate $\pi_{0}$. Also $\gamma_{0}$ and
-$\gamma_{1}$ are estimated to reduce variance of $U_{i}$.
+Propensity score models are always estimated unless a fixed value such
+as \pi_0=1/2 is requested, though it is generally better to estimate
+\pi_0 adaptively. Similarly, \gamma_0 and \gamma_1 are estimated to
+reduce the variance of U_i.
 
-- The treatment’s must be given as factors.
-- Treatment for 2nd randomization may depend on response.
+- Treatments must be given as factors.
+- The treatment for the 2nd randomization may depend on the response.
   - Treatment probabilities are estimated by default and uncertainty
-    from this adjusted for.
-  - treat.model must then typically allow for interaction with treatment
-    number and covariates
-- Randomization augmentation for 1’st and 2’nd randomization possible.
-  - typesR=c(“R0”,“R1”,“R01”)
-- Censoring model possibly stratified on observed covariates (at time
-  0).
-  - default model is to stratify after randomization R0
-  - cens.model can be specified
-- Censoring augmentation done dynamically over time with time-dependent
-  covariates.
-  - typesC=c(“C”,“dynC”), C fixed coefficients and dynC dynamic
-  - done for each strata in censoring model
+    from this is adjusted for.
+  - `treat.model` must typically allow for interaction between treatment
+    number and covariates.
+- Randomization augmentation for the 1st and 2nd randomization is
+  possible.
+  - `typesR=c("R0","R1","R01")`
+- The censoring model can be stratified on observed baseline covariates.
+  - Default model stratifies on randomization `R0`.
+  - `cens.model` can be specified.
+- Censoring augmentation is done dynamically over time with
+  time-dependent covariates.
+  - `typesC=c("C","dynC")`: `C` for fixed coefficients and `dynC` for
+    dynamic.
+  - Applied separately within each stratum of the censoring model.
 
-Standard errors are estimated using the influence function of all
-estimators and tests of differences can therefore be computed
-subsequently.
+Standard errors are estimated using the influence functions of all
+estimators, so tests of differences can be computed subsequently.
 
-- variance adjustment for censoring augmentation computed subtracting
-  variance gain
-- influence functions given for case with R0 only
+- Variance adjustment for censoring augmentation is computed by
+  subtracting the variance gain.
+- Influence functions are given for the case with `R0` only.
 
-The times of randomization is specified by
+The times of randomization are specified by:
 
-- treat.var is “1” when a randomization is given
-  - default is to assume that all time-points corresponds to a
-    treatment, the survival case without time-dependent covariates
-  - recurrent events situation must be specified as first record of each
-    subject, see below example.
+- `treat.var` is `"1"` when a randomization occurs.
+  - Default assumes all time points correspond to a treatment (the
+    survival case without time-dependent covariates).
+  - For recurrent events, this must be specified as the first record for
+    each subject; see example below.
 
-Data must be given on start,stop,status survival format with
+Data must be provided in start-stop-status survival format with:
 
-- one code of status indicating events of interest
-- one code for the censorings
+- one status code indicating events of interest
+- one code for censorings
 
 The phreg_rct can be used for counting process style data, and thus
 covers situations with
@@ -103,6 +98,7 @@ and will in all cases compute augmentations
 ## Simple Randomization: Lu-Tsiatis marginal Cox model
 
 ``` r
+
 library(mets) 
 set.seed(100)
 
@@ -122,9 +118,10 @@ summary(out)
 ###out <- phreg_rct(Surv(time,status)~Z.f,data=data,augmentR0=~X,augmentC=~factor(Z):X,cens.model=~+1)
 ```
 
-Results consitent with speff of library(speff2trial)
+Results consistent with speff of library(speff2trial)
 
 ``` r
+
 ###library(speff2trial) 
 library(mets)
 data(ACTG175)
@@ -155,11 +152,12 @@ summary(out)
 #> [1] "summary.phreg_rct"
 ```
 
-The study is actually block-randomized according (?) so the standard
-should be computed with an adjustment that is equivalent to augmenting
-with this block as factor
+The study is actually block-randomized, so the standard errors should be
+computed with an adjustment equivalent to augmenting with the block as a
+factor:
 
 ``` r
+
 dtable(data,~strat+arms)
 #> 
 #>       arms   0   1
@@ -179,42 +177,42 @@ summary(out)
 
 ## Two-Stage Randomization CALGB-9823 for survival outcomes
 
-We here illustrate some analysis of one SMART conducted by Cancer and
-Leukemia Group B Protocol 8923 (CALGB 8923), Stone and others (2001).
-388 patients were randomized to an initial treatment of GM-CSF (A1 ) or
-standard chemotherapy (A2 ). Patients with complete remission and
-informed consent to second stage were then re-randomized to only
-cytarabine (B1 ) or cytarabine plus mitoxantrone (B2 ).
+We illustrate an analysis of one SMART (Sequential Multiple Assignment
+Randomised Trial) conducted by Cancer and Leukemia Group B Protocol 8923
+(CALGB 8923), Stone and others (2001). 388 patients were randomised to
+an initial treatment of GM-CSF (A_1) or standard chemotherapy (A_2).
+Patients with complete remission and informed consent were then
+re-randomised to cytarabine only (B_1) or cytarabine plus mitoxantrone
+(B_2).
 
 We first compute the weighted risk-set estimator based on estimated
-weights $$\begin{aligned}
-{\Lambda_{A1,B1}(t)} & {= \sum\limits_{i}\int_{0}^{t}\frac{w_{i}(s)}{Y^{w}(s)}dN_{i}(s)}
-\end{aligned}$$ where
-$w_{i}(s) = I\left( A0_{i} = A1 \right) + \left( t > T_{R} \right)I\left( A1_{i} = B1 \right)/\pi_{1}\left( X_{i} \right)$,
-that is 1 when you start on treatment $A1$ and then for those that
-changes to $B1$ at time $T_{R}$ then is scaled up with the proportion
-doing this. This is equivalent to the IPTW (inverse probability of
-treatment weighted estimator). We estimate the treatment regimes $A1,B1$
-and $A2,B1$ by letting $A10$ indicate those that are consistent with
-ending on $B1$. $A10$ then starts being $1$ and becomes $0$ if the
-subject is treated with $B2$, but stays $1$ if the subject is treated
-with $B1$. We can then look at the two strata where $A0 = 0,A10 = 1$ and
-$A0 = 1,A10 = 1$. Similary, for those that end being consistent with
-$B2$. Thus defining $A11$ to start being $1$, then stays $1$ if $B2$ is
-taken, and becomes $0$ if the second randomization is $B1$.
+weights \begin{align\*} \Lambda\_{A1,B1}(t) & = \sum_i \int_0^t
+\frac{w_i(s)}{Y^w(s)} dN_i(s) \end{align\*} where w_i(s) = I(A0_i=A1) +
+(t\>T_R) I(A1_i=B1)/\pi_1(X_i), that is 1 when you start on treatment A1
+and then for those that changes to B1 at time T_R then is scaled up with
+the proportion doing this. This is equivalent to the IPTW (inverse
+probability of treatment weighted estimator). We estimate the treatment
+regimes A1, B1 and A2, B1 by letting A10 indicate those that are
+consistent with ending on B1. A10 then starts being 1 and becomes 0 if
+the subject is treated with B2, but stays 1 if the subject is treated
+with B1. We can then look at the two strata where A0=0,A10=1 and
+A0=1,A10=1. Similarly, for those that end being consistent with B2. Thus
+defining A11 to start being 1, then stays 1 if B2 is taken, and becomes
+0 if the second randomization is B1.
 
-- the treatment models are for all time-points, unless the weight.var
-  variable is given (1 for treatments, 0 otherwise) to accomodate a
-  general start,stop format
+- the treatment models are for all time-points, unless the `weight.var`
+  variable is given (1 for treatments, 0 otherwise) to accommodate a
+  general start-stop format
 - the treatment model may also depend on a response value
 - standard errors are based on influence functions and is also computed
   for the baseline
 
-We here use the propensity score model $P\left( A1 = B1|A0 \right)$ that
-uses the observed frequencies on arm $B1$ among those starting out on
-either $A1$ or $A2$.
+We here use the propensity score model P(A1=B1\|A0) that uses the
+observed frequencies on arm B1 among those starting out on either A1 or
+A2.
 
 ``` r
+
 data(calgb8923)
 calgt <- calgb8923
 
@@ -251,97 +249,82 @@ legend("topright",c("A1B1","A2B1","A1B2","A2B2"),col=c(1,2,3,4),lty=1)
 
 ``` r
 
+
 summary(pll1,times=1:10)
-#> $pred
-#>           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
-#> [1,] 0.8022569 0.7119656 0.6675967 0.6471848 0.6369788 0.6164021 0.5770105
-#> [2,] 0.8568499 0.7871414 0.7456444 0.7133504 0.6878999 0.6623719 0.6400970
-#>           [,8]      [,9]     [,10]
-#> [1,] 0.5427705 0.5154506 0.5103024
-#> [2,] 0.6109335 0.5646244 0.5543596
+#> Predictions of type 'surv'
+#>   Showing subjects: 1, 2
+#>   Showing times:    1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 #> 
-#> $se.pred
-#>            [,1]       [,2]       [,3]       [,4]       [,5]       [,6]
-#> [1,] 0.02861524 0.03101141 0.03283701 0.03265187 0.03255301 0.03229413
-#> [2,] 0.02491113 0.02819870 0.02918381 0.03134551 0.03175905 0.03205534
-#>            [,7]       [,8]       [,9]      [,10]
-#> [1,] 0.03387985 0.03486639 0.03785952 0.03806234
-#> [2,] 0.03345603 0.03601502 0.03946837 0.03959668
+#> -- Subject 1 --
+#>  time   surv     se  lower  upper
+#>     1 0.8023 0.0286 0.7481 0.8603
+#>     2 0.7120 0.0310 0.6537 0.7754
+#>     3 0.6676 0.0328 0.6062 0.7352
+#>     4 0.6472 0.0327 0.5863 0.7145
+#>     5 0.6370 0.0326 0.5763 0.7041
+#>     6 0.6164 0.0323 0.5562 0.6831
+#>     7 0.5770 0.0339 0.5143 0.6474
+#>     8 0.5428 0.0349 0.4786 0.6156
+#>     9 0.5155 0.0379 0.4463 0.5953
+#>    10 0.5103 0.0381 0.4409 0.5906
 #> 
-#> $lower
-#>           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
-#> [1,] 0.7480876 0.6537066 0.6062423 0.5862506 0.5762674 0.5562481 0.5142857
-#> [2,] 0.8093900 0.7337687 0.6905840 0.6544855 0.6283866 0.6024322 0.5777713
-#>           [,8]      [,9]     [,10]
-#> [1,] 0.4785606 0.4463411 0.4408982
-#> [2,] 0.5442707 0.4923330 0.4819390
-#> 
-#> $upper
-#>           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
-#> [1,] 0.8603486 0.7754168 0.7351604 0.7144523 0.7040864 0.6830613 0.6473856
-#> [2,] 0.9070927 0.8443964 0.8050947 0.7775096 0.7530497 0.7282753 0.7091460
-#>           [,8]      [,9]     [,10]
-#> [1,] 0.6155957 0.5952608 0.5906319
-#> [2,] 0.6857613 0.6475306 0.6376627
-#> 
-#> $times
-#>  [1]  1  2  3  4  5  6  7  8  9 10
-#> 
-#> attr(,"class")
-#> [1] "summarypredictrecreg"
+#> -- Subject 2 --
+#>  time   surv     se  lower  upper
+#>     1 0.8568 0.0249 0.8094 0.9071
+#>     2 0.7871 0.0282 0.7338 0.8444
+#>     3 0.7456 0.0292 0.6906 0.8051
+#>     4 0.7134 0.0313 0.6545 0.7775
+#>     5 0.6879 0.0318 0.6284 0.7530
+#>     6 0.6624 0.0321 0.6024 0.7283
+#>     7 0.6401 0.0335 0.5778 0.7091
+#>     8 0.6109 0.0360 0.5443 0.6858
+#>     9 0.5646 0.0395 0.4923 0.6475
+#>    10 0.5544 0.0396 0.4819 0.6377
 summary(pll0,times=1:10)
-#> $pred
-#>           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
-#> [1,] 0.8017327 0.7008265 0.6523029 0.6158134 0.5923768 0.5659830 0.5329907
-#> [2,] 0.8560743 0.7740713 0.7153512 0.6690102 0.6272139 0.5642496 0.5412531
-#>           [,8]      [,9]     [,10]
-#> [1,] 0.4856035 0.4751084 0.4580125
-#> [2,] 0.5244200 0.5014231 0.4784263
+#> Predictions of type 'surv'
+#>   Showing subjects: 1, 2
+#>   Showing times:    1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 #> 
-#> $se.pred
-#>            [,1]       [,2]       [,3]       [,4]       [,5]       [,6]
-#> [1,] 0.02874374 0.03363964 0.03593932 0.03745772 0.03849765 0.03905568
-#> [2,] 0.02508408 0.03053222 0.03382459 0.03662354 0.03831324 0.04083119
-#>            [,7]       [,8]       [,9]      [,10]
-#> [1,] 0.03953451 0.04080406 0.04110910 0.04157512
-#> [2,] 0.04145722 0.04203299 0.04238077 0.04269490
+#> -- Subject 1 --
+#>  time   surv     se  lower  upper
+#>     1 0.8017 0.0287 0.7473 0.8601
+#>     2 0.7008 0.0336 0.6379 0.7700
+#>     3 0.6523 0.0359 0.5855 0.7267
+#>     4 0.6158 0.0375 0.5466 0.6938
+#>     5 0.5924 0.0385 0.5215 0.6728
+#>     6 0.5660 0.0391 0.4944 0.6479
+#>     7 0.5330 0.0395 0.4609 0.6164
+#>     8 0.4856 0.0408 0.4119 0.5725
+#>     9 0.4751 0.0411 0.4010 0.5629
+#>    10 0.4580 0.0416 0.3834 0.5472
 #> 
-#> $lower
-#>           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
-#> [1,] 0.7473298 0.6379004 0.5855331 0.5466050 0.5215305 0.4943860 0.4608737
-#> [2,] 0.8082955 0.7164839 0.6520354 0.6009461 0.5564424 0.4896381 0.4658035
-#>           [,8]      [,9]     [,10]
-#> [1,] 0.4118674 0.4009976 0.3833640
-#> [2,] 0.4481818 0.4248738 0.4016554
-#> 
-#> $upper
-#>           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
-#> [1,] 0.8600959 0.7699599 0.7266867 0.6937847 0.6728470 0.6479486 0.6163926
-#> [2,] 0.9066774 0.8362873 0.7848152 0.7447834 0.7069865 0.6502305 0.6289239
-#>           [,8]      [,9]     [,10]
-#> [1,] 0.5725404 0.5629159 0.5471966
-#> [2,] 0.6136267 0.5917643 0.5698710
-#> 
-#> $times
-#>  [1]  1  2  3  4  5  6  7  8  9 10
-#> 
-#> attr(,"class")
-#> [1] "summarypredictrecreg"
+#> -- Subject 2 --
+#>  time   surv     se  lower  upper
+#>     1 0.8561 0.0251 0.8083 0.9067
+#>     2 0.7741 0.0305 0.7165 0.8363
+#>     3 0.7154 0.0338 0.6520 0.7848
+#>     4 0.6690 0.0366 0.6009 0.7448
+#>     5 0.6272 0.0383 0.5564 0.7070
+#>     6 0.5642 0.0408 0.4896 0.6502
+#>     7 0.5413 0.0415 0.4658 0.6289
+#>     8 0.5244 0.0420 0.4482 0.6136
+#>     9 0.5014 0.0424 0.4249 0.5918
+#>    10 0.4784 0.0427 0.4017 0.5699
 ```
 
-The propensity score mode can be extended to use covariates to get
-increased efficiency. Note also that the propensity scores for $A0$ will
+The propensity score model can be extended to use covariates to get
+increased efficiency. Note also that the propensity scores for A0 will
 cancel out in the different strata.
 
-We now illustrate how to fit a Cox model of the form $$\begin{aligned}
- & {\lambda_{A0}(t)\exp\left( B1(t)\beta_{1} + B2(t)\beta_{2} \right)}
-\end{aligned}$$ where $\beta_{0}$ is the effect of treatment $A2$ and
-the effect of $B1$
+We now illustrate how to fit a Cox model of the form \begin{align\*} &
+\lambda\_{A0}(t) \exp( B1(t) \beta_1 + B2(t) \beta_2) \end{align\*}
+where \beta_0 is the effect of treatment A2 and the effect of B1
 
 Now comparing only those starting on A1/A2 to compare the effect of B1
 versus B2
 
 ``` r
+
 library(mets)
 data(calgb8923)
 calgt <- calgb8923
@@ -392,6 +375,7 @@ and a more structured model with both A0 and A1, that does not seem very
 reasonable based on the above,
 
 ``` r
+
 ssf <- phreg_rct(Event(start,time,status)~A0.f+A10t+A11t+cluster(id),
      data=calgt,
      typesR=c("non","R0","R1","R01"),typesC=c("non","C","dynC"),
@@ -401,9 +385,10 @@ ssf <- phreg_rct(Event(start,time,status)~A0.f+A10t+A11t+cluster(id),
 
 ## Recurrent events: Simple Randomization
 
-Recurrents events simulation with death and censoring.
+Recurrent events simulation with death and censoring.
 
 ``` r
+
 n <- 1000
 beta <- 0.15; 
  data(CPH_HPN_CRBSI)
@@ -431,7 +416,7 @@ rr$X <- rr$lz1
 rr$lX <- rr$z1
 rr$statusD <- rr$status
 rr <- dtransform(rr,statusD=2,death==1)
-rr <- count.history(rr)
+rr <- count_history(rr)
 rr$Z <- rr$A0
 data <- rr
 data$Z.f <- as.factor(data$Z)
@@ -452,6 +437,7 @@ dlist(data,start+stop+statusD+A0+z1+treattime+Count1~id|id %in% c(4,5))
 Now we fit the model
 
 ``` r
+
 fit2 <- phreg_rct(Event(start,stop,statusD)~Z.f+cluster(id),data=data,
      treat.var="treattime",typesR=c("non","R0"),typesC=c("non","C","dynC"),
      augmentR0=~z1,augmentC=~z1+Count1)
@@ -473,6 +459,7 @@ summary(fit2)
 ## Twostage Randomization: Recurrent events
 
 ``` r
+
 n <- 500
 beta=c(0.3,0.3);betatr=0.3;betac=0;betao=0;betao1=0;ce=3;fixed=1;sim=1;dep=4;varz=1;ztr=0; ce <- 3
 ## take possible frailty 
@@ -491,7 +478,7 @@ rr$z1 <- attr(rr,"z")[rr$id]
 rr$A1 <- A1[rr$id]
 rr$A0 <- A0[rr$id]
 rr$lz1 <- log(rr$z1)
-rr <- count.history(rr,types=1:2)
+rr <- count_history(rr,types=1:2)
 rr$A1t <- 0
 rr <- dtransform(rr,A1t=A1,Count2==1) 
 rr$At.f <- rr$A0
@@ -519,6 +506,7 @@ Now fitting the model and computing different augmentations (true values
 0.3 and 0.3)
 
 ``` r
+
 sse <- phreg_rct(Event(start,time,statusD)~A0.f+A1t+cluster(id),data=rr,
      typesR=c("non","R0","R1","R01"),typesC=c("non","C","dynC"),treat.var="treattime",
      treat.model=At.f~factor(Count2),
@@ -553,49 +541,46 @@ summary(sse)
 #> [1] "summary.phreg_rct"
 ```
 
-- treat.model has A0 and A1 coded as At.f and we here allow a model that
+- `treat.model` codes A_0 and A_1 as `At.f`; here we allow a model that
   depends on the randomization to be as adaptive as possible.
-- for the observational case one can here also adjust for covarites.
-- Censoring model was stratified on A0.f
+- For the observational case one can also adjust for covariates here.
+- The censoring model was stratified on `A0.f`.
 
-## Causal assumptions for Twostage Randomization: Recurrent events
+## Causal assumptions for Two-Stage Randomization: Recurrent events
 
-We take interest in $N_{1}$ but also have death $N_{d}$.
+We are interested in N_1 and also have death N_d.
 
-Now we need that given $X_{0}$
+Given X_0, we require:
 
-- $A_{0}\bot N_{1}^{0}{()},N_{1}^{1}{()},N_{d}^{0}{()},N_{d}^{1}{()}|X_{0}$
-- positivity $1 > \pi_{0}\left( X_{0} \right) > 0$
+- A_0 \perp N_1^0(), N_1^1(), N_d^0(), N_d^1() \| X_0
+- positivity: 1 \> \pi_0(X_0) \> 0
 
-and given ${\bar{X}}_{1}$ the history accumulated at time $T_{R}$ of 2nd
-randomization
+Given \bar X_1, the history accumulated up to the time T_R of the second
+randomization:
 
-- $A_{1}\bot N_{1}^{0}{()},N_{1}^{1}{()},N_{d}^{0}{()},N_{d}^{1}{()}|{\bar{X}}_{1}$
-- positivity $1 > \pi_{1}\left( X_{1} \right) > 0$
+- A_1 \perp N_1^0(), N_1^1(), N_d^0(), N_d^1() \| \bar X_1
+- positivity: 1 \> \pi_1(X_1) \> 0
 
-and
+And consistency, to link counterfactual quantities to observed data.
 
-- consistency
+We must use an IPTW-weighted Cox score and augment as before.
 
-to link the counterfactual quantities to observed data.
+In addition we require that censoring is independent given, for example,
+A_0:
 
-We must use IPTW weighted Cox score and augment as before
+- Independent censoring.
 
-In addition we need that the censoring is independent given for example
-$A_{0}$
+To use `phreg_rct` in this setting:
 
-- Independent censoring
-
-To use the phreg_rct in this situation
-
-- RCT=FALSE
-- propensity score models must be specified
-- marginal estimate is based on IPTW cox model phreg_IPTW
-  - when the same model is used for the propensity scores and the
-    augmentation models the augmentation models are not needed due to
-    the adaptive nature from fitting the propensity score models.
+- Set `RCT=FALSE`.
+- Propensity score models must be specified.
+- The marginal estimate is based on the IPTW Cox model `phreg_IPTW`.
+  - When the same model is used for both the propensity scores and the
+    augmentation models, the augmentation models are not needed due to
+    the adaptive nature of fitting the propensity score models.
 
 ``` r
+
 fit2 <- phreg_rct(Event(start,stop,statusD)~Z.f+cluster(id),data=data,
      typesR=c("non","R0"),typesC=c("non","C","dynC"),
          RCT=FALSE,treat.model=Z.f~z1,augmentR0=~z1,augmentC=~z1+Count1,
@@ -615,6 +600,7 @@ summary(fit2)
 and for twostage randomization
 
 ``` r
+
 sse <- phreg_rct(Event(start,time,statusD)~A0.f+A1t+cluster(id),data=rr,
      typesR=c("non","R0","R1","R01"),typesC=c("non","C","dynC"),
          treat.var="treattime",
@@ -653,10 +639,11 @@ summary(sse)
 ## SessionInfo
 
 ``` r
+
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -675,22 +662,22 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] mets_1.3.9
+#> [1] mets_1.3.10
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           
-#>  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        
-#>  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            
-#> [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           
-#> [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
+#>  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        
+#>  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            
+#> [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           
+#> [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        
 #> [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   
-#> [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       
-#> [22] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      
-#> [25] fs_1.6.6               htmlwidgets_1.6.4      Rcpp_1.1.1            
-#> [28] future_1.68.0          lattice_0.22-7         systemfonts_1.3.1     
-#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.46.1     
-#> [34] parallel_4.5.2         splines_4.5.2          Matrix_1.7-4          
-#> [37] bslib_0.9.0            tools_4.5.2            RcppArmadillo_15.2.3-1
-#> [40] globals_0.18.0         survival_3.8-3         pkgdown_2.2.0         
+#> [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       
+#> [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      
+#> [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        
+#> [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     
+#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     
+#> [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
+#> [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1
+#> [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         
 #> [43] cachem_1.1.0           desc_1.4.3
 ```

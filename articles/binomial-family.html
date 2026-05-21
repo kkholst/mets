@@ -6,9 +6,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Analysis of multivariate binomial data: family analysis • mets</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="../katex-auto.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Analysis of multivariate binomial data: family analysis">
 </head>
@@ -20,7 +21,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,10 +38,10 @@
     <li><a class="dropdown-item" href="../articles/binomial-family.html">Analysis of multivariate binomial data: family analysis</a></li>
     <li><a class="dropdown-item" href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a></li>
     <li><a class="dropdown-item" href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a></li>
-    <li><a class="dropdown-item" href="../articles/binreg-TRS.html">Two-Stage Randomization for for Competing risks and Survival outcomes</a></li>
+    <li><a class="dropdown-item" href="../articles/binreg-TRS.html">Two-Stage Randomization for Competing risks and Survival outcomes</a></li>
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
-    <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">Cooking Survival Data: 5-Minute Recipes</a></li>
     <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
@@ -80,7 +81,7 @@
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2026-01-14</h4>
+            <h4 data-toc-skip class="date">2026-05-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/binomial-family.Rmd" class="external-link"><code>vignettes/binomial-family.Rmd</code></a></small>
       <div class="d-none name"><code>binomial-family.Rmd</code></div>
@@ -91,14 +92,14 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>When looking at multivariate binomial data with the aim of learning
-about the dependence that is present, possibly after correcting for some
-covariates many models and methods are available:</p>
+<p>When analysing multivariate binomial data with the aim of learning
+about the dependence present, possibly after adjusting for covariates,
+many models and methods are available:</p>
 <ul>
-<li>Random-effects models logistic regression covered elsewhere (glmer
-in lme4).</li>
+<li>Random-effects logistic regression models covered elsewhere
+(<code>glmer</code> in <code>lme4</code>).</li>
 </ul>
-<p>in the mets package you can fit the</p>
+<p>In the mets package you can fit the</p>
 <ul>
 <li><p>Pairwise odds ratio model</p></li>
 <li>
@@ -121,13 +122,13 @@ ACE, ADE ,AE and so forth.</li>
 composite likelihoods based on pairs within clusters. The models can be
 fitted specifically based on specifying which pairs one wants to use for
 the composite score.</p>
-<p>The models are described in futher details in the binomial-twin
+<p>The models are described in further details in the binomial-twin
 vignette.</p>
 </div>
 <div class="section level2">
 <h2 id="simulated-family-data">Simulated family data<a class="anchor" aria-label="anchor" href="#simulated-family-data"></a>
 </h2>
-<p>We start by simulating family data with and additive gamma structure
+<p>We start by simulating family data with an additive gamma structure
 on ACE form. Here 10000 families consisting of two parents and two
 children. The response is ybin and there is one covariate x.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -138,9 +139,9 @@ children. The response is ybin and there is one covariate x.</p>
 <span><span class="co">#&gt; Attaching package: 'timereg'</span></span>
 <span><span class="co">#&gt; The following objects are masked from 'package:mets':</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Event, event.split, kmplot, plotConfregion</span></span>
+<span><span class="co">#&gt;     Event, kmplot, plotConfregion</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
-<span> <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">simbinClaytonOakes.family.ace</a></span><span class="op">(</span><span class="fl">500</span>,<span class="fl">2</span>,<span class="fl">1</span>,beta<span class="op">=</span><span class="cn">NULL</span>,alpha<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span> <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mets-simulation.html">sim_binClaytonOakes_family_ace</a></span><span class="op">(</span><span class="fl">500</span>,<span class="fl">2</span>,<span class="fl">1</span>,beta<span class="op">=</span><span class="cn">NULL</span>,alpha<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span>
 <span> <span class="va">data</span><span class="op">$</span><span class="va">number</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span><span class="op">)</span></span>
 <span> <span class="va">data</span><span class="op">$</span><span class="va">child</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">number</span><span class="op">==</span><span class="fl">3</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
@@ -181,7 +182,7 @@ for x. The marginals can be specified as desired.</p>
 <p>For the Additive Gamma model we set-up the random effects included in
 such a family to make the ACE valid using some special functions for
 this.</p>
-<p>The model is constructed with one enviromental effect shared by all
+<p>The model is constructed with one environmental effect shared by all
 in the family and 8 genetic random effects with size 1/4 genetic
 variance. Looking at the first family we see that the mother and father
 both share half the genes with the children and that the two children
@@ -189,7 +190,7 @@ also share half their genes with this specification. Below we also show
 an alternative specification of this model using all pairs.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># make ace random effects design</span></span>
-<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">ace.family.design</a></span><span class="op">(</span><span class="va">data</span>,member<span class="op">=</span><span class="st">"type"</span>,id<span class="op">=</span><span class="st">"cluster"</span><span class="op">)</span></span>
+<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twin-design.html">ace_family_design</a></span><span class="op">(</span><span class="va">data</span>,member<span class="op">=</span><span class="st">"type"</span>,id<span class="op">=</span><span class="st">"cluster"</span><span class="op">)</span></span>
 <span><span class="va">out</span><span class="op">$</span><span class="va">pardes</span></span>
 <span><span class="co">#&gt;       [,1] [,2]</span></span>
 <span><span class="co">#&gt;  [1,] 0.25    0</span></span>
@@ -210,7 +211,7 @@ an alternative specification of this model using all pairs.</p>
 <p>We can now fit the model calling the two-stage function</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># fitting ace model for family structure</span></span>
-<span><span class="va">ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span><span class="op">(</span><span class="va">margbin</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,</span>
+<span><span class="va">ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial_twostage.html">binomial_twostage</a></span><span class="op">(</span><span class="va">margbin</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,</span>
 <span>theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>,random.design<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">des.rv</span>,theta.des<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">pardes</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ts</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span></span>
@@ -247,15 +248,15 @@ an alternative specification of this model using all pairs.</p>
 <div class="section level2">
 <h2 id="pairwise-fitting">Pairwise fitting<a class="anchor" aria-label="anchor" href="#pairwise-fitting"></a>
 </h2>
-<p>We now specify the same model via extracting all pairs.<br>
-The random effecs structure is typically simpler when just looking at
-pairs, but we start by specifying the random effects jointly for whole
-family. A special function writes up all combinations of pairs. There
-are 6 pairs within each family, and we keep track of who belongs to the
-different families. We first simply give the pairs and we then should
-get the same result as before.</p>
+<p>We now specify the same model by extracting all pairs. The random
+effects structure is typically simpler when looking at pairs only, but
+we start by specifying the random effects jointly for the whole family.
+A special function writes up all combinations of pairs. There are 6
+pairs within each family, and we keep track of which family each belongs
+to. We first simply supply the pairs and should get the same result as
+before.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/familycluster.index.html">familycluster.index</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/familycluster_index.html">familycluster_index</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mm</span><span class="op">$</span><span class="va">familypairindex</span>,n<span class="op">=</span><span class="fl">20</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] 1 2 1 3 1 4 2 3 2 4 3 4 5 6 5 7 5 8 6 7</span></span>
 <span><span class="va">pairs</span> <span class="op">&lt;-</span> <span class="va">mm</span><span class="op">$</span><span class="va">pairs</span></span>
@@ -277,7 +278,7 @@ get the same result as before.</p>
 <span><span class="co">#&gt; [12,]    7    8</span></span></code></pre></div>
 <p>Now with the pairs we fit the model</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tsp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span><span class="op">(</span><span class="va">margbin</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>,detail<span class="op">=</span><span class="fl">0</span>,</span>
+<code class="sourceCode R"><span><span class="va">tsp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial_twostage.html">binomial_twostage</a></span><span class="op">(</span><span class="va">margbin</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>,detail<span class="op">=</span><span class="fl">0</span>,</span>
 <span>        random.design<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">des.rv</span>,theta.des<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">pardes</span>,pairs<span class="op">=</span><span class="va">pairs</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">tsp</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span></span>
@@ -309,7 +310,7 @@ estimates.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
 <span><span class="va">ssid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">pairs</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">pairs</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">tsd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span><span class="op">(</span><span class="va">aa</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,</span>
+<span><span class="va">tsd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial_twostage.html">binomial_twostage</a></span><span class="op">(</span><span class="va">aa</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,</span>
 <span>               theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>,step<span class="op">=</span><span class="fl">1.0</span>,</span>
 <span>               random.design<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">des.rv</span>,iid<span class="op">=</span><span class="fl">1</span>,Nit<span class="op">=</span><span class="fl">10</span>,</span>
 <span>               theta.des<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">pardes</span>,pairs<span class="op">=</span><span class="va">pairs</span><span class="op">[</span><span class="va">ssid</span>,<span class="op">]</span><span class="op">)</span></span>
@@ -342,10 +343,10 @@ estimates.</p>
 to specify the model. We here use the same marginal “aa” to make the
 results comparable. The marginal can also be fitted based on available
 data.</p>
-<p>We start by selecting the data related to the pairs, and sets up new
-id’s and to start we specify the model using the full design with 9
-random effects. Below we show how one can use with only the random
-effects needed for each pair, which is typically simpler.</p>
+<p>We start by selecting the data related to the pairs, setting up new
+ids, and specifying the model using the full design with 9 random
+effects. Below we also show how to use only the random effects needed
+for each pair, which is typically simpler.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">pairs</span><span class="op">[</span><span class="va">ssid</span>,<span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      [,1] [,2]</span></span>
@@ -369,7 +370,7 @@ effects needed for each pair, which is typically simpler.</p>
 <span><span class="co">#&gt; [6,]    5    7</span></span>
 <span></span>
 <span><span class="va">dataid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dsort.html">dsort</a></span><span class="op">(</span><span class="va">data</span><span class="op">[</span><span class="va">ids</span>,<span class="op">]</span>,<span class="st">"cluster"</span><span class="op">)</span></span>
-<span><span class="va">outid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">ace.family.design</a></span><span class="op">(</span><span class="va">dataid</span>,member<span class="op">=</span><span class="st">"type"</span>,id<span class="op">=</span><span class="st">"cluster"</span><span class="op">)</span></span>
+<span><span class="va">outid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twin-design.html">ace_family_design</a></span><span class="op">(</span><span class="va">dataid</span>,member<span class="op">=</span><span class="st">"type"</span>,id<span class="op">=</span><span class="st">"cluster"</span><span class="op">)</span></span>
 <span><span class="va">outid</span><span class="op">$</span><span class="va">pardes</span></span>
 <span><span class="co">#&gt;       [,1] [,2]</span></span>
 <span><span class="co">#&gt;  [1,] 0.25    0</span></span>
@@ -392,7 +393,7 @@ effects needed for each pair, which is typically simpler.</p>
 <p>Now fitting the model with the data set up</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">aa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">ybin</span><span class="op">~</span><span class="va">x</span>,data<span class="op">=</span><span class="va">dataid</span>,family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">tsdid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span><span class="op">(</span><span class="va">aa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,</span>
+<span><span class="va">tsdid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial_twostage.html">binomial_twostage</a></span><span class="op">(</span><span class="va">aa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,</span>
 <span>         theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>,random.design<span class="op">=</span><span class="va">outid</span><span class="op">$</span><span class="va">des.rv</span>,theta.des<span class="op">=</span><span class="va">outid</span><span class="op">$</span><span class="va">pardes</span>,pairs<span class="op">=</span><span class="va">pair.new</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">tsdid</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span></span>
@@ -454,28 +455,24 @@ are constructed by certain functions for the ACE design.</p>
 <span><span class="va">mf</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span><span class="op">(</span><span class="va">pair.types</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">==</span><span class="st">"mother"</span> <span class="op">&amp;</span> <span class="va">pair.types</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">==</span><span class="st">"father"</span><span class="op">)</span></span>
 <span><span class="co">##          pair, rv related to pairs,  theta.des related to pair </span></span>
 <span><span class="va">pairs.new</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">pair.new</span>,<span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="fl">1</span><span class="op">+</span><span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">*</span><span class="fl">3</span>,<span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="fl">2</span><span class="op">+</span><span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">*</span><span class="fl">4</span>,<span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="fl">1</span><span class="op">+</span><span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">*</span><span class="fl">2</span>,<span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="fl">3</span><span class="op">+</span><span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">*</span><span class="fl">4</span><span class="op">)</span></span></code></pre></div>
-<p>pairs.new is matrix with</p>
+<p><code>pairs.new</code> is a matrix with</p>
 <ul>
-<li><p>columns 1:2 giving the indeces of the data points</p></li>
-<li><p>columns 3:4 giving the indeces of the random.design for the
-different pairs</p></li>
-<li><p>columns 5 giving the indeces of the theta.des written as
+<li><p>columns 1:2 giving the indices of the data points</p></li>
+<li><p>columns 3:4 giving the indices of the <code>random.design</code>
+for the different pairs</p></li>
+<li><p>column 5 giving the indices of <code>theta.des</code> written as
 rows</p></li>
-<li><p>columns 6 giving the number of random variables for this
+<li><p>column 6 giving the number of random variables for this
 pair</p></li>
 </ul>
 <p>The length of all rows of theta.des are the maximum number of random
-effects
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>×</mo><annotation encoding="application/x-tex">\times</annotation></semantics></math>
-the number of parameters. These two numbers are given in the call. In
-this case 4
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>×</mo><annotation encoding="application/x-tex">\times</annotation></semantics></math>
-2. So theta.des has rows of length
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>8</mn><annotation encoding="application/x-tex">8</annotation></semantics></math>,
-possibly including some 0’s for rows not relevant due to fewer random
-effects, as is the case here for pairs that do not share genetic
-effects.</p>
-<p>For pair 1 that is a mother/farther pair, we see that they share 1
+effects <span class="math inline">\times</span> the number of
+parameters. These two numbers are given in the call. In this case 4
+<span class="math inline">\times</span> 2. So theta.des has rows of
+length <span class="math inline">8</span>, possibly including some 0’s
+for rows not relevant due to fewer random effects, as is the case here
+for pairs that do not share genetic effects.</p>
+<p>For pair 1 that is a mother/father pair, we see that they share 1
 environmental random effect of size 1. There are also two genetic
 effects that are unshared between the two. So a total of 3 random
 effects are needed here. The theta.des relates the 3 random effects to
@@ -510,7 +507,7 @@ effect.</p>
 fewer random effects needed for pairs. We need to also specify the
 number of parameters in this case.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tsdid2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span><span class="op">(</span><span class="va">aa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>, theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>,</span>
+<code class="sourceCode R"><span><span class="va">tsdid2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial_twostage.html">binomial_twostage</a></span><span class="op">(</span><span class="va">aa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>, theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>,</span>
 <span>           random.design<span class="op">=</span><span class="va">random.des</span>,theta.des<span class="op">=</span><span class="va">theta.des</span>,pairs<span class="op">=</span><span class="va">pairs.new</span>,dim.theta<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">tsdid2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span></span>
@@ -538,7 +535,7 @@ number of parameters in this case.</p>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
 <p>The same model can be specifed even simpler via the kinship
-coefficient. For this speicification there are 4 random effects for each
+coefficient. For this specification there are 4 random effects for each
 pair, but some have variance 0. The mother-father pair, here shares a
 random effect with variance 0, and have two non-shared genetic effects
 with full variance, in addition to a fully shared environmental
@@ -549,9 +546,9 @@ effect.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">kinship</span>,n<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] 0.0 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5</span></span>
 <span></span>
-<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">make.pairwise.design</a></span><span class="op">(</span><span class="va">pair.new</span>,<span class="va">kinship</span>,type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span> </span></code></pre></div>
+<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twin-design.html">make_pairwise_design</a></span><span class="op">(</span><span class="va">pair.new</span>,<span class="va">kinship</span>,type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span> </span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tsdid3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span><span class="op">(</span><span class="va">aa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,</span>
+<code class="sourceCode R"><span><span class="va">tsdid3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial_twostage.html">binomial_twostage</a></span><span class="op">(</span><span class="va">aa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,</span>
 <span>             theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">/</span><span class="fl">9</span>,random.design<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">random.design</span>,</span>
 <span>             theta.des<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">theta.des</span>,pairs<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">new.pairs</span>,dim.theta<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">tsdid3</span><span class="op">)</span></span>
@@ -585,7 +582,7 @@ effect.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">simbinClaytonOakes.family.ace</a></span><span class="op">(</span><span class="fl">500</span>,<span class="fl">2</span>,<span class="fl">1</span>,beta<span class="op">=</span><span class="cn">NULL</span>,alpha<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mets-simulation.html">sim_binClaytonOakes_family_ace</a></span><span class="op">(</span><span class="fl">500</span>,<span class="fl">2</span>,<span class="fl">1</span>,beta<span class="op">=</span><span class="cn">NULL</span>,alpha<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   ybin x   type cluster</span></span>
 <span><span class="co">#&gt; 1    0 1 mother       1</span></span>
@@ -597,7 +594,7 @@ effect.</p>
 <span><span class="va">data</span><span class="op">$</span><span class="va">number</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span><span class="op">)</span></span>
 <span><span class="va">data</span><span class="op">$</span><span class="va">child</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">number</span><span class="op">==</span><span class="fl">3</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/familycluster.index.html">familycluster.index</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span></span>
+<span><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/familycluster_index.html">familycluster_index</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mm</span><span class="op">$</span><span class="va">familypairindex</span>,n<span class="op">=</span><span class="fl">20</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] 1 2 1 3 1 4 2 3 2 4 3 4 5 6 5 7 5 8 6 7</span></span>
 <span><span class="va">pairs</span> <span class="op">&lt;-</span> <span class="va">mm</span><span class="op">$</span><span class="va">pairs</span></span>
@@ -629,7 +626,7 @@ effect.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">aa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">ybin</span><span class="op">~</span><span class="va">x</span>,data<span class="op">=</span><span class="va">data</span>,family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">tsp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span><span class="op">(</span><span class="va">aa</span>,data<span class="op">=</span><span class="va">data</span>, clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,</span>
+<span><span class="va">tsp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial_twostage.html">binomial_twostage</a></span><span class="op">(</span><span class="va">aa</span>,data<span class="op">=</span><span class="va">data</span>, clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,</span>
 <span>         theta.des<span class="op">=</span><span class="va">dm</span>,pairs<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">pairs</span>,<span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dm</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">tsp</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Odds-Ratio (Plackett) model</span></span>
@@ -699,13 +696,13 @@ construct the design.</p>
 <span><span class="co">#&gt; father.father                       0           0            0            0</span></span>
 <span><span class="co">#&gt; mother.father                     233           0            0            0</span></span>
 <span><span class="va">tdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">obs.types</span><span class="op">)</span>,<span class="va">tdp</span><span class="op">)</span></span></code></pre></div>
-<p>We then can fit the pairwise model using the pairs and the
-pair-design for descrbing the OR. The results are consistent with the
-the ACE model as the mother-father have a lower dependence as is due
-only the environmental effects. All other combinations should have the
-same dependence as also seem to be the case.</p>
+<p>We can then fit the pairwise model using the pairs and the
+pair-design for describing the OR. The results are consistent with the
+ACE model: mother-father pairs have a lower dependence since it is
+driven only by environmental effects. All other combinations appear to
+have the same dependence, as expected.</p>
 <p>To fit the OR model it is generally recommended to use the var.link
-to use the parmetrization with log-odd-ratio regression.</p>
+to use the parametrization with log-odd-ratio regression.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">###porpair &lt;- binomial.twostage(aa,data=dataid,clusters=dataid$cluster,</span></span>
 <span><span class="co">###           theta.des=tdp,pairs=pair.new,model="or",var.link=1)</span></span>
@@ -716,9 +713,9 @@ to use the parmetrization with log-odd-ratio regression.</p>
 </h2>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.5.2 (2025-10-31)</span></span>
+<span><span class="co">#&gt; R version 4.6.0 (2026-04-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.3 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -737,22 +734,22 @@ to use the parmetrization with log-odd-ratio regression.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] timereg_2.0.7  survival_3.8-3 mets_1.3.9    </span></span>
+<span><span class="co">#&gt; [1] timereg_2.0.7  survival_3.8-6 mets_1.3.10   </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           </span></span>
-<span><span class="co">#&gt;  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        </span></span>
-<span><span class="co">#&gt;  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            </span></span>
-<span><span class="co">#&gt; [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           </span></span>
-<span><span class="co">#&gt; [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        </span></span>
+<span><span class="co">#&gt;  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           </span></span>
+<span><span class="co">#&gt;  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        </span></span>
+<span><span class="co">#&gt;  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            </span></span>
+<span><span class="co">#&gt; [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           </span></span>
+<span><span class="co">#&gt; [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        </span></span>
 <span><span class="co">#&gt; [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   </span></span>
-<span><span class="co">#&gt; [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       </span></span>
-<span><span class="co">#&gt; [22] compiler_4.5.2         codetools_0.2-20       fs_1.6.6              </span></span>
-<span><span class="co">#&gt; [25] htmlwidgets_1.6.4      Rcpp_1.1.1             future_1.68.0         </span></span>
-<span><span class="co">#&gt; [28] lattice_0.22-7         systemfonts_1.3.1      digest_0.6.39         </span></span>
-<span><span class="co">#&gt; [31] R6_2.6.1               parallelly_1.46.1      parallel_4.5.2        </span></span>
-<span><span class="co">#&gt; [34] splines_4.5.2          Matrix_1.7-4           bslib_0.9.0           </span></span>
-<span><span class="co">#&gt; [37] tools_4.5.2            RcppArmadillo_15.2.3-1 globals_0.18.0        </span></span>
+<span><span class="co">#&gt; [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       </span></span>
+<span><span class="co">#&gt; [22] compiler_4.6.0         codetools_0.2-20       fs_2.1.0              </span></span>
+<span><span class="co">#&gt; [25] htmlwidgets_1.6.4      Rcpp_1.1.1-1.1         future_1.70.0         </span></span>
+<span><span class="co">#&gt; [28] lattice_0.22-9         systemfonts_1.3.2      digest_0.6.39         </span></span>
+<span><span class="co">#&gt; [31] R6_2.6.1               parallelly_1.47.0      parallel_4.6.0        </span></span>
+<span><span class="co">#&gt; [34] splines_4.6.0          Matrix_1.7-5           bslib_0.11.0          </span></span>
+<span><span class="co">#&gt; [37] tools_4.6.0            RcppArmadillo_15.2.6-1 globals_0.19.1        </span></span>
 <span><span class="co">#&gt; [40] pkgdown_2.2.0          cachem_1.1.0           desc_1.4.3</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

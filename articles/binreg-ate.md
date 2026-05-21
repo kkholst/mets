@@ -1,49 +1,56 @@
 # Average treatment effect (ATE) for Competing risks and binary outcomes
 
-The binregATE function can fit a logistic link model with IPCW
-adjustment for a specific time-point, and can thus be used for
-describing survival or competing risks data. The function can be used
-for large data and is completely scalable, that is, linear in the data.
-A nice feature is that influcence functions are computed and are
-available.
+The `binregATE` function estimates the average treatment effect for
+binary outcomes with IPCW adjustment at a specific time-point, and can
+thus be used for survival or competing risks data. Computation is linear
+in data size and influence functions are computed and available.
 
-In addition and to summarize
+Key features:
 
-- the censoring weights can be strata dependent
+- the censoring weights can be stratum-dependent
 - predictions can be computed with standard errors
-- computation time is linear in data
-  - including standard errors
-- clusters can be given and then cluster corrected standard errors are
-  computed
+- computation time is linear in data size, including standard errors
+- cluster-corrected standard errors are available via the `clusters`
+  argument
 
 ## Average treatment effect
 
-First we simulate some data that mimics that of Kumar et al 2012. This
-is data from multiple myeloma patients treated with allogeneic stem cell
-transplantation from the Center for International Blood and Marrow
-Transplant Research (CIBMTR) Kumar et al (2012), “Trends in allogeneic
-stem cell transplantation for multiple myeloma: a CIBMTR analysis”. The
-data used in this paper consist of patients transplanted from 1995 to
-2005, and we compared the outcomes between transplant periods: 2001-2005
-(N=488) versus 1995-2000 (N=375). The two competing events were relapse
-(cause 2) and treatment-related mortality (TRM, cause 1) defined as
-death without relapse. considered the following risk covariates:
-transplant time period (gp (main interest of the study): 1 for
-transplanted in 2001-2005 versus 0 for transplanted in 1995-2000), donor
-type (dnr: 1 for Unrelated or other related donor (N=280) versus 0 for
-HLA-identical sibling (N=584)), prior autologous transplant (preauto: 1
-for Auto+Allo transplant (N=399) versus 0 for allogeneic transplant
-alone (N=465)) and time to transplant (ttt24: 1 for more than 24 months
-(N=289) versus 0 for less than or equal to 24 months (N=575))).
+First we simulate some data that mimics that of Kumar et al. (2012).
+This is data from multiple myeloma patients treated with allogeneic stem
+cell transplantation from the Center for International Blood and Marrow
+Transplant Research (CIBMTR). The data consisted of patients
+transplanted from 1995 to 2005, comparing outcomes between transplant
+periods: 2001–2005 (N=488) versus 1995–2000 (N=375). The two competing
+events were relapse (cause 2) and treatment-related mortality (TRM,
+cause 1) defined as death without relapse. Kumar et al. (2012)
+considered the following risk covariates: transplant time period (`gp`,
+main interest of the study: 1 for transplanted in 2001–2005 versus 0 for
+transplanted in 1995–2000), donor type (`dnr`: 1 for unrelated or other
+related donor (N=280) versus 0 for HLA-identical sibling (N=584)), prior
+autologous transplant (`preauto`: 1 for Auto+Allo transplant (N=399)
+versus 0 for allogeneic transplant alone (N=465)) and time to transplant
+(`ttt24`: 1 for more than 24 months (N=289) versus 0 for less than or
+equal to 24 months (N=575)).
 
-We here generate similar data by assuming that the two cumlative
-incidence curves are logistic and we have censoring that depends on the
-covariates via a Cox model. All this is wrapped in the kumarsim
-function. The simulation does not deal with possible violations of the
-bound that $F_{1} + F_{2} < 1$. But as we increase the sample size we
-still see that we recover the parameters of cause 2.
+We generate similar data by assuming that the two cumulative incidence
+curves are logistic and that censoring depends on covariates via a Cox
+model, all wrapped in the `kumarsim` function. The simulation does not
+enforce the constraint F_1+F_2 \< 1, but as we increase the sample size
+we still recover the parameters of cause 2.
+
+We start by computing the average treatment effects for the transplant
+periods (`gp`), then consider the possible interaction between `gp` and
+donor type (`dnr`) and estimate all contrasts between the risk estimates
+for all combinations of `gp` and `dnr`. The key components are:
+
+- an outcome model (fitted by IPCW): `Event(...) ~ .....`
+- a propensity score model (using logistic regression):
+  `treat.model=...`
+- an IPCW weight estimated using a stratified Kaplan-Meier model:
+  `cens.model=~strata(..)`
 
 ``` r
+
 library(mets) 
 set.seed(100)
 ###
@@ -158,18 +165,20 @@ very different from those using the simple Kaplan-Meier weights that are
 severely biased for these data. This is due to a strong censoring
 dependence.
 
-The average treatment is around $0.17 = E\left( Y(1) - Y(0) \right)$ at
-time 60 for the transplant period, under the standard causal
-assumptions. The 1/0 treatment variable used for the causal computation
-is found as the right hand side (rhs) of the treat.model or as the first
-argument on the rhs of the response model.
+The average treatment is around 0.17 = E(Y(1) - Y(0)) at time 60 for the
+transplant period, under the standard causal assumptions. The 1/0
+treatment variable used for the causal computation is found as the right
+hand side (rhs) of the treat.model or as the first argument on the rhs
+of the response model.
 
 The binregATE default uses binreg with its default to fit the working
 model and is recommended, but the logitIPCW and logitIPCWATE can also be
 used and are GLM-type IPCW weighted models (see binreg help
-page/vignette).
+page/vignette). We can compare the logitIPCWATE/logitIPCW with that of
+wglm and its ate function in the riskRegression package, and they agree.
 
 ``` r
+
 ib2 <- logitIPCWATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,
     treat.model=gp.f~dnr+preauto+ttt24,time=40,cens.model=~strata(gp,dnr))
 summary(ib2)
@@ -271,24 +280,20 @@ for binregATE.
 ## Average treatment for Competing risks data
 
 The binreg function does direct binomial regression for one time-point,
-$t$, fitting the model $$\begin{aligned}
-{P\left( T \leq t,\epsilon = 1|X \right)} & {= \text{expit}\left( X^{T}\beta \right),}
-\end{aligned}$$ for possible right censored data. The estimation
-procedure is based on IPCW adjusted estimating equation (EE)
-$$\begin{aligned}
-{U(\beta) =} & {X\left( \Delta(t)I(T \leq t,\epsilon = 1)/G_{c}(T \land t) - \text{expit}\left( X^{T}beta \right) \right) = 0}
-\end{aligned}$$ where $G_{c}(t) = P(C > t)$, the censoring survival
-distribution, and with $\Delta(t) = I(C > T \land t)$ the indicator of
-being uncensored at time $t$.
+t, fitting the model \begin{align\*} P(T \leq t, \epsilon=1 \| X ) & =
+\mbox{expit}( X^T \beta), \end{align\*} for possible right censored
+data. The estimation procedure is based on IPCW adjusted estimating
+equation (EE) \begin{align\*} U(\beta) = & X \left( \Delta(t) I(T \leq
+t, \epsilon=1 )/G_c(T \wedge t) - \mbox{expit}( X^T beta) \right) = 0
+\end{align\*} where G_c(t)=P(C \> t), the censoring survival
+distribution, and with \Delta(t) = I( C \> T \wedge t) the indicator of
+being uncensored at time t.
 
-The function logitIPCW instead considers the EE the EE $$\begin{aligned}
-{U(\beta) =} & {X\frac{\Delta(t)}{G_{c}(T \land t)}\left( I(T \leq t,\epsilon = 1) - \text{expit}\left( X^{T}beta \right) \right) = 0.}
-\end{aligned}$$ The two score equations are quite similar, and exactly
-the same when the censoring model is fully-nonparametric given $X$.
-
-- It seems that the binreg estimating equations most often is preferable
-  to use, and the estimating equation used is also augmented in the
-  default implementation (see the binreg vignette).
+The function logitIPCW instead considers the EE \begin{align\*} U(\beta)
+= & X \frac{\Delta(t)}{G_c(T \wedge t)} \left( I(T \leq t, \epsilon=1
+) - \mbox{expit}( X^T beta) \right) = 0. \end{align\*} The two score
+equations are quite similar, and exactly the same when the censoring
+model is fully-nonparametric given X.
 
 Additional functions logitATE, and binregATE computes the average
 treatment effect. We demonstrate their use below.
@@ -302,9 +307,9 @@ functions are stored in the output. Further, the standard errors can be
 cluster corrected by specifying the relevant cluster for the working
 outcome model.
 
-- We estimate the average treatment effect of our binary response
-  $I(T \leq t,\epsilon = 1)$
-  - Using a working logistic model for the resonse (possibly with a
+- We estimate the average treatment effect of our binary response I(T
+  \leq t, \epsilon=1)
+  - Using a working logistic model for the response (possibly with a
     cluster specification)
   - Using a working logistic model for treatment given covariates
     - The binregATE can also handle a factor with more than two levels
@@ -316,71 +321,69 @@ outcome model.
 If there are no censoring then the censoring weights are simply set to
 1.
 
-The average treatment effect is $$\begin{array}{r}
-{E\left( Y(1) - Y(0) \right)}
-\end{array}$$ using counterfactual outcomes.
+The average treatment effect is \begin{align\*} E(Y(1) - Y(0))
+\end{align\*} using counterfactual outcomes.
 
-We compute the simple G-estimator $$\begin{array}{r}
-{\sum m_{a}\left( X_{i} \right)}
-\end{array}$$ to estimate the risk $E\left( Y(a) \right)$.
+We compute the simple G-estimator \begin{align\*} \sum m_a(X_i)
+\end{align\*} to estimate the risk E(Y(a)).
 
 The DR-estimator instead uses the estimating equations that are double
 robust wrt
 
-- A working logistic model for the resonse
+- A working logistic model for the response
 - A working logistic model for treatment given covariates
 
-This is estimated using the estimator $$\begin{array}{r}
-{\sum\left\lbrack \frac{A_{i}Y_{i}}{\pi_{A}\left( X_{i} \right)} - \frac{A_{i} - \pi_{A}\left( X_{i} \right)}{\pi_{A}\left( X_{i} \right)}m_{1}\left( X_{i} \right) \right\rbrack - \left\lbrack \frac{\left( 1 - A_{i} \right)Y_{i}}{1 - \pi_{A}\left( X_{i} \right)} + \frac{A_{i} - \pi_{A}\left( X_{i} \right)}{1 - \pi_{A}\left( X_{i} \right)}m_{0}\left( X_{i} \right) \right\rbrack}
-\end{array}$$ where
+This is estimated using the estimator \begin{align\*} \sum \left\[
+\frac{A_i Y_i}{\pi_A(X_i)}-\frac{A_i - \pi_A(X_i)}{\pi_A(X_i)} m_1(X_i)
+\right\] - \left\[ \frac{(1-A_i) Y_i}{1-\pi_A(X_i)}+\frac{A_i -
+\pi_A(X_i)}{1-\pi_A(X_i)} m_0(X_i) \right\] \end{align\*} where
 
-- $A_{i}$ is treatment indicator
-- $\pi_{A}\left( X_{i} \right) = P\left( A_{i} = 1|X_{i} \right)$ is
-  treatment model
-- $Y_{i}$ outcome, that in case of censoring is censoring adjusted
-  ${\widetilde{Y}}_{i}\Delta(t)/G_{c}\left( T_{i} - \land t \right)$
-- ${\widetilde{Y}}_{i} = I\left( T_{i} \leq t,\epsilon_{i} = 1 \right)$
-  oucome before censoring.
-- $m_{j}\left( X_{i} \right) = P\left( Y_{i} = 1|A_{i} = j,X_{i} \right)$
-  is outcome model, using binomial regression.
+- A_i is treatment indicator
+- \pi_A(X_i) = P(A_i=1\|X_i) is treatment model
+- Y_i outcome, that in case of censoring is censoring adjusted \tilde
+  Y_i \Delta(t) /G_c(T_i- \wedge t)
+- \tilde Y_i = I(T_i \leq t, \epsilon_i=1) outcome before censoring.
+- m_j(X_i)=P(Y_i=1\| A_i=j,X_i) is outcome model, using binomial
+  regression.
 
 The standard errors are then based on an iid decomposition using
 taylor-expansions for the parameters of the treatment-model and the
 outcome-model, and the censoring probability.
 
 We need that the censoring model is correct, so it can be important to
-use a sufficiently large censorng model as we also illustrate below.
+use a sufficiently large censoring model as we also illustrate below.
 
-- The censoring model can be specified by strata (used for phreg
+- The censoring model can be specified by strata (used for `phreg`).
 
 We also compute standard marginalization for average treatment effect
-(called differenceG) $$\begin{array}{r}
-{\sum\left\lbrack m_{1}\left( X_{i} \right) - m_{0}\left( X_{i} \right) \right\rbrack}
-\end{array}$$ and again standard errors are based on the related
-influcence functions and are also returned.
+(called differenceG) \begin{align\*} \sum \left\[ m_1(X_i) - m_0(X_i)
+\right\] \end{align\*} and again standard errors are based on the
+related influence functions and are also returned.
 
 For large data where there are more than 2 treatment groups the
 computations can be memory extensive when there are many covariates due
 to the multinomial-regression model used for the propensity scores.
 Otherwise the function (binregATE) will run for large data.
 
-The ATE functions need that the treatment that is given as the first
-variable on the right hand side of the outcome model is a factor. The
-variable is also indentified from the left hand side of the treatment
-model (treat.model), that per default assumes that treatment does not
+The ATE functions require that the treatment variable, given as the
+first variable on the right-hand side of the outcome model, is a factor.
+The variable is also identified from the left-hand side of the treatment
+model (`treat.model`), which by default assumes that treatment does not
 depend on any covariates.
 
 ## Average treatment effect for binary or continuous responses
 
 In the binary case a binary outcome is specified instead of the survival
-outcome, and as a consequence no-censoring adjustment is done
+outcome, and as a consequence no censoring adjustment is done.
 
-- the binary/numeric outcome must be a variable in the data-frame
+- the binary/numeric outcome must be a variable in the data frame
 
-Running the code (can also use binregATE koding cause without censorings
-values, so setting cens.code=2, and time large)
+The following code runs the analysis (one can also use `binregATE` by
+coding `cause` without censoring values, i.e. setting `cens.code=2` and
+`time` large):
 
 ``` r
+
 kumar$cause2 <- 1*(kumar$cause==2)
 
 b3 <- logitATE(cause2~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24)
@@ -430,6 +433,7 @@ estimate(coef=b3$riskDR,vcov=b3$var.riskDR,f=function(p) p[1]/p[2])
 Or with continuous response using normal estimating equations
 
 ``` r
+
 b3 <- normalATE(time~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24)
 summary(b3)
 #>    n events
@@ -461,10 +465,11 @@ summary(b3)
 ## SessionInfo
 
 ``` r
+
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -483,22 +488,22 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] mets_1.3.9
+#> [1] mets_1.3.10
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           
-#>  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        
-#>  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            
-#> [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           
-#> [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
+#>  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        
+#>  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            
+#> [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           
+#> [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        
 #> [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   
-#> [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       
-#> [22] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      
-#> [25] fs_1.6.6               htmlwidgets_1.6.4      Rcpp_1.1.1            
-#> [28] future_1.68.0          lattice_0.22-7         systemfonts_1.3.1     
-#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.46.1     
-#> [34] parallel_4.5.2         splines_4.5.2          Matrix_1.7-4          
-#> [37] bslib_0.9.0            tools_4.5.2            RcppArmadillo_15.2.3-1
-#> [40] globals_0.18.0         survival_3.8-3         pkgdown_2.2.0         
+#> [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       
+#> [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      
+#> [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        
+#> [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     
+#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     
+#> [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
+#> [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1
+#> [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         
 #> [43] cachem_1.1.0           desc_1.4.3
 ```

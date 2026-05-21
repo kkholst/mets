@@ -6,9 +6,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Average treatment effect (ATE) for Competing risks and binary outcomes • mets</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="../katex-auto.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Average treatment effect (ATE) for Competing risks and binary outcomes">
 </head>
@@ -20,7 +21,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,10 +38,10 @@
     <li><a class="dropdown-item" href="../articles/binomial-family.html">Analysis of multivariate binomial data: family analysis</a></li>
     <li><a class="dropdown-item" href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a></li>
     <li><a class="dropdown-item" href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a></li>
-    <li><a class="dropdown-item" href="../articles/binreg-TRS.html">Two-Stage Randomization for for Competing risks and Survival outcomes</a></li>
+    <li><a class="dropdown-item" href="../articles/binreg-TRS.html">Two-Stage Randomization for Competing risks and Survival outcomes</a></li>
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
-    <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">Cooking Survival Data: 5-Minute Recipes</a></li>
     <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
@@ -80,7 +81,7 @@
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2026-01-14</h4>
+            <h4 data-toc-skip class="date">2026-05-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/binreg-ate.Rmd" class="external-link"><code>vignettes/binreg-ate.Rmd</code></a></small>
       <div class="d-none name"><code>binreg-ate.Rmd</code></div>
@@ -88,58 +89,69 @@
 
     
     
-<p>The binregATE function can fit a logistic link model with IPCW
-adjustment for a specific time-point, and can thus be used for
-describing survival or competing risks data. The function can be used
-for large data and is completely scalable, that is, linear in the data.
-A nice feature is that influcence functions are computed and are
-available.</p>
-<p>In addition and to summarize</p>
+<p>The <code>binregATE</code> function estimates the average treatment
+effect for binary outcomes with IPCW adjustment at a specific
+time-point, and can thus be used for survival or competing risks data.
+Computation is linear in data size and influence functions are computed
+and available.</p>
+<p>Key features:</p>
 <ul>
-<li>the censoring weights can be strata dependent</li>
+<li>the censoring weights can be stratum-dependent</li>
 <li>predictions can be computed with standard errors</li>
-<li>computation time is linear in data
-<ul>
-<li>including standard errors</li>
-</ul>
-</li>
-<li>clusters can be given and then cluster corrected standard errors are
-computed</li>
+<li>computation time is linear in data size, including standard
+errors</li>
+<li>cluster-corrected standard errors are available via the
+<code>clusters</code> argument</li>
 </ul>
 <div class="section level2">
 <h2 id="average-treatment-effect">Average treatment effect<a class="anchor" aria-label="anchor" href="#average-treatment-effect"></a>
 </h2>
-<p>First we simulate some data that mimics that of Kumar et al 2012.
+<p>First we simulate some data that mimics that of Kumar et al. (2012).
 This is data from multiple myeloma patients treated with allogeneic stem
 cell transplantation from the Center for International Blood and Marrow
-Transplant Research (CIBMTR) Kumar et al (2012), “Trends in allogeneic
-stem cell transplantation for multiple myeloma: a CIBMTR analysis”. The
-data used in this paper consist of patients transplanted from 1995 to
-2005, and we compared the outcomes between transplant periods: 2001-2005
-(N=488) versus 1995-2000 (N=375). The two competing events were relapse
-(cause 2) and treatment-related mortality (TRM, cause 1) defined as
-death without relapse. considered the following risk covariates:
-transplant time period (gp (main interest of the study): 1 for
-transplanted in 2001-2005 versus 0 for transplanted in 1995-2000), donor
-type (dnr: 1 for Unrelated or other related donor (N=280) versus 0 for
-HLA-identical sibling (N=584)), prior autologous transplant (preauto: 1
-for Auto+Allo transplant (N=399) versus 0 for allogeneic transplant
-alone (N=465)) and time to transplant (ttt24: 1 for more than 24 months
-(N=289) versus 0 for less than or equal to 24 months (N=575))).</p>
-<p>We here generate similar data by assuming that the two cumlative
-incidence curves are logistic and we have censoring that depends on the
-covariates via a Cox model. All this is wrapped in the kumarsim
-function. The simulation does not deal with possible violations of the
-bound that
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mn>1</mn></msub><mo>+</mo><msub><mi>F</mi><mn>2</mn></msub><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">F_1+F_2 &lt; 1</annotation></semantics></math>.
-But as we increase the sample size we still see that we recover the
-parameters of cause 2.</p>
+Transplant Research (CIBMTR). The data consisted of patients
+transplanted from 1995 to 2005, comparing outcomes between transplant
+periods: 2001–2005 (<span class="math inline">N=488</span>) versus
+1995–2000 (<span class="math inline">N=375</span>). The two competing
+events were relapse (cause 2) and treatment-related mortality (TRM,
+cause 1) defined as death without relapse. Kumar et al. (2012)
+considered the following risk covariates: transplant time period
+(<code>gp</code>, main interest of the study: 1 for transplanted in
+2001–2005 versus 0 for transplanted in 1995–2000), donor type
+(<code>dnr</code>: 1 for unrelated or other related donor (<span class="math inline">N=280</span>) versus 0 for HLA-identical sibling
+(<span class="math inline">N=584</span>)), prior autologous transplant
+(<code>preauto</code>: 1 for Auto+Allo transplant (<span class="math inline">N=399</span>) versus 0 for allogeneic transplant
+alone (<span class="math inline">N=465</span>)) and time to transplant
+(<code>ttt24</code>: 1 for more than 24 months (<span class="math inline">N=289</span>) versus 0 for less than or equal to 24
+months (<span class="math inline">N=575</span>)).</p>
+<p>We generate similar data by assuming that the two cumulative
+incidence curves are logistic and that censoring depends on covariates
+via a Cox model, all wrapped in the <code>kumarsim</code> function. The
+simulation does not enforce the constraint <span class="math inline">F_1+F_2 &lt; 1</span>, but as we increase the sample
+size we still recover the parameters of cause 2.</p>
+<p>We start by computing the average treatment effects for the
+transplant periods (<code>gp</code>), then consider the possible
+interaction between <code>gp</code> and donor type (<code>dnr</code>)
+and estimate all contrasts between the risk estimates for all
+combinations of <code>gp</code> and <code>dnr</code>. The key components
+are:</p>
+<ul>
+<li>an outcome model (fitted by IPCW):
+<code>Event(...) ~ .....</code>
+</li>
+<li>a propensity score model (using logistic regression):
+<code>treat.model=...</code>
+</li>
+<li>an IPCW weight estimated using a stratified Kaplan-Meier model:
+<code>cens.model=~strata(..)</code>
+</li>
+</ul>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span> </span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
 <span><span class="co">###</span></span>
 <span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">400</span></span>
-<span><span class="va">kumar</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregATE.html">kumarsim</a></span><span class="op">(</span><span class="va">n</span>,depcens<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">kumar</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mets-simulation.html">kumarsim</a></span><span class="op">(</span><span class="va">n</span>,depcens<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">kumar</span><span class="op">$</span><span class="va">cause</span> <span class="op">&lt;-</span> <span class="va">kumar</span><span class="op">$</span><span class="va">status</span></span>
 <span><span class="va">kumar</span><span class="op">$</span><span class="va">ttt24</span> <span class="op">&lt;-</span> <span class="va">kumar</span><span class="op">[</span>,<span class="fl">6</span><span class="op">]</span></span>
 <span><span class="fu"><a href="../reference/dtable.html">dtable</a></span><span class="op">(</span><span class="va">kumar</span>,<span class="op">~</span><span class="va">cause</span><span class="op">)</span></span>
@@ -246,16 +258,18 @@ parameters of cause 2.</p>
 very different from those using the simple Kaplan-Meier weights that are
 severely biased for these data. This is due to a strong censoring
 dependence.</p>
-<p>The average treatment is around
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.17</mn><mo>=</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">0.17 = E(Y(1) - Y(0))</annotation></semantics></math>
-at time 60 for the transplant period, under the standard causal
-assumptions. The 1/0 treatment variable used for the causal computation
-is found as the right hand side (rhs) of the treat.model or as the first
-argument on the rhs of the response model.</p>
+<p>The average treatment is around <span class="math inline">0.17 =
+E(Y(1) - Y(0))</span> at time 60 for the transplant period, under the
+standard causal assumptions. The 1/0 treatment variable used for the
+causal computation is found as the right hand side (rhs) of the
+treat.model or as the first argument on the rhs of the response
+model.</p>
 <p>The binregATE default uses binreg with its default to fit the working
 model and is recommended, but the logitIPCW and logitIPCWATE can also be
 used and are GLM-type IPCW weighted models (see binreg help
-page/vignette).</p>
+page/vignette). We can compare the logitIPCWATE/logitIPCW with that of
+wglm and its ate function in the riskRegression package, and they
+agree.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ib2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binregATE.html">logitIPCWATE</a></span><span class="op">(</span><span class="fu"><a href="../reference/Event.html">Event</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">)</span><span class="op">~</span><span class="va">gp.f</span><span class="op">+</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>,<span class="va">kumar</span>,cause<span class="op">=</span><span class="fl">2</span>,</span>
 <span>    treat.model<span class="op">=</span><span class="va">gp.f</span><span class="op">~</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>,time<span class="op">=</span><span class="fl">40</span>,cens.model<span class="op">=</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">gp</span>,<span class="va">dnr</span><span class="op">)</span><span class="op">)</span></span>
@@ -342,13 +356,13 @@ page/vignette).</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tagteam/riskRegression" class="external-link">riskRegression</a></span><span class="op">)</span></span>
 <span><span class="va">e.wglm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/riskRegression/man/wglm.html" class="external-link">wglm</a></span><span class="op">(</span> regressor.event<span class="op">=</span><span class="op">~</span><span class="va">gp.f</span><span class="op">+</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>, formula.censor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span>, times <span class="op">=</span> <span class="fl">60</span>, data <span class="op">=</span> <span class="va">kumar</span>, product.limit<span class="op">=</span><span class="cn">TRUE</span>,cause<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">e.wglm</span><span class="op">)</span><span class="op">$</span><span class="va">coef</span></span>
-<span><span class="fu"><a href="http://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">ibs</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">ibs</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">es.wglm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/riskRegression/man/wglm.html" class="external-link">wglm</a></span><span class="op">(</span> regressor.event<span class="op">=</span><span class="op">~</span><span class="va">gp.f</span><span class="op">+</span><span class="va">dnr</span><span class="op">+</span><span class="va">preauto</span><span class="op">+</span><span class="va">ttt24</span>, </span>
 <span>formula.censor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">cause</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">gp</span>,<span class="va">dnr</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">60</span>, </span>
 <span>data <span class="op">=</span> <span class="va">kumar</span>, product.limit<span class="op">=</span><span class="cn">TRUE</span>,cause<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">es.wglm</span><span class="op">)</span><span class="op">$</span><span class="va">coef</span></span>
-<span><span class="fu"><a href="http://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">ib5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">ib5</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>The cluster argument should not be used for the logitIPCWATE, but
 works for binregATE.</p>
@@ -357,34 +371,21 @@ works for binregATE.</p>
 <h2 id="average-treatment-for-competing-risks-data">Average treatment for Competing risks data<a class="anchor" aria-label="anchor" href="#average-treatment-for-competing-risks-data"></a>
 </h2>
 <p>The binreg function does direct binomial regression for one
-time-point,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>,
-fitting the model
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mtext mathvariant="normal">expit</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+time-point, <span class="math inline">t</span>, fitting the model <span class="math display">\begin{align*}
 P(T \leq t, \epsilon=1 | X )  &amp; = \mbox{expit}( X^T \beta),
-\end{align*}</annotation></semantics></math> for possible right censored
-data. The estimation procedure is based on IPCW adjusted estimating
-equation (EE)
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>U</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo></mtd><mtd columnalign="left" style="text-align: left"><mi>X</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Δ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><msub><mi>G</mi><mi>c</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>∧</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mtext mathvariant="normal">expit</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>b</mi><mi>e</mi><mi>t</mi><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0</mn></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
- U(\beta) = &amp;  X \left( \Delta(t) I(T \leq t, \epsilon=1 )/G_c(T \wedge t) - \mbox{expit}( X^T beta) \right) = 0 
-\end{align*}</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>G</mi><mi>c</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mo>&gt;</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">G_c(t)=P(C &gt; t)</annotation></semantics></math>,
-the censoring survival distribution, and with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mo>&gt;</mo><mi>T</mi><mo>∧</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\Delta(t) = I( C &gt; T \wedge t)</annotation></semantics></math>
-the indicator of being uncensored at time
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>.</p>
-<p>The function logitIPCW instead considers the EE the EE
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>U</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo></mtd><mtd columnalign="left" style="text-align: left"><mi>X</mi><mfrac><mrow><mi>Δ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mi>G</mi><mi>c</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>∧</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mtext mathvariant="normal">expit</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>b</mi><mi>e</mi><mi>t</mi><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0</mn><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
- U(\beta) = &amp;  X  \frac{\Delta(t)}{G_c(T \wedge t)} \left( I(T \leq t, \epsilon=1 ) - \mbox{expit}( X^T beta) \right) = 0.
-\end{align*}</annotation></semantics></math> The two score equations are
-quite similar, and exactly the same when the censoring model is
-fully-nonparametric given
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>.</p>
-<ul>
-<li>It seems that the binreg estimating equations most often is
-preferable to use, and the estimating equation used is also augmented in
-the default implementation (see the binreg vignette).</li>
-</ul>
+\end{align*}</span> for possible right censored data. The estimation
+procedure is based on IPCW adjusted estimating equation (EE) <span class="math display">\begin{align*}
+U(\beta) = &amp;  X \left( \Delta(t) I(T \leq t, \epsilon=1 )/G_c(T
+\wedge t) - \mbox{expit}( X^T beta) \right) = 0
+\end{align*}</span> where <span class="math inline">G_c(t)=P(C &gt;
+t)</span>, the censoring survival distribution, and with <span class="math inline">\Delta(t) = I( C &gt; T \wedge t)</span> the
+indicator of being uncensored at time <span class="math inline">t</span>.</p>
+<p>The function logitIPCW instead considers the EE <span class="math display">\begin{align*}
+U(\beta) = &amp;  X  \frac{\Delta(t)}{G_c(T \wedge t)} \left( I(T \leq
+t, \epsilon=1 ) - \mbox{expit}( X^T beta) \right) = 0.
+\end{align*}</span> The two score equations are quite similar, and
+exactly the same when the censoring model is fully-nonparametric given
+<span class="math inline">X</span>.</p>
 <p>Additional functions logitATE, and binregATE computes the average
 treatment effect. We demonstrate their use below.</p>
 <p>The functions binregATE (recommended) and logitATE also works when
@@ -396,8 +397,9 @@ cluster corrected by specifying the relevant cluster for the working
 outcome model.</p>
 <ul>
 <li>We estimate the average treatment effect of our binary response
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>T</mi><mo>≤</mo><mi>t</mi><mo>,</mo><mi>ϵ</mi><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">I(T \leq t, \epsilon=1)</annotation></semantics></math><ul>
-<li>Using a working logistic model for the resonse (possibly with a
+<span class="math inline">I(T \leq t, \epsilon=1)</span>
+<ul>
+<li>Using a working logistic model for the response (possibly with a
 cluster specification)</li>
 <li>Using a working logistic model for treatment given covariates
 <ul>
@@ -412,82 +414,80 @@ stratified Kaplan-Meier.</li>
 </ul>
 <p>If there are no censoring then the censoring weights are simply set
 to 1.</p>
-<p>The average treatment effect is
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
- E(Y(1) - Y(0)) 
-\end{align*}</annotation></semantics></math> using counterfactual
-outcomes.</p>
-<p>We compute the simple G-estimator
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mo>∑</mo><msub><mi>m</mi><mi>a</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-\sum  m_a(X_i) 
-\end{align*}</annotation></semantics></math> to estimate the risk
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">E(Y(a))</annotation></semantics></math>.</p>
+<p>The average treatment effect is <span class="math display">\begin{align*}
+E(Y(1) - Y(0))
+\end{align*}</span> using counterfactual outcomes.</p>
+<p>We compute the simple G-estimator <span class="math display">\begin{align*}
+\sum  m_a(X_i)
+\end{align*}</span> to estimate the risk <span class="math inline">E(Y(a))</span>.</p>
 <p>The DR-estimator instead uses the estimating equations that are
 double robust wrt</p>
 <ul>
-<li>A working logistic model for the resonse</li>
+<li>A working logistic model for the response</li>
 <li>A working logistic model for treatment given covariates</li>
 </ul>
-<p>This is estimated using the estimator
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mo>∑</mo><mrow><mo stretchy="true" form="prefix">[</mo><mfrac><mrow><msub><mi>A</mi><mi>i</mi></msub><msub><mi>Y</mi><mi>i</mi></msub></mrow><mrow><msub><mi>π</mi><mi>A</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>−</mo><mfrac><mrow><msub><mi>A</mi><mi>i</mi></msub><mo>−</mo><msub><mi>π</mi><mi>A</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mi>π</mi><mi>A</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><msub><mi>m</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>−</mo><mrow><mo stretchy="true" form="prefix">[</mo><mfrac><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>A</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>Y</mi><mi>i</mi></msub></mrow><mrow><mn>1</mn><mo>−</mo><msub><mi>π</mi><mi>A</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>+</mo><mfrac><mrow><msub><mi>A</mi><mi>i</mi></msub><mo>−</mo><msub><mi>π</mi><mi>A</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mn>1</mn><mo>−</mo><msub><mi>π</mi><mi>A</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><msub><mi>m</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-\sum \left[ \frac{A_i Y_i}{\pi_A(X_i)}-\frac{A_i - \pi_A(X_i)}{\pi_A(X_i)} m_1(X_i) \right]
-   - \left[ \frac{(1-A_i) Y_i}{1-\pi_A(X_i)}+\frac{A_i - \pi_A(X_i)}{1-\pi_A(X_i)} m_0(X_i) \right]
-\end{align*}</annotation></semantics></math> where</p>
+<p>This is estimated using the estimator <span class="math display">\begin{align*}
+\sum \left[ \frac{A_i Y_i}{\pi_A(X_i)}-\frac{A_i -
+\pi_A(X_i)}{\pi_A(X_i)} m_1(X_i) \right]
+   - \left[ \frac{(1-A_i) Y_i}{1-\pi_A(X_i)}+\frac{A_i -
+\pi_A(X_i)}{1-\pi_A(X_i)} m_0(X_i) \right]
+\end{align*}</span> where</p>
 <ul>
 <li>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>i</mi></msub><annotation encoding="application/x-tex">A_i</annotation></semantics></math>
-is treatment indicator</li>
+<span class="math inline">A_i</span> is treatment indicator</li>
 <li>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>π</mi><mi>A</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>A</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\pi_A(X_i) = P(A_i=1|X_i)</annotation></semantics></math>
-is treatment model</li>
+<span class="math inline">\pi_A(X_i) = P(A_i=1|X_i)</span> is
+treatment model</li>
 <li>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mi>i</mi></msub><annotation encoding="application/x-tex">Y_i</annotation></semantics></math>
-outcome, that in case of censoring is censoring adjusted
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>Y</mi><mo accent="true">̃</mo></mover><mi>i</mi></msub><mi>Δ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><msub><mi>G</mi><mi>c</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>T</mi><mi>i</mi></msub><mo>−</mo><mo>∧</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\tilde Y_i \Delta(t) /G_c(T_i- \wedge t)</annotation></semantics></math>
+<span class="math inline">Y_i</span> outcome, that in case of
+censoring is censoring adjusted <span class="math inline">\tilde Y_i
+\Delta(t) /G_c(T_i- \wedge t)</span>
 </li>
 <li>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>Y</mi><mo accent="true">̃</mo></mover><mi>i</mi></msub><mo>=</mo><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>T</mi><mi>i</mi></msub><mo>≤</mo><mi>t</mi><mo>,</mo><msub><mi>ϵ</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\tilde Y_i = I(T_i \leq t, \epsilon_i=1)</annotation></semantics></math>
-oucome before censoring.</li>
+<span class="math inline">\tilde Y_i = I(T_i \leq t,
+\epsilon_i=1)</span> outcome before censoring.</li>
 <li>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>m</mi><mi>j</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><msub><mi>A</mi><mi>i</mi></msub><mo>=</mo><mi>j</mi><mo>,</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">m_j(X_i)=P(Y_i=1| A_i=j,X_i)</annotation></semantics></math>
-is outcome model, using binomial regression.</li>
+<span class="math inline">m_j(X_i)=P(Y_i=1| A_i=j,X_i)</span> is
+outcome model, using binomial regression.</li>
 </ul>
 <p>The standard errors are then based on an iid decomposition using
 taylor-expansions for the parameters of the treatment-model and the
 outcome-model, and the censoring probability.</p>
 <p>We need that the censoring model is correct, so it can be important
-to use a sufficiently large censorng model as we also illustrate
+to use a sufficiently large censoring model as we also illustrate
 below.</p>
 <ul>
-<li>The censoring model can be specified by strata (used for phreg</li>
+<li>The censoring model can be specified by strata (used for
+<code>phreg</code>).</li>
 </ul>
 <p>We also compute standard marginalization for average treatment effect
-(called differenceG)
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mo>∑</mo><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>m</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>m</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+(called differenceG) <span class="math display">\begin{align*}
 \sum \left[  m_1(X_i) - m_0(X_i) \right]
-\end{align*}</annotation></semantics></math> and again standard errors
-are based on the related influcence functions and are also returned.</p>
+\end{align*}</span> and again standard errors are based on the related
+influence functions and are also returned.</p>
 <p>For large data where there are more than 2 treatment groups the
 computations can be memory extensive when there are many covariates due
 to the multinomial-regression model used for the propensity scores.
 Otherwise the function (binregATE) will run for large data.</p>
-<p>The ATE functions need that the treatment that is given as the first
-variable on the right hand side of the outcome model is a factor. The
-variable is also indentified from the left hand side of the treatment
-model (treat.model), that per default assumes that treatment does not
-depend on any covariates.</p>
+<p>The ATE functions require that the treatment variable, given as the
+first variable on the right-hand side of the outcome model, is a factor.
+The variable is also identified from the left-hand side of the treatment
+model (<code>treat.model</code>), which by default assumes that
+treatment does not depend on any covariates.</p>
 </div>
 <div class="section level2">
 <h2 id="average-treatment-effect-for-binary-or-continuous-responses">Average treatment effect for binary or continuous responses<a class="anchor" aria-label="anchor" href="#average-treatment-effect-for-binary-or-continuous-responses"></a>
 </h2>
 <p>In the binary case a binary outcome is specified instead of the
-survival outcome, and as a consequence no-censoring adjustment is
-done</p>
+survival outcome, and as a consequence no censoring adjustment is
+done.</p>
 <ul>
-<li>the binary/numeric outcome must be a variable in the data-frame</li>
+<li>the binary/numeric outcome must be a variable in the data frame</li>
 </ul>
-<p>Running the code (can also use binregATE koding cause without
-censorings values, so setting cens.code=2, and time large)</p>
+<p>The following code runs the analysis (one can also use
+<code>binregATE</code> by coding <code>cause</code> without censoring
+values, i.e. setting <code>cens.code=2</code> and <code>time</code>
+large):</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">kumar</span><span class="op">$</span><span class="va">cause2</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span><span class="op">(</span><span class="va">kumar</span><span class="op">$</span><span class="va">cause</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span></span>
 <span></span>
@@ -530,7 +530,7 @@ censorings values, so setting cens.code=2, and time large)</p>
 <span><span class="co">###summary(b3a)</span></span>
 <span></span>
 <span><span class="co">## calculate also relative risk</span></span>
-<span><span class="fu"><a href="http://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="va">b3</span><span class="op">$</span><span class="va">riskDR</span>,vcov<span class="op">=</span><span class="va">b3</span><span class="op">$</span><span class="va">var.riskDR</span>,f<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">/</span><span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="va">b3</span><span class="op">$</span><span class="va">riskDR</span>,vcov<span class="op">=</span><span class="va">b3</span><span class="op">$</span><span class="va">var.riskDR</span>,f<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">/</span><span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;        Estimate Std.Err   2.5% 97.5%   P-value</span></span>
 <span><span class="co">#&gt; treat0   0.8146  0.1194 0.5807 1.049 8.831e-12</span></span></code></pre></div>
 <p>Or with continuous response using normal estimating equations</p>
@@ -567,9 +567,9 @@ censorings values, so setting cens.code=2, and time large)</p>
 </h2>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.5.2 (2025-10-31)</span></span>
+<span><span class="co">#&gt; R version 4.6.0 (2026-04-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.3 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -588,23 +588,23 @@ censorings values, so setting cens.code=2, and time large)</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.9</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.10</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           </span></span>
-<span><span class="co">#&gt;  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        </span></span>
-<span><span class="co">#&gt;  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            </span></span>
-<span><span class="co">#&gt; [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           </span></span>
-<span><span class="co">#&gt; [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        </span></span>
+<span><span class="co">#&gt;  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           </span></span>
+<span><span class="co">#&gt;  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        </span></span>
+<span><span class="co">#&gt;  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            </span></span>
+<span><span class="co">#&gt; [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           </span></span>
+<span><span class="co">#&gt; [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        </span></span>
 <span><span class="co">#&gt; [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   </span></span>
-<span><span class="co">#&gt; [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       </span></span>
-<span><span class="co">#&gt; [22] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      </span></span>
-<span><span class="co">#&gt; [25] fs_1.6.6               htmlwidgets_1.6.4      Rcpp_1.1.1            </span></span>
-<span><span class="co">#&gt; [28] future_1.68.0          lattice_0.22-7         systemfonts_1.3.1     </span></span>
-<span><span class="co">#&gt; [31] digest_0.6.39          R6_2.6.1               parallelly_1.46.1     </span></span>
-<span><span class="co">#&gt; [34] parallel_4.5.2         splines_4.5.2          Matrix_1.7-4          </span></span>
-<span><span class="co">#&gt; [37] bslib_0.9.0            tools_4.5.2            RcppArmadillo_15.2.3-1</span></span>
-<span><span class="co">#&gt; [40] globals_0.18.0         survival_3.8-3         pkgdown_2.2.0         </span></span>
+<span><span class="co">#&gt; [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       </span></span>
+<span><span class="co">#&gt; [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      </span></span>
+<span><span class="co">#&gt; [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        </span></span>
+<span><span class="co">#&gt; [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     </span></span>
+<span><span class="co">#&gt; [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     </span></span>
+<span><span class="co">#&gt; [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          </span></span>
+<span><span class="co">#&gt; [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1</span></span>
+<span><span class="co">#&gt; [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         </span></span>
 <span><span class="co">#&gt; [43] cachem_1.1.0           desc_1.4.3</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -2,14 +2,14 @@
 
 ## Overview
 
-When looking at bivariate binomial data with the aim of learning about
-the dependence that is present, possibly after correcting for some
-covariates many models are available.
+When analysing bivariate binomial data with the aim of learning about
+the dependence present, possibly after adjusting for covariates, many
+models are available.
 
-- Random-effects models logistic regression covered elsewhere (glmer in
-  lme4).
+- Random-effects logistic regression models covered elsewhere (`glmer`
+  in `lme4`).
 
-in the mets package you can fit the
+In the mets package you can fit the
 
 - Pairwise odds ratio model
 
@@ -26,19 +26,19 @@ in the mets package you can fit the
 
 Typically it can be hard or impossible to specify random effects models
 with special structure among the parameters of the random effects. This
-is possible in our models.
+is possible with our models.
 
-To be concrete about the model structure assume that we have paired
-binomial data $(Y_{1},Y_{2},X_{1},X_{)}2$ where the responses are
-$Y_{1},Y_{2}$ and we have covariates $X_{1},X_{2}$.
+To be concrete about the model structure, assume that we have paired
+binomial data (Y_1, Y_2, X_1, X_2) where the responses are Y_1, Y_2 and
+the covariates are X_1, X_2.
 
 We start by giving a brief description of these different models. First
 we for bivariate data one can specify the marginal probability using
-logistic regression models
-$$logit\left( P\left( Y_{i} = 1|X_{i} \right) \right) = \alpha_{i} + X_{i}^{T}\beta i = 1,2.$$
-These model can be estimated under working independence .
+logistic regression models logit(P(Y_i=1\|X_i)) = \alpha_i + X_i^T \beta
+i=1,2. These models can be estimated under working independence (Zeger
+and Liang, 1986).
 
-A typical twin analysis will typically consist of looking at both
+A typical twin analysis will consist of looking at both
 
 - Pairwise odds ratio model
 
@@ -51,115 +51,116 @@ bivariate probit model.
 
 ## Biprobit with random effects
 
-For these model we assume that given random effects $Z$ and a covariate
-vector $V_{12}$ we have independent logistic regression models
-$$probit\left( P\left( Y_{i} = 1|X_{i},Z \right) \right) = \alpha_{i} + X_{i}^{T}\beta + V_{12}^{T}Zi = 1,2.$$
-where Z\$ is a bivariate normal distribution with some covariance
-$\Sigma$. The general covariance structure $\Sigma$ makes the model very
-flexible.
+For these models we assume that given random effects Z and a covariate
+vector V\_{12} we have independent probit regression models
+\mbox{probit}(P(Y_i=1\|X_i, Z)) = \alpha_i + X_i^T \beta + V\_{12}^T Z,
+\quad i=1,2. where Z follows a bivariate normal distribution with
+covariance \Sigma. The general covariance structure \Sigma makes the
+model very flexible.
 
 We note that
 
-- Paramters $\beta$ are subject specific
-- The $\Sigma$ will reflect dependence
+- Parameters \beta are subject-specific
+- \Sigma reflects the dependence structure
 
-The more standard link function $logit$ rather than the $probit$ link is
-often used and implemented in for example . The advantage is that one
-now gets an odds-ratio interpretation of the subject specific effects,
-but one then needs numerical integration to fit the model.
+The more standard \mbox{logit} link rather than the \mbox{probit} link
+is often used and implemented in, for example, Tutz and Hennevogl
+(1996). The advantage is that one obtains an odds-ratio interpretation
+of the subject-specific effects, but numerical integration is then
+needed to fit the model.
 
 ### Pairwise odds ratio model
 
-Now the pairwise odds ratio model the specifies that given \$ X_1, X_2
-\$ the marginal models are
-$$logit\left( P\left( Y_{i} = 1|X_{i} \right) \right) = \alpha_{i} + X_{i}^{T}\beta i = 1,2$$
+The pairwise odds ratio model specifies that given X_1, X_2 the marginal
+models are logit(P(Y_i=1\|X_i)) = \alpha_i + X_i^T \beta i=1,2
 
-The primary object of interest are the odds ratio between $Y_{1}$ and
-$Y_{2}$$$\gamma_{12} = \frac{P\left( Y_{ki} = 1,Y_{kj} = 1 \right)P\left( Y_{ki} = 0,Y_{kj} = 0 \right)}{P\left( Y_{ki} = 1,Y_{kj} = 0 \right)P\left( Y_{ki} = 0,Y_{kj} = 1 \right)}$$
-given $X_{ki}$, $X_{kj}$, and $Z_{kji}$.
+The primary object of interest are the odds ratio between Y\_{1} and
+Y\_{2} \gamma\_{12} = \frac{ P( Y\_{ki} =1 , Y\_{kj} =1) P( Y\_{ki} =0 ,
+Y\_{kj} =0) }{ P( Y\_{ki} =1 , Y\_{kj} =0) P( Y\_{ki} =0 , Y\_{kj} =1) }
+given X\_{ki}, X\_{kj}, and Z\_{kji}.
 
-We model the odds ratio with the regression
-$$\gamma_{12} = \exp\left( Z_{12}^{T}\lambda \right)$$ Where $Z_{12}$
-are some covarites that may influence the odds-ratio between between
-$Y_{1}$ and $Y_{2}$ and contains the marginal covariates, . This
-odds-ratio is given covariates as well as marginal covariates. The
-odds-ratio and marginals specify the joint bivariate distribution via
-the so-called Placckett-distribution.
+We model the odds ratio with the regression \gamma\_{12} = \exp(
+Z\_{12}^T \lambda) Where Z\_{12} are covariates that may influence the
+odds ratio between Y\_{1} and Y\_{2} and contains the marginal
+covariates . This odds-ratio is given covariates as well as marginal
+covariates. The odds-ratio and marginals specify the joint bivariate
+distribution via the so-called Placckett-distribution.
 
-One way of fitting this model is the ALR algoritm, the alternating
-logistic regression ahd this has been described in several papers . We
-here simply estimate the parameters in a two stage-procedure
+One way of fitting this model is the ALR (alternating logistic
+regression) algorithm, described in several papers (Kuk, 2004; Kuk,
+2007; Qaqish, 2012). We estimate the parameters in a two-stage
+procedure:
 
 - Estimating the marginal parameters via GEE
 - Using marginal estimates, estimate dependence parameters
 
-This gives efficient estimates of the dependence parameters because of
-orthogonality, but some efficiency may be gained for the marginal
-parameters by using the full likelihood or iterative fitting such as for
-the ALR.
+This gives efficient estimates of the dependence parameters due to
+orthogonality, though some efficiency may be gained for the marginal
+parameters by using the full likelihood or iterative fitting such as
+ALR.
 
-The pairwise odds-ratio model is very useful, but one do not have a
+The pairwise odds-ratio model is very useful, but one does not have a
 random effects model.
 
 ### Additive gamma model
 
 Again we operate under marginal logistic regression models are
-$$logit\left( P\left( Y_{i} = 1|X_{i} \right) \right) = \alpha_{i} + X_{i}^{T}\beta i = 1,2$$
+logit(P(Y_i=1\|X_i)) = \alpha_i + X_i^T \beta i=1,2
 
-First with just one random effect $Z$ we assume that conditional on $Z$
-the responses are independent and follow the model
-$$logit\left( P\left( Y_{i} = 1|X_{i},Z \right) \right) = exp\left( - Z \cdot \Psi^{- 1}\left( \lambda_{\bullet},\lambda_{\bullet},P\left( Y_{i} = 1|X_{i} \right) \right) \right)$$
-where $\Psi$ is the laplace transform of $Z$ where we assume that $Z$ is
-gamma distributed with variance $\lambda_{\bullet}^{- 1}$ and mean 1. In
-general $\Psi\left( \lambda_{1},\lambda_{2} \right)$ is the laplace
-transform of a Gamma distributed random effect with $Z$ with mean
-$\lambda_{1}/\lambda_{2}$ and variance $\lambda_{1}/\lambda_{2}^{2}$.
+First with just one random effect Z we assume that conditional on Z the
+responses are independent and follow the model logit(P(Y_i=1\|X_i,Z)) =
+exp( -Z \cdot
+\Psi^{-1}(\lambda\_{\bullet},\lambda\_{\bullet},P(Y_i=1\|X_i)) ) where
+\Psi is the laplace transform of Z where we assume that Z is gamma
+distributed with variance \lambda\_{\bullet}^{-1} and mean 1. In general
+\Psi(\lambda_1,\lambda_2) is the laplace transform of a Gamma
+distributed random effect with Z with mean \lambda_1/\lambda_2 and
+variance \lambda_1/\lambda_2^2.
 
 We fit this model by
 
 - Estimating the marginal parameters via GEE
 - Using marginal estimates, estimate dependence parameters
 
-To deal with multiple random effects we consider random effects
-$Z_{i}i = 1,...,d$ such that $Z_{i}$ is gamma distributed with \* mean:
-$\lambda_{j}/\lambda_{\bullet}$ \* variance:
-$\lambda_{j}/\lambda_{\bullet}^{2}$, where we define the scalar
-$\lambda_{\bullet}$ below.
+To deal with multiple random effects we consider random effects Z_i
+i=1,...,d such that Z_i is gamma distributed with \* mean:
+\lambda_j/\lambda\_{\bullet} \* variance:
+\lambda_j/\lambda\_{\bullet}^2, where we define the scalar
+\lambda\_{\bullet} below.
 
-Now given a cluster-specific design vector $V_{12}$ we assume that
-$$V_{12}^{T}Z$$ is gamma distributed with mean 1 and variance
-$\lambda_{\bullet}^{- 1}$ such that critically the random effect
-variance is the same for all clusters. That is
-$$\lambda_{\bullet} = V_{12}^{T}\left( \lambda_{1},...,\lambda_{d} \right)^{T}$$
-We return to some specific models below, and show how to fit the ACE and
-AE model using this set-up.
+Now given a cluster-specific design vector V\_{12} we assume that
+V\_{12}^T Z is gamma distributed with mean 1 and variance
+\lambda\_{\bullet}^{-1} such that critically the random effect variance
+is the same for all clusters. That is \lambda\_{\bullet} = V\_{12}^T
+(\lambda_1,...,\lambda_d)^T We return to some specific models below, and
+show how to fit the ACE and AE model using this set-up.
 
 One last option in the model-specification is to specify how the
-parameters $\lambda_{1},...,\lambda_{d}$ are related. We thus can
-specify a matrix $M$ of dimension $p \times d$ such that
-$$\left( \lambda_{1},...,\lambda_{d} \right)^{T} = M\theta$$ where
-$\theta$ is d-dimensional. If $M$ is diagonal we have no restrictions on
-parameters.
+parameters \lambda_1,...,\lambda_d are related. We thus can specify a
+matrix M of dimension p \times d such that (\lambda_1,...,\lambda_d)^T =
+M \theta where \theta is d-dimensional. If M is diagonal we have no
+restrictions on parameters.
 
 This parametrization is obtained with the var.par=0 option that thus
-estimates $\theta$.
+estimates \theta.
 
 The DEFAULT parametrization instead estimates the variances of the
-random effecs (var.par=1) via the parameters
-$\nu$$$M\nu = \left( \lambda_{1}/\lambda_{\bullet}^{2},...,\lambda_{d}/\lambda_{\bullet}^{2} \right)^{T}$$
+random effects (var.par=1) via the parameters \nu M \nu = (
+\lambda_1/\lambda\_{\bullet}^2, ...,\lambda_d/\lambda\_{\bullet}^2)^T
 
 The basic modelling assumption is now that given random effects
-$Z = \left( Z_{1},...,Z_{d} \right)$ we have independent probabilites
-$$logit\left( P\left( Y_{i} = 1|X_{i},Z \right) \right) = exp\left( - V_{12,i}^{T}Z \cdot \Psi^{- 1}\left( \lambda_{\bullet},\lambda_{\bullet},P\left( Y_{i} = 1|X_{i} \right) \right) \right)i = 1,2$$
+Z=(Z_1,...,Z_d) we have independent probabilites logit(P(Y_i=1\|X_i,Z))
+= exp( -V\_{12,i}^T Z \cdot
+\Psi^{-1}(\lambda\_{\bullet},\lambda\_{\bullet},P(Y_i=1\|X_i)) ) i=1,2
 
 We fit this model by
 
 - Estimating the marginal parameters via GEE
 - Using marginal estimates, estimate dependence parameters
 
-Even though the model not formaly in this formulation allows negative
-correlation in practice the paramters can be negative and this reflects
-negative correlation. An advanatage is that no numerical integration is
+Even though the model not formally in this formulation allows negative
+correlation in practice the parameters can be negative and this reflects
+negative correlation. An advantage is that no numerical integration is
 needed.
 
 ### The twin-stutter data
@@ -173,6 +174,7 @@ We here consider MZ and same sex DZ twins.
 Looking at the data
 
 ``` r
+
 library(mets)
 data(twinstut)
 twinstut$binstut <- 1*(twinstut$stutter=="yes")
@@ -199,6 +201,7 @@ covariates. We here note that there is a rather strong gender effect in
 the risk of stuttering.
 
 ``` r
+
 margbin <- glm(binstut~factor(sex)+age,data=twinstut,family=binomial())
 summary(margbin)
 #> 
@@ -227,7 +230,8 @@ Now estimating the OR parameter. We see a strong dependence with an OR
 at around 8 that is clearly significant.
 
 ``` r
-bina <- binomial.twostage(margbin,data=twinstut,var.link=1,
+
+bina <- binomial_twostage(margbin,data=twinstut,var.link=1,
                        clusters=twinstut$tvparnr,detail=0)
 summary(bina)
 #> Dependence parameter for Odds-Ratio (Plackett) model 
@@ -248,15 +252,15 @@ summary(bina)
 ```
 
 Now, and more interestingly, we consider an OR that depends on zygosity
-and note that MZ have a much larger OR than DZ twins. This type of trait
-is somewhat complicated to interpret, but clearly, one option is that
-that there is a genetic effect, alternatively there might be a stronger
-environmental effect for MZ twins.
+and note that MZ twins have a much larger OR than DZ twins. This type of
+result is somewhat complex to interpret: one possibility is a genetic
+effect, another is a stronger shared environmental effect for MZ twins.
 
 ``` r
+
 # design for OR dependence 
 theta.des <- model.matrix( ~-1+factor(zyg),data=twinstut)
-bin <- binomial.twostage(margbin,data=twinstut,var.link=1,
+bin <- binomial_twostage(margbin,data=twinstut,var.link=1,
                           clusters=twinstut$tvparnr,theta.des=theta.des)
 summary(bin)
 #> Dependence parameter for Odds-Ratio (Plackett) model 
@@ -279,15 +283,16 @@ summary(bin)
 ```
 
 We now consider further regression modelling of the OR structure by
-considering possible interactions between sex and zygozsity. We see that
+considering possible interactions between sex and zygosity. We see that
 MZ has a much higher dependence and that males have a much lower
 dependence. We tested for interaction in this model and these were not
 significant.
 
 ``` r
+
 twinstut$cage <- scale(twinstut$age)
 theta.des <- model.matrix( ~-1+factor(zyg)+factor(sex),data=twinstut)
-bina <- binomial.twostage(margbin,data=twinstut,var.link=1,
+bina <- binomial_twostage(margbin,data=twinstut,var.link=1,
                           clusters=twinstut$tvparnr,theta.des=theta.des)
 summary(bina)
 #> Dependence parameter for Odds-Ratio (Plackett) model 
@@ -311,80 +316,10 @@ summary(bina)
 #> [1] "summary.mets.twostage"
 ```
 
-### Alternative syntax
-
-We now demonstrate how the models can fitted jointly and with anohter
-syntax, that ofcourse just fits the marginal model and subsequently fits
-the pairwise OR model.
-
-First noticing as before that MZ twins have a much higher dependence.
-
-``` r
- # refers to zygosity of first subject in eash pair : zyg1
- # could also use zyg2 (since zyg2=zyg1 within twinpair's)
- out <- easy.binomial.twostage(stutter~factor(sex)+age,data=twinstut,
-                response="binstut",id="tvparnr",var.link=1,
-                theta.formula=~-1+factor(zyg1))
-summary(out)
-#> Dependence parameter for Odds-Ratio (Plackett) model 
-#> With log-link
-#> $estimates
-#>                    theta        se
-#> factor(zyg1)dz 0.1624942 1.0050473
-#> factor(zyg1)mz 3.7460315 0.7259771
-#> 
-#> $or
-#>                Estimate Std.Err    2.5%   97.5% P-value
-#> factor(zyg1)dz    1.176   1.182  -1.141   3.494  0.3197
-#> factor(zyg1)mz   42.353  30.747 -17.910 102.616  0.1684
-#> 
-#> $type
-#> [1] "plackett"
-#> 
-#> attr(,"class")
-#> [1] "summary.mets.twostage"
-```
-
-Now considering all data and estimating separate effects for the OR for
-opposite sex DZ twins and same sex twins. We here find that os twins are
-not markedly different from the same sex DZ twins.
-
-``` r
- # refers to zygosity of first subject in eash pair : zyg1
- # could also use zyg2 (since zyg2=zyg1 within twinpair's))
- 
- desfs<-function(x,num1="zyg1",num2="zyg2")
-         c(x[num1]=="dz",x[num1]=="mz",x[num1]=="os")*1
-     
- margbinall <- glm(binstut~factor(sex)+age,data=twinsall,family=binomial())
- out3 <- easy.binomial.twostage(binstut~factor(sex)+age,
-       data=twinsall,response="binstut",id="tvparnr",var.link=1,
-       theta.formula=desfs,desnames=c("dz","mz","os"))
- summary(out3)
-#> Dependence parameter for Odds-Ratio (Plackett) model 
-#> With log-link
-#> $estimates
-#>        theta        se
-#> dz 0.5278527 0.2396796
-#> mz 3.4850037 0.1864190
-#> os 0.7802940 0.2894394
-#> 
-#> $or
-#>    Estimate Std.Err    2.5%  97.5%   P-value
-#> dz    1.695  0.4063  0.8989  2.492 3.016e-05
-#> mz   32.623  6.0815 20.7031 44.542 8.128e-08
-#> os    2.182  0.6316  0.9442  3.420 5.504e-04
-#> 
-#> $type
-#> [1] "plackett"
-#> 
-#> attr(,"class")
-#> [1] "summary.mets.twostage"
-```
-
 ### Bivariate Probit model
 
 ``` r
+
 library(mets)
 data(twinstut)
 twinstut <- subset(twinstut,zyg%in%c("mz","dz"))
@@ -407,6 +342,7 @@ concordance and casewise concordance estimates can be reported from this
 analysis.
 
 ``` r
+
 b1 <- bptwin(binstut~sex,data=twinstut,id="tvparnr",zyg="zyg",DZ="dz",type="un")
 summary(b1)
 #> 
@@ -455,6 +391,7 @@ above. Also formally we can test if this submodel is acceptable by a
 likelihood ratio test.
 
 ``` r
+
 b1 <- bptwin(binstut~sex,data=twinstut,id="tvparnr",zyg="zyg",DZ="dz",type="ace")
 summary(b1)
 #> 
@@ -496,6 +433,7 @@ summary(b1)
 ```
 
 ``` r
+
 b0 <- bptwin(binstut~sex,data=twinstut,id="tvparnr",zyg="zyg",DZ="dz",type="ae")
 summary(b0)
 #> 
@@ -543,9 +481,10 @@ parametrizing the OR model with an intercept. This clearly shows a
 significant difference.
 
 ``` r
+
 theta.des <- model.matrix( ~-1+factor(zyg),data=twinstut)
 margbin <- glm(binstut~sex,data=twinstut,family=binomial())
-bintwin <- binomial.twostage(margbin,data=twinstut,model="gamma",
+bintwin <- binomial_twostage(margbin,data=twinstut,model="gamma",
      clusters=twinstut$tvparnr,detail=0,theta=c(0.1)/1,var.link=1,
      theta.des=theta.des)
 summary(bintwin)
@@ -571,7 +510,7 @@ summary(bintwin)
 # test for same dependence in MZ and DZ 
 theta.des <- model.matrix( ~factor(zyg),data=twinstut)
 margbin <- glm(binstut~sex,data=twinstut,family=binomial())
-bintwin <- binomial.twostage(margbin,data=twinstut,model="gamma",
+bintwin <- binomial_twostage(margbin,data=twinstut,model="gamma",
      clusters=twinstut$tvparnr,detail=0,theta=c(0.1)/1,var.link=1,
      theta.des=theta.des)
 summary(bintwin)
@@ -597,16 +536,16 @@ summary(bintwin)
 
 ### Polygenic modelling
 
-First setting up the random effects design for the random effects and
-the the relationship between variance parameters. We see that the
-genetic random effect has size one for MZ and 0.5 for DZ subjects, that
-have shared and non-shared genetic components with variance 0.5 such
-that the total genetic variance is the same for all subjects. The shared
-environmental effect is the samme for all. Thus two parameters with
-these bands.
+First setting up the random effects design and the relationship between
+variance parameters. We see that the genetic random effect has size 1
+for MZ and 0.5 for DZ subjects, who have shared and non-shared genetic
+components with variance 0.5 such that the total genetic variance is the
+same for all subjects. The shared environmental effect is the same for
+all. Thus two parameters with these constraints.
 
 ``` r
-out <- twin.polygen.design(twinstut,id="tvparnr",zygname="zyg",zyg="dz",type="ace")
+
+out <- twin_polygen_design(twinstut,id="tvparnr",zygname="zyg",zyg="dz",type="ace")
 head(cbind(out$des.rv,twinstut$tvparnr),10)
 #>    MZ DZ DZns1 DZns2 env   
 #> 1   1  0     0     0   1  1
@@ -634,8 +573,9 @@ suggesting that the ACE model does not fit the data. When the random
 design is given we automatically use the gamma fralty model.
 
 ``` r
+
 margbin <- glm(binstut~sex,data=twinstut,family=binomial())
-bintwin1 <- binomial.twostage(margbin,data=twinstut,
+bintwin1 <- binomial_twostage(margbin,data=twinstut,
      clusters=twinstut$tvparnr,detail=0,theta=c(0.1)/1,var.link=0,
      random.design=out$des.rv,theta.des=out$pardes)
 summary(bintwin1)
@@ -669,6 +609,7 @@ For this model we estimate the concordance and casewise concordance as
 well as the marginal rates of stuttering for females.
 
 ``` r
+
 concordanceTwinACE(bintwin1,type="ace")
 #> $MZ
 #>                      Estimate  Std.Err     2.5%   97.5%   P-value
@@ -687,9 +628,10 @@ The E component was not consistent with the fit of the data and we now
 consider instead the AE model.
 
 ``` r
+
 out <- twin.polygen.design(twinstut,id="tvparnr",zygname="zyg",zyg="dz",type="ae")
 
-bintwin <- binomial.twostage(margbin,data=twinstut,
+bintwin <- binomial_twostage(margbin,data=twinstut,
      clusters=twinstut$tvparnr,detail=0,theta=c(0.1)/1,var.link=0,
      random.design=out$des.rv,theta.des=out$pardes)
 summary(bintwin)
@@ -720,6 +662,7 @@ summary(bintwin)
 Again, the concordance can be computed:
 
 ``` r
+
 concordanceTwinACE(bintwin,type="ae")
 #> $MZ
 #>                      Estimate  Std.Err     2.5%   97.5%   P-value
@@ -737,10 +680,11 @@ concordanceTwinACE(bintwin,type="ae")
 ## SessionInfo
 
 ``` r
+
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -759,22 +703,23 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] mets_1.3.9
+#> [1] mets_1.3.10
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           
-#>  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        
-#>  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            
-#> [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           
-#> [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        
-#> [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   
-#> [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       
-#> [22] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      
-#> [25] fs_1.6.6               ucminf_1.2.2           htmlwidgets_1.6.4     
-#> [28] Rcpp_1.1.1             future_1.68.0          lattice_0.22-7        
-#> [31] systemfonts_1.3.1      digest_0.6.39          R6_2.6.1              
-#> [34] parallelly_1.46.1      parallel_4.5.2         splines_4.5.2         
-#> [37] Matrix_1.7-4           bslib_0.9.0            tools_4.5.2           
-#> [40] RcppArmadillo_15.2.3-1 globals_0.18.0         survival_3.8-3        
-#> [43] pkgdown_2.2.0          cachem_1.1.0           desc_1.4.3
+#>  [1] Matrix_1.7-5           future.apply_1.20.2    jsonlite_2.0.0        
+#>  [4] ucminf_1.2.3           compiler_4.6.0         Rcpp_1.1.1-1.1        
+#>  [7] parallel_4.6.0         jquerylib_0.1.4        globals_0.19.1        
+#> [10] splines_4.6.0          systemfonts_1.3.2      textshaping_1.0.5     
+#> [13] yaml_2.3.12            fastmap_1.2.0          lattice_0.22-9        
+#> [16] R6_2.6.1               knitr_1.51             htmlwidgets_1.6.4     
+#> [19] future_1.70.0          desc_1.4.3             bslib_0.11.0          
+#> [22] rlang_1.2.0            cachem_1.1.0           xfun_0.57             
+#> [25] fs_2.1.0               sass_0.4.10            cli_3.6.6             
+#> [28] pkgdown_2.2.0          digest_0.6.39          grid_4.6.0            
+#> [31] mvtnorm_1.3-7          lifecycle_1.0.5        lava_1.9.1            
+#> [34] RcppArmadillo_15.2.6-1 timereg_2.0.7          evaluate_1.0.5        
+#> [37] numDeriv_2016.8-1.1    listenv_0.10.1         codetools_0.2-20      
+#> [40] ragg_1.5.2             survival_3.8-6         stats4_4.6.0          
+#> [43] parallelly_1.47.0      rmarkdown_2.31         tools_4.6.0           
+#> [46] htmltools_0.5.9
 ```

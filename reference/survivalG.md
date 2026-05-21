@@ -1,11 +1,8 @@
-# G-estimator for Cox and Fine-Gray model
+# G-Estimator for Cox and Fine-Gray Models
 
-Computes G-estimator \$\$ \hat S(t,A=a) = n^{-1} \sum_i \hat
-S(t,A=a,Z_i) \$\$ for the Cox model based on phreg og the Fine-Gray
-model based on the cifreg function. Gives influence functions of these
-risk estimates and SE's are based on these. If first covariate is a
-factor then all contrast are computed, and if continuous then considered
-covariate values are given by Avalues.
+Computes the G-estimator (G-formula) for standardized survival or
+cumulative incidence estimates: \$\$ \hat S(t, A=a) = n^{-1} \sum_i \hat
+S(t, A=a, Z_i) \$\$
 
 ## Usage
 
@@ -25,35 +22,71 @@ survivalG(
 
 - x:
 
-  phreg or cifreg object
+  Object of class `"phreg"` or `"cifreg"`.
 
 - data:
 
-  data frame for risk averaging, must be part of the data used for
-  fitting unless same.data=FALSE. When a subset of the data such as the
-  treated model should be fitted with cluster(id)
+  Data frame for risk averaging. Must be part of the data used for
+  fitting unless `same.data=FALSE`.
 
 - time:
 
-  for estimate
+  Time point for estimation.
 
 - Avalues:
 
-  values to compare for first covariate A
+  Values to compare for the first covariate \\A\\.
 
 - varname:
 
-  if given then averages for this variable, default is first variable
+  Name of the variable to be treated as the treatment/exposure variable
+  (default is the first variable).
 
 - same.data:
 
-  assumes that same data is used for fitting of survival model and
-  averaging.
+  Logical; assumes the same data is used for fitting and averaging.
 
 - First:
 
-  to only use first record for G-averaging, for example when start,stop
-  structure is used with phreg
+  Logical; if `TRUE`, uses only the first record for G-averaging (useful
+  for start-stop structures).
+
+## Value
+
+An object of class `"survivalG"` containing:
+
+- risk:
+
+  Standardized risk estimates.
+
+- risk.iid:
+
+  Influence functions for the risk estimates.
+
+- difference:
+
+  Pairwise differences in risks.
+
+- ratio:
+
+  Risk ratios.
+
+- survival.ratio:
+
+  Survival ratios (for `phreg`).
+
+- survival.difference:
+
+  Survival differences (for `phreg`).
+
+## Details
+
+Based on a `phreg` or `cifreg` object. Provides influence functions for
+these risk estimates, allowing for standard error computation.
+
+If the first covariate is a factor, contrasts between all levels are
+computed automatically. If it is continuous, specific values must be
+provided via `Avalues`.
 
 ## Author
 
@@ -62,97 +95,102 @@ Thomas Scheike
 ## Examples
 
 ``` r
-library(mets)
-data(bmt); bmt$time <- bmt$time+runif(408)*0.001
-bmt$event <- (bmt$cause!=0)*1; bmt$id <- 1:408
-dfactor(bmt) <- tcell.f~tcell
+data(bmt)
+bmt$time <- bmt$time + runif(408) * 0.001
+bmt$event <- (bmt$cause != 0) * 1
+bmt$id <- 1:408
+dfactor(bmt) <- tcell.f ~ tcell
 
-fg1 <- cifreg(Event(time,cause)~tcell.f+platelet+age,bmt,cause=1,
-              cox.prep=TRUE,propodds=NULL)
-summary(survivalG(fg1,bmt,50))
+# Fine-Gray model
+fg1 <- cifreg(Event(time, cause) ~ tcell.f + platelet + age, bmt,
+              cause = 1, cox.prep = TRUE, propodds = NULL)
+summary(survivalG(fg1, bmt, 50))
 #> G-estimator :
 #>       Estimate Std.Err   2.5%  97.5%   P-value
-#> risk0   0.4332 0.02749 0.3793 0.4870 6.316e-56
+#> risk0   0.4332 0.02750 0.3793 0.4871 6.349e-56
 #> risk1   0.2726 0.05861 0.1577 0.3875 3.297e-06
 #> 
 #> Average Treatment effect: difference (G-estimator) :
 #>     Estimate Std.Err   2.5%    97.5% P-value
-#> ps0  -0.1605  0.0635 -0.285 -0.03607 0.01147
+#> ps0  -0.1606  0.0635 -0.285 -0.03611 0.01145
 #> 
 #> Average Treatment effect: ratio (G-estimator) :
 #> log-ratio: 
-#>         Estimate   Std.Err       2.5%       97.5%    P-value
-#> [ps0] -0.4630061 0.2211506 -0.8964533 -0.02955888 0.03629353
+#>       Estimate   Std.Err       2.5%       97.5%    P-value
+#> ps0 -0.4631328 0.2211563 -0.8965913 -0.02967436 0.03624731
 #> ratio: 
 #>  Estimate      2.5%     97.5% 
-#> 0.6293888 0.4080142 0.9708737 
+#> 0.6293090 0.4079579 0.9707616 
 #> 
 
-ss <- phreg(Surv(time,event)~tcell.f+platelet+age,bmt) 
-summary(survivalG(ss,bmt,50))
+# Cox model
+ss <- phreg(Surv(time, event) ~ tcell.f + platelet + age, bmt)
+summary(survivalG(ss, bmt, 50))
 #> G-estimator :
 #>       Estimate Std.Err   2.5%  97.5%    P-value
-#> risk0   0.6539 0.02708 0.6008 0.7069 8.837e-129
-#> risk1   0.5639 0.05971 0.4469 0.6810  3.573e-21
-#> 
-#> Average Treatment effect: difference (G-estimator) :
-#>     Estimate Std.Err    2.5%   97.5% P-value
-#> ps0 -0.08992 0.06291 -0.2132 0.03338  0.1529
-#> 
-#> Average Treatment effect: ratio (G-estimator) :
-#> log-ratio: 
-#>         Estimate   Std.Err       2.5%      97.5%   P-value
-#> [ps0] -0.1479471 0.1095497 -0.3626606 0.06676628 0.1768548
-#> ratio: 
-#>  Estimate      2.5%     97.5% 
-#> 0.8624767 0.6958226 1.0690456 
-#> 
-#> Average Treatment effect:  survival-difference (G-estimator) :
-#>       Estimate   Std.Err        2.5%     97.5%   P-value
-#> ps0 0.08992126 0.0629098 -0.03337969 0.2132222 0.1528985
-#> 
-#> Average Treatment effect: 1-G (survival)-ratio (G-estimator) :
-#> log-ratio: 
-#>        Estimate   Std.Err        2.5%     97.5%   P-value
-#> [ps0] 0.2309406 0.1503721 -0.06378329 0.5256645 0.1245888
-#> ratio: 
-#>  Estimate      2.5%     97.5% 
-#> 1.2597844 0.9382083 1.6915826 
-#> 
-
-ss <- phreg(Surv(time,event)~strata(tcell.f)+platelet+age,bmt) 
-summary(survivalG(ss,bmt,50))
-#> G-estimator :
-#>       Estimate Std.Err   2.5%  97.5%    P-value
-#> risk0   0.6441 0.02727 0.5906 0.6975 2.397e-123
-#> risk1   0.6172 0.07125 0.4776 0.7568  4.611e-18
+#> risk0   0.6539 0.02708 0.6008 0.7070 8.771e-129
+#> risk1   0.5639 0.05971 0.4469 0.6809  3.579e-21
 #> 
 #> Average Treatment effect: difference (G-estimator) :
 #>     Estimate Std.Err    2.5%  97.5% P-value
-#> ps0 -0.02687 0.07622 -0.1763 0.1225  0.7244
+#> ps0    -0.09 0.06291 -0.2133 0.0333  0.1525
 #> 
 #> Average Treatment effect: ratio (G-estimator) :
 #> log-ratio: 
-#>          Estimate   Std.Err       2.5%     97.5%  P-value
-#> [ps0] -0.04261856 0.1228491 -0.2833984 0.1981613 0.728653
+#>       Estimate   Std.Err       2.5%      97.5%   P-value
+#> ps0 -0.1480738 0.1095493 -0.3627866 0.06663895 0.1764831
 #> ratio: 
 #>  Estimate      2.5%     97.5% 
-#> 0.9582769 0.7532197 1.2191590 
+#> 0.8623675 0.6957349 1.0689095 
 #> 
 #> Average Treatment effect:  survival-difference (G-estimator) :
-#>       Estimate    Std.Err      2.5%    97.5%   P-value
-#> ps0 0.02687251 0.07621848 -0.122513 0.176258 0.7244093
+#>       Estimate    Std.Err        2.5%     97.5%   P-value
+#> ps0 0.08999732 0.06290582 -0.03329583 0.2132905 0.1525255
 #> 
 #> Average Treatment effect: 1-G (survival)-ratio (G-estimator) :
 #> log-ratio: 
-#>         Estimate   Std.Err       2.5%     97.5%   P-value
-#> [ps0] 0.07278456 0.2010782 -0.3213214 0.4668906 0.7173734
+#>      Estimate   Std.Err        2.5%     97.5%   P-value
+#> ps0 0.2311351 0.1503551 -0.06355556 0.5258258 0.1242294
 #> ratio: 
-#>  Estimate      2.5%     97.5% 
-#> 1.0754988 0.7251901 1.5950269 
+#> Estimate     2.5%    97.5% 
+#> 1.260029 0.938422 1.691855 
 #> 
 
-sst <- survivalGtime(ss,bmt,n=50)
+# Stratified Cox model
+ss <- phreg(Surv(time, event) ~ strata(tcell.f) + platelet + age, bmt)
+summary(survivalG(ss, bmt, 50))
+#> G-estimator :
+#>       Estimate Std.Err   2.5%  97.5%    P-value
+#> risk0   0.6441 0.02727 0.5906 0.6975 2.434e-123
+#> risk1   0.6172 0.07125 0.4775 0.7568  4.635e-18
+#> 
+#> Average Treatment effect: difference (G-estimator) :
+#>     Estimate Std.Err    2.5%  97.5% P-value
+#> ps0 -0.02693 0.07622 -0.1763 0.1225  0.7238
+#> 
+#> Average Treatment effect: ratio (G-estimator) :
+#> log-ratio: 
+#>        Estimate   Std.Err       2.5%     97.5%   P-value
+#> ps0 -0.04271539 0.1228586 -0.2835139 0.1980831 0.7280812
+#> ratio: 
+#>  Estimate      2.5%     97.5% 
+#> 0.9581841 0.7531327 1.2190637 
+#> 
+#> Average Treatment effect:  survival-difference (G-estimator) :
+#>       Estimate    Std.Err      2.5%     97.5%   P-value
+#> ps0 0.02693334 0.07622097 -0.122457 0.1763237 0.7238196
+#> 
+#> Average Treatment effect: 1-G (survival)-ratio (G-estimator) :
+#> log-ratio: 
+#>       Estimate   Std.Err      2.5%    97.5%  P-value
+#> ps0 0.07294849 0.2010713 -0.321144 0.467041 0.716755
+#> ratio: 
+#>  Estimate      2.5%     97.5% 
+#> 1.0756751 0.7253188 1.5952668 
+#> 
+
+# Time-varying G-estimates
+sst <- survivalGtime(ss, bmt, n = 50)
 #> Warning: NaNs produced
 #> Warning: NaNs produced
 #> Warning: NaNs produced
@@ -160,40 +198,36 @@ sst <- survivalGtime(ss,bmt,n=50)
 plot(sst)
 
 
-fg1t <- survivalGtime(fg1,bmt,n=50)
-plot(fg1t)
-
-
-#among treated: must specify id to link influence functions
-ss <- phreg(Surv(time,event)~tcell.f+platelet+age+cluster(id),bmt) 
-summary(survivalG(ss,subset(bmt,tcell==1),50))
+# Among treated (specify id to link influence functions)
+ss <- phreg(Surv(time, event) ~ tcell.f + platelet + age + cluster(id), bmt)
+summary(survivalG(ss, subset(bmt, tcell == 1), 50))
 #> G-estimator :
 #>       Estimate Std.Err   2.5%  97.5%   P-value
-#> risk0   0.6662 0.03407 0.5995 0.7330 3.661e-85
-#> risk1   0.5749 0.05749 0.4622 0.6876 1.518e-23
+#> risk0   0.6663 0.03407 0.5995 0.7331 3.588e-85
+#> risk1   0.5749 0.05748 0.4622 0.6875 1.511e-23
 #> 
 #> Average Treatment effect: difference (G-estimator) :
 #>     Estimate Std.Err    2.5%   97.5% P-value
-#> ps0 -0.09134 0.06417 -0.2171 0.03442  0.1546
+#> ps0 -0.09142 0.06416 -0.2172 0.03434  0.1542
 #> 
 #> Average Treatment effect: ratio (G-estimator) :
 #> log-ratio: 
-#>         Estimate   Std.Err       2.5%      97.5%   P-value
-#> [ps0] -0.1474634 0.1081918 -0.3595155 0.06458876 0.1728887
+#>      Estimate   Std.Err       2.5%      97.5%   P-value
+#> ps0 -0.147582 0.1081855 -0.3596217 0.06445766 0.1725181
 #> ratio: 
 #>  Estimate      2.5%     97.5% 
-#> 0.8628941 0.6980145 1.0667203 
+#> 0.8627917 0.6979403 1.0665804 
 #> 
 #> Average Treatment effect:  survival-difference (G-estimator) :
-#>       Estimate    Std.Err        2.5%     97.5%   P-value
-#> ps0 0.09134406 0.06416628 -0.03441954 0.2171077 0.1545761
+#>       Estimate    Std.Err       2.5%     97.5%   P-value
+#> ps0 0.09142262 0.06416389 -0.0343363 0.2171815 0.1542064
 #> 
 #> Average Treatment effect: 1-G (survival)-ratio (G-estimator) :
 #> log-ratio: 
-#>        Estimate   Std.Err        2.5%     97.5%   P-value
-#> [ps0] 0.2419052 0.1620237 -0.07565548 0.5594659 0.1354311
+#>      Estimate   Std.Err       2.5%     97.5%   P-value
+#> ps0 0.2421385 0.1620315 -0.0754374 0.5597144 0.1350733
 #> ratio: 
 #>  Estimate      2.5%     97.5% 
-#> 1.2736735 0.9271356 1.7497378 
+#> 1.2739707 0.9273378 1.7501727 
 #> 
 ```

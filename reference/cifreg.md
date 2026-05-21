@@ -1,8 +1,13 @@
-# CIF regression
+# Cumulative Incidence Function (CIF) Regression
 
-CIF logistic-link for propodds=1 default and CIF Fine-Gray (cloglog)
-regression for propodds=NULL. The FG model can also be called using the
-cifregFG function that has propodds=NULL.
+Fits a regression model for the cumulative incidence function (CIF) in
+the presence of competing risks. Supports two link functions:
+
+- `propodds=1` (default): Logistic link model (logit of CIF), providing
+  Odds Ratio (OR) interpretations.
+
+- `propodds=NULL`: Fine-Gray (cloglog) regression model, providing
+  subdistribution hazard ratio interpretations.
 
 ## Usage
 
@@ -23,57 +28,88 @@ cifreg(
 
 - formula:
 
-  formula with 'Event' outcome
+  Formula with an 'Event' outcome.
 
 - data:
 
-  data frame
+  Data frame containing the variables.
 
 - propodds:
 
-  to fit logit link model, and propodds=NULL to fit Fine-Gray model
+  Logical; if `1` (default), fits the logit link model. If `NULL`, fits
+  the Fine-Gray model.
 
 - cause:
 
-  of interest
+  Cause of interest (default is 1).
 
 - cens.code:
 
-  code of censoring
+  Code for censoring (default is 0).
 
 - no.codes:
 
-  certain event codes to be ignored when finding competing causes, can
-  be used with administrative censoring.
+  Event codes to be ignored when identifying competing causes (useful
+  for administrative censoring).
 
 - death.code:
 
-  can also specify death.code (in addition to cause) to overrule default
-  which takes all remaining codes (minus cause,cens.code,no.codes)
+  Codes for death (terminal events). If `NULL`, defaults to all
+  remaining codes (excluding `cause`, `cens.code`, and `no.codes`).
 
 - ...:
 
-  Additional arguments to recreg
+  Additional arguments passed to `recreg`.
+
+## Value
+
+An object of class `"cifreg"` (extending `"phreg"`) containing:
+
+- coef:
+
+  Estimated coefficients.
+
+- var:
+
+  Robust variance-covariance matrix.
+
+- iid:
+
+  Influence functions for the coefficients.
+
+- cumhaz:
+
+  Cumulative incidence estimates.
+
+- propodds:
+
+  Indicator of the link function used.
 
 ## Details
 
-For FG model: \$\$ \int (X - E ) Y_1(t) w(t) dM_1 \$\$ is computed and
-summed over clusters and returned multiplied with inverse of second
-derivative as iid.naive. Here \$\$w(t) = G(t) (I(T_i \wedge t \<
-C_i)/G_c(T_i \wedge t))\$\$ and \$\$E(t) = S_1(t)/S_0(t)\$\$ and
-\$\$S_j(t) = \sum X_i^j Y\_{i1}(t) w_i(t) \exp(X_i^T \beta)\$\$.
+For the Fine-Gray model, the score equations are: \$\$ \int (X - E(t))
+Y_1(t) w(t) dM_1 \$\$ summed over clusters and returned as `iid.naive`
+(multiplied by the inverse of the second derivative). Here, \$\$w(t) =
+G(t) (I(T_i \wedge t \< C_i)/G_c(T_i \wedge t))\$\$, \$\$E(t) =
+S_1(t)/S_0(t)\$\$, and \$\$S_j(t) = \sum X_i^j Y\_{i1}(t) w_i(t)
+\exp(X_i^T \beta)\$\$.
 
-The iid decomposition of the beta's, however, also have a censoring term
-that is also is computed and added (still scaled with inverse second
-derivative) \$\$ \int (X - E ) Y_1(t) w(t) dM_1 + \int q(s)/p(s) dM_c
-\$\$ and returned as the iid
+The full influence function (IID decomposition) for the beta
+coefficients includes a censoring term: \$\$ \int (X - E(t)) Y_1(t) w(t)
+dM_1 + \int q(s)/p(s) dM_c \$\$ which is returned as the `iid`
+component.
 
-For logistic link standard errors are slightly to small since
-uncertainty from recursive baseline is not considered, so for smaller
-data-sets it is recommended to use the prop.odds.subdist of timereg that
-is also more efficient due to use of different weights for the
-estimating equations. Alternatively, one can also bootstrap the standard
+For the logistic link model, standard errors may be slightly
+underestimated because uncertainty from the recursive baseline
+estimation is not fully accounted for. For smaller datasets, it is
+recommended to use the `prop.odds.subdist` function from the timereg
+package (which uses more efficient weights) or to bootstrap the standard
 errors.
+
+## See also
+
+[`cifregFG`](http://kkholst.github.io/mets/reference/cifregFG.md),
+[`recreg`](http://kkholst.github.io/mets/reference/recreg.md), `gofFG`
 
 ## Author
 
@@ -83,7 +119,6 @@ Thomas Scheike
 
 ``` r
 ## data with no ties
-library(mets)
 data(bmt,package="mets")
 bmt$time <- bmt$time+runif(nrow(bmt))*0.01
 bmt$id <- 1:nrow(bmt)
@@ -96,17 +131,17 @@ summary(or)
 #>  408    161
 #> 
 #>  408 clusters
-#> coeffients:
+#> coefficients:
 #>           Estimate      S.E.   dU^-1/2 P-value
-#> tcell    -0.709588  0.331979  0.274927  0.0326
-#> platelet -0.455282  0.236017  0.187920  0.0537
-#> age       0.391176  0.098037  0.083670  0.0001
+#> tcell    -0.709607  0.331978  0.274926  0.0326
+#> platelet -0.455297  0.236017  0.187920  0.0537
+#> age       0.391175  0.098036  0.083670  0.0001
 #> 
-#> exp(coeffients):
+#> exp(coefficients):
 #>          Estimate    2.5%  97.5%
-#> tcell     0.49185 0.25660 0.9428
-#> platelet  0.63427 0.39937 1.0073
-#> age       1.47872 1.22021 1.7920
+#> tcell     0.49184 0.25659 0.9428
+#> platelet  0.63426 0.39936 1.0073
+#> age       1.47872 1.22022 1.7920
 #> 
 par(mfrow=c(1,2))
 plot(or)
@@ -127,17 +162,17 @@ summary(fg)
 #>  408    161
 #> 
 #>  408 clusters
-#> coeffients:
+#> coefficients:
 #>           Estimate      S.E.   dU^-1/2 P-value
-#> tcell    -0.597103  0.270456  0.275787  0.0273
-#> platelet -0.425560  0.180746  0.187722  0.0185
-#> age       0.343971  0.080295  0.086293  0.0000
+#> tcell    -0.597055  0.270452  0.275783  0.0273
+#> platelet -0.426037  0.180707  0.187720  0.0184
+#> age       0.343921  0.080270  0.086285  0.0000
 #> 
-#> exp(coeffients):
+#> exp(coefficients):
 #>          Estimate    2.5%  97.5%
-#> tcell     0.55040 0.32394 0.9352
-#> platelet  0.65340 0.45849 0.9312
-#> age       1.41054 1.20514 1.6509
+#> tcell     0.55043 0.32396 0.9352
+#> platelet  0.65309 0.45831 0.9307
+#> age       1.41047 1.20514 1.6508
 #> 
 ##fg=recreg(Event(time,cause)~tcell+platelet+age,data=bmt,cause=1,death.code=2)
 ##summary(fg)
@@ -160,15 +195,15 @@ summary(sfg)
 #>  408    161
 #> 
 #>  408 clusters
-#> coeffients:
+#> coefficients:
 #>           Estimate      S.E.   dU^-1/2 P-value
-#> platelet -0.424117  0.180836  0.187823   0.019
-#> age       0.342147  0.079890  0.086294   0.000
+#> platelet -0.424645  0.180792  0.187822  0.0188
+#> age       0.342094  0.079862  0.086285  0.0000
 #> 
-#> exp(coeffients):
+#> exp(coefficients):
 #>          Estimate    2.5%  97.5%
-#> platelet  0.65435 0.45907 0.9327
-#> age       1.40797 1.20390 1.6466
+#> platelet  0.65400 0.45887 0.9321
+#> age       1.40789 1.20390 1.6465
 #> 
 plot(sfg)
 
@@ -180,6 +215,6 @@ Biid <- iidBaseline(fg,time=20)
 pfg1 <- FGprediid(Biid,nd)
 pfg1
 #>           pred     se-log     lower     upper
-#> [1,] 0.2692345 0.22759056 0.1723476 0.4205874
-#> [2,] 0.4344053 0.07477379 0.3751868 0.5029707
+#> [1,] 0.2692822 0.22756923 0.1723853 0.4206442
+#> [2,] 0.4344567 0.07477993 0.3752267 0.5030363
 ```

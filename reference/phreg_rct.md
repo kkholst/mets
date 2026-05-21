@@ -1,13 +1,12 @@
-# Lu-Tsiatis More Efficient Log-Rank for Randomized studies with baseline covariates
+# Lu-Tsiatis More Efficient Log-Rank for Randomized Studies with Baseline Covariates
 
 Efficient implementation of the Lu-Tsiatis improvement using baseline
-covariates, extended to competing risks and recurrent events. Results
-almost equivalent with the speffSurv function of the speff2trial
-function in the survival case. A dynamic censoring augmentation
-regression is also computed to gain even more from the censoring
-augmentation. Furhter, we also deal with twostage randomizations. The
-function was implemented to deal with recurrent events (start,stop) +
-cluster, and more examples in vignette.
+covariates, extended to competing risks and recurrent events. The
+results are almost equivalent to the `speffSurv` function of the
+`speff2trial` package in the survival case. A dynamic censoring
+augmentation regression is also computed to gain additional efficiency
+from the censoring augmentation. The function handles two-stage
+randomizations and recurrent events (start,stop) with cluster structure.
 
 ## Usage
 
@@ -42,104 +41,157 @@ phreg_rct(
 
 - formula:
 
-  formula with 'Surv' or 'Event' outcome (see `coxph`) and treatment
-  (randomization 0/1)
+  Formula with `Surv` or `Event` outcome (see `coxph`) and treatment
+  variable (randomization 0/1). The treatment variable must be the first
+  covariate on the right-hand side.
 
 - data:
 
-  data frame
+  Data frame containing all variables referenced in the formula.
 
 - cause:
 
-  to use for competing risks, recurrent events data
+  Numeric code for the event of interest in competing risks or recurrent
+  events.
 
 - cens.code:
 
-  to use for competing risks, recurrent events data
+  Numeric code for censoring in competing risks or recurrent events.
 
 - typesR:
 
-  augmentations used for randomization
+  Character vector specifying augmentation types for randomization
+  (options: "R0" for baseline, "R1" for post-baseline, "R01" for both).
 
 - typesC:
 
-  augmentations used for censoring
+  Character vector specifying augmentation types for censoring (options:
+  "C" for static, "dynC" for dynamic).
 
 - weights:
 
-  weights for score equation
+  Weights to be used for `phreg`.
 
 - augmentR0:
 
-  formula for the randomization augmentation (~age+sex)
+  Formula for the first randomization augmentation (e.g., `~age+sex`).
 
 - augmentR1:
 
-  formula for the randomization augmentation (~age+sex)
+  Formula for the second randomization augmentation (e.g., `~age+sex`).
 
 - augmentC:
 
-  formula for the censoring augmentation (~age+sex)
+  Formula for the censoring augmentation (e.g., `~age+sex`).
 
 - treat.model:
 
-  propensity score model, default is ~+1, assuming an RCT study
+  Propensity score model formula (default is `~+1`, assuming RCT).
 
 - RCT:
 
-  if false will use propensity score adjustment for marginal model
+  Logical; if FALSE, uses propensity score adjustment for marginal
+  model.
 
 - treat.var:
 
-  in case of twostage randomization, this variable is 1 for the
-  treatment times, if start,stop then default assumes that only one
-  treatment at first record
+  Variable indicating treatment times in two-stage randomization.
 
 - km:
 
-  use Kaplan-Meier for the censoring weights (stratified on treatment)
+  Logical; use Kaplan-Meier for censoring weights (stratified on
+  treatment).
 
 - level:
 
-  of confidence intervals
+  Confidence level for intervals (default 0.95).
 
 - cens.model:
 
-  default is censoring model ~strata(treatment) but any model can be
-  used to make censoring martingales
+  Censoring model formula (default is `~strata(treatment)`).
 
 - estpr:
 
-  estimates propensity scores
+  Numeric code (1/0); estimate propensity scores or not (default TRUE).
 
 - pi0:
 
-  possible fixed propensity scores for randomizations
+  Fixed propensity scores for randomizations (if not estimating).
 
 - base.augment:
 
-  TRUE to covariate augment baselines (only for R0 augmentation)
+  Logical; covariate augment baselines (only for R0 augmentation).
 
 - return.augmentR0:
 
-  to return augmentation data
+  Logical; return augmentation data.
 
 - mlogit:
 
-  if TRUE then forces use of this function for propensity scores,
-  default for binary treatment is glm
+  Logical; use multinomial logistic regression for propensity scores.
 
 - ...:
 
-  Additional arguments to phreg function
+  Additional arguments passed to `phreg` function.
+
+## Value
+
+An object of class `"phreg_rct"` containing:
+
+- coefs:
+
+  Coefficient estimates for the treatment effect.
+
+- iid:
+
+  Influence function (IID) decomposition for variance estimation.
+
+- AugR0, AugR1, AugCdyn, AugClt:
+
+  Augmentation terms for different strategies.
+
+- cumhaz:
+
+  Cumulative hazards.
+
+- var:
+
+  Variance-covariance matrix.
+
+- se:
+
+  Standard errors.
+
+- call:
+
+  Original function call.
+
+- formula:
+
+  Formula used.
+
+- data:
+
+  The data used (if requested).
+
+The object includes results for different augmentation combinations (R0,
+R1, R01, C, dynC).
+
+## Details
+
+The method improves the efficiency of the log-rank test by utilizing
+auxiliary baseline covariates to reduce variance, particularly useful in
+randomized clinical trials (RCTs) where covariate adjustment can
+increase power.
 
 ## References
 
-Lu, Tsiatis (2008), Improving the efficiency of the log-rank test using
-auxiliary covariates, Biometrika, 679–694
+Lu, T. and Tsiatis, A. A. (2008), Improving the efficiency of the
+log-rank test using auxiliary covariates, Biometrika, 95, 679–694.
 
-Scheike, Nerstroem and Martinussen (2025), Randomized clinical trials
-and the proportional hazards model for recurrent events.
+Scheike, T. H., Nerstroem, C. and Martinussen, T. (2026), Randomized
+clinical trials and the proportional hazards model for recurrent events,
+TEST.
 
 ## Author
 
@@ -154,10 +206,10 @@ dfactor(data) <- Z.f~Z
 
 out <- phreg_rct(Surv(time,status)~Z.f,data=data,augmentR0=~X,augmentC=~factor(Z):X)
 summary(out)
-#>                 Estimate   Std.Err       2.5%     97.5%   P-value
-#> Marginal-Z.f1  0.1781155 0.2639114 -0.3391412 0.6953723 0.4997350
-#> R0_C:Z.f1     -0.0175242 0.2071406 -0.4235122 0.3884638 0.9325790
-#> R0_dynC:Z.f1   0.1109733 0.2022974 -0.2855223 0.5074689 0.5833039
+#>                Estimate   Std.Err        2.5%     97.5%    P-value
+#> Marginal-Z.f1 0.6721162 0.2763128  0.13055314 1.2136793 0.01499718
+#> R0_C:Z.f1     0.4990308 0.2230568  0.06184748 0.9362141 0.02527090
+#> R0_dynC:Z.f1  0.3950996 0.2172938 -0.03078852 0.8209876 0.06902238
 #> attr(,"class")
 #> [1] "summary.phreg_rct"
 ```

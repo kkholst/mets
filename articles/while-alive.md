@@ -3,20 +3,17 @@
 ## While Alive estimands for Recurrent Events
 
 We consider two while-alive estimands for recurrent events data
-$$\begin{array}{r}
-\frac{E\left( N(D \land t) \right)}{E(D \land t)}
-\end{array}$$ and the mean of the subject specific events per time-unit
-$$\begin{array}{r}
-{E\left( \frac{N(D \land t)}{D \land t} \right)}
-\end{array}$$ for two treatment-groups in the case of an RCT. For the
-mean of events per time-unit it has been seen that when the sample size
-is small one can improve the finite sample properties by employing a
-transformation such as square or cube-root, and thus consider
-$$\begin{array}{r}
-{E\left( \left( \frac{N(D \land t)}{D \land t} \right)^{.33} \right)}
-\end{array}$$
+\begin{align\*} \frac{E(N(D \wedge t))}{E(D \wedge t)} \end{align\*} and
+the mean of the subject specific events per time-unit \begin{align\*} E(
+\frac{N(D \wedge t)}{D \wedge t} ) \end{align\*} for two
+treatment-groups in the case of an RCT. For the mean of events per
+time-unit it has been seen that when the sample size is small one can
+improve the finite sample properties by employing a transformation such
+as square or cube-root, and thus consider \begin{align\*} E( (\frac{N(D
+\wedge t)}{D \wedge t})^.33 ) \end{align\*}
 
 ``` r
+
 data(hfactioncpx12)
 
 dtable(hfactioncpx12,~status)
@@ -35,9 +32,11 @@ summary(dd)
 #>  
 #>                           Estimate Std.Err    2.5%    97.5% P-value
 #> [treatment0] - [treat.... -0.06517 0.02588 -0.1159 -0.01444  0.0118
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [treatment0] - [treatment1] = 0 
+#>  
+#> chisq = 6.3405, df = 1, p-value = 0.0118
 #> mean events, E(N(min(D,t))): 
 #>            Estimate Std.Err  2.5% 97.5%   P-value
 #> treatment0    1.572 0.09573 1.384 1.759 1.375e-60
@@ -45,9 +44,11 @@ summary(dd)
 #>  
 #>                           Estimate Std.Err    2.5%  97.5% P-value
 #> [treatment0] - [treat....   0.1185  0.1407 -0.1574 0.3943     0.4
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [treatment0] - [treatment1] = 0 
+#>  
+#> chisq = 0.7085, df = 1, p-value = 0.4
 #> _______________________________________________________ 
 #> Ratio of means E(N(min(D,t)))/E(min(D,t)) 
 #>    Estimate Std.Err   2.5%  97.5%   P-value
@@ -56,9 +57,11 @@ summary(dd)
 #>  
 #>             Estimate Std.Err     2.5%  97.5% P-value
 #> [p1] - [p2]  0.09022 0.07565 -0.05805 0.2385   0.233
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [p1] - [p2] = 0 
+#>  
+#> chisq = 1.4222, df = 1, p-value = 0.233
 #> _______________________________________________________ 
 #> Mean of Events per time-unit E(N(min(D,t))/min(D,t)) 
 #>        Estimate Std.Err   2.5%  97.5%   P-value
@@ -67,9 +70,11 @@ summary(dd)
 #>  
 #>                     Estimate Std.Err    2.5%  97.5% P-value
 #> [treat0] - [treat1]   0.3173  0.1381 0.04675 0.5879 0.02153
-#> 
-#>  Null Hypothesis: 
-#>   [treat0] - [treat1] = 0
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
+#>   [treat0] - [treat1] = 0 
+#>  
+#> chisq = 5.2837, df = 1, p-value = 0.02153
 
 dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,
            death.code=2,trans=.333)
@@ -83,9 +88,11 @@ summary(dd,type="log")
 #>  
 #>                           Estimate Std.Err     2.5%     97.5% P-value
 #> [treatment0] - [treat.... -0.03446 0.01377 -0.06145 -0.007478 0.01231
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [treatment0] - [treatment1] = 0 
+#>  
+#> chisq = 6.2656, df = 1, p-value = 0.01231
 #> mean events, E(N(min(D,t))): 
 #>            Estimate Std.Err   2.5%  97.5%   P-value
 #> treatment0   0.4523 0.06090 0.3329 0.5716 1.119e-13
@@ -93,9 +100,11 @@ summary(dd,type="log")
 #>  
 #>                           Estimate Std.Err    2.5%  97.5% P-value
 #> [treatment0] - [treat....  0.07835 0.09352 -0.1049 0.2616  0.4022
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [treatment0] - [treatment1] = 0 
+#>  
+#> chisq = 0.7018, df = 1, p-value = 0.4022
 #> _______________________________________________________ 
 #> Ratio of means E(N(min(D,t)))/E(min(D,t)) 
 #>    Estimate Std.Err    2.5%    97.5%   P-value
@@ -104,9 +113,11 @@ summary(dd,type="log")
 #>  
 #>             Estimate Std.Err     2.5%  97.5% P-value
 #> [p1] - [p2]   0.1128 0.09511 -0.07361 0.2992  0.2356
-#> 
-#>  Null Hypothesis: 
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [p1] - [p2] = 0 
+#>  
+#> chisq = 1.4067, df = 1, p-value = 0.2356
 #> _______________________________________________________ 
 #> Mean of Events per time-unit E(N(min(D,t))/min(D,t)) 
 #>        Estimate Std.Err    2.5%   97.5%   P-value
@@ -115,34 +126,65 @@ summary(dd,type="log")
 #>  
 #>                     Estimate Std.Err     2.5%  97.5% P-value
 #> [treat0] - [treat1]   0.1548 0.07517 0.007459 0.3021 0.03948
-#> 
-#>  Null Hypothesis: 
-#>   [treat0] - [treat1] = 0
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
+#>   [treat0] - [treat1] = 0 
+#>  
+#> chisq = 4.2403, df = 1, p-value = 0.03948
 ```
 
-We see that the ratio of means are not very different, but that the
-subject specific mean of events per time-unit shows that those on the
-active treatment has fewer events per time-unit on average.
+We see that the ratio of means is not very different between groups, but
+that the subject-specific mean of events per time-unit shows that those
+on the active treatment have fewer events per time-unit on average.
+
+We can also fit a regression model for the mean of the subject-specific
+events per time-unit, here using the exponential link.
+
+``` r
+
+hfactioncpx12$age <- rnorm(741)[hfactioncpx12$id]
+hfactioncpx12$sex <- rbinom(741,1,0.5)[hfactioncpx12$id]
+
+dd <- WA_reg(Event(entry,time,status)~treatment+age+sex+cluster(id),hfactioncpx12,time=2,death.code=2)
+summary(dd)
+#>    n events
+#>  741     86
+#> 
+#>  741 clusters
+#> coeffients:
+#>               Estimate    Std.Err       2.5%      97.5% P-value
+#> (Intercept)  0.0878839  0.0937519 -0.0958665  0.2716342  0.3485
+#> treatment1  -0.3522855  0.1368005 -0.6204094 -0.0841615  0.0100
+#> age         -0.0036586  0.0499082 -0.1014768  0.0941597  0.9416
+#> sex         -0.0316276  0.1479585 -0.3216210  0.2583658  0.8307
+#> 
+#> exp(coeffients):
+#>             Estimate    2.5%  97.5%
+#> (Intercept)  1.09186 0.90859 1.3121
+#> treatment1   0.70308 0.53772 0.9193
+#> age          0.99635 0.90350 1.0987
+#> sex          0.96887 0.72497 1.2948
+```
 
 ## Composite outcomes involving death and marks
 
-The number of events can be generalized in various ways by using other
-outcomes than $N(D \land t)$, for example,  
-$$\begin{array}{r}
-{\widetilde{N}(D \land t) = \int_{0}^{t}I(D \geq s)M(s)dN(s) + \sum\limits_{j}M_{j}I(D \leq t,\epsilon = j))}
-\end{array}$$ where $M(s)$ are the marks related to $N(s)$ and are
-$M_{j}$ marks associated with the different causes of the terminal
-event. This provides an extension of the weighted composite outcomes
-measure of Mao & Lin (2022).
+The event count can be generalised in various ways by using outcomes
+other than N(D \wedge t), for example, \begin{align\*} \tilde N(D \wedge
+t) = \int_0^t I(D \geq s) M(s) dN(s) + \sum_j M_j I(D \leq t,\epsilon=j)
+) \end{align\*} where M(s) are the marks associated with N(s) and M_j
+are marks associated with the different causes of the terminal event.
+This provides an extension of the weighted composite outcomes measure of
+Mao & Lin (2022).
 
-The marks (or here weights) can be stochastic if we are couting hosptial
-expenses, for example, and is vector on the data-frame. The marks for
-the event times (defined through the causes) will then be used.
+The marks (or weights) can be stochastic, for example when counting
+hospital expenses, and are stored as a vector in the data frame. The
+marks for the event times (defined through the causes) are then used.
 
-Here weighting death with weight 2 and otherwise couting the recurrent
-of events as before (with weight 1)
+Here we weight death by 2 and otherwise count recurrent events as before
+(with weight 1):
 
 ``` r
+
 hfactioncpx12$marks <- runif(nrow(hfactioncpx12))
 
 ##ddmg <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,
@@ -156,10 +198,11 @@ cause=1:2,death.code=2,marks=hfactioncpx12$status)
 ## SessionInfo
 
 ``` r
+
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -178,22 +221,22 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] mets_1.3.9
+#> [1] mets_1.3.10
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           
-#>  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        
-#>  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            
-#> [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           
-#> [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
+#>  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        
+#>  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            
+#> [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           
+#> [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        
 #> [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   
-#> [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       
-#> [22] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      
-#> [25] fs_1.6.6               htmlwidgets_1.6.4      Rcpp_1.1.1            
-#> [28] future_1.68.0          lattice_0.22-7         systemfonts_1.3.1     
-#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.46.1     
-#> [34] parallel_4.5.2         splines_4.5.2          Matrix_1.7-4          
-#> [37] bslib_0.9.0            tools_4.5.2            RcppArmadillo_15.2.3-1
-#> [40] globals_0.18.0         survival_3.8-3         pkgdown_2.2.0         
+#> [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       
+#> [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      
+#> [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        
+#> [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     
+#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     
+#> [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
+#> [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1
+#> [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         
 #> [43] cachem_1.1.0           desc_1.4.3
 ```

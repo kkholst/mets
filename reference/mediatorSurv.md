@@ -56,7 +56,6 @@ Thomas Scheike
 ## Examples
 
 ``` r
-library(mets)
 n <- 400
 dat <- kumarsimRCT(n,rho1=0.5,rho2=0.5,rct=2,censpar=c(0,0,0,0),
           beta = c(-0.67, 0.59, 0.55, 0.25, 0.98, 0.18, 0.45, 0.31),
@@ -78,28 +77,27 @@ aaMss22 <- binreg(Event(time,status)~dnr+preauto+ttt24+cluster(id),data=dat,time
 aaMss <- binreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),
                 data=wdata,time=50,weights=wdata$weights,cause=2)
 ## to compute standard errors , requires numDeriv
-library(numDeriv)
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
 #>    n events
-#>  800    364
+#>  800    366
 #> 
 #>  400 clusters
 #> coeffients:
 #>              Estimate   Std.Err      2.5%     97.5% P-value
-#> (Intercept) -0.277563  0.165585 -0.602103  0.046978  0.0937
-#> dnr.f01     -0.013552  0.264909 -0.532765  0.505661  0.9592
-#> dnr.f11      0.243449  0.081661  0.083396  0.403502  0.0029
-#> preauto      0.317339  0.234407 -0.142091  0.776768  0.1758
-#> ttt24        0.331677  0.264380 -0.186498  0.849853  0.2096
+#> (Intercept) -0.354894  0.163603 -0.675550 -0.034239  0.0301
+#> dnr.f01     -0.075193  0.253862 -0.572754  0.422368  0.7671
+#> dnr.f11      0.256898  0.082388  0.095421  0.418376  0.0018
+#> preauto      0.499033  0.232544  0.043255  0.954812  0.0319
+#> ttt24        0.269618  0.261502 -0.242916  0.782153  0.3025
 #> 
 #> exp(coeffients):
 #>             Estimate    2.5%  97.5%
-#> (Intercept)  0.75763 0.54766 1.0481
-#> dnr.f01      0.98654 0.58698 1.6581
-#> dnr.f11      1.27564 1.08697 1.4971
-#> preauto      1.37347 0.86754 2.1744
-#> ttt24        1.39330 0.82986 2.3393
+#> (Intercept)  0.70125 0.50888 0.9663
+#> dnr.f01      0.92756 0.56397 1.5256
+#> dnr.f11      1.29291 1.10012 1.5195
+#> preauto      1.64713 1.04420 2.5982
+#> ttt24        1.30946 0.78434 2.1862
 #> 
 #> 
 ## not run bootstrap (to save time)

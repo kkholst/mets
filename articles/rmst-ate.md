@@ -1,44 +1,42 @@
 # Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks
 
-The resmeanATE or resmeanIPCW/rmstIPCW functions can fit an
-exponential/linear link model with IPCW adjustment for a specific
-time-point for the resticted mean survival or years lost for competing
-risks. The function can be used for large data and is completely
-scalable, that is, linear in the data. The function can thus be used for
-large data. A nice feature is that influcence functions are computed and
-are available.
+The `resmeanATE` or `resmeanIPCW`/`rmstIPCW` functions fit an
+exponential or linear link model with IPCW adjustment at a specific time
+point for the restricted mean survival or years lost in competing risks.
+The computation is linear in the data size, making it suitable for large
+datasets. Influence functions are computed and available for downstream
+inference.
 
-In addition and to summarize
+Key features:
 
-- the censoring weights can be strata dependent
+- censoring weights can be stratum-dependent
 - predictions can be computed with standard errors
-- computation time is linear in data
-  - including standard errors
-- clusters can be given and then cluster corrected standard errors are
-  computed
+- computation time is linear in data size, including standard errors
+- cluster-corrected standard errors are available via the `clusters`
+  argument
 
 ## RMST
 
-Regression for rmst outcome
-$E\left( T \land t|X \right) = exp\left( X^{T}\beta \right)$ based on
+Regression for rmst outcome E(T \wedge t \| X) = exp(X^T \beta) based on
 IPCW adjustment for censoring, thus solving the estimating equation
-$$\begin{aligned}
- & {X^{T}\left\lbrack (T \land t)\frac{I(C > T \land t)}{G_{C}(T \land t,X)} - exp\left( X^{T}\beta \right) \right\rbrack = 0.}
-\end{aligned}$$ This is done with the resmeanIPCW function. For fully
-saturated model with full censoring model this is equal to the integrals
-of the Kaplan-Meier estimators as illustrated below.
+\begin{align\*} & X^T \[ (T \wedge t) \frac{I(C \> T \wedge t)}{G_C(T
+\wedge t,X)} - exp(X^T \beta) \] = 0 . \end{align\*} This is done with
+the resmeanIPCW function. For a fully saturated model with a complete
+censoring model this is equal to the integral of the Kaplan-Meier
+estimator, as illustrated below.
 
-We can also compute the integral of the Kaplan-Meier or Cox based
-survival estimator to get the RMST (with the resmean.phreg function)
-$$\int_{0}^{t}S\left( s|X \right)ds$$.
+We can also compute the integral of the Kaplan-Meier or Cox-based
+survival estimator to get the RMST (using the `resmean_phreg` function):
+\int_0^t S(s\|X) ds.
 
-For competing risks the years lost can be computed via cumulative
-incidence functions (cif.yearslost) or as IPCW estimator since  
-$$E\left( I(\epsilon = 1)(t - T \land t)|X \right) = \int_{0}^{t}F_{1}(s)ds.$$
-For fully saturated model with full censoring model these estimators are
-equivalent as illustrated below.
+For competing risks, the years lost can be computed via cumulative
+incidence functions (`cif_yearslost`) or as an IPCW estimator, since E(
+I(\epsilon=1) ( t - T \wedge t ) \| X) = \int_0^t F_1(s) ds. For a fully
+saturated model with a complete censoring model these estimators are
+equivalent, as illustrated below.
 
 ``` r
+
 set.seed(101)
 
      data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001
@@ -76,7 +74,7 @@ set.seed(101)
 #> inttcell=1, platelet=0    16.19  2.4061 11.48 20.91 1.705e-11
 #> inttcell=1, platelet=1    17.77  2.4536 12.96 22.58 4.463e-13
      out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
-     rm1 <- resmean.phreg(out1,times=30)
+     rm1 <- resmean_phreg(out1,times=30)
      summary(rm1)
 #>                     strata times    rmean  se.rmean    lower    upper
 #> tcell=0, platelet=0      0    30 13.60295 0.8315418 12.06700 15.33439
@@ -99,24 +97,26 @@ set.seed(101)
 #> inttcell=1, platelet=0    7.261  2.3533  2.648 11.873 2.033e-03
 #> inttcell=1, platelet=1    5.780  2.0925  1.679  9.882 5.737e-03
      ## same as integrated cumulative incidence 
-     rmc1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30,cause=1)
+     rmc1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30,cause=1)
      summary(rmc1)
 #> $estimate
-#>                     strata times    intF_1   intF_2 se.intF_1 se.intF_2
-#> tcell=0, platelet=0      0    30 12.105125 4.291930 0.8508102 0.6161439
-#> tcell=0, platelet=1      1    30  6.884171 4.214556 1.1740988 0.9057028
-#> tcell=1, platelet=0      2    30  7.260755 6.548034 2.3532867 1.9703340
-#> tcell=1, platelet=1      3    30  5.780369 6.453535 2.0924946 2.0815225
-#>                     total.years.lost lower_intF_1 upper_intF_1 lower_intF_2
-#> tcell=0, platelet=0         16.39705    10.547328    13.893001     3.239330
-#> tcell=0, platelet=1         11.09873     4.928092     9.616665     2.765857
-#> tcell=1, platelet=0         13.80879     3.846790    13.704561     3.630616
-#> tcell=1, platelet=1         12.23390     2.843285    11.751429     3.429661
-#>                     upper_intF_2
-#> tcell=0, platelet=0     5.686565
-#> tcell=0, platelet=1     6.422055
-#> tcell=1, platelet=0    11.809770
-#> tcell=1, platelet=1    12.143507
+#> $estimate$intF_1
+#>                     strata times    intF_1 se.intF_1 lower_intF_1 upper_intF_1
+#> tcell=0, platelet=0      0    30 12.105125 0.8508102    10.547328    13.893001
+#> tcell=0, platelet=1      1    30  6.884171 1.1740988     4.928092     9.616665
+#> tcell=1, platelet=0      2    30  7.260755 2.3532867     3.846790    13.704561
+#> tcell=1, platelet=1      3    30  5.780369 2.0924946     2.843285    11.751429
+#> 
+#> $estimate$intF_2
+#>                     strata times   intF_2 se.intF_2 lower_intF_2 upper_intF_2
+#> tcell=0, platelet=0      0    30 4.291930 0.6161439     3.239330     5.686565
+#> tcell=0, platelet=1      1    30 4.214556 0.9057028     2.765857     6.422055
+#> tcell=1, platelet=0      2    30 6.548034 1.9703340     3.630616    11.809770
+#> tcell=1, platelet=1      3    30 6.453535 2.0815225     3.429661    12.143507
+#> 
+#> 
+#> $total.years.lost
+#> [1] 16.39705 11.09873 13.80879 12.23390
 
      ## plotting the years lost for different horizon's and the two causes 
      par(mfrow=c(1,3))
@@ -132,6 +132,7 @@ Based on the output from the IPCW estimators we can derive any measure
 of interest
 
 ``` r
+
 estimate(out)
 #>                        Estimate Std.Err   2.5%  97.5%   P-value
 #> inttcell=0, platelet=0   12.105  0.8508 10.438 13.773 6.162e-46
@@ -156,10 +157,11 @@ measures <- function(p) {
 
 ## Average treatment effect
 
-Computes average treatment effect for restricted mean survival and years
-lost in competing risks situation
+This section computes the average treatment effect for restricted mean
+survival and years lost in the competing risks setting.
 
 ``` r
+
  dfactor(bmt) <- tcell~tcell
  bmt$event <- (bmt$cause!=0)*1
  out <- resmeanATE(Event(time,event)~tcell+platelet,data=bmt,time=40,treat.model=tcell~platelet)
@@ -258,10 +260,11 @@ lost in competing risks situation
 ## SessionInfo
 
 ``` r
+
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -280,22 +283,22 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] mets_1.3.9
+#> [1] mets_1.3.10
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           
-#>  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        
-#>  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            
-#> [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           
-#> [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
+#>  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        
+#>  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            
+#> [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           
+#> [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        
 #> [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   
-#> [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       
-#> [22] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      
-#> [25] fs_1.6.6               htmlwidgets_1.6.4      Rcpp_1.1.1            
-#> [28] future_1.68.0          lattice_0.22-7         systemfonts_1.3.1     
-#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.46.1     
-#> [34] parallel_4.5.2         splines_4.5.2          Matrix_1.7-4          
-#> [37] bslib_0.9.0            tools_4.5.2            RcppArmadillo_15.2.3-1
-#> [40] globals_0.18.0         survival_3.8-3         pkgdown_2.2.0         
+#> [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       
+#> [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      
+#> [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        
+#> [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     
+#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     
+#> [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
+#> [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1
+#> [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         
 #> [43] cachem_1.1.0           desc_1.4.3
 ```

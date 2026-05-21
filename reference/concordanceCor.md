@@ -20,7 +20,7 @@ concordanceCor(
 
 - object:
 
-  Output from the cor.cif, rr.cif or or.cif function
+  Output from the cor_cif, rr_cif or or_cif function
 
 - cif1:
 

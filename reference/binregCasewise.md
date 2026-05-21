@@ -1,7 +1,9 @@
-# Estimates the casewise concordance based on Concordance and marginal estimate using binreg
+# Estimate Casewise Concordance Using Binomial Regression
 
-Estimates the casewise concordance based on Concordance and marginal
-estimate using binreg
+Estimates the casewise concordance based on concordance and marginal
+estimates obtained from `binreg` objects. Uses cluster-based IID for
+standard errors, which are often better than those from `casewise`
+(which can be conservative).
 
 ## Usage
 
@@ -13,28 +15,35 @@ binregCasewise(concbreg, margbreg, zygs = c("DZ", "MZ"), newdata = NULL, ...)
 
 - concbreg:
 
-  Concordance
+  Concordance object from `binreg`.
 
 - margbreg:
 
-  Marginal estimate
+  Marginal estimate object from `binreg`.
 
 - zygs:
 
-  order of zygosity for estimation of concordance and casewise.
+  Order of zygosity for estimation (e.g., `c("DZ","MZ")`).
 
 - newdata:
 
-  to give instead of zygs.
+  Data frame to give instead of `zygs`.
 
 - ...:
 
-  to pass to estimate function
+  Arguments passed to `estimate`.
 
-## Details
+## Value
 
-Uses cluster iid for the two binomial-regression estimates standard
-errors better than those of casewise that are often conservative.
+A list containing:
+
+- coef:
+
+  Exponentiated coefficients (ratios).
+
+- logcoef:
+
+  Log-scale coefficients and standard errors.
 
 ## Author
 
@@ -43,9 +52,8 @@ Thomas Scheike
 ## Examples
 
 ``` r
-library(mets)
 data(prt)
-prt <- force.same.cens(prt,cause="status")
+prt <- force_same_cens(prt,cause="status")
 
 dd <- bicompriskData(Event(time, status)~strata(zyg)+id(id), data=prt, cause=c(2, 2))
 newdata <- data.frame(zyg=c("DZ","MZ"),id=1)

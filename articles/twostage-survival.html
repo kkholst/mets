@@ -6,9 +6,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Analysis of multivariate survival data • mets</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="../katex-auto.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Analysis of multivariate survival data">
 </head>
@@ -20,7 +21,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,10 +38,10 @@
     <li><a class="dropdown-item" href="../articles/binomial-family.html">Analysis of multivariate binomial data: family analysis</a></li>
     <li><a class="dropdown-item" href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a></li>
     <li><a class="dropdown-item" href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a></li>
-    <li><a class="dropdown-item" href="../articles/binreg-TRS.html">Two-Stage Randomization for for Competing risks and Survival outcomes</a></li>
+    <li><a class="dropdown-item" href="../articles/binreg-TRS.html">Two-Stage Randomization for Competing risks and Survival outcomes</a></li>
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
-    <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">Cooking Survival Data: 5-Minute Recipes</a></li>
     <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
@@ -80,7 +81,7 @@
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2026-01-14</h4>
+            <h4 data-toc-skip class="date">2026-05-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/twostage-survival.Rmd" class="external-link"><code>vignettes/twostage-survival.Rmd</code></a></small>
       <div class="d-none name"><code>twostage-survival.Rmd</code></div>
@@ -91,9 +92,9 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>When looking at multivariate survival data with the aim of learning
-about the dependence that is present, possibly after correcting for some
-covariates different approaches are available in the mets package</p>
+<p>When analysing multivariate survival data with the aim of learning
+about the dependence present, possibly after adjusting for covariates,
+several approaches are available in the mets package:</p>
 <ul>
 <li>Binary models and adjust for censoring with inverse probabilty of
 censoring weighting
@@ -101,7 +102,7 @@ censoring weighting
 <li>biprobit model</li>
 </ul>
 </li>
-<li>Bivariate surival models of Clayton-Oakes type
+<li>Bivariate survival models of Clayton-Oakes type
 <ul>
 <li>With regression structure on dependence parameter</li>
 <li>With additive gamma distributed random effects</li>
@@ -109,7 +110,7 @@ censoring weighting
 ACE, ADE ,AE and so forth.</li>
 </ul>
 </li>
-<li>Plackett OR model model
+<li>Plackett OR model
 <ul>
 <li>With regression structure on OR dependence parameter</li>
 </ul>
@@ -121,71 +122,56 @@ models with special structure among the parameters of the random
 effects. This is possible for our specification of the random effects
 models.</p>
 <p>To be concrete about the model structure assume that we have paired
-survival data
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>T</mi><mn>1</mn></msub><mo>,</mo><msub><mi>δ</mi><mn>1</mn></msub><mo>,</mo><msub><mi>T</mi><mn>2</mn></msub><mo>,</mo><msub><mi>δ</mi><mn>2</mn></msub><mo>,</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><msub><mi>X</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(T_1, \delta_1, T_2, \delta_2,  X_1, X_2)</annotation></semantics></math>
-where the censored survival responses are
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>T</mi><mn>1</mn></msub><mo>,</mo><msub><mi>δ</mi><mn>1</mn></msub><mo>,</mo><msub><mi>T</mi><mn>2</mn></msub><mo>,</mo><msub><mi>δ</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(T_1, \delta_1, T_2, \delta_2)</annotation></semantics></math>
-and the covariates are
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><msub><mi>X</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(X_1, X_2)</annotation></semantics></math>.</p>
-<p>The basic models assumes that each subject has a marginal on Cox-form
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mrow><mi>s</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>k</mi><mo>,</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>X</mi><mrow><mi>k</mi><mi>i</mi></mrow><mi>T</mi></msubsup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex"> 
+survival data <span class="math inline">(T_1, \delta_1, T_2,
+\delta_2,  X_1, X_2)</span> where the censored survival responses are
+<span class="math inline">(T_1, \delta_1, T_2, \delta_2)</span> and the
+covariates are <span class="math inline">(X_1, X_2)</span>.</p>
+<p>The basic model assumes that each subject has a marginal on Cox form
+<span class="math display">
 \lambda_{s(k,i)}(t) \exp( X_{ki}^T \beta)
-</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>k</mi><mo>,</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">s(k,i)</annotation></semantics></math>
-is a strata variable.</p>
-<p>The constructed likelihood is a composite likehood based on</p>
+</span> where <span class="math inline">s(k,i)</span> is a strata
+variable.</p>
+<p>The constructed likelihood is a composite likelihood based on</p>
 <ul>
 <li><p>all pairs within each cluster (when the pairs argument is not
 used)</p></li>
 <li><p>the specified pairs when the pairs argument is used.</p></li>
 </ul>
-<p>In addition to the clusters specified for the construction of the
-composite likelihood these can be added further summed using the
-se.clusters argument that sums the influence functions over the
-se.clusters. When se.clusters are not specified it is the same as the
-cluster argument.</p>
-<p>When the clusters of the dependence parametaters are the same as
-those of the marginal model and the phreg function is used then the
+<p>In addition to the clusters specified for constructing the composite
+likelihood, these can be further summed using the
+<code>se.clusters</code> argument, which sums the influence functions
+over the <code>se.clusters</code>. When <code>se.clusters</code> is not
+specified it defaults to the <code>cluster</code> argument.</p>
+<p>When the clusters of the dependence parameters are the same as those
+of the marginal model and the <code>phreg</code> function is used, the
 standard errors are corrected for the uncertainty from the marginal
-models, otherwise the returned standard errors are computed as if the
+models; otherwise the returned standard errors are computed as if the
 marginals are known.</p>
 </div>
 <div class="section level2">
 <h2 id="gamma-distributed-frailties">Gamma distributed frailties<a class="anchor" aria-label="anchor" href="#gamma-distributed-frailties"></a>
 </h2>
-<p>The focus of this vignette is describe how to work on bivariate
-survival data using the addtive gamma-random effects models. We present
-two different ways of specifying different dependence structures.</p>
+<p>The focus of this vignette is to describe how to work with bivariate
+survival data using additive gamma random effects models. We present two
+different ways of specifying different dependence structures.</p>
 <ul>
 <li><p>Univariate models with a single random effect for each cluster
 and with a regression design on the variance.</p></li>
 <li><p>Multivariate models with multiple random effects for each
 cluster.</p></li>
 </ul>
-<p>The univariate models are then given a given cluster random effects
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mi>k</mi></msub><annotation encoding="application/x-tex">Z_k</annotation></semantics></math>
-with parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math>
-the joint survival function is given by the Clayton copula and on the
-form
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ψ</mi><mo stretchy="false" form="prefix">(</mo><mi>θ</mi><mo>,</mo><msup><mi>ψ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo>,</mo><msub><mi>S</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><msub><mi>X</mi><mrow><mi>k</mi><mn>1</mn></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msup><mi>ψ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo>,</mo><msub><mi>S</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><msub><mi>X</mi><mrow><mi>k</mi><mn>1</mn></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex"> 
-  \psi(\theta, \psi^{-1}(\theta,S_1(t,X_{k1}) ) + \psi^{-1}(\theta, S_1(t,X_{k1}) ) 
-</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>
-is the Laplace transform of a gamma distributed random variable with
-mean 1 and variance
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math>.</p>
+<p>The univariate models are given a cluster random effect <span class="math inline">Z_k</span> with parameter <span class="math inline">\theta</span> the joint survival function is given
+by the Clayton copula and on the form <span class="math display">
+  \psi(\theta, \psi^{-1}(\theta,S_1(t,X_{k1}) ) + \psi^{-1}(\theta,
+S_1(t,X_{k1}) )
+</span> where <span class="math inline">\psi</span> is the Laplace
+transform of a gamma distributed random variable with mean 1 and
+variance <span class="math inline">\theta</span>.</p>
 <p>We then model the variance within clusters by a cluster specific
-regression design such that
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi><mo>=</mo><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>z</mi><mi>j</mi><mi>T</mi></msubsup><mi>α</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex"> 
+regression design such that <span class="math display">
   \theta = h(z_j^T \alpha)
-</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>
-is the regression design (specified by theta.des in the software), and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>h</mi><annotation encoding="application/x-tex">h</annotation></semantics></math>
-is link function, that is either
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mi>x</mi><mi>p</mi></mrow><annotation encoding="application/x-tex">exp</annotation></semantics></math>
-or the identity.</p>
+</span> where <span class="math inline">z</span> is the regression
+design (specified by theta.des in the software), and <span class="math inline">h</span> is link function, that is either <span class="math inline">exp</span> or the identity.</p>
 <p>This model can be fitted using a pairwise likelihood or the
 pseudo-likelihood using either</p>
 <ul>
@@ -195,158 +181,96 @@ pseudo-likelihood using either</p>
 <p>To make the twostage approach possible we need a model with specific
 structure for the marginals. Therefore given the random effect of the
 clusters the survival distributions within a cluster are independent and
-on the form
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>T</mi><mi>j</mi></msub><mo>&gt;</mo><mi>t</mi><mo stretchy="false" form="prefix">|</mo><msub><mi>X</mi><mi>j</mi></msub><mo>,</mo><mi>Z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>Z</mi><mo>⋅</mo><msup><mi>Ψ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>ν</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo>,</mo><mi>S</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="false" form="prefix">|</mo><msub><mi>X</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex"> 
- P(T_j &gt; t| X_j,Z) = exp( -Z \cdot \Psi^{-1}(\nu^{-1},S(t|X_j)) )  
-</annotation></semantics></math> with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Ψ</mi><annotation encoding="application/x-tex">\Psi</annotation></semantics></math>
-the laplace of the gamma distribution with mean 1 and variance
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><mi>ν</mi></mrow><annotation encoding="application/x-tex">1/\nu</annotation></semantics></math>.</p>
+on the form <span class="math display">
+P(T_j &gt; t| X_j,Z) = exp( -Z \cdot \Psi^{-1}(\nu^{-1},S(t|X_j)) )  
+</span> with <span class="math inline">\Psi</span> the laplace of the
+gamma distribution with mean 1 and variance <span class="math inline">1/\nu</span>.</p>
 </div>
 <div class="section level2">
 <h2 id="additive-gamma-frailties">Additive Gamma frailties<a class="anchor" aria-label="anchor" href="#additive-gamma-frailties"></a>
 </h2>
-<p>For the multivariate models we are given a multivarite random effect
-each cluster
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mn>1</mn></msub><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msub><mi>Z</mi><mi>d</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Z=(Z_1,...,Z_d)</annotation></semantics></math>
-with d random effects. The total random effect for each subject
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
-in a cluster is then specified using a regression design on these random
-effects, with a regression vector
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mi>j</mi></msub><annotation encoding="application/x-tex">V_j</annotation></semantics></math>
-such that the total random effect is
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>V</mi><mi>j</mi><mi>T</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mn>1</mn></msub><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msub><mi>Z</mi><mi>d</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">V_j^T (Z_1,...,Z_d)</annotation></semantics></math>.
-The elements of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mi>J</mi></msub><annotation encoding="application/x-tex">V_J</annotation></semantics></math>
-are 1/0. The random effects
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mn>1</mn></msub><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msub><mi>Z</mi><mi>d</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(Z_1,...,Z_d)</annotation></semantics></math>
-has associated parameters
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>λ</mi><mn>1</mn></msub><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msub><mi>λ</mi><mi>d</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(\lambda_1,...,\lambda_d)</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mi>j</mi></msub><annotation encoding="application/x-tex">Z_j</annotation></semantics></math>
-is Gamma distributed with</p>
+<p>For the multivariate models we are given a multivariate random effect
+for each cluster, <span class="math inline">Z=(Z_1,...,Z_d)</span> with
+<span class="math inline">d</span> random effects. The total random
+effect for each subject <span class="math inline">j</span> in a cluster
+is specified using a regression design on these random effects, with a
+regression vector <span class="math inline">V_j</span> such that the
+total random effect is <span class="math inline">V_j^T
+(Z_1,...,Z_d)</span>. The elements of <span class="math inline">V_j</span> are 1/0. The random effects <span class="math inline">(Z_1,...,Z_d)</span> have associated parameters
+<span class="math inline">(\lambda_1,...,\lambda_d)</span> and <span class="math inline">Z_j</span> is Gamma distributed with</p>
 <ul>
-<li><p>mean
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mi>j</mi></msub><mi>/</mi><msubsup><mi>V</mi><mn>1</mn><mi>T</mi></msubsup><mi>λ</mi></mrow><annotation encoding="application/x-tex">\lambda_j/V_1^T \lambda</annotation></semantics></math></p></li>
-<li><p>variance
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mi>j</mi></msub><mi>/</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>V</mi><mn>1</mn><mi>T</mi></msubsup><mi>λ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\lambda_j/(V_1^T \lambda)^2</annotation></semantics></math></p></li>
+<li><p>mean <span class="math inline">\lambda_j/V_1^T
+\lambda</span></p></li>
+<li><p>variance <span class="math inline">\lambda_j/(V_1^T
+\lambda)^2</span></p></li>
 </ul>
 <p>The key assumption to make the two-stage fitting possible is that
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>ν</mi><mo>=</mo><msubsup><mi>V</mi><mi>j</mi><mi>T</mi></msubsup><mi>λ</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+<span class="math display">\begin{align*}
    \nu =V_j^T \lambda
-\end{align*}</annotation></semantics></math> is constant within
-clusters. The consequence of this is that the total random effect for
-each subject within a cluster,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>V</mi><mi>j</mi><mi>T</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mn>1</mn></msub><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msub><mi>Z</mi><mi>d</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">V_j^T (Z_1,...,Z_d)</annotation></semantics></math>,
-is gamma distributed with variance
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><mi>ν</mi></mrow><annotation encoding="application/x-tex">1/\nu</annotation></semantics></math>.</p>
+\end{align*}</span> is constant within clusters. The consequence of this
+is that the total random effect for each subject within a cluster, <span class="math inline">V_j^T (Z_1,...,Z_d)</span>, is gamma distributed
+with variance <span class="math inline">1/\nu</span>.</p>
 <p>The DEFAULT parametrization (var.par=1) uses the variances of the
-random effecs
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>θ</mi><mi>j</mi></msub><mo>=</mo><msub><mi>λ</mi><mi>j</mi></msub><mi>/</mi><msup><mi>ν</mi><mn>2</mn></msup></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
- \theta_j  = \lambda_j/\nu^2
-\end{align*}</annotation></semantics></math> For alternative
-parametrizations one can specify that the parameters are
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>θ</mi><mi>j</mi></msub><mo>=</mo><msub><mi>λ</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\theta_j=\lambda_j</annotation></semantics></math>
-with the argument var.par=0.</p>
-<p>Finally the parameters
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>θ</mi><mn>1</mn></msub><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msub><mi>θ</mi><mi>d</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(\theta_1,...,\theta_d)</annotation></semantics></math>
-are related to the parameters of the model by a regression construction
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
-(d x k), that links the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>d</mi><annotation encoding="application/x-tex">d</annotation></semantics></math><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math>
-parameters with the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
-underlying
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
-parameters
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>θ</mi></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>M</mi><mi>α</mi><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
- \theta &amp; = M  \alpha. 
-\end{align*}</annotation></semantics></math> The default is a diagonal
-matrix for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>.
-This can be used to make structural assumptions about the variances of
-the random-effects as is needed for the ACE model for example. In the
-software $ M $ is called theta.des</p>
-<p>Assume that the marginal survival distribution for subject
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
-within cluster
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
-is given by
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>i</mi></mrow></msub></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">S_{X_{k,i}}(t)</annotation></semantics></math>
-given covariates
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>i</mi></mrow></msub><annotation encoding="application/x-tex">X_{k,i}</annotation></semantics></math>.</p>
-<p>Now given the random effects of the cluster
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mi>k</mi></msub><annotation encoding="application/x-tex">Z_k</annotation></semantics></math>
-and the
-covariates<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>i</mi></mrow></msub><annotation encoding="application/x-tex">X_{k,i}</annotation></semantics></math><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>n</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">i=1,\dots,n_k</annotation></semantics></math>
-we assume that subjects within the cluster are independent with survival
-distributions
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>V</mi><mrow><mi>k</mi><mo>,</mo><mi>i</mi></mrow></msub><msub><mi>Z</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><msup><mi>Ψ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>ν</mi><mo>,</mo><msub><mi>S</mi><msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>i</mi></mrow></msub></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+random effects <span class="math display">\begin{align*}
+\theta_j  = \lambda_j/\nu^2
+\end{align*}</span> For alternative parametrizations one can specify
+that the parameters are <span class="math inline">\theta_j=\lambda_j</span> with the argument
+var.par=0.</p>
+<p>Finally the parameters <span class="math inline">(\theta_1,...,\theta_d)</span> are related to the
+parameters of the model by a regression construction <span class="math inline">M</span> (d x k), that links the <span class="math inline">d</span> <span class="math inline">\theta</span>
+parameters with the <span class="math inline">k</span> underlying <span class="math inline">\alpha</span> parameters <span class="math display">\begin{align*}
+\theta &amp; = M  \alpha.
+\end{align*}</span> The default is a diagonal matrix for <span class="math inline">M</span>. This can be used to make structural
+assumptions about the variances of the random-effects as is needed for
+the ACE model for example. In the software $ M $ is called theta.des</p>
+<p>Assume that the marginal survival distribution for subject <span class="math inline">i</span> within cluster <span class="math inline">k</span> is given by <span class="math inline">S_{X_{k,i}}(t)</span> given covariates <span class="math inline">X_{k,i}</span>.</p>
+<p>Now given the random effects of the cluster <span class="math inline">Z_k</span> and the covariates <span class="math inline">X_{k,i}</span> <span class="math inline">i=1,\dots,n_k</span> we assume that subjects within
+the cluster are independent with survival distributions <span class="math display">\begin{align*}
   \exp(-  ( V_{k,i} Z_k)  \Psi^{-1} (\nu,S_{X_{k,i}}(t)) ).
-\end{align*}</annotation></semantics></math></p>
-<p>A consequence of this is that the hazards given the covariates
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>i</mi></mrow></msub><annotation encoding="application/x-tex">X_{k,i}</annotation></semantics></math>
-and the random effects
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mi>k</mi></msub><annotation encoding="application/x-tex">Z_k</annotation></semantics></math>
-are given by
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>λ</mi><mrow><mi>k</mi><mo>,</mo><mi>i</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>;</mo><msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>i</mi></mrow></msub><mo>,</mo><msub><mi>Z</mi><mrow><mi>k</mi><mo>,</mo><mi>i</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>V</mi><mrow><mi>k</mi><mo>,</mo><mi>i</mi></mrow></msub><msub><mi>V</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>D</mi><mn>3</mn></msub><msup><mi>Ψ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>ν</mi><mo>,</mo><msub><mi>S</mi><msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>i</mi></mrow></msub></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>D</mi><mi>t</mi></msub><msub><mi>S</mi><msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>i</mi></mrow></msub></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-  \lambda_{k,i}(t;X_{k,i},Z_{k,i}) = ( V_{k,i} V_k) D_3 \Psi^{-1} (\nu,S_{X_{k,i}}(t))  D_t S_{X_{k,i}}(t) 
+\end{align*}</span></p>
+<p>A consequence of this is that the hazards given the covariates <span class="math inline">X_{k,i}</span> and the random effects <span class="math inline">Z_k</span> are given by <span class="math display">\begin{align}
+  \lambda_{k,i}(t;X_{k,i},Z_{k,i}) = ( V_{k,i} V_k) D_3 \Psi^{-1}
+(\nu,S_{X_{k,i}}(t))  D_t S_{X_{k,i}}(t)
   \label{eq-cond-haz}
-\end{align}</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>D</mi><mi>t</mi></msub><annotation encoding="application/x-tex">D_t</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>D</mi><mn>3</mn></msub><annotation encoding="application/x-tex">D_3</annotation></semantics></math>
-denotes the partial derivatives with respect to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>
-and the third argument, respectively.</p>
+\end{align}</span> where <span class="math inline">D_t</span> and <span class="math inline">D_3</span> denotes the partial derivatives with
+respect to <span class="math inline">t</span> and the third argument,
+respectively.</p>
 <p>Further, we can express the multivariate survival distribution as
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>S</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>t</mi><mi>m</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>m</mi></munderover><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>V</mi><mi>i</mi></msub><mi>Z</mi><mo stretchy="true" form="postfix">)</mo></mrow><msup><mi>Ψ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>η</mi><mi>l</mi></msub><mo>,</mo><msub><mi>ν</mi><mi>l</mi></msub><mo>,</mo><msub><mi>S</mi><msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>i</mi></mrow></msub></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munderover><mo>∏</mo><mrow><mi>l</mi><mo>=</mo><mn>1</mn></mrow><mi>p</mi></munderover><mi>Ψ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>η</mi><mi>l</mi></msub><mo>,</mo><mi>η</mi><mo>,</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>m</mi></munderover><msub><mi>Q</mi><mrow><mi>k</mi><mo>,</mo><mi>i</mi></mrow></msub><msup><mi>Ψ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>η</mi><mo>,</mo><mi>η</mi><mo>,</mo><msub><mi>S</mi><msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>i</mi></mrow></msub></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-  S(t_1,\dots,t_m) &amp; =  \exp( -\sum_{i=1}^m (V_i Z) \Psi^{-1}(\eta_l,\nu_l,S_{X_{k,i}}(t_i)) )  \nonumber \\
-  &amp; =  \prod_{l=1}^p  \Psi(\eta_l,\eta , \sum_{i=1}^m Q_{k,i} \Psi^{-1}(\eta,\eta,S_{X_{k,i}}(t_i))).
+<span class="math display">\begin{align}
+  S(t_1,\dots,t_m) &amp; =  \exp( -\sum_{i=1}^m (V_i Z)
+\Psi^{-1}(\eta_l,\nu_l,S_{X_{k,i}}(t_i)) )  \nonumber \\
+  &amp; =  \prod_{l=1}^p  \Psi(\eta_l,\eta , \sum_{i=1}^m Q_{k,i}
+\Psi^{-1}(\eta,\eta,S_{X_{k,i}}(t_i))).
   \label{eq-multivariate-surv}
-\end{align}</annotation></semantics></math> In the case of considering
-just pairs, we write this function as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mrow><mi>k</mi><mo>,</mo><mi>i</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msub><mi>S</mi><mrow><mi>k</mi><mo>,</mo><mi>j</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">C(S_{k,i}(t),S_{k,j}(t))</annotation></semantics></math>.</p>
+\end{align}</span> In the case of considering just pairs, we write this
+function as <span class="math inline">C(S_{k,i}(t),S_{k,j}(t))</span>.</p>
 <p>In addition to survival times from this model, we assume that we
-independent right censoring present
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>U</mi><mrow><mi>k</mi><mo>,</mo><mi>i</mi></mrow></msub><annotation encoding="application/x-tex">U_{k,i}</annotation></semantics></math>
-such that the given
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mi>k</mi></msub><annotation encoding="application/x-tex">V_k</annotation></semantics></math>
-and the
-covariates<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mrow><mi>k</mi><mo>,</mo><mi>i</mi></mrow></msub><annotation encoding="application/x-tex">X_{k,i}</annotation></semantics></math><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>n</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">i=1,\dots,n_k</annotation></semantics></math><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>U</mi><mrow><mi>k</mi><mo>,</mo><mn>1</mn></mrow></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>U</mi><mrow><mi>k</mi><mo>,</mo><msub><mi>n</mi><mi>k</mi></msub></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(U_{k,1},\dots,U_{k,n_k})</annotation></semantics></math>
-of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>T</mi><mrow><mi>k</mi><mo>,</mo><mn>1</mn></mrow></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>T</mi><mrow><mi>k</mi><mo>,</mo><msub><mi>n</mi><mi>k</mi></msub></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(T_{k,1},\dots,T_{k,n_k})</annotation></semantics></math>,
-and the conditional censoring distribution do not depend on
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mi>k</mi></msub><annotation encoding="application/x-tex">V_k</annotation></semantics></math>.</p>
-<p>One consequence of the model strucure is that the Kendall’s can be
-computed for two-subjects
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mi>i</mi><mo>,</mo><mi>j</mi><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(i,j)</annotation></semantics></math>
-across two clusters <code>1'' and</code>2’’ as
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>V</mi><mrow><mn>1</mn><mi>i</mi></mrow></msub><msub><mi>Z</mi><mn>1</mn></msub><mo>−</mo><msub><mi>V</mi><mrow><mn>1</mn><mi>j</mi></mrow></msub><msub><mi>Z</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>V</mi><mrow><mn>2</mn><mi>i</mi></mrow></msub><msub><mi>Z</mi><mn>1</mn></msub><mo>−</mo><msub><mi>V</mi><mrow><mn>2</mn><mi>j</mi></mrow></msub><msub><mi>Z</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>V</mi><mrow><mn>1</mn><mi>i</mi></mrow></msub><msub><mi>Z</mi><mn>1</mn></msub><mo>+</mo><msub><mi>V</mi><mrow><mn>2</mn><mi>i</mi></mrow></msub><msub><mi>Z</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>V</mi><mrow><mn>1</mn><mi>j</mi></mrow></msub><msub><mi>Z</mi><mn>1</mn></msub><mo>+</mo><msub><mi>V</mi><mrow><mn>2</mn><mi>j</mi></mrow></msub><msub><mi>Z</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-E( \frac{( V_{1i} Z_1-  V_{1j}Z_2)( V_{2i}Z_1 -  V_{2j}Z_2 )}{( V_{1i}Z_1 + V_{2i}Z_2 ) ( V_{1j}Z_1 + V_{2j}Z_2 )} ) 
-\end{align}</annotation></semantics></math> under the assumption that
-that we compare pairs with equivalent marginals,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><msub><mi>X</mi><mrow><mn>1</mn><mo>,</mo><mi>i</mi></mrow></msub></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>S</mi><msub><mi>X</mi><mrow><mn>2</mn><mo>,</mo><mi>i</mi></mrow></msub></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">S_{X_{1,i}}(t)= S_{X_{2,i}}(t)</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><msub><mi>X</mi><mrow><mn>1</mn><mo>,</mo><mi>j</mi></mrow></msub></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>S</mi><msub><mi>X</mi><mrow><mn>2</mn><mo>,</mo><mi>j</mi></mrow></msub></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">S_{X_{1,j}}(t)= S_{X_{2,j}}(t)</annotation></semantics></math>,
-and that
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><msub><mi>X</mi><mrow><mn>1</mn><mo>,</mo><mi>i</mi></mrow></msub></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>∞</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>S</mi><msub><mi>X</mi><mrow><mn>1</mn><mo>,</mo><mi>j</mi></mrow></msub></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>∞</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">S_{X_{1,i}}(\infty)= S_{X_{1,j}}(\infty)=0</annotation></semantics></math>.
-Here we also use that
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>η</mi><annotation encoding="application/x-tex">\eta</annotation></semantics></math>
-is the same across clusters. The Kendall’s tau would be the same for due
-to the same additive structure for the frailty terms, and the random
-effects thus have the same interpretation in terms of Kendall’s tau.</p>
+independent right censoring present <span class="math inline">U_{k,i}</span> such that the given <span class="math inline">V_k</span> and the covariates <span class="math inline">X_{k,i}</span> <span class="math inline">i=1,\dots,n_k</span> <span class="math inline">(U_{k,1},\dots,U_{k,n_k})</span> of <span class="math inline">(T_{k,1},\dots,T_{k,n_k})</span>, and the
+conditional censoring distribution do not depend on <span class="math inline">V_k</span>.</p>
+<p>One consequence of the model structure is that Kendall’s tau can be
+computed for two-subjects <span class="math inline">(i,j)</span> across
+two clusters <code>1'' and</code>2’’ as <span class="math display">\begin{align}
+E( \frac{( V_{1i} Z_1-  V_{1j}Z_2)( V_{2i}Z_1 -  V_{2j}Z_2 )}{(
+V_{1i}Z_1 + V_{2i}Z_2 ) ( V_{1j}Z_1 + V_{2j}Z_2 )} )
+\end{align}</span> under the assumption that we compare pairs with
+equivalent marginals, <span class="math inline">S_{X_{1,i}}(t)=
+S_{X_{2,i}}(t)</span> and <span class="math inline">S_{X_{1,j}}(t)=
+S_{X_{2,j}}(t)</span>, and that <span class="math inline">S_{X_{1,i}}(\infty)= S_{X_{1,j}}(\infty)=0</span>.
+Here we also use that <span class="math inline">\eta</span> is the same
+across clusters. The Kendall’s tau would be the same for due to the same
+additive structure for the frailty terms, and the random effects thus
+have the same interpretation in terms of Kendall’s tau.</p>
 </div>
 <div class="section level2">
 <h2 id="univariate-gamma-clayton-oakes-model-twostage-models">Univariate gamma (clayton-oakes) model twostage models<a class="anchor" aria-label="anchor" href="#univariate-gamma-clayton-oakes-model-twostage-models"></a>
 </h2>
 <p>We start by fitting simple Clayton-Oakes models for the data, that is
-with an overall random effect that is Gamma distrubuted with variance
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math>.
-We can fit the model by a pseudo-MLE (twostageMLE) and a pairwise
-composite likelihood approach (twostage).</p>
-<p>The pseudo-liklihood and the composite pairwise likelhood should give
-the same for this model since we have paired data. In addition the
+with an overall random effect that is Gamma distributed with variance
+<span class="math inline">\theta</span>. We can fit the model by a
+pseudo-MLE (twostageMLE) and a pairwise composite likelihood approach
+(twostage).</p>
+<p>The pseudo-likelihood and the composite pairwise likelihood should
+give the same for this model since we have paired data. In addition the
 log-parametrization is illustrated with the var.link=1 option. In
 addition it is specified that we want a “clayton.oakes” model. We note
 that the standard errors differs because the twostage does not include
@@ -375,7 +299,7 @@ so here it is better to use the twostageMLE.</p>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span>
 <span> </span>
 <span> <span class="co"># Clayton-Oakes</span></span>
-<span> <span class="va">fitco2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span><span class="op">(</span><span class="va">margph</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span> <span class="va">fitco2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival_twostage.html">survival_twostage</a></span><span class="op">(</span><span class="va">margph</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">0.0</span>,</span>
 <span>                  clusters<span class="op">=</span><span class="va">diabetes</span><span class="op">$</span><span class="va">id</span>,var.link<span class="op">=</span><span class="fl">1</span>,model<span class="op">=</span><span class="st">"clayton.oakes"</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fitco2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span></span>
@@ -394,7 +318,7 @@ so here it is better to use the twostageMLE.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span>
-<span> <span class="va">fitco3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span><span class="op">(</span><span class="va">margph</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">1.0</span>,</span>
+<span> <span class="va">fitco3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival_twostage.html">survival_twostage</a></span><span class="op">(</span><span class="va">margph</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">1.0</span>,</span>
 <span>                  clusters<span class="op">=</span><span class="va">diabetes</span><span class="op">$</span><span class="va">id</span>,var.link<span class="op">=</span><span class="fl">0</span>,model<span class="op">=</span><span class="st">"clayton.oakes"</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fitco3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span></span>
@@ -409,7 +333,7 @@ so here it is better to use the twostageMLE.</p>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
 <p>Note, the standard errors are slightly different when comparing
-fitco1 with fitco3 since the survival.twostage uses numerical
+fitco1 with fitco3 since the survival_twostage uses numerical
 derivatives for the hessian and the derivative in the direction of the
 marginal model.</p>
 <p>The marginal models can be either structured Cox model or as here
@@ -432,7 +356,7 @@ those before.</p>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span>
 <span></span>
-<span>  <span class="va">fitcoa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span><span class="op">(</span><span class="va">marg</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">1.0</span>,clusters<span class="op">=</span><span class="va">diabetes</span><span class="op">$</span><span class="va">id</span>,</span>
+<span>  <span class="va">fitcoa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival_twostage.html">survival_twostage</a></span><span class="op">(</span><span class="va">marg</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">1.0</span>,clusters<span class="op">=</span><span class="va">diabetes</span><span class="op">$</span><span class="va">id</span>,</span>
 <span>           model<span class="op">=</span><span class="st">"clayton.oakes"</span>,var.link<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fitcoa</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span></span>
@@ -450,50 +374,38 @@ those before.</p>
 <div class="section level2">
 <h2 id="piecewise-constant-clayton-oakes-model">Piecewise constant Clayton-Oakes model<a class="anchor" aria-label="anchor" href="#piecewise-constant-clayton-oakes-model"></a>
 </h2>
-<p>Let the cross-hazard ratio (CHR) be defined as
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>η</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mn>1</mn></msub><mo>,</mo><msub><mi>t</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><msub><mi>λ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mn>1</mn></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>T</mi><mn>2</mn></msub><mo>=</mo><msub><mi>t</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mi>λ</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mn>1</mn></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>T</mi><mn>2</mn></msub><mo>≥</mo><msub><mi>t</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>=</mo><mfrac><mrow><msub><mi>λ</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mn>2</mn></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>T</mi><mn>1</mn></msub><mo>=</mo><msub><mi>t</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mi>λ</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mn>2</mn></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>T</mi><mn>1</mn></msub><mo>≥</mo><msub><mi>t</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-  \eta(t_1,t_2) =  \frac{ \lambda_1(t_1| T_2=t_2)}{ \lambda_1(t_1| T_2 \ge t_2)}
+<p>Let the cross-hazard ratio (CHR) be defined as <span class="math display">\begin{align}
+  \eta(t_1,t_2) =  \frac{ \lambda_1(t_1| T_2=t_2)}{ \lambda_1(t_1| T_2
+\ge t_2)}
   =  \frac{ \lambda_2(t_2| T_1=t_1)}{ \lambda_2(t_2| T_1 \ge t_1)}
-\end{align}</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>λ</mi><mn>1</mn></msub><annotation encoding="application/x-tex">\lambda_1</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>λ</mi><mn>2</mn></msub><annotation encoding="application/x-tex">\lambda_2</annotation></semantics></math>
-are the conditional hazard functions of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>1</mn></msub><annotation encoding="application/x-tex">T_1</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>2</mn></msub><annotation encoding="application/x-tex">T_2</annotation></semantics></math>
-given covariates. For the Clayton-Oakes model this ratio is
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>η</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mn>1</mn></msub><mo>,</mo><msub><mi>t</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>1</mn><mo>+</mo><mi>θ</mi></mrow><annotation encoding="application/x-tex">\eta(t_1,t_2) = 1+\theta</annotation></semantics></math>,
-and as a consequence we see that if the co-twin is dead at any time we
-would increase our risk assessment on the hazard scale with the constant
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>η</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mn>1</mn></msub><mo>,</mo><msub><mi>t</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\eta(t_1,t_2)</annotation></semantics></math>.
-The Clayton-Oakes model also has the nice property that Kendall’s tau is
-linked directly to the dependence parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math>
-and is
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><mn>2</mn><mi>/</mi><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">1/(1+2/\theta)</annotation></semantics></math>.</p>
-<p>A very useful extension of the model the constant cross-hazard ratio
-(CHR) model is the piecewise constant cross-hazard ratio (CHR) for
-bivariate survival data , and this model was extended to competing risks
-in .</p>
-<p>In the survival setting we let the CHR
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>η</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mn>1</mn></msub><mo>,</mo><msub><mi>t</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mo>∑</mo><msub><mi>η</mi><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mn>1</mn></msub><mo>∈</mo><msub><mi>I</mi><mi>i</mi></msub><mo>,</mo><msub><mi>t</mi><mn>2</mn></msub><mo>∈</mo><msub><mi>I</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+\end{align}</span> where <span class="math inline">\lambda_1</span> and
+<span class="math inline">\lambda_2</span> are the conditional hazard
+functions of <span class="math inline">T_1</span> and <span class="math inline">T_2</span> given covariates. For the Clayton-Oakes
+model this ratio is <span class="math inline">\eta(t_1,t_2) =
+1+\theta</span>, and as a consequence we see that if the co-twin is dead
+at any time we would increase our risk assessment on the hazard scale
+with the constant <span class="math inline">\eta(t_1,t_2)</span>. The
+Clayton-Oakes model also has the nice property that Kendall’s tau is
+linked directly to the dependence parameter <span class="math inline">\theta</span> and is <span class="math inline">1/(1+2/\theta)</span>.</p>
+<p>A very useful extension of the constant cross-hazard ratio (CHR)
+model is the piecewise constant cross-hazard ratio (PCHR) model for
+bivariate survival data (Nan et al., 2006), extended to competing risks
+by Shih and Lu (2010).</p>
+<p>In the survival setting we let the CHR <span class="math display">\begin{align}
   \eta(t_1,t_2) &amp; = \sum \eta_{i,j} I(t_1 \in I_i, t_2 \in I_j)
-\end{align}</annotation></semantics></math></p>
-<p>The model lets the CHR by constant in different part of the plane.
-This can be thought of also as having a separate Clayton-Oakes model for
-each of the regions specified in the plane here by the cut-points
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0.5</mn><mo>,</mo><mn>2</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">c(0,0.5,2)</annotation></semantics></math>
-thus defining 9 regions.</p>
-<p>This provides a constructive goodness of fit test for the whether the
-Clayton-Oakes model is valid. Indeed if valid the parameter should be
-the same in all regions.</p>
+\end{align}</span></p>
+<p>The model allows the CHR to be constant in different regions of the
+plane, specified here by the cut-points <span class="math inline">c(0,0.5,2)</span> thus defining 9 regions. This can
+also be thought of as fitting a separate Clayton-Oakes model for each
+region.</p>
+<p>This provides a constructive goodness-of-fit test for whether the
+Clayton-Oakes model is valid: if valid, the parameter should be the same
+across all regions.</p>
 <p>First we generate some data from the Clayton-Oakes model with
-variance
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.5</mn><annotation encoding="application/x-tex">0.5</annotation></semantics></math>
-and 2000 pairs. And fit the related model.</p>
+variance <span class="math inline">0.5</span> and 2000 pairs. And fit
+the related model.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simClaytonOakes.html">simClaytonOakes</a></span><span class="op">(</span><span class="fl">200</span>,<span class="fl">2</span>,<span class="fl">0.5</span>,<span class="fl">0</span>,<span class="fl">3</span><span class="op">)</span></span>
+<code class="sourceCode R"><span> <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_ClaytonOakes.html">sim_ClaytonOakes</a></span><span class="op">(</span><span class="fl">200</span>,<span class="fl">2</span>,<span class="fl">0.5</span>,<span class="fl">0</span>,<span class="fl">3</span><span class="op">)</span></span>
 <span>  <span class="va">margph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span>
 <span> <span class="co"># Clayton-Oakes, MLE </span></span>
 <span> <span class="va">fitco1</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/twostageMLE.html">twostageMLE</a></span><span class="op">(</span><span class="va">margph</span>,data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span>
@@ -509,13 +421,12 @@ and 2000 pairs. And fit the related model.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
-<p>Now we cut the region at the cut-points
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0.5</mn><mo>,</mo><mn>2</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">c(0,0.5,2)</annotation></semantics></math>
-thus defining 9 regions and fit a separate model for each region.<br>
+<p>Now we cut the region at the cut-points <span class="math inline">c(0,0.5,2)</span> thus defining 9 regions and fit a
+separate model for each region.<br>
 We see that the parameter is indeed rather constant over the 9 regions.
 A formal test can be constructed.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="va">udp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">piecewise.twostage</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.5</span>,<span class="fl">2</span><span class="op">)</span>,data<span class="op">=</span><span class="va">d</span>,id<span class="op">=</span><span class="st">"cluster"</span>,timevar<span class="op">=</span><span class="st">"time"</span>,status<span class="op">=</span><span class="st">"status"</span>,model<span class="op">=</span><span class="st">"clayton.oakes"</span>,silent<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span>
+<code class="sourceCode R"><span> <span class="va">udp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival-helpers.html">piecewise_twostage</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.5</span>,<span class="fl">2</span><span class="op">)</span>,data<span class="op">=</span><span class="va">d</span>,id<span class="op">=</span><span class="st">"cluster"</span>,timevar<span class="op">=</span><span class="st">"time"</span>,status<span class="op">=</span><span class="st">"status"</span>,model<span class="op">=</span><span class="st">"clayton.oakes"</span>,silent<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Data-set  1 out of  4</span></span>
 <span><span class="co">#&gt;   Number of joint events: 55 of  200</span></span>
 <span><span class="co">#&gt; Data-set  2 out of  4</span></span>
@@ -542,32 +453,21 @@ A formal test can be constructed.</p>
 </h2>
 <p>To illustrate how the multivariate models can be used, we first set
 up some twin data with ACE structure. That is two shared random effects,
-one being the genes
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>σ</mi><mi>g</mi><mn>2</mn></msubsup><annotation encoding="application/x-tex">\sigma_g^2</annotation></semantics></math>
-and one the environmental effect
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>σ</mi><mi>e</mi><mn>2</mn></msubsup><annotation encoding="application/x-tex">\sigma_e^2</annotation></semantics></math>.
+one being the genes <span class="math inline">\sigma_g^2</span> and one
+the environmental effect <span class="math inline">\sigma_e^2</span>.
 Monozygotic twins share all genes whereas the dizygotic twins only share
 half the genes. This can be expressed via 5 random effect for each twin
 pair (for example). We start by setting this up.</p>
 <p>The pardes matrix tells how the the parameters of the 5 random
 effects are related, and the matrix her first has one random effect with
-parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>θ</mi><mn>1</mn></msub><annotation encoding="application/x-tex">\theta_1</annotation></semantics></math>
-(here the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>σ</mi><mi>g</mi><mn>2</mn></msubsup><annotation encoding="application/x-tex">\sigma_g^2</annotation></semantics></math>
-), then the next 3 random effects have parameters
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.5</mn><msub><mi>θ</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">0.5 \theta_1</annotation></semantics></math>
-(here
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.5</mn><msubsup><mi>σ</mi><mi>g</mi><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">0.5 \sigma_g^2</annotation></semantics></math>
-), and the last random effect that is given by its own parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>θ</mi><mn>2</mn></msub><annotation encoding="application/x-tex">\theta_2</annotation></semantics></math>
-(here
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>σ</mi><mi>e</mi><mn>2</mn></msubsup><annotation encoding="application/x-tex">\sigma_e^2</annotation></semantics></math>
-).</p>
+parameter <span class="math inline">\theta_1</span> (here the <span class="math inline">\sigma_g^2</span> ), then the next 3 random effects
+have parameters <span class="math inline">0.5 \theta_1</span> (here
+<span class="math inline">0.5 \sigma_g^2</span> ), and the last random
+effect that is given by its own parameter <span class="math inline">\theta_2</span> (here <span class="math inline">\sigma_e^2</span> ).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">simClaytonOakes.twin.ace</a></span><span class="op">(</span><span class="fl">200</span>,<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">3</span><span class="op">)</span></span>
+<code class="sourceCode R"><span> <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mets-simulation.html">sim_ClaytonOakes_twin_ace</a></span><span class="op">(</span><span class="fl">200</span>,<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">3</span><span class="op">)</span></span>
 <span></span>
-<span> <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">twin.polygen.design</a></span><span class="op">(</span><span class="va">data</span>,id<span class="op">=</span><span class="st">"cluster"</span>,zyg<span class="op">=</span><span class="st">"DZ"</span>,zygname<span class="op">=</span><span class="st">"zyg"</span>,type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span></span>
+<span> <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twin-design.html">twin_polygen_design</a></span><span class="op">(</span><span class="va">data</span>,id<span class="op">=</span><span class="st">"cluster"</span>,zyg<span class="op">=</span><span class="st">"DZ"</span>,zygname<span class="op">=</span><span class="st">"zyg"</span>,type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span></span>
 <span> <span class="va">pardes</span> <span class="op">&lt;-</span> <span class="va">out</span><span class="op">$</span><span class="va">pardes</span></span>
 <span> <span class="va">pardes</span> </span>
 <span><span class="co">#&gt;      [,1] [,2]</span></span>
@@ -577,11 +477,8 @@ parameter
 <span><span class="co">#&gt; [4,]  0.5    0</span></span>
 <span><span class="co">#&gt; [5,]  0.0    1</span></span></code></pre></div>
 <p>The last part of the model structure is to decide how the random
-effects are shared for the different pairs (MZ and DZ), this is specfied
-by the random effects design
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mn>1</mn></msub><annotation encoding="application/x-tex">V_1</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mn>2</mn></msub><annotation encoding="application/x-tex">V_2</annotation></semantics></math>)
+effects are shared for the different pairs (MZ and DZ), this is
+specified by the random effects design (<span class="math inline">V_1</span> and <span class="math inline">V_2</span>)
 for each pair. This is here specified by an overall designmatrix for
 each subject (since they enter all pairs with the same random effects
 design).</p>
@@ -606,14 +503,13 @@ environmental random effect.</p>
 the true values, and note that the output also compares the sizes of the
 genetic and environmental random effect. This number is sometimes called
 the heritability. In addition the total variance for each subject is
-also computed and is here around
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>3</mn><annotation encoding="application/x-tex">3</annotation></semantics></math>,
-as we indeed constructed.</p>
+also computed and is here around <span class="math inline">3</span>, as
+we indeed constructed.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">### data &lt;- simClaytonOakes.twin.ace(2000,2,1,0,3)</span></span>
-<span><span class="co">### out &lt;- twin.polygen.design(data,id="cluster",zyg="DZ",zygname="zyg",type="ace")</span></span>
+<code class="sourceCode R"><span><span class="co">### data &lt;- sim_ClaytonOakes_twin_ace(2000,2,1,0,3)</span></span>
+<span><span class="co">### out &lt;- twin_polygen_design(data,id="cluster",zyg="DZ",zygname="zyg",type="ace")</span></span>
 <span> <span class="va">aa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>,data<span class="op">=</span><span class="va">data</span><span class="op">)</span></span>
-<span> <span class="va">ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">aa</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,</span>
+<span> <span class="va">ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">aa</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,</span>
 <span>      theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>,var.link<span class="op">=</span><span class="fl">0</span>,random.design<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">des.rv</span>,theta.des<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">pardes</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ts</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span></span>
@@ -641,7 +537,7 @@ as we indeed constructed.</p>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
 <ul>
-<li>A nice feature of the procdure is that it scales linearly in the
+<li>A nice feature of the procedure is that it scales linearly in the
 number of observations
 <ul>
 <li>1 mill pairs had a running time of around 100 seconds.</li>
@@ -651,13 +547,13 @@ number of observations
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">run</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">run</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
-<span> <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">simClaytonOakes.twin.ace</a></span><span class="op">(</span><span class="fl">1000000</span>,<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">3</span><span class="op">)</span></span>
+<span> <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mets-simulation.html">sim_ClaytonOakes_twin_ace</a></span><span class="op">(</span><span class="fl">1000000</span>,<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">3</span><span class="op">)</span></span>
 <span></span>
-<span> <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">twin.polygen.design</a></span><span class="op">(</span><span class="va">data</span>,id<span class="op">=</span><span class="st">"cluster"</span>,zyg<span class="op">=</span><span class="st">"DZ"</span>,zygname<span class="op">=</span><span class="st">"zyg"</span>,type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span></span>
+<span> <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twin-design.html">twin_polygen_design</a></span><span class="op">(</span><span class="va">data</span>,id<span class="op">=</span><span class="st">"cluster"</span>,zyg<span class="op">=</span><span class="st">"DZ"</span>,zygname<span class="op">=</span><span class="st">"zyg"</span>,type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span></span>
 <span> <span class="va">pardes</span> <span class="op">&lt;-</span> <span class="va">out</span><span class="op">$</span><span class="va">pardes</span></span>
 <span> <span class="va">aa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>,data<span class="op">=</span><span class="va">data</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span></span>
-<span> <span class="va">ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">aa</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,</span>
+<span> <span class="va">ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">aa</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,</span>
 <span>      theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>,var.link<span class="op">=</span><span class="fl">0</span>,random.design<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">des.rv</span>,theta.des<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">pardes</span><span class="op">)</span></span>
 <span> <span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ts</span><span class="op">)</span></span>
@@ -671,7 +567,7 @@ however, should reflect both random effects.</p>
 around 0.60, and for DZ around 0.33. Both are quite high and this is due
 to a large shared environmental effect and large genetic effect.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/internal.html">kendall.ClaytonOakes.twin.ace</a></span><span class="op">(</span><span class="va">ts</span><span class="op">$</span><span class="va">theta</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,<span class="va">ts</span><span class="op">$</span><span class="va">theta</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,K<span class="op">=</span><span class="fl">10000</span><span class="op">)</span> </span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/twin-design.html">kendall_ClaytonOakes_twin_ace</a></span><span class="op">(</span><span class="va">ts</span><span class="op">$</span><span class="va">theta</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,<span class="va">ts</span><span class="op">$</span><span class="va">theta</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,K<span class="op">=</span><span class="fl">10000</span><span class="op">)</span> </span>
 <span><span class="co">#&gt; $mz.kendall</span></span>
 <span><span class="co">#&gt; [1] 0.6186546</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -683,13 +579,13 @@ to a large shared environmental effect and large genetic effect.</p>
 </h2>
 <p>For family data, things are quite similar since we use only the
 pairwise structure. We show how the designs are specified.</p>
-<p>First we simulate data from an ACE model. 2000 families with
-two-parents that share only the environment, and two-children that share
-genes with their parents.</p>
+<p>First we simulate data from an ACE model: 200 families each with two
+parents who share only the environment, and two children who share genes
+with their parents.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">simClaytonOakes.family.ace</a></span><span class="op">(</span><span class="fl">200</span>,<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mets-simulation.html">sim_ClaytonOakes_family_ace</a></span><span class="op">(</span><span class="fl">200</span>,<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">3</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
 <span><span class="co">#&gt;        time status x cluster   type   mintime lefttime truncated</span></span>
 <span><span class="co">#&gt; 1 0.4139376      1 0       1 mother 0.4139376        0         0</span></span>
@@ -703,8 +599,7 @@ genes with their parents.</p>
 <p>To set up the random effects some functions can be used. We here set
 up the ACE model that has 9 random effects with one shared environmental
 effect (the last random effect) and 4 genetic random effects for each
-parent, with variance
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>σ</mi><mi>g</mi><mn>2</mn></msubsup><mi>/</mi><mn>4</mn></mrow><annotation encoding="application/x-tex">\sigma_g^2/4</annotation></semantics></math>.</p>
+parent, with variance <span class="math inline">\sigma_g^2/4</span>.</p>
 <p>The random effect is again set-up with an overall designmatrix
 because it is again the same for each subject for all comparisons across
 family members. We below demonstrate how the model can be specified in
@@ -712,7 +607,7 @@ various other ways.</p>
 <p>Each child share 2 genetic random effects with each parent, and also
 share 2 genetic random effects with his/her sibling.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">ace.family.design</a></span><span class="op">(</span><span class="va">data</span>,member<span class="op">=</span><span class="st">"type"</span>,id<span class="op">=</span><span class="st">"cluster"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twin-design.html">ace_family_design</a></span><span class="op">(</span><span class="va">data</span>,member<span class="op">=</span><span class="st">"type"</span>,id<span class="op">=</span><span class="st">"cluster"</span><span class="op">)</span></span>
 <span><span class="va">out</span><span class="op">$</span><span class="va">pardes</span></span>
 <span><span class="co">#&gt;       [,1] [,2]</span></span>
 <span><span class="co">#&gt;  [1,] 0.25    0</span></span>
@@ -735,7 +630,7 @@ share 2 genetic random effects with his/her sibling.</p>
 <code class="sourceCode R"><span><span class="va">pa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>,data<span class="op">=</span><span class="va">data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># make ace random effects design</span></span>
-<span><span class="va">ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,var.par<span class="op">=</span><span class="fl">1</span>,var.link<span class="op">=</span><span class="fl">0</span>,theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>,</span>
+<span><span class="va">ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,var.par<span class="op">=</span><span class="fl">1</span>,var.link<span class="op">=</span><span class="fl">0</span>,theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>,</span>
 <span>        random.design<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">des.rv</span>,theta.des<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">pardes</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ts</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span></span>
@@ -763,16 +658,16 @@ share 2 genetic random effects with his/her sibling.</p>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
 <p>The model can also be fitted by specifying the pairs that one wants
-for the pairwise likelhood. This is done by specifying the pairs
+for the pairwise likelihood. This is done by specifying the pairs
 argument. We start by considering all pairs as we also did before.</p>
-<p>All pairs can be written up by calling the familycluster.index
+<p>All pairs can be written up by calling the familycluster_index
 function.</p>
-<p>There are xx pairs to consider, and the first 6 pairs for the first
-family is written out here.</p>
+<p>There are <!-- TODO: insert pair count --> pairs to consider, and the
+first 6 pairs for the first family is written out here.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># now specify fitting via specific pairs </span></span>
 <span><span class="co"># first all pairs </span></span>
-<span><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/familycluster.index.html">familycluster.index</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span></span>
+<span><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/familycluster_index.html">familycluster_index</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mm</span><span class="op">$</span><span class="va">familypairindex</span>,n<span class="op">=</span><span class="fl">12</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] 1 2 1 3 1 4 2 3 2 4 3 4</span></span>
 <span><span class="va">pairs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="va">mm</span><span class="op">$</span><span class="va">familypairindex</span>,ncol<span class="op">=</span><span class="fl">2</span>,byrow<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
@@ -786,7 +681,7 @@ family is written out here.</p>
 <span><span class="co">#&gt; [6,]    3    4</span></span></code></pre></div>
 <p>Then fitting the model using only specified pairs</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>, theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>,var.link<span class="op">=</span><span class="fl">0</span>,step<span class="op">=</span><span class="fl">1.0</span>,</span>
+<code class="sourceCode R"><span><span class="va">ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>, theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>,var.link<span class="op">=</span><span class="fl">0</span>,step<span class="op">=</span><span class="fl">1.0</span>,</span>
 <span>        random.design<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">des.rv</span>, theta.des<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">pardes</span>,pairs<span class="op">=</span><span class="va">pairs</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ts</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span></span>
@@ -818,7 +713,7 @@ pairs picked still refers to the data given in the data argument, and
 clusters (families) are also specified as before.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ssid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">pairs</span><span class="op">)</span>,<span class="fl">200</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">tsd</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,</span>
+<span><span class="va">tsd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">data</span>,clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span>,</span>
 <span>    theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">/</span><span class="fl">10</span>,var.link<span class="op">=</span><span class="fl">0</span>,random.design<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">des.rv</span>,</span>
 <span>   theta.des<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">pardes</span>,pairs<span class="op">=</span><span class="va">pairs</span><span class="op">[</span><span class="va">ssid</span>,<span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">tsd</span><span class="op">)</span></span>
@@ -846,17 +741,16 @@ clusters (families) are also specified as before.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
-<p>Sometimes one only has the data from the pairs in addition to for
-example a cohort estimate of the marginal surival models. We now
-demonstrate how this is dealt with. Everything is essentially as before
-but need to organize the design differently compared to before we
-specified the design<br>
-for everybody in the cohort. In addition we do not here bring in the
-uncertainty from the baseline in the estimates, even though this is
-formally possible, but when the data of the marginal model and twostage
-data are not the same, we have to specify that we do not want the
-decomposition for the uncertainty due to the baseline
-(baseline.iid=0).</p>
+<p>Sometimes one only has data from the pairs in addition to, for
+example, a cohort estimate of the marginal survival models. We now
+demonstrate how this is handled. Everything is essentially as before,
+except we need to organise the design differently compared to before,
+when we specified the design for everybody in the cohort. In addition,
+we do not bring in the uncertainty from the baseline in the estimates
+here; even though this is formally possible, when the data for the
+marginal model and the twostage model are not the same, we must specify
+that we do not want the decomposition for uncertainty due to the
+baseline (<code>baseline.iid=0</code>).</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">pairs</span><span class="op">[</span><span class="va">ssid</span>,<span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -874,7 +768,7 @@ decomposition for the uncertainty due to the baseline
 <span><span class="co"># this requires that pair.new refers to id's in dataid (survival, status and so forth)</span></span>
 <span><span class="co"># random.design and theta.des are constructed to be the array 3 dims via individual specfication from ace.family.design</span></span>
 <span><span class="va">dataid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dsort.html">dsort</a></span><span class="op">(</span><span class="va">data</span><span class="op">[</span><span class="va">ids</span>,<span class="op">]</span>,<span class="st">"cluster"</span><span class="op">)</span></span>
-<span><span class="va">outid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">ace.family.design</a></span><span class="op">(</span><span class="va">dataid</span>,member<span class="op">=</span><span class="st">"type"</span>,id<span class="op">=</span><span class="st">"cluster"</span><span class="op">)</span></span>
+<span><span class="va">outid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twin-design.html">ace_family_design</a></span><span class="op">(</span><span class="va">dataid</span>,member<span class="op">=</span><span class="st">"type"</span>,id<span class="op">=</span><span class="st">"cluster"</span><span class="op">)</span></span>
 <span><span class="va">outid</span><span class="op">$</span><span class="va">pardes</span></span>
 <span><span class="co">#&gt;       [,1] [,2]</span></span>
 <span><span class="co">#&gt;  [1,] 0.25    0</span></span>
@@ -896,7 +790,7 @@ decomposition for the uncertainty due to the baseline
 <span><span class="co">#&gt; [6,]  1  0  1  0  1  0  1  0   1</span></span></code></pre></div>
 <p>Now fitting the model using only the pair data.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tsdid</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">/</span><span class="fl">10</span>,var.link<span class="op">=</span><span class="fl">0</span>,baseline.iid<span class="op">=</span><span class="fl">0</span>,</span>
+<code class="sourceCode R"><span><span class="va">tsdid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">/</span><span class="fl">10</span>,var.link<span class="op">=</span><span class="fl">0</span>,baseline.iid<span class="op">=</span><span class="fl">0</span>,</span>
 <span>          random.design<span class="op">=</span><span class="va">outid</span><span class="op">$</span><span class="va">des.rv</span>,theta.des<span class="op">=</span><span class="va">outid</span><span class="op">$</span><span class="va">pardes</span>,pairs<span class="op">=</span><span class="va">pair.new</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">tsdid</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span></span>
@@ -925,7 +819,7 @@ decomposition for the uncertainty due to the baseline
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span>
 <span></span>
 <span><span class="va">paid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>,data<span class="op">=</span><span class="va">dataid</span><span class="op">)</span></span>
-<span><span class="va">tsdidb</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">paid</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">/</span><span class="fl">10</span>,</span>
+<span><span class="va">tsdidb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">paid</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">/</span><span class="fl">10</span>,</span>
 <span>  var.link<span class="op">=</span><span class="fl">0</span>,random.design<span class="op">=</span><span class="va">outid</span><span class="op">$</span><span class="va">des.rv</span>,theta.des<span class="op">=</span><span class="va">outid</span><span class="op">$</span><span class="va">pardes</span>,pairs<span class="op">=</span><span class="va">pair.new</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">tsdidb</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span></span>
@@ -995,12 +889,12 @@ situations.</p>
 <span><span class="va">mf</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span><span class="op">(</span><span class="va">pair.types</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">==</span><span class="st">"mother"</span> <span class="op">&amp;</span> <span class="va">pair.types</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">==</span><span class="st">"father"</span><span class="op">)</span></span>
 <span><span class="co">##          pair, rv related to pairs,  theta.des related to pair </span></span>
 <span><span class="va">pairs.new</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">pair.new</span>,<span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="fl">1</span><span class="op">+</span><span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">*</span><span class="fl">3</span>,<span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="fl">2</span><span class="op">+</span><span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">*</span><span class="fl">4</span>,<span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="fl">1</span><span class="op">+</span><span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">*</span><span class="fl">2</span>,<span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="fl">3</span><span class="op">+</span><span class="op">(</span><span class="va">mf</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">*</span><span class="fl">4</span><span class="op">)</span></span></code></pre></div>
-<p>pairs.new is matix with</p>
+<p>pairs.new is a matrix with</p>
 <ul>
-<li><p>columns 1:2 giving the indeces of the data points</p></li>
-<li><p>columns 3:4 giving the indeces of the random.design for the
+<li><p>columns 1:2 giving the indices of the data points</p></li>
+<li><p>columns 3:4 giving the indices of the random.design for the
 different pairs</p></li>
-<li><p>columns 5 giving the indeces of the theta.des written as
+<li><p>columns 5 giving the indices of the theta.des written as
 rows</p></li>
 <li><p>columns 6 giving the number of random variables for this
 pair</p></li>
@@ -1024,8 +918,8 @@ father), (mother, child), and (father, child), respectively.</p>
 <span><span class="co">#&gt; 8 1.763022      1 1       2  child 1.6718726        0         0      4     0</span></span></code></pre></div>
 <p>The random effects for these are specified from random effects with
 design read from the random.design, using the rows (1,2), (3,4) and
-(3,4), respecively, and with random effects that have variances given by
-theta.des rows, 1,2, and 2 respectively in the three cases. For the
+(3,4), respectively, and with random effects that have variances given
+by theta.des rows, 1,2, and 2 respectively in the three cases. For the
 first pair (1,2), the random vectors and their variances are given by,
 (mother, father) pair,</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
@@ -1039,31 +933,21 @@ first pair (1,2), the random vectors and their variances are given by,
 <span><span class="co">#&gt; [2,]    1    0</span></span>
 <span><span class="co">#&gt; [3,]    0    1</span></span>
 <span><span class="co">#&gt; [4,]    0    0</span></span></code></pre></div>
-<p>thus sharing only the third random effect with variance
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>σ</mi><mi>e</mi><mn>2</mn></msubsup><annotation encoding="application/x-tex">\sigma_e^2</annotation></semantics></math>
-and having two non-shared random effects with variances
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>σ</mi><mi>g</mi><mn>2</mn></msubsup><annotation encoding="application/x-tex">\sigma_g^2</annotation></semantics></math>,
-and finally a last 4th random effect with variance
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0</mn><annotation encoding="application/x-tex">0</annotation></semantics></math>
-that thus could have been omitted.</p>
+<p>thus sharing only the third random effect with variance <span class="math inline">\sigma_e^2</span> and having two non-shared random
+effects with variances <span class="math inline">\sigma_g^2</span>, and
+finally a last 4th random effect with variance <span class="math inline">0</span> that thus could have been omitted.</p>
 <p>The length of all rows of theta.des are the maximum number of random
-effects
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>×</mo><annotation encoding="application/x-tex">\times</annotation></semantics></math>
-the number of parameters. These two numbers are given in the call. In
-this case 4
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>×</mo><annotation encoding="application/x-tex">\times</annotation></semantics></math>
-2. So theta.des has rows of length
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>8</mn><annotation encoding="application/x-tex">8</annotation></semantics></math>,
-possibly including some 0’s for rows not relevant due to fewer random
-effects, as is the case here for pairs that do not share genetic
-effects.</p>
+effects <span class="math inline">\times</span> the number of
+parameters. These two numbers are given in the call. In this case 4
+<span class="math inline">\times</span> 2. So theta.des has rows of
+length <span class="math inline">8</span>, possibly including some 0’s
+for rows not relevant due to fewer random effects, as is the case here
+for pairs that do not share genetic effects.</p>
 <p>Now considering the parent and their child, they are thus sharing the
-first random effect with variance
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.5</mn><msubsup><mi>σ</mi><mi>g</mi><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">0.5 \sigma_g^2</annotation></semantics></math>
-then there are two non-shared random effects with variances
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.5</mn><msubsup><mi>σ</mi><mi>g</mi><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">0.5 \sigma_g^2</annotation></semantics></math>,
-and finally a shared environment with variance
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>σ</mi><mi>e</mi><mn>2</mn></msubsup><annotation encoding="application/x-tex">\sigma_e^2</annotation></semantics></math>.</p>
+first random effect with variance <span class="math inline">0.5
+\sigma_g^2</span> then there are two non-shared random effects with
+variances <span class="math inline">0.5 \sigma_g^2</span>, and finally a
+shared environment with variance <span class="math inline">\sigma_e^2</span>.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dataid</span><span class="op">)</span></span>
 <span><span class="co">#&gt;       time status x cluster   type   mintime lefttime truncated number child</span></span>
@@ -1085,7 +969,7 @@ and finally a shared environment with variance
 <span><span class="co">#&gt; [1] 1 0 1 1</span></span></code></pre></div>
 <p>And fitting again the same model as before</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tsdid2</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,</span>
+<code class="sourceCode R"><span><span class="va">tsdid2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,</span>
 <span>       theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">/</span><span class="fl">10</span>,var.link<span class="op">=</span><span class="fl">0</span>,step<span class="op">=</span><span class="fl">1.0</span>,random.design<span class="op">=</span><span class="va">random.des</span>,</span>
 <span>       baseline.iid<span class="op">=</span><span class="fl">0</span>, theta.des<span class="op">=</span><span class="va">theta.des</span>,pairs<span class="op">=</span><span class="va">pairs.new</span>,dim.theta<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">tsdid2</span><span class="op">)</span></span>
@@ -1133,10 +1017,10 @@ coefficient.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">kinship</span>,n<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] 0.5 0.0 0.5 0.5 0.5 0.5 0.5 0.0 0.5 0.0</span></span>
 <span></span>
-<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">make.pairwise.design</a></span><span class="op">(</span><span class="va">pair.new</span>,<span class="va">kinship</span>,type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span> </span></code></pre></div>
+<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twin-design.html">make_pairwise_design</a></span><span class="op">(</span><span class="va">pair.new</span>,<span class="va">kinship</span>,type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span> </span></code></pre></div>
 <p>Same output as before</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tsdid3</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,</span>
+<code class="sourceCode R"><span><span class="va">tsdid3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,</span>
 <span>   theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">/</span><span class="fl">10</span>,var.link<span class="op">=</span><span class="fl">0</span>,step<span class="op">=</span><span class="fl">1.0</span>,random.design<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">random.design</span>,</span>
 <span>   baseline.iid<span class="op">=</span><span class="fl">0</span>,theta.des<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">theta.des</span>,pairs<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">new.pairs</span>,dim.theta<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">tsdid3</span><span class="op">)</span></span>
@@ -1175,8 +1059,8 @@ coefficient.</p>
 <p>Now fitting the AE model without the “C” component for shared
 environment:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outae</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">make.pairwise.design</a></span><span class="op">(</span><span class="va">pair.new</span>,<span class="va">kinship</span>,type<span class="op">=</span><span class="st">"ae"</span><span class="op">)</span> </span>
-<span><span class="va">tsdid4</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,</span>
+<code class="sourceCode R"><span><span class="va">outae</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twin-design.html">make_pairwise_design</a></span><span class="op">(</span><span class="va">pair.new</span>,<span class="va">kinship</span>,type<span class="op">=</span><span class="st">"ae"</span><span class="op">)</span> </span>
+<span><span class="va">tsdid4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">dataid</span>,clusters<span class="op">=</span><span class="va">dataid</span><span class="op">$</span><span class="va">cluster</span>,</span>
 <span>   theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">/</span><span class="fl">10</span>,var.link<span class="op">=</span><span class="fl">0</span>,random.design<span class="op">=</span><span class="va">outae</span><span class="op">$</span><span class="va">random.design</span>,</span>
 <span>   baseline.iid<span class="op">=</span><span class="fl">0</span>,theta.des<span class="op">=</span><span class="va">outae</span><span class="op">$</span><span class="va">theta.des</span>,pairs<span class="op">=</span><span class="va">outae</span><span class="op">$</span><span class="va">new.pairs</span>,dim.theta<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">tsdid4</span><span class="op">)</span></span>
@@ -1184,7 +1068,7 @@ environment:</p>
 <span><span class="co">#&gt; Variance of Gamma distributed random effects</span></span>
 <span><span class="co">#&gt; $estimates</span></span>
 <span><span class="co">#&gt;                Coef.        SE        z        P-val Kendall tau        SE</span></span>
-<span><span class="co">#&gt; dependence1 1.932485 0.5702673 3.388735 0.0007021583   0.4914157 0.0737521</span></span>
+<span><span class="co">#&gt; dependence1 1.932485 0.5702673 3.388735 0.0007021582   0.4914157 0.0737521</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $type</span></span>
 <span><span class="co">#&gt; [1] "clayton.oakes"</span></span>
@@ -1206,18 +1090,17 @@ environment:</p>
 <div class="section level3">
 <h3 id="pairwise-dependence-modelling">Pairwise dependence modelling<a class="anchor" aria-label="anchor" href="#pairwise-dependence-modelling"></a>
 </h3>
-<p>We now illustate how to estimate all pairwise associations between
+<p>We now illustrate how to estimate all pairwise associations between
 different family-members using the twostage function. They key is
 specify the pairs for the composite likelihood directly and then the
-associated design-matrix directly. This needs to be done looking at both
-subjects in the pairs, and the design therefore follows the pairs and is
-a matrix where its row is given as the third column in the pairs
+associated design-matrix design therefore follows the pairs and is a
+matrix where its row is given as the third column in the pairs
 argument.</p>
 <p>First we get the pairs to be considered</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">simClaytonOakes.family.ace</a></span><span class="op">(</span><span class="fl">200</span>,<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mets-simulation.html">sim_ClaytonOakes_family_ace</a></span><span class="op">(</span><span class="fl">200</span>,<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">3</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
 <span><span class="co">#&gt;        time status x cluster   type   mintime lefttime truncated</span></span>
 <span><span class="co">#&gt; 1 0.4139376      1 0       1 mother 0.4139376        0         0</span></span>
@@ -1229,7 +1112,7 @@ argument.</p>
 <span><span class="va">data</span><span class="op">$</span><span class="va">number</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span><span class="op">)</span></span>
 <span><span class="va">data</span><span class="op">$</span><span class="va">child</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">*</span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">number</span><span class="op">==</span><span class="fl">3</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/familycluster.index.html">familycluster.index</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span></span>
+<span><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/familycluster_index.html">familycluster_index</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mm</span><span class="op">$</span><span class="va">familypairindex</span>,n<span class="op">=</span><span class="fl">20</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] 1 2 1 3 1 4 2 3 2 4 3 4 5 6 5 7 5 8 6 7</span></span>
 <span><span class="va">pairs</span> <span class="op">&lt;-</span> <span class="va">mm</span><span class="op">$</span><span class="va">pairs</span></span>
@@ -1277,7 +1160,7 @@ argument.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>,<span class="va">data</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">tsp</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">data</span>,theta.des<span class="op">=</span><span class="va">dm</span>,pairs<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">pairs</span>,<span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dm</span><span class="op">)</span><span class="op">)</span>,se.clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">clust</span><span class="op">)</span></span>
+<span><span class="va">tsp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/twostage.html" class="external-link">twostage</a></span><span class="op">(</span><span class="va">pa</span>,data<span class="op">=</span><span class="va">data</span>,theta.des<span class="op">=</span><span class="va">dm</span>,pairs<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">pairs</span>,<span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dm</span><span class="op">)</span><span class="op">)</span>,se.clusters<span class="op">=</span><span class="va">data</span><span class="op">$</span><span class="va">clust</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">tsp</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span></span>
 <span><span class="co">#&gt; Variance of Gamma distributed random effects </span></span>
@@ -1306,55 +1189,43 @@ argument.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
-<p>We note that mother-father have the smallest correlation since they
-only share the environmental random effect, whereas other pairs have a
-similar correlation (in fact the same due to the way the data was
-simulated) consisting of half the genetic effect and the environmental
-effect that was also shared.</p>
+<p>We note that mother-father pairs have the smallest correlation since
+they share only the environmental random effect, whereas other pairs
+have a similar correlation (in fact the same, due to how the data were
+simulated), consisting of half the genetic effect plus the shared
+environmental effect.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="univariate-plackett-model-twostage-models">Univariate plackett model twostage models<a class="anchor" aria-label="anchor" href="#univariate-plackett-model-twostage-models"></a>
 </h2>
-<p>The copula known as the Plackett distribution, see , is on the form
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>u</mi><mo>,</mo><mi>v</mi><mo>;</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><mfrac><mrow><mi>S</mi><mo>−</mo><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>S</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn><mi>u</mi><mi>v</mi><mi>θ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo>−</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mn>2</mn><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mtd><mtd columnalign="left" style="text-align: left"><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> if </mtext><mspace width="0.333em"></mspace></mrow><mi>θ</mi><mo>≠</mo><mn>1</mn></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><mi>u</mi><mi>v</mi></mtd><mtd columnalign="left" style="text-align: left"><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> if </mtext><mspace width="0.333em"></mspace></mrow><mi>θ</mi><mo>=</mo><mn>1</mn></mtd></mtr></mtable></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
+<p>The copula known as the Plackett distribution (Plackett, 1965;
+Anderson et al., 1992; Ghosh et al., 2006), is on the form <span class="math display">\begin{align}
   C(u,v; \theta) =
   \begin{cases}
-    \frac{ S - (S^2 - 4 u v \theta (\theta-a))}{2 (\theta -1)} &amp; \mbox{ if } \theta \ne 1 \\
+    \frac{ S - (S^2 - 4 u v \theta (\theta-a))}{2 (\theta -1)} &amp;
+\mbox{ if } \theta \ne 1 \\
     u v &amp; \mbox{ if } \theta = 1
   \end{cases}
-\end{align}</annotation></semantics></math> with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo>=</mo><mn>1</mn><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>u</mi><mo>+</mo><mi>v</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">S=1+(\theta-1) (u + v)</annotation></semantics></math>.
-With marginals
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mi>i</mi></msub><annotation encoding="application/x-tex">S_i</annotation></semantics></math>
-we now define the bivariate survival function as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>u</mi><mn>1</mn></msub><mo>,</mo><msub><mi>u</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><msub><mi>S</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">C(u_1,u_2)=H(S_1(t_1),S_2(t_2))</annotation></semantics></math>
-with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>u</mi><mi>i</mi></msub><mo>=</mo><msub><mi>S</mi><mi>i</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">u_i=S_i(t_i)</annotation></semantics></math>.</p>
-<p>The dependence parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math>
-has the nice interpretation that the it is equivalent to the odds-ratio
-of all
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mo>×</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">2 \times 2</annotation></semantics></math>
-tables for surviving past any cut of the plane
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mn>1</mn></msub><mo>,</mo><msub><mi>t</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(t_1,t_2)</annotation></semantics></math>,
-that is
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi><mo>=</mo><mfrac><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>T</mi><mn>1</mn></msub><mo>&gt;</mo><msub><mi>t</mi><mn>1</mn></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>T</mi><mn>2</mn></msub><mo>&gt;</mo><msub><mi>t</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>T</mi><mn>1</mn></msub><mo>≤</mo><msub><mi>t</mi><mn>1</mn></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>T</mi><mn>2</mn></msub><mo>&gt;</mo><msub><mi>t</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>T</mi><mn>1</mn></msub><mo>&gt;</mo><msub><mi>t</mi><mn>1</mn></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>T</mi><mn>2</mn></msub><mo>≤</mo><msub><mi>t</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>T</mi><mn>1</mn></msub><mo>≤</mo><msub><mi>t</mi><mn>1</mn></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>T</mi><mn>2</mn></msub><mo>≤</mo><msub><mi>t</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
-\theta = \frac{ P(T_1 &gt; t_1 | T_2 &gt;t_2) P(T_1 \leq t_1 | T_2&gt;t_2) }{P(T_1 &gt; t_1 | T_2 \leq t_2) P(T_1 \leq t_1 | T_2 \leq t_2 ) }.
-</annotation></semantics></math></p>
+\end{align}</span> with <span class="math inline">S=1+(\theta-1) (u +
+v)</span>. With marginals <span class="math inline">S_i</span> we now
+define the bivariate survival function as <span class="math inline">C(u_1,u_2)=H(S_1(t_1),S_2(t_2))</span> with <span class="math inline">u_i=S_i(t_i)</span>.</p>
+<p>The dependence parameter <span class="math inline">\theta</span> has
+the nice interpretation that the it is equivalent to the odds-ratio of
+all <span class="math inline">2 \times 2</span> tables for surviving
+past any cut of the plane <span class="math inline">(t_1,t_2)</span>,
+that is <span class="math display">
+\theta = \frac{ P(T_1 &gt; t_1 | T_2 &gt;t_2) P(T_1 \leq t_1 |
+T_2&gt;t_2) }{P(T_1 &gt; t_1 | T_2 \leq t_2) P(T_1 \leq t_1 | T_2 \leq
+t_2 ) }.
+</span></p>
 <p>One additional nice feature of the odds-ratio measure it that it is
-directly linked to the Spearman correlation,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ρ</mi><annotation encoding="application/x-tex">\rho</annotation></semantics></math>,
-that can be computed as
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mfrac><mrow><mi>θ</mi><mo>+</mo><mn>1</mn></mrow><mrow><mi>θ</mi><mo>−</mo><mn>1</mn></mrow></mfrac><mo>−</mo><mfrac><mrow><mn>2</mn><mi>θ</mi></mrow><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mfrac><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-  \frac{\theta+1}{\theta -1} - \frac{2 \theta}{(\theta-1)^2} \log(\theta)
-\end{align}</annotation></semantics></math> when
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi><mo>≠</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\theta \ne 1</annotation></semantics></math>,
-if
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\theta=1</annotation></semantics></math>
-then
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ρ</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\rho=0</annotation></semantics></math>.</p>
-<p>This model has a more free parameter than the Clayton-Oakes
+directly linked to the Spearman correlation, <span class="math inline">\rho</span>, that can be computed as <span class="math display">\begin{align}
+  \frac{\theta+1}{\theta -1} - \frac{2 \theta}{(\theta-1)^2}
+\log(\theta)
+\end{align}</span> when <span class="math inline">\theta \ne 1</span>,
+if <span class="math inline">\theta=1</span> then <span class="math inline">\rho=0</span>.</p>
+<p>This model has one more free parameter than the Clayton-Oakes
 model.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
@@ -1379,7 +1250,7 @@ model.</p>
 <span> </span>
 <span> <span class="co"># Plackett model</span></span>
 <span> <span class="va">mph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">treat</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">diabetes</span><span class="op">)</span></span>
-<span> <span class="va">fitp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span><span class="op">(</span><span class="va">mph</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">3.0</span>,</span>
+<span> <span class="va">fitp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival_twostage.html">survival_twostage</a></span><span class="op">(</span><span class="va">mph</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">3.0</span>,</span>
 <span>                clusters<span class="op">=</span><span class="va">diabetes</span><span class="op">$</span><span class="va">id</span>,var.link<span class="op">=</span><span class="fl">1</span>,model<span class="op">=</span><span class="st">"plackett"</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fitp</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Odds-Ratio (Plackett) model </span></span>
@@ -1400,7 +1271,7 @@ model.</p>
 <span> </span>
 <span> <span class="co"># without covariates but with stratafied </span></span>
 <span> <span class="va">marg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">treat</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>,data<span class="op">=</span><span class="va">diabetes</span><span class="op">)</span></span>
-<span> <span class="va">fitpa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span><span class="op">(</span><span class="va">marg</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">1.0</span>,</span>
+<span> <span class="va">fitpa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival_twostage.html">survival_twostage</a></span><span class="op">(</span><span class="va">marg</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">1.0</span>,</span>
 <span>                 clusters<span class="op">=</span><span class="va">diabetes</span><span class="op">$</span><span class="va">id</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fitpa</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span></span>
@@ -1420,7 +1291,7 @@ model.</p>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span>
 <span> </span>
-<span> <span class="va">fitcoa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span><span class="op">(</span><span class="va">marg</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">1.0</span>,clusters<span class="op">=</span><span class="va">diabetes</span><span class="op">$</span><span class="va">id</span>,</span>
+<span> <span class="va">fitcoa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival_twostage.html">survival_twostage</a></span><span class="op">(</span><span class="va">marg</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">1.0</span>,clusters<span class="op">=</span><span class="va">diabetes</span><span class="op">$</span><span class="va">id</span>,</span>
 <span>                  model<span class="op">=</span><span class="st">"clayton.oakes"</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fitcoa</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Clayton-Oakes model</span></span>
@@ -1442,7 +1313,7 @@ model.</p>
 <p>With a regression design</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">adult</span><span class="op">)</span>,<span class="va">diabetes</span><span class="op">)</span></span>
-<span> <span class="va">fitp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival.twostage.html">survival.twostage</a></span><span class="op">(</span><span class="va">mph</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">3.0</span>,Nit<span class="op">=</span><span class="fl">40</span>,</span>
+<span> <span class="va">fitp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival_twostage.html">survival_twostage</a></span><span class="op">(</span><span class="va">mph</span>,data<span class="op">=</span><span class="va">diabetes</span>,theta<span class="op">=</span><span class="fl">3.0</span>,Nit<span class="op">=</span><span class="fl">40</span>,</span>
 <span>                clusters<span class="op">=</span><span class="va">diabetes</span><span class="op">$</span><span class="va">id</span>,var.link<span class="op">=</span><span class="fl">1</span>,model<span class="op">=</span><span class="st">"plackett"</span>,</span>
 <span>        theta.des<span class="op">=</span><span class="va">mm</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fitp</span><span class="op">)</span></span>
@@ -1469,8 +1340,8 @@ model.</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="co"># Piecewise constant cross hazards ratio modelling</span></span>
 <span></span>
-<span> <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fu"><a href="../reference/simClaytonOakes.html">simClaytonOakes</a></span><span class="op">(</span><span class="fl">1000</span>,<span class="fl">2</span>,<span class="fl">0.5</span>,<span class="fl">0</span>,stoptime<span class="op">=</span><span class="fl">2</span>,left<span class="op">=</span><span class="fl">0</span><span class="op">)</span>,<span class="op">!</span><span class="va">truncated</span><span class="op">)</span></span>
-<span> <span class="va">udp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">piecewise.twostage</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.5</span>,<span class="fl">2</span><span class="op">)</span>,data<span class="op">=</span><span class="va">d</span>,id<span class="op">=</span><span class="st">"cluster"</span>,timevar<span class="op">=</span><span class="st">"time"</span>,</span>
+<span> <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fu"><a href="../reference/sim_ClaytonOakes.html">sim_ClaytonOakes</a></span><span class="op">(</span><span class="fl">1000</span>,<span class="fl">2</span>,<span class="fl">0.5</span>,<span class="fl">0</span>,stoptime<span class="op">=</span><span class="fl">2</span>,left<span class="op">=</span><span class="fl">0</span><span class="op">)</span>,<span class="op">!</span><span class="va">truncated</span><span class="op">)</span></span>
+<span> <span class="va">udp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/survival-helpers.html">piecewise_twostage</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.5</span>,<span class="fl">2</span><span class="op">)</span>,data<span class="op">=</span><span class="va">d</span>,id<span class="op">=</span><span class="st">"cluster"</span>,timevar<span class="op">=</span><span class="st">"time"</span>,</span>
 <span>                           status<span class="op">=</span><span class="st">"status"</span>,model<span class="op">=</span><span class="st">"plackett"</span>,silent<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Data-set  1 out of  4</span></span>
 <span><span class="co">#&gt;   Number of joint events: 254 of  1000</span></span>
@@ -1498,9 +1369,9 @@ model.</p>
 </h2>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.5.2 (2025-10-31)</span></span>
+<span><span class="co">#&gt; R version 4.6.0 (2026-04-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.3 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -1519,23 +1390,23 @@ model.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.9</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.10</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           </span></span>
-<span><span class="co">#&gt;  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        </span></span>
-<span><span class="co">#&gt;  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            </span></span>
-<span><span class="co">#&gt; [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           </span></span>
-<span><span class="co">#&gt; [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        </span></span>
+<span><span class="co">#&gt;  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           </span></span>
+<span><span class="co">#&gt;  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        </span></span>
+<span><span class="co">#&gt;  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            </span></span>
+<span><span class="co">#&gt; [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           </span></span>
+<span><span class="co">#&gt; [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        </span></span>
 <span><span class="co">#&gt; [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   </span></span>
-<span><span class="co">#&gt; [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       </span></span>
-<span><span class="co">#&gt; [22] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      </span></span>
-<span><span class="co">#&gt; [25] fs_1.6.6               htmlwidgets_1.6.4      Rcpp_1.1.1            </span></span>
-<span><span class="co">#&gt; [28] future_1.68.0          lattice_0.22-7         systemfonts_1.3.1     </span></span>
-<span><span class="co">#&gt; [31] digest_0.6.39          R6_2.6.1               parallelly_1.46.1     </span></span>
-<span><span class="co">#&gt; [34] parallel_4.5.2         splines_4.5.2          Matrix_1.7-4          </span></span>
-<span><span class="co">#&gt; [37] bslib_0.9.0            tools_4.5.2            RcppArmadillo_15.2.3-1</span></span>
-<span><span class="co">#&gt; [40] globals_0.18.0         survival_3.8-3         pkgdown_2.2.0         </span></span>
+<span><span class="co">#&gt; [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       </span></span>
+<span><span class="co">#&gt; [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      </span></span>
+<span><span class="co">#&gt; [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        </span></span>
+<span><span class="co">#&gt; [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     </span></span>
+<span><span class="co">#&gt; [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     </span></span>
+<span><span class="co">#&gt; [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          </span></span>
+<span><span class="co">#&gt; [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1</span></span>
+<span><span class="co">#&gt; [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         </span></span>
 <span><span class="co">#&gt; [43] cachem_1.1.0           desc_1.4.3</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

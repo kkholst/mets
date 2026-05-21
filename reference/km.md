@@ -1,27 +1,48 @@
-# Kaplan-Meier with robust standard errors
+# Kaplan-Meier with Robust Standard Errors
 
-Kaplan-Meier with robust standard errors Robust variance is default
-variance and obtained from the predict call
+Computes Kaplan-Meier estimates with robust standard errors. Robust
+variance is the default and is obtained from the `predict` call.
 
 ## Usage
 
 ``` r
-km(formula, data = data, ...)
+km(formula, data = data, km = TRUE, ...)
 ```
 
 ## Arguments
 
 - formula:
 
-  formula with 'Surv' 'Event' outcome
+  Formula with 'Surv' or 'Event' outcome.
 
 - data:
 
-  data frame
+  Data frame.
+
+- km:
+
+  Logical; if `TRUE`, returns Kaplan-Meier estimates; otherwise returns
+  Nelson-Aalen based estimates.
 
 - ...:
 
-  Additional arguments to phreg
+  Additional arguments passed to `phreg`.
+
+## Value
+
+An object of class `"km"` (extends `"predictphreg"`) containing:
+
+- surr:
+
+  Survival probabilities.
+
+- se.surv:
+
+  Standard errors.
+
+- lower, upper:
+
+  Confidence intervals.
 
 ## Author
 
@@ -30,82 +51,71 @@ Thomas Scheike
 ## Examples
 
 ``` r
-library(mets)
 data(sTRACE)
-sTRACE$cluster <- sample(1:100,500,replace=TRUE)
-out1 <- km(Surv(time,status==9)~strata(vf,chf),data=sTRACE)
-out2 <- km(Surv(time,status==9)~strata(vf,chf)+cluster(cluster),data=sTRACE)
+sTRACE$cluster <- sample(1:100, 500, replace = TRUE)
+out1 <- km(Surv(time, status == 9) ~ strata(vf, chf), data = sTRACE)
+out2 <- km(Surv(time, status == 9) ~ strata(vf, chf) + cluster(cluster), data = sTRACE)
 
-summary(out1,times=1:3)
-#> $pred
-#>           [,1]      [,2]      [,3]
-#> [1,] 0.9216911 0.8606809 0.8171022
-#> [2,] 0.7180838 0.6043700 0.5032911
-#> [3,] 0.6930406 0.6930406 0.6930406
-#> [4,] 0.5320165 0.4044111 0.4044111
+summary(out1, times = 1:3)
+#> Predictions of type 'surv'
+#>   Showing subjects: 1, 2, 3, 4
+#>   Showing times:    1, 2, 3
 #> 
-#> $se.pred
-#>            [,1]       [,2]       [,3]
-#> [1,] 0.01768107 0.02279610 0.02545049
-#> [2,] 0.02911535 0.03163815 0.03234100
-#> [3,] 0.16275118 0.16275118 0.16275118
-#> [4,] 0.09970269 0.09739478 0.09739478
+#> -- Subject 1 --
+#>  time   surv     se  lower  upper
+#>     1 0.9215 0.0177 0.8875 0.9568
+#>     2 0.8604 0.0228 0.8169 0.9062
+#>     3 0.8167 0.0254 0.7683 0.8681
 #> 
-#> $lower
-#>           [,1]      [,2]      [,3]
-#> [1,] 0.8876802 0.8171413 0.7687123
-#> [2,] 0.6632273 0.5454355 0.4437332
-#> [3,] 0.4373867 0.4373867 0.4373867
-#> [4,] 0.3684728 0.2522477 0.2522477
+#> -- Subject 2 --
+#>  time   surv     se  lower  upper
+#>     1 0.7175 0.0291 0.6627 0.7768
+#>     2 0.6035 0.0316 0.5447 0.6687
+#>     3 0.5022 0.0323 0.4428 0.5697
 #> 
-#> $upper
-#>           [,1]      [,2]      [,3]
-#> [1,] 0.9570051 0.9065405 0.8685383
-#> [2,] 0.7774775 0.6696724 0.5708430
-#> [3,] 1.0000000 1.0000000 1.0000000
-#> [4,] 0.7681477 0.6483640 0.6483640
+#> -- Subject 3 --
+#>  time   surv     se  lower upper
+#>     1 0.6667 0.1566 0.4207     1
+#>     2 0.6667 0.1566 0.4207     1
+#>     3 0.6667 0.1566 0.4207     1
 #> 
-#> $times
-#> [1] 1 2 3
+#> -- Subject 4 --
+#>  time   surv     se  lower  upper
+#>     1 0.5217 0.0978 0.3614 0.7533
+#>     2 0.3913 0.0942 0.2441 0.6274
+#>     3 0.3913 0.0942 0.2441 0.6274
 #> 
-#> attr(,"class")
-#> [1] "summarypredictrecreg"
-summary(out2,times=1:3)
-#> $pred
-#>           [,1]      [,2]      [,3]
-#> [1,] 0.9216911 0.8606809 0.8171022
-#> [2,] 0.7180838 0.6043700 0.5032911
-#> [3,] 0.6930406 0.6930406 0.6930406
-#> [4,] 0.5320165 0.4044111 0.4044111
+summary(out2, times = 1:3)
+#> Predictions of type 'surv'
+#>   Showing subjects: 1, 2, 3, 4
+#>   Showing times:    1, 2, 3
 #> 
-#> $se.pred
-#>            [,1]       [,2]       [,3]
-#> [1,] 0.01642282 0.02138888 0.02742317
-#> [2,] 0.02592998 0.02848191 0.02901227
-#> [3,] 0.13371319 0.13371319 0.13371319
-#> [4,] 0.09483034 0.08233461 0.08233461
+#> -- Subject 1 --
+#>  time   surv     se  lower  upper
+#>     1 0.9215 0.0157 0.8913 0.9528
+#>     2 0.8604 0.0220 0.8184 0.9045
+#>     3 0.8167 0.0239 0.7712 0.8649
 #> 
-#> $lower
-#>           [,1]      [,2]      [,3]
-#> [1,] 0.8900585 0.8197641 0.7650835
-#> [2,] 0.6690187 0.5510470 0.4495228
-#> [3,] 0.4748215 0.4748215 0.4748215
-#> [4,] 0.3751466 0.2713475 0.2713475
+#> -- Subject 2 --
+#>  time   surv     se  lower  upper
+#>     1 0.7175 0.0284 0.6639 0.7753
+#>     2 0.6035 0.0305 0.5467 0.6663
+#>     3 0.5022 0.0331 0.4414 0.5715
 #> 
-#> $upper
-#>           [,1]      [,2]      [,3]
-#> [1,] 0.9544479 0.9036401 0.8726579
-#> [2,] 0.7707472 0.6628529 0.5634909
-#> [3,] 1.0000000 1.0000000 1.0000000
-#> [4,] 0.7544825 0.6027266 0.6027266
+#> -- Subject 3 --
+#>  time   surv     se  lower upper
+#>     1 0.6667 0.1566 0.4207     1
+#>     2 0.6667 0.1566 0.4207     1
+#>     3 0.6667 0.1566 0.4207     1
 #> 
-#> $times
-#> [1] 1 2 3
+#> -- Subject 4 --
+#>  time   surv     se  lower  upper
+#>     1 0.5217 0.0934 0.3674 0.7409
+#>     2 0.3913 0.0899 0.2494 0.6140
+#>     3 0.3913 0.0899 0.2494 0.6140
 #> 
-#> attr(,"class")
-#> [1] "summarypredictrecreg"
 
-par(mfrow=c(1,2))
-plot(out1,se=TRUE)
-plot(out2,se=TRUE)
+par(mfrow = c(1, 2))
+plot(out1, se = TRUE)
+plot(out2, se = TRUE)
 ```

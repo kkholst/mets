@@ -141,14 +141,14 @@ a <- biprobit(y~1+x,rho=~1+x,data=dd,id="id")
 summary(a, mean.contrast=c(1,.5), cor.contrast=c(1,.5))
 #> 
 #>                 Estimate    Std.Err       Z p-value    
-#> (Intercept)   -0.0092239  0.0197080 -0.4680  0.6398    
-#> x              0.0101193  0.0313670  0.3226  0.7470    
-#> r:(Intercept) -0.0229627  0.0383073 -0.5994  0.5489    
-#> r:x            0.9894711  0.0692001 14.2987  <2e-16 ***
+#> (Intercept)    0.0035356  0.0198806  0.1778 0.85885    
+#> x             -0.0755638  0.0333240 -2.2676 0.02336 *  
+#> r:(Intercept)  0.0091359  0.0382962  0.2386 0.81145    
+#> r:x            1.0296248  0.0726052 14.1811 < 2e-16 ***
 #> ---
 #> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 #> 
-#> logLik: -2651.885  mean(score^2): 1.394e-05 
+#> logLik: -2650.936  mean(score^2): 3.114e-05 
 #>     n pairs 
 #>  4000  2000 
 #> 
@@ -157,13 +157,13 @@ summary(a, mean.contrast=c(1,.5), cor.contrast=c(1,.5))
 #>  Mean          [(Intercept)] + 0.5[x] 
 #> 
 #>                         Estimate 2.5%    97.5%  
-#> Rel.Recur.Risk          1.29171  1.22694 1.35649
-#> OR                      3.29799  2.55557 4.25610
-#> Tetrachoric correlation 0.43963  0.35367 0.51823
+#> Rel.Recur.Risk          1.33713  1.26918 1.40508
+#> OR                      3.75680  2.91262 4.84565
+#> Tetrachoric correlation 0.48074  0.39827 0.55550
 #>                                                 
-#> Concordance             0.32079  0.29429 0.34849
-#> Casewise Concordance    0.64371  0.60960 0.67642
-#> Marginal                0.49834  0.47536 0.52132
+#> Concordance             0.31627  0.28970 0.34409
+#> Casewise Concordance    0.65030  0.61607 0.68305
+#> Marginal                0.48634  0.46289 0.50985
 with(predict(a,data.frame(x=seq(-1,1,by=.1))), plot(p00~x,type="l"))
 
 

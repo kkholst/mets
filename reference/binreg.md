@@ -1,8 +1,9 @@
-# Binomial Regression for censored competing risks data
+# Binomial Regression for Censored Competing Risks Data
 
-Simple version of comp.risk function of timereg for just one time-point
-thus fitting the model \$\$P(T \leq t, \epsilon=1 \| X ) = expit( X^T
-beta) \$\$
+Fits a binomial regression model for a specific time point in the
+presence of right-censored data and competing risks. This function
+implements the Inverse Probability of Censoring Weighted (IPCW)
+estimating equation approach.
 
 ## Usage
 
@@ -27,7 +28,6 @@ binreg(
   outcome = c("cif", "rmst", "rmtl"),
   model = c("default", "logit", "exp", "lin"),
   Ydirect = NULL,
-  monotone = TRUE,
   ...
 )
 ```
@@ -36,128 +36,143 @@ binreg(
 
 - formula:
 
-  formula with outcome (see `coxph`)
+  A formula object specifying the outcome and covariates. The outcome
+  must be an `Event` object (`Event(time, cause)`).
 
 - data:
 
-  data frame
+  A data frame containing the variables in the formula.
 
 - cause:
 
-  cause of interest (numeric variable)
+  Numeric vector or scalar indicating the cause of interest for the
+  competing risks.
 
 - time:
 
-  time of interest
+  Numeric scalar indicating the time point of interest for the
+  cumulative incidence.
 
 - beta:
 
-  starting values
+  Optional numeric vector of starting values for the coefficients.
+  Defaults to zeros.
 
 - type:
 
-  "II" adds augmentation term, and "I" classic binomial regression
+  Character string. Either `"I"` (classic binomial regression) or `"II"`
+  (adds augmentation term).
 
 - offset:
 
-  offsets for partial likelihood
+  Optional numeric vector of offsets for the linear predictor.
 
 - weights:
 
-  for score equations
+  Optional numeric vector of weights for the score equations.
 
 - cens.weights:
 
-  censoring weights
+  Optional numeric vector of pre-calculated censoring weights. If NULL,
+  they are estimated internally.
 
 - cens.model:
 
-  only stratified cox model without covariates
+  A formula specifying the censoring model. Defaults to `~+1`. Can
+  include strata (e.g., `~strata(group)`).
 
 - se:
 
-  to compute se's based on IPCW
+  Logical. If TRUE, computes standard errors based on IPCW influence
+  functions.
 
 - kaplan.meier:
 
-  uses Kaplan-Meier for IPCW in contrast to exp(-Baseline)
+  Logical. If TRUE, uses Kaplan-Meier estimator for IPCW weights;
+  otherwise uses exponential baseline.
 
 - cens.code:
 
-  gives censoring code
+  Numeric code representing censored observations in the status
+  variable. Defaults to 0.
 
 - no.opt:
 
-  to not optimize
+  Logical. If TRUE, optimization is skipped and starting values are
+  used.
 
 - method:
 
-  for optimization
+  Character string. Optimization method: `"nr"` (Newton-Raphson) or
+  `"nlm"`.
 
 - augmentation:
 
-  to augment binomial regression
+  Optional numeric vector for additional augmentation terms.
 
 - outcome:
 
-  can do CIF regression "cif"=F(t\|X), "rmst"=E( min(T, t) \| X) , or
-  years-lost "rmtl"=E( I(epsilon==cause) ( t - mint(T,t)) ) \| X)
+  Character string. Outcome type: `"cif"` (Cumulative Incidence
+  Function), `"rmst"` (Restricted Mean Survival Time), or `"rmtl"`
+  (Restricted Mean Time Lost).
 
 - model:
 
-  link functions used, with defaults logit for cif, exp for rmst or
-  rmtl, but can be logit, exp or lin (for identity link)
+  Character string. Link function: `"default"` (auto-selects based on
+  outcome), `"logit"`, `"exp"`, or `"lin"` (identity).
 
 - Ydirect:
 
-  use this Y instead of outcome constructed inside the program (e.g.
-  I(T\< t, epsilon=1)), then uses IPCW vesion of the Y, set outcome to
-  "rmst" to fit using the model specified by model
-
-- monotone:
-
-  if true then uses del link functions used, with defaults logit for
-  cif, exp for rmst or rmtl, but can be logit, exp or lin (for identity
-  link)
+  Optional numeric vector. If provided, this outcome is used instead of
+  constructing one from `outcome`. Useful for custom IPCW adjustments.
 
 - ...:
 
-  Additional arguments to lower level funtions
+  Additional arguments passed to lower-level optimization functions.
+
+## Value
+
+An object of class `"binreg"` containing coefficients,
+variance-covariance matrix, influence functions (`iid`), and model
+details.
 
 ## Details
+
+The model estimates the probability: \$\$P(T \leq t, \epsilon=1 \| X ) =
+\text{expit}( X^T \beta) \$\$
 
 Based on binomial regresion IPCW response estimating equation: \$\$ X (
 \Delta^{ipcw}(t) I(T \leq t, \epsilon=1 ) - expit( X^T beta)) = 0 \$\$
 where \$\$\Delta^{ipcw}(t) = I((min(t,T)\< C)/G_c(min(t,T)-)\$\$ is IPCW
-adjustment of the response \$\$Y(t)= I(T \leq t, \epsilon=1 )\$\$.
+adjustment of the response \$\$Y(t)= I(T \leq t, \epsilon=1 )\$\$. Two
+types of estimators are available:
 
-(type="I") sovlves this estimating equation using a stratified
-Kaplan-Meier for the censoring distribution. For (type="II") the default
-an additional censoring augmentation term \$\$X \int E(Y(t)\|
-T\>s)/G_c(s) d \hat M_c\$\$ is added.
+- `type="I"`: Solves the standard IPCW estimating equation.
 
-logitIPCW instead considers \$\$ X I(min(T_i,t) \< G_i)/G_c(min(T_i ,t))
-( I(T \leq t, \epsilon=1 ) - expit( X^T beta)) = 0 \$\$ a standard
-logistic regression with weights that adjust for IPCW.
+- `type="II"`: Adds a censoring augmentation term for efficiency gains,
+  solving \$\$X \int E(Y(t)\| T\>s)/G_c(s) d \hat M_c\$\$.
 
-When monotone is FALSE the solved equation for binreg is equivalent to
-minmizing the least squares problem and thus becomes \$\$ D\_\beta
-h(\beta) ( \Delta^{ipcw}(t) I(T \leq t, \epsilon=1 ) - h( X^T beta)) = 0
-\$\$.
+Alternatively, `logitIPCW` performs a standard logistic regression with
+IPCW weights applied directly to the likelihood. Thus solving \$\$ X
+I(min(T_i,t) \< G_i)/G_c(min(T_i ,t)) ( I(T \leq t, \epsilon=1 ) -
+expit( X^T beta)) = 0 \$\$ a standard logistic regression with IPCW
+weights.
 
-The variance is based on the squared influence functions that are also
-returned as the iid component. naive.var is variance under known
-censoring model.
+The variance estimation is based on squared influence functions, with
+options for naive variance (assuming known censoring) and robust
+variance (accounting for censoring model estimation).
 
 Censoring model may depend on strata (cens.model=~strata(gX)).
 
 ## References
 
-Blanche PF, Holt A, Scheike T (2022). “On logistic regression with right
-censored data, with or without competing risks, and its use for
-estimating treatment effects.” Lifetime data analysis, 29, 441–482.
-Scheike TH, Zhang MJ, Gerds TA (2008). “Predicting cumulative incidence
-probability by direct binomial regression.” Biometrika, 95(1), 205–220.
+- Blanche PF, Holt A, Scheike T (2022). "On logistic regression with
+  right censored data, with or without competing risks, and its use for
+  estimating treatment effects." *Lifetime data analysis*, 29, 441–482.
+
+- Scheike TH, Zhang MJ, Gerds TA (2008). "Predicting cumulative
+  incidence probability by direct binomial regression." *Biometrika*,
+  95(1), 205–220.
 
 ## Author
 
@@ -166,7 +181,6 @@ Thomas Scheike
 ## Examples
 
 ``` r
-library(mets)
 data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 # logistic regresion with IPCW binomial regression 
 out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
@@ -177,30 +191,30 @@ summary(out)
 #>  408 clusters
 #> coeffients:
 #>              Estimate   Std.Err      2.5%     97.5% P-value
-#> (Intercept) -0.180332  0.126755 -0.428766  0.068103  0.1548
-#> tcell       -0.418194  0.345422 -1.095208  0.258820  0.2260
-#> platelet    -0.437667  0.240973 -0.909965  0.034630  0.0693
+#> (Intercept) -0.180394  0.126758 -0.428836  0.068047  0.1547
+#> tcell       -0.418584  0.345417 -1.095589  0.258421  0.2256
+#> platelet    -0.436894  0.240971 -0.909189  0.035401  0.0698
 #> 
 #> exp(coeffients):
 #>             Estimate    2.5%  97.5%
-#> (Intercept)  0.83499 0.65131 1.0705
-#> tcell        0.65823 0.33447 1.2954
-#> platelet     0.64554 0.40254 1.0352
+#> (Intercept)  0.83494 0.65127 1.0704
+#> tcell        0.65798 0.33434 1.2949
+#> platelet     0.64604 0.40285 1.0360
 #> 
 #> 
 head(iid(out))
-#>              [,1]        [,2]        [,3]
-#> [1,] -0.006946408 0.004004252 0.006177039
-#> [2,] -0.006946408 0.004004252 0.006177039
-#> [3,] -0.006946408 0.004004252 0.006177039
-#> [4,] -0.006946408 0.004004252 0.006177039
-#> [5,] -0.006946408 0.004004252 0.006177039
-#> [6,] -0.006946408 0.004004252 0.006177039
+#>              [,1]       [,2]        [,3]
+#> [1,] -0.006946199 0.00400363 0.006176986
+#> [2,] -0.006946199 0.00400363 0.006176986
+#> [3,] -0.006946199 0.00400363 0.006176986
+#> [4,] -0.006946199 0.00400363 0.006176986
+#> [5,] -0.006946199 0.00400363 0.006176986
+#> [6,] -0.006946199 0.00400363 0.006176986
 
 predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
 #>        pred         se     lower     upper
-#> 1 0.3502366 0.04847385 0.2552279 0.4452454
-#> 2 0.2618851 0.06969063 0.1252915 0.3984788
+#> 1 0.3503983 0.04848583 0.2553661 0.4454305
+#> 2 0.2619472 0.06969541 0.1253442 0.3985502
 
 outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
 summary(outs)
@@ -210,15 +224,15 @@ summary(outs)
 #>  408 clusters
 #> coeffients:
 #>              Estimate   Std.Err      2.5%     97.5% P-value
-#> (Intercept) -0.180703  0.127413 -0.430429  0.069022  0.1561
-#> tcell       -0.365924  0.350632 -1.053150  0.321302  0.2967
-#> platelet    -0.433487  0.240270 -0.904408  0.037433  0.0712
+#> (Intercept) -0.180650  0.127412 -0.430373  0.069073  0.1562
+#> tcell       -0.366536  0.350628 -1.053754  0.320682  0.2959
+#> platelet    -0.432322  0.240356 -0.903411  0.038767  0.0721
 #> 
 #> exp(coeffients):
 #>             Estimate    2.5%  97.5%
-#> (Intercept)  0.83468 0.65023 1.0715
-#> tcell        0.69356 0.34884 1.3789
-#> platelet     0.64824 0.40478 1.0381
+#> (Intercept)  0.83473 0.65027 1.0715
+#> tcell        0.69313 0.34863 1.3781
+#> platelet     0.64900 0.40519 1.0395
 #> 
 #> 
 
@@ -231,15 +245,15 @@ summary(outl)
 #>  408 clusters
 #> coeffients:
 #>              Estimate   Std.Err      2.5%     97.5% P-value
-#> (Intercept) -0.241521  0.131457 -0.499171  0.016129  0.0662
-#> tcell       -0.344491  0.368376 -1.066494  0.377513  0.3497
-#> platelet    -0.292933  0.262665 -0.807747  0.221881  0.2647
+#> (Intercept) -0.241502  0.131458 -0.499155  0.016152  0.0662
+#> tcell       -0.344459  0.368378 -1.066466  0.377548  0.3498
+#> platelet    -0.292612  0.262671 -0.807437  0.222214  0.2653
 #> 
 #> exp(coeffients):
 #>             Estimate    2.5%  97.5%
-#> (Intercept)  0.78543 0.60703 1.0163
-#> tcell        0.70858 0.34421 1.4587
-#> platelet     0.74607 0.44586 1.2484
+#> (Intercept)  0.78545 0.60704 1.0163
+#> tcell        0.70860 0.34422 1.4587
+#> platelet     0.74631 0.44600 1.2488
 #> 
 #> 
 
@@ -288,17 +302,17 @@ summary(cifs1)
 #>  408 clusters
 #> coeffients:
 #>              Estimate   Std.Err      2.5%     97.5% P-value
-#> (Intercept) -0.198947  0.130987 -0.455677  0.057782  0.1288
-#> tcell       -0.636947  0.356604 -1.335878  0.061983  0.0741
-#> platelet    -0.344912  0.246013 -0.827089  0.137265  0.1609
-#> age          0.437244  0.107266  0.227007  0.647481  0.0000
+#> (Intercept) -0.199011  0.130990 -0.455747  0.057725  0.1287
+#> tcell       -0.637354  0.356609 -1.336295  0.061587  0.0739
+#> platelet    -0.344105  0.246028 -0.826312  0.138101  0.1619
+#> age          0.437232  0.107268  0.226990  0.647474  0.0000
 #> 
 #> exp(coeffients):
 #>             Estimate    2.5%  97.5%
-#> (Intercept)  0.81959 0.63402 1.0595
-#> tcell        0.52890 0.26293 1.0639
-#> platelet     0.70828 0.43732 1.1471
-#> age          1.54843 1.25484 1.9107
+#> (Intercept)  0.81954 0.63397 1.0594
+#> tcell        0.52869 0.26282 1.0635
+#> platelet     0.70885 0.43766 1.1481
+#> age          1.54842 1.25482 1.9107
 #> 
 #> 
 summary(cifs2)
@@ -308,17 +322,17 @@ summary(cifs2)
 #>  408 clusters
 #> coeffients:
 #>              Estimate   Std.Err      2.5%     97.5% P-value
-#> (Intercept) -1.322081  0.157783 -1.631329 -1.012832  0.0000
-#> tcell        0.746834  0.352260  0.056416  1.437252  0.0340
-#> platelet    -0.019142  0.276984 -0.562021  0.523738  0.9449
-#> age         -0.072139  0.141687 -0.349842  0.205563  0.6107
+#> (Intercept) -1.321973  0.157772 -1.631199 -1.012746  0.0000
+#> tcell        0.746607  0.352230  0.056249  1.436965  0.0340
+#> platelet    -0.019636  0.277012 -0.562570  0.523299  0.9435
+#> age         -0.072163  0.141691 -0.349873  0.205547  0.6105
 #> 
 #> exp(coeffients):
 #>             Estimate    2.5%  97.5%
-#> (Intercept)  0.26658 0.19567 0.3632
-#> tcell        2.11031 1.05804 4.2091
-#> platelet     0.98104 0.57006 1.6883
-#> age          0.93040 0.70480 1.2282
+#> (Intercept)  0.26661 0.19569 0.3632
+#> tcell        2.10983 1.05786 4.2079
+#> platelet     0.98056 0.56974 1.6876
+#> age          0.93038 0.70478 1.2282
 #> 
 #> 
 
@@ -332,42 +346,42 @@ summary(cifdob)
 #>  408 clusters
 #> coeffients:
 #>                           Estimate   Std.Err      2.5%     97.5% P-value
-#> factor(strata)1          -0.198947  0.130987 -0.455677  0.057782  0.1288
-#> factor(strata)2          -1.322081  0.157783 -1.631329 -1.012832  0.0000
-#> tcell                    -0.636947  0.356604 -1.335878  0.061983  0.0741
-#> platelet                 -0.344912  0.246013 -0.827089  0.137265  0.1609
-#> age                       0.437244  0.107266  0.227007  0.647481  0.0000
-#> factor(strata)2:tcell     1.383781  0.600927  0.205986  2.561577  0.0213
-#> factor(strata)2:platelet  0.325770  0.432013 -0.520959  1.172500  0.4508
-#> factor(strata)2:age      -0.509383  0.208101 -0.917254 -0.101513  0.0144
+#> factor(strata)1          -0.199011  0.130990 -0.455747  0.057725  0.1287
+#> factor(strata)2          -1.321973  0.157772 -1.631199 -1.012746  0.0000
+#> tcell                    -0.637354  0.356609 -1.336295  0.061587  0.0739
+#> platelet                 -0.344105  0.246028 -0.826312  0.138101  0.1619
+#> age                       0.437232  0.107268  0.226990  0.647474  0.0000
+#> factor(strata)2:tcell     1.383961  0.600900  0.206219  2.561703  0.0213
+#> factor(strata)2:platelet  0.324469  0.432052 -0.522336  1.171275  0.4527
+#> factor(strata)2:age      -0.509395  0.208107 -0.917277 -0.101514  0.0144
 #> 
 #> exp(coeffients):
 #>                          Estimate    2.5%   97.5%
-#> factor(strata)1           0.81959 0.63402  1.0595
-#> factor(strata)2           0.26658 0.19567  0.3632
-#> tcell                     0.52890 0.26293  1.0639
-#> platelet                  0.70828 0.43732  1.1471
-#> age                       1.54843 1.25484  1.9107
-#> factor(strata)2:tcell     3.98996 1.22874 12.9562
-#> factor(strata)2:platelet  1.38510 0.59395  3.2301
-#> factor(strata)2:age       0.60087 0.39961  0.9035
+#> factor(strata)1           0.81954 0.63397  1.0594
+#> factor(strata)2           0.26661 0.19569  0.3632
+#> tcell                     0.52869 0.26282  1.0635
+#> platelet                  0.70885 0.43766  1.1481
+#> age                       1.54842 1.25482  1.9107
+#> factor(strata)2:tcell     3.99068 1.22902 12.9579
+#> factor(strata)2:platelet  1.38330 0.59313  3.2261
+#> factor(strata)2:age       0.60086 0.39961  0.9035
 #> 
 #> 
 head(iid(cifdob)) 
 #>           [,1]       [,2]        [,3]        [,4]          [,5]        [,6]
-#> 1 -0.007447571 0.01776726 0.004626980 0.006532086 -0.0006994667 -0.01601858
-#> 2 -0.007988246 0.01802853 0.006444080 0.006743734 -0.0035442243 -0.02069211
-#> 3 -0.008864645 0.01851042 0.010424440 0.006903340 -0.0101076390 -0.03003705
-#> 4 -0.008835416 0.01849245 0.010262329 0.006903222 -0.0098333568 -0.02967265
-#> 5 -0.007126560 0.01761890 0.003707153 0.006378236  0.0006895580 -0.01349320
-#> 6 -0.009148217 0.01869572 0.012152107 0.006877028 -0.0130608526 -0.03386034
+#> 1 -0.007447326 0.01776600 0.004626296 0.006531923 -0.0006993516 -0.01601793
+#> 2 -0.007987989 0.01802736 0.006443417 0.006743184 -0.0035437821 -0.02069155
+#> 3 -0.008864382 0.01850941 0.010423878 0.006901906 -0.0101064671 -0.03003676
+#> 4 -0.008835153 0.01849143 0.010261762 0.006901825 -0.0098322147 -0.02967234
+#> 5 -0.007126324 0.01761759 0.003706467 0.006378263  0.0006895118 -0.01349252
+#> 6 -0.009147957 0.01869476 0.012151608 0.006875199 -0.0130593653 -0.03386018
 #>          [,7]          [,8]
-#> 1 -0.02078114  0.0033123348
-#> 2 -0.01975211  0.0112638920
-#> 3 -0.01757153  0.0274275718
-#> 4 -0.01765988  0.0267910710
-#> 5 -0.02132293 -0.0009455222
-#> 6 -0.01662766  0.0341341628
+#> 1 -0.02077957  0.0033123534
+#> 2 -0.01975008  0.0112636695
+#> 3 -0.01756847  0.0274268466
+#> 4 -0.01765687  0.0267903655
+#> 5 -0.02132158 -0.0009453789
+#> 6 -0.01662415  0.0341332319
 
 newdata <- data.frame(tcell=1,platelet=1,age=0,strata=1:2,id=1)
 riskratio <- function(p) {
@@ -376,21 +390,21 @@ riskratio <- function(p) {
   return(p[1]/p[2])
 }
 lava::estimate(cifdob,f=riskratio)
-#>    Estimate Std.Err   2.5% 97.5% P-value
-#> p1   0.6605  0.2738 0.1239 1.197 0.01585
+#>    Estimate Std.Err  2.5% 97.5% P-value
+#> p1    0.661   0.274 0.124 1.198 0.01584
 
 predict(cifdob,newdata)
 #>        pred         se     lower     upper
-#> 1 0.2349072 0.06592758 0.1056892 0.3641253
-#> 2 0.3556286 0.07421505 0.2101671 0.5010901
+#> 1 0.2349678 0.06593344 0.1057382 0.3641973
+#> 2 0.3554881 0.07418260 0.2100902 0.5008860
 (p1 <- predict(cifs1,newdata))
 #>        pred         se     lower     upper
-#> 1 0.2349072 0.06592758 0.1056892 0.3641253
-#> 2 0.2349072 0.06592758 0.1056892 0.3641253
+#> 1 0.2349678 0.06593344 0.1057382 0.3641973
+#> 2 0.2349678 0.06593344 0.1057382 0.3641973
 (p2 <- predict(cifs2,newdata))
-#>        pred         se     lower     upper
-#> 1 0.3556286 0.07421505 0.2101671 0.5010901
-#> 2 0.3556286 0.07421505 0.2101671 0.5010901
+#>        pred        se     lower    upper
+#> 1 0.3554881 0.0741826 0.2100902 0.500886
+#> 2 0.3554881 0.0741826 0.2100902 0.500886
 p1[1,1]/p2[1,1]
-#> [1] 0.6605409
+#> [1] 0.6609723
 ```

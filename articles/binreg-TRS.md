@@ -1,60 +1,55 @@
-# Two-Stage Randomization for for Competing risks and Survival outcomes
+# Two-Stage Randomization for Competing risks and Survival outcomes
 
-## Two-Stage Randomization for for Competing risks and Survival outcomes
+## Two-Stage Randomization for Competing risks and Survival outcomes
 
 Under two-stage randomization we can estimate the average treatment
-effect $E\left( Y\left( i,\bar{k} \right) \right)$ of treatment regime
-$\left( i,\bar{k} \right)$.
+effect E(Y(i,\bar k)) of treatment regime (i,\bar k).
 
-- treatment A0=i and
-  - for all responses, randomization A1 = (k_1), so treatment k_1
-  - response\*A1 = (k_1, k_2), so treatment k_1 if response 1, and
+- treatment A_0=i and
+  - for all responses, randomization A_1 = (k_1), so treatment k_1
+  - response\times A_1 = (k_1, k_2), so treatment k_1 if response 1, and
     treatment k_2 if response 2.
 
-The estimator can be agumented in different ways: using the two
-randomizations and the dynamic censoring augmentatation.
+The estimator can be augmented in different ways: using the two
+randomizations and the dynamic censoring augmentation.
 
-Estimating
-$\mu_{i,\bar{k}} = P\left( Y\left( i,\bar{k},\epsilon = v \right) < = t \right)$,
-restricted mean
-$E\left( \min\left( Y\left( i,\bar{k} \right),\tau \right) \right)$ or
-years lost
-$E\left( I(\epsilon = v) \cdot \left( \tau - \min\left( Y\left( i,\bar{k} \right),\tau \right) \right) \right)$
-using IPCW weighted estimating equations : \\
+Estimating \mu\_{i,\bar k} = P(Y(i,\bar k,\epsilon=v) \<= t), restricted
+mean E( \min(Y(i,\bar k),\tau)) or years lost E( I(\epsilon=v) \cdot
+(\tau - \min(Y(i,\bar k),\tau))) using IPCW weighted estimating
+equations : \\
 
-The solved estimating eqution is $$\begin{array}{r}
-{\sum\limits_{i}\frac{I\left( min\left( T_{i},t \right) < G_{i} \right)}{G_{c}\left( min\left( T_{i},t \right) \right)}I(T \leq t,\epsilon = 1) - AUG_{0} - AUG_{1} + AUG_{C} - p(i,j)) = 0}
-\end{array}$$ using the covariates from augmentR0 to augment with
-$$\begin{array}{r}
-{AUG_{0} = \frac{A_{0}(i) - \pi_{0}(i)}{\pi_{0}(i)}X_{0}\gamma_{0}}
-\end{array}$$ and using the covariates from augmentR1 to augment with
-$$\begin{array}{r}
-{AUG_{1} = \frac{A_{0}(i)}{\pi_{0}(i)}\frac{A_{1}(j) - \pi_{1}(j)}{\pi_{1}(j)}X_{1}\gamma_{1}}
-\end{array}$$ and censoring augmenting with $$\begin{array}{r}
-{AUG_{C} = \int_{0}^{t}\gamma_{c}(s)^{T}\left( e(s) - \bar{e}(s) \right)\frac{1}{G_{c}(s)}dM_{c}(s)}
-\end{array}$$ where $\gamma_{c}(s)$ is chosen to minimize the variance
-given the dynamic covariates specified by augmentC.
+The solved estimating equation is \begin{align\*} \sum_i
+\frac{I(min(T_i,t) \< G_i)}{G_c(min(T_i ,t))} I(T \leq t, \epsilon=1 ) -
+AUG_0 - AUG_1 + AUG_C - p(i,j)) = 0 \end{align\*} using the covariates
+from augmentR0 to augment with \begin{align\*} AUG_0 = \frac{A_0(i) -
+\pi_0(i)}{ \pi_0(i)} X_0 \gamma_0 \end{align\*} and using the covariates
+from augmentR1 to augment with \begin{align\*} AUG_1 =
+\frac{A_0(i)}{\pi_0(i)} \frac{A_1(j) - \pi_1(j)}{ \pi_1(j)} X_1 \gamma_1
+\end{align\*} and censoring augmenting with \begin{align\*} AUG_C =
+\int_0^t \gamma_c(s)^T (e(s) - \bar e(s)) \frac{1}{G_c(s) } dM_c(s)
+\end{align\*} where \gamma_c(s) is chosen to minimize the variance given
+the dynamic covariates specified by augmentC.
 
-- The treatment’s must be given as factors.
-- Treatment for 2nd randomization may depend on response.
+- Treatments must be given as factors.
+- Treatment for the 2nd randomization may depend on response.
   - Treatment probabilities are estimated by default and uncertainty
-    from this adjusted for.
-- Randomization augmentation for 1’st and 2’nd randomization possible.
-- Censoring model possibly stratified on observed covariates (at time
-  0).
-- Censoring augmentation done dynamically over time with time-dependent
-  covariates.
+    from this is adjusted for.
+- Randomization augmentation for the 1st and 2nd randomization is
+  possible.
+- Censoring model can be stratified on observed covariates (at time 0).
+- Censoring augmentation is done dynamically over time with
+  time-dependent covariates.
 
-Standard errors are estimated using the influence function of all
-estimators and tests of differences can therefore be computed
-subsequently.
+Standard errors are estimated using the influence functions of all
+estimators; tests of differences can therefore be computed subsequently.
 
-Data must be given on start,stop,status survival format with
+Data must be in start-stop-status survival format with
 
-- one code of status indicating response, that is 2nd randomization
-- other codes defines the outcome of interest
+- one code of `status` indicating response, i.e. 2nd randomization
+- other codes defining the outcome of interest
 
 ``` r
+
 library(mets) 
 set.seed(100)
 
@@ -120,6 +115,7 @@ estimate(coef=bb$riskG$riskG01[,1],vcov=crossprod(bb$riskG.iid$riskG01),f=functi
 ```
 
 ``` r
+
 
 ## 2 levels for each response , fixed weights 
 datat$response.f <- as.factor(datat$response)
@@ -479,42 +475,39 @@ bb
 
 ## Two-Stage Randomization CALGB-9823
 
-We here illustrate some analysis of one SMART conducted by Cancer and
-Leukemia Group B Protocol 8923 (CALGB 8923), Stone and others (2001).
-388 patients were randomized to an initial treatment of GM-CSF (A1 ) or
-standard chemotherapy (A2 ). Patients with complete remission and
-informed consent to second stage were then re-randomized to only
-cytarabine (B1 ) or cytarabine plus mitoxantrone (B2 ).
+We illustrate an analysis of one SMART conducted by Cancer and Leukemia
+Group B Protocol 8923 (CALGB 8923), Stone et al. (2001). 388 patients
+were randomized to an initial treatment of GM-CSF (A_1) or standard
+chemotherapy (A_2). Patients with complete remission and informed
+consent to the second stage were then re-randomized to cytarabine only
+(B_1) or cytarabine plus mitoxantrone (B_2).
 
 We first compute the weighted risk-set estimator based on estimated
-weights $$\begin{aligned}
-{\Lambda_{A1,B1}(t)} & {= \sum\limits_{i}\int_{0}^{t}\frac{w_{i}(s)}{Y^{w}(s)}dN_{i}(s)}
-\end{aligned}$$ where
-$w_{i}(s) = I\left( A0_{i} = A1 \right) + \left( t > T_{R} \right)I\left( A1_{i} = B1 \right)/\pi_{1}\left( X_{i} \right)$,
-that is 1 when you start on treatment $A1$ and then for those that
-changes to $B1$ at time $T_{R}$ then is scaled up with the proportion
-doing this. This is equivalent to the IPTW (inverse probability of
-treatment weighted estimator). We estimate the treatment regimes $A1,B1$
-and $A2,B1$ by letting $A10$ indicate those that are consistent with
-ending on $B1$. $A10$ then starts being $1$ and becomes $0$ if the
-subject is treated with $B2$, but stays $1$ if the subject is treated
-with $B1$. We can then look at the two strata where $A0 = 0,A10 = 1$ and
-$A0 = 1,A10 = 1$. Similary, for those that end being consistent with
-$B2$. Thus defining $A11$ to start being $1$, then stays $1$ if $B2$ is
-taken, and becomes $0$ if the second randomization is $B1$.
+weights \begin{align\*} \Lambda\_{A1,B1}(t) & = \sum_i \int_0^t
+\frac{w_i(s)}{Y^w(s)} dN_i(s) \end{align\*} where w_i(s) = I(A0_i=A1) +
+I(t\>T_R) I(A1_i=B1)/\pi_1(X_i), that is 1 when starting on treatment
+A1, and then scaled up by the proportion switching to B1 at time T_R for
+those that do so. This is equivalent to the IPTW (inverse probability of
+treatment weighted) estimator. We estimate the treatment regimes A1, B1
+and A2, B1 by letting A10 indicate those consistent with ending on B1.
+A10 starts at 1 and becomes 0 if the subject is treated with B2, but
+stays 1 if treated with B1. We can then look at the two strata where
+A0=0, A10=1 and A0=1, A10=1. Similarly, we define A11 to start at 1,
+remain 1 if B2 is taken, and become 0 if the second randomization is B1.
 
-- the treatment models are for all time-points, unless the weight.var
-  variable is given (1 for treatments, 0 otherwise) to accomodate a
-  general start,stop format
+- the treatment models apply to all time-points, unless the `weight.var`
+  variable is given (1 for treatments, 0 otherwise) to accommodate a
+  general start-stop format
 - the treatment model may also depend on a response value
-- standard errors are based on influence functions and is also computed
+- standard errors are based on influence functions and are also computed
   for the baseline
 
-We here use the propensity score model $P\left( A1 = B1|A0 \right)$ that
-uses the observed frequencies on arm $B1$ among those starting out on
-either $A1$ or $A2$.
+We here use the propensity score model P(A1=B1\|A0) that uses the
+observed frequencies on arm B1 among those starting out on either A1 or
+A2.
 
 ``` r
+
 data(calgb8923)
 calgt <- calgb8923
 
@@ -551,55 +544,45 @@ legend("topright",c("A1B1","A2B1","A1B2","A2B2"),col=c(1,2,3,4),lty=1)
 
 ``` r
 
+
 summary(pll1,times=12)
-#> $pred
-#> [1] 0.4556676 0.5029214
+#> Predictions of type 'surv'
+#>   Showing subjects: 1, 2
+#>   Showing times:    12
 #> 
-#> $se.pred
-#> [1] 0.04212703 0.04165848
+#> -- Subject 1 --
+#>  time   surv     se  lower  upper
+#>    12 0.4557 0.0421 0.3801 0.5462
 #> 
-#> $lower
-#> [1] 0.3801487 0.4275556
-#> 
-#> $upper
-#> [1] 0.5461888 0.5915721
-#> 
-#> $times
-#> [1] 12
-#> 
-#> attr(,"class")
-#> [1] "summarypredictrecreg"
+#> -- Subject 2 --
+#>  time   surv     se  lower  upper
+#>    12 0.5029 0.0417 0.4276 0.5916
 summary(pll0,times=12)
-#> $pred
-#> [1] 0.3950461 0.4279272
+#> Predictions of type 'surv'
+#>   Showing subjects: 1, 2
+#>   Showing times:    12
 #> 
-#> $se.pred
-#> [1] 0.04263714 0.04342426
+#> -- Subject 1 --
+#>  time  surv     se  lower  upper
+#>    12 0.395 0.0426 0.3197 0.4881
 #> 
-#> $lower
-#> [1] 0.3197260 0.3507467
-#> 
-#> $upper
-#> [1] 0.4881098 0.5220911
-#> 
-#> $times
-#> [1] 12
-#> 
-#> attr(,"class")
-#> [1] "summarypredictrecreg"
+#> -- Subject 2 --
+#>  time   surv     se  lower  upper
+#>    12 0.4279 0.0434 0.3507 0.5221
 ```
 
-The propensity score mode can be extended to use covariates to get
-increased efficiency. Note also that the propensity scores for $A0$ will
+The propensity score model can be extended to use covariates to get
+increased efficiency. Note also that the propensity scores for A0 will
 cancel out in the different strata.
 
 ## SessionInfo
 
 ``` r
+
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -618,22 +601,22 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] mets_1.3.9
+#> [1] mets_1.3.10
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           
-#>  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        
-#>  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            
-#> [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           
-#> [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
+#>  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        
+#>  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            
+#> [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           
+#> [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        
 #> [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   
-#> [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       
-#> [22] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      
-#> [25] fs_1.6.6               htmlwidgets_1.6.4      Rcpp_1.1.1            
-#> [28] future_1.68.0          lattice_0.22-7         systemfonts_1.3.1     
-#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.46.1     
-#> [34] parallel_4.5.2         splines_4.5.2          Matrix_1.7-4          
-#> [37] bslib_0.9.0            tools_4.5.2            RcppArmadillo_15.2.3-1
-#> [40] globals_0.18.0         survival_3.8-3         pkgdown_2.2.0         
+#> [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       
+#> [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      
+#> [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        
+#> [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     
+#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     
+#> [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
+#> [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1
+#> [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         
 #> [43] cachem_1.1.0           desc_1.4.3
 ```

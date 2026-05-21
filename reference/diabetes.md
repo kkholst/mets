@@ -45,6 +45,7 @@ survival data with covariates, Biometrics 45, 145-56.
 ## Examples
 
 ``` r
+
 data(diabetes)
 names(diabetes)
 #> [1] "id"     "time"   "status" "trteye" "treat"  "adult"  "agedx" 

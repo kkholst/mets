@@ -1,4 +1,4 @@
-# hfaction, subset of block randmized study HF-ACtion from WA package
+# hfaction, subset of block randomized study HF-ACtion from WA package
 
 Data from HF-action trial slightly modified from WA package, consisting
 of 741 nonischemic patients with baseline cardiopulmonary test duration

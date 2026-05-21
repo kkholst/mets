@@ -67,6 +67,7 @@ tTRACE is a subsample consisting of 1000 patients.
 ## Examples
 
 ``` r
+
 data(TRACE)
 names(TRACE)
 #> [1] "id"       "wmi"      "status"   "chf"      "age"      "sex"      "diabetes"

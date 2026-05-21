@@ -1,6 +1,7 @@
-# Fast Cox PH regression
+# Fast Cox Proportional Hazards Regression
 
-Fast Cox PH regression Robust variance is default variance with the
+Fits a Cox proportional hazards model using a fast C++ backend. Robust
+variance (sandwich estimator) is the default variance estimate in the
 summary.
 
 ## Usage
@@ -13,28 +14,72 @@ phreg(formula, data, offset = NULL, weights = NULL, ...)
 
 - formula:
 
-  formula with 'Surv' outcome (see `coxph`)
+  Formula with a 'Surv' or 'Event' outcome (similar to `coxph`).
 
 - data:
 
-  data frame
+  Data frame containing the variables.
 
 - offset:
 
-  offsets for Cox model
+  Offsets for the Cox model linear predictor.
 
 - weights:
 
-  weights for Cox score equations
+  Weights for the Cox score equations.
 
 - ...:
 
-  Additional arguments to lower level funtions
+  Additional arguments passed to lower-level functions (e.g.,
+  optimization controls).
+
+## Value
+
+An object of class `"phreg"` containing:
+
+- coef:
+
+  Vector of estimated coefficients.
+
+- var:
+
+  Robust variance-covariance matrix.
+
+- beta.iid:
+
+  Influence functions for the regression coefficients.
+
+- cumhaz:
+
+  Matrix of cumulative hazard estimates (time, cumhaz).
+
+- se.cumhaz:
+
+  Matrix of standard errors for the cumulative hazard.
+
+- cox.prep:
+
+  List containing preprocessed data for the Cox model.
+
+- opt:
+
+  Optimization results (if optimization was performed).
+
+- call:
+
+  The matched call.
 
 ## Details
 
-influence functions (iid) will follow numerical order of given cluster
-variable so ordering after \$id will give iid in order of data-set.
+The influence functions (IID decomposition) follow the numerical order
+of the given cluster variable. Ordering the results by \`\$id\` will
+align the IID terms with the original dataset order.
+
+## See also
+
+[`plot.phreg`](http://kkholst.github.io/mets/reference/plot.phreg.md),
+[`predict.phreg`](http://kkholst.github.io/mets/reference/predict.phreg.md),
+`robust_phreg`
 
 ## Author
 
@@ -43,35 +88,35 @@ Klaus K. Holst, Thomas Scheike
 ## Examples
 
 ``` r
-library(mets)
 data(TRACE)
 dcut(TRACE) <- ~.
-out1 <- phreg(Surv(time,status==9)~wmi+age+strata(vf,chf)+cluster(id),data=TRACE)
+# Fit model with clustering
+out1 <- phreg(Surv(time, status == 9) ~ wmi + age + strata(vf, chf) + cluster(id), data = TRACE)
 summary(out1)
 #> 
 #>     n events
 #>  1878    958
-#> coeffients:
+#> coefficients:
 #>       Estimate       S.E.    dU^-1/2 P-value
 #> wmi -0.8470690  0.0871082  0.0864370       0
 #> age  0.0563491  0.0037111  0.0036386       0
 #> 
-#> exp(coeffients):
+#> exp(coefficients):
 #>     Estimate    2.5%  97.5%
 #> wmi  0.42867 0.36139 0.5085
 #> age  1.05797 1.05030 1.0657
 #> 
 
-par(mfrow=c(1,2))
+# Plotting baselines
+par(mfrow = c(1, 2))
 plot(out1)
 
-## computing robust variance for baseline
-rob1 <- robust.phreg(out1)
-plot(rob1,se=TRUE,robust=TRUE)
+# Computing robust variance for baseline
+rob1 <- robust_phreg(out1)
+plot(rob1, se = TRUE, robust = TRUE)
 
 
-## iid decomposition, with scaled influence functions
-## for regression parameters
+# IID decomposition for regression parameters
 head(iid(out1))
 #>              wmi           age
 #> 3   2.315573e-04  8.113514e-05
@@ -80,8 +125,9 @@ head(iid(out1))
 #> 15 -3.739823e-05  2.673793e-05
 #> 17 -2.997039e-03  5.371497e-05
 #> 22 -9.146118e-04 -9.342247e-06
-## making iid decomposition of baseline at a specific time-point
-Aiiid <- iid(out1,time=30)
+
+# IID decomposition for baseline at a specific time-point
+Aiiid <- iid(out1, time = 30)
 head(Aiiid)
 #>          strata0       strata1       strata2       strata3
 #> 3  -1.894877e-04 -4.120570e-04 -2.659857e-04 -7.350908e-04
@@ -90,8 +136,9 @@ head(Aiiid)
 #> 15 -8.543458e-05 -9.149095e-05 -8.008394e-05 -2.250601e-04
 #> 17  4.118052e-05  3.243790e-05  3.366936e-05 -1.046447e-05
 #> 22  5.011669e-05  1.201129e-04  8.975026e-05  2.188617e-04
-## both iid decompositions
-dd <- iidBaseline(out1,time=30)
+
+# Combined IID decomposition (beta and baseline)
+dd <- iidBaseline(out1, time = 30)
 head(dd$beta.iid)
 #>             [,1]          [,2]
 #> 3   2.315573e-04  8.113514e-05
@@ -109,12 +156,13 @@ head(dd$base.iid)
 #> 17  4.118052e-05  3.243790e-05  3.366936e-05 -1.046447e-05
 #> 22  5.011669e-05  1.201129e-04  8.975026e-05  2.188617e-04
 
-outs <- phreg(Surv(time,status==9)~strata(vf,wmicat.4)+cluster(id),data=TRACE)
+# Stratified model
+outs <- phreg(Surv(time, status == 9) ~ strata(vf, wmicat.4) + cluster(id), data = TRACE)
 summary(outs)
 #> 
 #>     n events
 #>  1878    958
 #> 
-par(mfrow=c(1,2))
+par(mfrow = c(1, 2))
 plot(outs)
 ```

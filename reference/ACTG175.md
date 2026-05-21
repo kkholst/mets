@@ -1,4 +1,4 @@
-# ACTG175, block randmized study from speff2trial package
+# ACTG175, block randomized study from speff2trial package
 
 Data from speff2trial
 

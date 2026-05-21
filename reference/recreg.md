@@ -1,6 +1,8 @@
-# Recurrent events regression with terminal event
+# Recurrent Events Regression with Terminal Event
 
-Fits Ghosh-Lin IPCW Cox-type model
+Fits a Ghosh-Lin IPCW (Inverse Probability of Censoring Weighted)
+Cox-type model for recurrent events in the presence of a terminal event
+(e.g., death).
 
 ## Usage
 
@@ -26,74 +28,107 @@ recreg(
 
 - formula:
 
-  formula with 'Event' outcome
+  Formula with an 'Event' outcome.
 
 - data:
 
-  data frame
+  Data frame containing the variables.
 
 - cause:
 
-  of interest (1 default)
+  Cause of interest (default is 1).
 
 - death.code:
 
-  codes for death (terminating event, 2 default)
+  Codes for the terminal event/death (default is 2).
 
 - cens.code:
 
-  code of censoring (0 default)
+  Code for censoring (default is 0).
 
 - cens.model:
 
-  for stratified Cox model without covariates
+  Formula for a stratified Cox model without covariates used to estimate
+  censoring probabilities.
 
 - weights:
 
-  weights for score equations
+  Weights for the score equations.
 
 - offset:
 
-  offsets for model
+  Offsets for the model.
 
 - Gc:
 
-  censoring weights for time argument, default is to calculate these
-  with a Kaplan-Meier estimator, should then give G_c(T_i-)
+  Censoring weights for the time argument. If `NULL`, these are
+  calculated using a Kaplan-Meier estimator (should then provide
+  \\G_c(T_i-)\\).
 
 - wcomp:
 
-  weights for composite outcome, so when cause=c(1,3), we might have
-  wcomp=c(1,2).
+  Weights for composite outcomes (e.g., when `cause=c(1,3)`, `wcomp`
+  might be `c(1,2)`).
 
 - marks:
 
-  a mark value can be specified, this is vector from the data-frame
-  where the mark value can be found at all events
+  A mark value vector from the data frame, specifying the mark value at
+  all events.
 
 - augmentation.type:
 
-  of augmentation when augmentation model is given
+  Type of augmentation when an augmentation model is given (options:
+  `"lindyn.augment"`, `"lin.augment"`).
 
 - ...:
 
-  Additional arguments to lower level funtions
+  Additional arguments passed to lower-level functions.
+
+## Value
+
+An object of class `"recreg"` (extending `"phreg"`) containing:
+
+- coef:
+
+  Estimated coefficients.
+
+- var:
+
+  Robust variance-covariance matrix.
+
+- iid:
+
+  Influence functions for the coefficients.
+
+- cumhaz:
+
+  Cumulative hazard estimates.
+
+- se.cumhaz:
+
+  Standard errors for cumulative hazard.
 
 ## Details
 
-For Cox type model : \$\$ E(dN_1(t)\|X) = \mu_0(t)dt exp(X^T \beta) \$\$
-by solving Cox-type IPCW weighted score equations \$\$ \int (Z - E(t))
-w(t) dN_1(t) \$\$ where \$\$w(t) = G(t) (I(T_i \wedge t \< C_i)/G_c(T_i
-\wedge t))\$\$ and \$\$E(t) = S_1(t)/S_0(t)\$\$ and \$\$S_j(t) = \sum
-X_i^j w_i(t) \exp(X_i^T \beta)\$\$.
+For the Cox-type model, the expectation is modeled as: \$\$
+E(dN_1(t)\|X) = \mu_0(t) dt \exp(X^T \beta) \$\$ by solving Cox-type
+IPCW weighted score equations: \$\$ \int (Z - E(t)) w(t) dN_1(t) \$\$
+where \$\$w(t) = G(t) (I(T_i \wedge t \< C_i)/G_c(T_i \wedge t))\$\$,
+\$\$E(t) = S_1(t)/S_0(t)\$\$, and \$\$S_j(t) = \sum X_i^j w_i(t)
+\exp(X_i^T \beta)\$\$.
 
-The iid decomposition of the beta's are on the form \$\$ \int (Z - E )
-w(t) dM_1 + \int q(s)/p(s) dM_c \$\$ and returned as iid.
+The IID decomposition of the beta coefficients takes the form: \$\$ \int
+(Z - E) w(t) dM_1 + \int q(s)/p(s) dM_c \$\$ and is returned as the
+`iid` component.
 
-Events, deaths and censorings are specified via stop start structure and
-the Event call, that via a status vector and cause (code),
-censoring-codes (cens.code) and death-codes (death.code) indentifies
-these. See example and vignette.
+Events, deaths, and censorings are specified via a start-stop structure
+and the `Event` call. The function identifies these via a status vector
+and cause codes, censoring codes (`cens.code`), and death codes
+(`death.code`). See examples and vignettes for details.
+
+## See also
+
+[`recregIPCW`](http://kkholst.github.io/mets/reference/recregIPCW.md)
 
 ## Author
 
@@ -103,7 +138,6 @@ Thomas Scheike
 
 ``` r
 ## data with no ties
-library(mets)
 data(hfactioncpx12)
 hf <- hfactioncpx12
 hf$x <- as.numeric(hf$treatment) 
@@ -116,11 +150,11 @@ summary(gl)
 #>  2132   1391
 #> 
 #>  741 clusters
-#> coeffients:
+#> coefficients:
 #>             Estimate      S.E.   dU^-1/2 P-value
 #> treatment1 -0.110404  0.078656  0.053776  0.1604
 #> 
-#> exp(coeffients):
+#> exp(coefficients):
 #>            Estimate    2.5%  97.5%
 #> treatment1  0.89547 0.76754 1.0447
 #> 
@@ -132,7 +166,8 @@ head(iid(gl))
 #> 4  1.308207e-03
 #> 5  5.404664e-05
 #> 6  2.229380e-03
-pgl <- predict(gl,dd,se=1); plot(pgl,se=1)
+pgl <- predict(gl,dd,se=1); 
+plot(pgl,se=1)
 
 
 ## censoring stratified after treatment 
@@ -144,11 +179,11 @@ summary(gls)
 #>  2132   1391
 #> 
 #>  741 clusters
-#> coeffients:
+#> coefficients:
 #>             Estimate      S.E.   dU^-1/2 P-value
 #> treatment1 -0.109509  0.078707  0.053777  0.1641
 #> 
-#> exp(coeffients):
+#> exp(coefficients):
 #>            Estimate    2.5%  97.5%
 #> treatment1  0.89627 0.76815 1.0458
 #> 

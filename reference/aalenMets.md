@@ -1,7 +1,8 @@
-# Fast additive hazards model with robust standard errors
+# Fast Additive Hazards Model with Robust Standard Errors
 
-Fast Lin-Ying additive hazards model with a possibly stratified
-baseline. Robust variance is default variance with the summary.
+Fits a fast Lin-Ying additive hazards model with a possibly stratified
+baseline. Robust variance is the default variance estimate in the
+summary.
 
 ## Usage
 
@@ -13,24 +14,49 @@ aalenMets(formula, data = data, no.baseline = FALSE, ...)
 
 - formula:
 
-  formula with 'Surv' outcome (see `coxph`)
+  Formula with a 'Surv' outcome (similar to `coxph`).
 
 - data:
 
-  data frame
+  Data frame.
 
 - no.baseline:
 
-  to fit model without baseline hazard
+  Logical; if `TRUE`, fits the model without baseline hazard estimation.
 
 - ...:
 
-  Additional arguments to phreg
+  Additional arguments passed to `phreg`.
+
+## Value
+
+An object of class `"aalenMets"` (extends `"phreg"`) containing:
+
+- coef:
+
+  Estimated coefficients.
+
+- var:
+
+  Robust variance-covariance matrix.
+
+- iid:
+
+  Influence functions.
+
+- intZHZ:
+
+  Integrated ZHZ matrix.
+
+- gamma:
+
+  Coefficient estimates.
 
 ## Details
 
-influence functions (iid) will follow numerical order of given cluster
-variable so ordering after \$id will give iid in order of data-set.
+Influence functions (IID) follow the numerical order of the given
+cluster variable. Ordering by `$id` aligns the IID terms with the
+dataset order.
 
 ## Author
 
@@ -39,27 +65,32 @@ Thomas Scheike
 ## Examples
 
 ``` r
-data(bmt); bmt$time <- bmt$time+runif(408)*0.001
-out <- aalenMets(Surv(time,cause==1)~tcell+platelet+age,data=bmt)
+data(bmt)
+bmt$time <- bmt$time + runif(408) * 0.001
+out <- aalenMets(Surv(time, cause == 1) ~ tcell + platelet + age, data = bmt)
 summary(out)
 #> 
 #>    n events
 #>  408    161
 #> 
 #>  408 clusters
-#> coeffients:
+#> coefficients:
 #>            Estimate       S.E.    dU^-1/2 P-value
-#> tcell    -0.0129601  0.0041293  0.2303828  0.0017
-#> platelet -0.0087422  0.0028056  0.1664323  0.0018
-#> age       0.0066203  0.0013880  0.0789265  0.0000
+#> tcell    -0.0129507  0.0041288  0.2304083  0.0017
+#> platelet -0.0087471  0.0028053  0.1664259  0.0018
+#> age       0.0066174  0.0013879  0.0789210  0.0000
 #> 
-#> exp(coeffients):
+#> exp(coefficients):
 #>          Estimate    2.5%  97.5%
-#> tcell     0.98712 0.97917 0.9951
-#> platelet  0.99130 0.98586 0.9968
-#> age       1.00664 1.00391 1.0094
+#> tcell     0.98713 0.97918 0.9952
+#> platelet  0.99129 0.98586 0.9968
+#> age       1.00664 1.00390 1.0094
 #> 
 
-## out2 <- timereg::aalen(Surv(time,cause==1)~const(tcell)+const(platelet)+const(age),data=bmt)
+## Comparison with timereg::aalen
+## out2 <- timereg::aalen(
+##   Surv(time, cause == 1) ~ const(tcell) + const(platelet) + const(age),
+##   data = bmt
+## )
 ## summary(out2)
 ```

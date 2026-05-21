@@ -3,14 +3,7 @@
 ## All functions
 
 - [`ACTG175`](http://kkholst.github.io/mets/reference/ACTG175.md) :
-  ACTG175, block randmized study from speff2trial package
-
-- [`BinAugmentCifstrata()`](http://kkholst.github.io/mets/reference/BinAugmentCifstrata.md)
-  : Augmentation for Binomial regression based on stratified NPMLE Cif
-  (Aalen-Johansen)
-
-- [`Bootphreg()`](http://kkholst.github.io/mets/reference/Bootphreg.md)
-  : Wild bootstrap for Cox PH regression
+  ACTG175, block randomized study from speff2trial package
 
 - [`CPH_HPN_CRBSI`](http://kkholst.github.io/mets/reference/CPH_HPN_CRBSI.md)
   : Rates for HPN program for patients of Copenhagen Cohort
@@ -21,25 +14,15 @@
 - [`Dbvn()`](http://kkholst.github.io/mets/reference/Dbvn.md) :
   Derivatives of the bivariate normal cumulative distribution function
 
-- [`EVaddGam()`](http://kkholst.github.io/mets/reference/EVaddGam.md) :
-  Relative risk for additive gamma model
-
-- [`Effbinreg()`](http://kkholst.github.io/mets/reference/Effbinreg.md)
-  : Efficient IPCW for binary data
-
 - [`Event()`](http://kkholst.github.io/mets/reference/Event.md) : Event
   history object
 
-- [`EventSplit2()`](http://kkholst.github.io/mets/reference/EventSplit2.md)
-  : Event split with two time-scales, time and gaptime
-
-- [`FG_AugmentCifstrata()`](http://kkholst.github.io/mets/reference/FG_AugmentCifstrata.md)
-  : Augmentation for Fine-Gray model based on stratified NPMLE Cif
-  (Aalen-Johansen)
-
-- [`Grandom.cif()`](http://kkholst.github.io/mets/reference/Grandom.cif.md)
+- [`Grandom_cif()`](http://kkholst.github.io/mets/reference/Grandom_cif.md)
   : Additive Random effects model for competing risks data for
   polygenetic modelling
+
+- [`IC(`*`<phreg>`*`)`](http://kkholst.github.io/mets/reference/IC.phreg.md)
+  : Influence Functions for phreg objects
 
 - [`LinSpline()`](http://kkholst.github.io/mets/reference/LinSpline.md)
   : Simple linear spline
@@ -50,48 +33,41 @@
   TRACE study group of myocardial infarction
 
 - [`WA_recurrent()`](http://kkholst.github.io/mets/reference/WA_recurrent.md)
-  : While-Alive estimands for recurrent events
+  : While-Alive Estimands for Recurrent Events
+
+- [`WA_reg()`](http://kkholst.github.io/mets/reference/WA_reg.md) :
+  While-Alive Regression for Recurrent Events
 
 - [`aalenMets()`](http://kkholst.github.io/mets/reference/aalenMets.md)
-  : Fast additive hazards model with robust standard errors
-
-- [`aalenfrailty()`](http://kkholst.github.io/mets/reference/aalenfrailty.md)
-  : Aalen frailty model
-
-- [`back2timereg()`](http://kkholst.github.io/mets/reference/back2timereg.md)
-  : Convert to timereg object
-
-- [`basehazplot.phreg()`](http://kkholst.github.io/mets/reference/basehazplot.phreg.md)
-  : Plotting the baselines of stratified Cox
+  : Fast Additive Hazards Model with Robust Standard Errors
 
 - [`bicomprisk()`](http://kkholst.github.io/mets/reference/bicomprisk.md)
-  : Estimation of concordance in bivariate competing risks data
+  : Estimation of Concordance in Bivariate Competing Risks Data
 
-- [`binomial.twostage()`](http://kkholst.github.io/mets/reference/binomial.twostage.md)
+- [`binomial_twostage()`](http://kkholst.github.io/mets/reference/binomial_twostage.md)
   : Fits Clayton-Oakes or bivariate Plackett (OR) models for binary data
   using marginals that are on logistic form. If clusters contain more
   than two times, the algoritm uses a compososite likelihood based on
   all pairwise bivariate models.
 
 - [`binreg()`](http://kkholst.github.io/mets/reference/binreg.md) :
-  Binomial Regression for censored competing risks data
+  Binomial Regression for Censored Competing Risks Data
 
 - [`binregATE()`](http://kkholst.github.io/mets/reference/binregATE.md)
-  : Average Treatment effect for censored competing risks data using
+  : Average Treatment Effect for Censored Competing Risks Data using
   Binomial Regression
 
 - [`binregCasewise()`](http://kkholst.github.io/mets/reference/binregCasewise.md)
-  : Estimates the casewise concordance based on Concordance and marginal
-  estimate using binreg
+  : Estimate Casewise Concordance Using Binomial Regression
 
 - [`binregG()`](http://kkholst.github.io/mets/reference/binregG.md) :
-  G-estimator for binomial regression model (Standardized estimates)
+  G-Estimator for Binomial Regression Model (Standardized Estimates)
 
 - [`binregRatio()`](http://kkholst.github.io/mets/reference/binregRatio.md)
-  : Percentage of years lost due to cause regression
+  : Percentage of Years Lost Due to a Cause Regression
 
 - [`binregTSR()`](http://kkholst.github.io/mets/reference/binregTSR.md)
-  : 2 Stage Randomization for Survival Data or competing Risks Data
+  : Two-Stage Randomization for Survival or Competing Risks Data
 
 - [`biprobit()`](http://kkholst.github.io/mets/reference/biprobit.md) :
   Bivariate Probit model
@@ -109,31 +85,50 @@
   CALGB 8923, twostage randomization SMART design
 
 - [`casewise()`](http://kkholst.github.io/mets/reference/casewise.md) :
-  Estimates the casewise concordance based on Concordance and marginal
-  estimate using prodlim but no testing
+  Estimate Casewise Concordance from prodlim Objects
 
-- [`casewise.test()`](http://kkholst.github.io/mets/reference/casewise.test.md)
-  : Estimates the casewise concordance based on Concordance and marginal
-  estimate using timereg and performs test for independence
+- [`casewise_bin()`](http://kkholst.github.io/mets/reference/casewise_bin.md)
+  : Casewise Concordance from Concordant/Discordant Counts
+
+- [`rr_cif()`](http://kkholst.github.io/mets/reference/cif-nonpar.md)
+  [`or_cif()`](http://kkholst.github.io/mets/reference/cif-nonpar.md)
+  [`random.cif()`](http://kkholst.github.io/mets/reference/cif-nonpar.md)
+  [`Grandom.cif()`](http://kkholst.github.io/mets/reference/cif-nonpar.md)
+  [`predictPairPlack()`](http://kkholst.github.io/mets/reference/cif-nonpar.md)
+  [`npc()`](http://kkholst.github.io/mets/reference/cif-nonpar.md)
+  [`nonparcuminc()`](http://kkholst.github.io/mets/reference/cif-nonpar.md)
+  [`plotcr()`](http://kkholst.github.io/mets/reference/cif-nonpar.md) :
+  Non-parametric Cumulative Incidence Functions
 
 - [`cif()`](http://kkholst.github.io/mets/reference/cif.md) : Cumulative
-  incidence with robust standard errors
+  Incidence with Robust Standard Errors
 
-- [`cifreg()`](http://kkholst.github.io/mets/reference/cifreg.md) : CIF
-  regression
+- [`cif_yearslost()`](http://kkholst.github.io/mets/reference/cif_yearslost.md)
+  : Restricted Mean Time Lost for Competing Risks
 
-- [`cluster.index()`](http://kkholst.github.io/mets/reference/cluster.index.md)
+- [`cifreg()`](http://kkholst.github.io/mets/reference/cifreg.md) :
+  Cumulative Incidence Function (CIF) Regression
+
+- [`cifregFG()`](http://kkholst.github.io/mets/reference/cifregFG.md) :
+  Fine-Gray Cumulative Incidence Function Regression
+
+- [`cluster_index()`](http://kkholst.github.io/mets/reference/cluster_index.md)
   : Finds subjects related to same cluster
+
+- [`coarse_clust()`](http://kkholst.github.io/mets/reference/coarse_clust.md)
+  : Coarsen Cluster Identifiers
 
 - [`concordanceCor()`](http://kkholst.github.io/mets/reference/concordanceCor.md)
   : Concordance Computes concordance and casewise concordance
 
-- [`cor.cif()`](http://kkholst.github.io/mets/reference/cor.cif.md) :
+- [`cor_cif()`](http://kkholst.github.io/mets/reference/cor_cif.md) :
   Cross-odds-ratio, OR or RR risk regression for competing risks
 
-- [`count.history()`](http://kkholst.github.io/mets/reference/count.history.md)
-  : Counts the number of previous events of two types for recurrent
-  events processes
+- [`count_history()`](http://kkholst.github.io/mets/reference/count_history.md)
+  : Compute cumulative event counts as time-dependent covariates
+
+- [`cumoddsreg()`](http://kkholst.github.io/mets/reference/cumoddsreg.md)
+  : Cumulative Odds Regression for Discrete Time Data
 
 - [`daggregate()`](http://kkholst.github.io/mets/reference/daggregate.md)
   : aggregating for for data frames
@@ -156,17 +151,11 @@
 - [`diabetes`](http://kkholst.github.io/mets/reference/diabetes.md) :
   The Diabetic Retinopathy Data
 
-- [`divide.conquer()`](http://kkholst.github.io/mets/reference/divide.conquer.md)
+- [`divide_conquer()`](http://kkholst.github.io/mets/reference/divide_conquer.md)
   : Split a data set and run function
-
-- [`divide.conquer.timereg()`](http://kkholst.github.io/mets/reference/divide.conquer.timereg.md)
-  : Split a data set and run function from timereg and aggregate
 
 - [`dlag()`](http://kkholst.github.io/mets/reference/dlag.md) : Lag
   operator
-
-- [`doubleFGR()`](http://kkholst.github.io/mets/reference/doubleFGR.md)
-  : Double CIF Fine-Gray model with two causes
 
 - [`dprint()`](http://kkholst.github.io/mets/reference/dprint.md) :
   list, head, print, tail
@@ -176,6 +165,9 @@
 
 - [`drelevel()`](http://kkholst.github.io/mets/reference/drelevel.md) :
   relev levels for data frames
+
+- [`drop.specials()`](http://kkholst.github.io/mets/reference/drop.specials.md)
+  : Remove Special Terms from a Formula
 
 - [`dsort()`](http://kkholst.github.io/mets/reference/dsort.md) : Sort
   data frame
@@ -189,31 +181,27 @@
 - [`dtransform()`](http://kkholst.github.io/mets/reference/dtransform.md)
   : Transform that allows condition
 
-- [`easy.binomial.twostage()`](http://kkholst.github.io/mets/reference/easy.binomial.twostage.md)
-  : Fits two-stage binomial for describing depdendence in binomial data
-  using marginals that are on logistic form using the binomial.twostage
-  funcion, but call is different and easier and the data manipulation is
-  build into the function. Useful in particular for family design data.
+- [`event_split()`](http://kkholst.github.io/mets/reference/event_split.md)
+  : event_split (SurvSplit).
 
-- [`evalTerminal()`](http://kkholst.github.io/mets/reference/evalTerminal.md)
-  : Evaluates piece constant covariates at min(D,t) where D is a
-  terminal event
-
-- [`event.split()`](http://kkholst.github.io/mets/reference/event.split.md)
-  : event.split (SurvSplit).
+- [`event_split2()`](http://kkholst.github.io/mets/reference/event_split2.md)
+  : Event split with two time-scales, time and gaptime
 
 - [`eventpois()`](http://kkholst.github.io/mets/reference/eventpois.md)
   : Extract survival estimates from lifetable analysis
 
-- [`familycluster.index()`](http://kkholst.github.io/mets/reference/familycluster.index.md)
-  : Finds all pairs within a cluster (family)
-
-- [`familyclusterWithProbands.index()`](http://kkholst.github.io/mets/reference/familyclusterWithProbands.index.md)
+- [`familyclusterWithProbands_index()`](http://kkholst.github.io/mets/reference/familyclusterWithProbands_index.md)
   : Finds all pairs within a cluster (famly) with the proband
   (case/control)
 
+- [`familycluster_index()`](http://kkholst.github.io/mets/reference/familycluster_index.md)
+  : Finds all pairs within a cluster (family)
+
 - [`fast.approx()`](http://kkholst.github.io/mets/reference/fast.approx.md)
   : Fast approximation
+
+- [`fast.cluster()`](http://kkholst.github.io/mets/reference/fast.cluster.md)
+  : Fast Cluster Index Conversion
 
 - [`fast.pattern()`](http://kkholst.github.io/mets/reference/fast.pattern.md)
   : Fast pattern
@@ -221,92 +209,48 @@
 - [`fast.reshape()`](http://kkholst.github.io/mets/reference/fast.reshape.md)
   : Fast reshape
 
+- [`faster.reshape()`](http://kkholst.github.io/mets/reference/faster.reshape.md)
+  : Fast Reshape from Long to Wide Format
+
+- [`folds()`](http://kkholst.github.io/mets/reference/folds.md) :
+  Generate Random Fold Indices for Cross-Validation
+
+- [`force.same.cens()`](http://kkholst.github.io/mets/reference/force.same.cens.md)
+  [`force_same_cens()`](http://kkholst.github.io/mets/reference/force.same.cens.md)
+  : Force Same Censoring Within Clusters
+
 - [`glm_IPTW()`](http://kkholst.github.io/mets/reference/glm_IPTW.md) :
-  IPTW GLM, Inverse Probaibilty of Treatment Weighted GLM
+  IPTW GLM, Inverse Probabibilty of Treatment Weighted GLM
 
 - [`gof(`*`<phreg>`*`)`](http://kkholst.github.io/mets/reference/gof.phreg.md)
-  : GOF for Cox PH regression
+  : Goodness-of-Fit for Cox PH Regression (Proportionality)
 
-- [`gofG.phreg()`](http://kkholst.github.io/mets/reference/gofG.phreg.md)
-  : Stratified baseline graphical GOF test for Cox covariates in PH
-  regression
+- [`gofM_phreg()`](http://kkholst.github.io/mets/reference/gofM_phreg.md)
+  : Goodness-of-Fit for Cox Covariates (Model Matrix)
 
-- [`gofM.phreg()`](http://kkholst.github.io/mets/reference/gofM.phreg.md)
-  : GOF for Cox covariates in PH regression
+- [`gofZ_phreg()`](http://kkholst.github.io/mets/reference/gofZ_phreg.md)
+  : Goodness-of-Fit for Cox Covariates (Linearity)
 
-- [`gofZ.phreg()`](http://kkholst.github.io/mets/reference/gofZ.phreg.md)
-  : GOF for Cox covariates in PH regression
+- [`grouptable()`](http://kkholst.github.io/mets/reference/grouptable.md)
+  : Create Group Contingency Table from Clustered Data
 
 - [`haplo`](http://kkholst.github.io/mets/reference/haplo.md) : haplo
   fun data
 
-- [`haplo.surv.discrete()`](http://kkholst.github.io/mets/reference/haplo.surv.discrete.md)
-  : Discrete time to event haplo type analysis
+- [`haplo_surv_discrete()`](http://kkholst.github.io/mets/reference/haplo_surv_discrete.md)
+  : Discrete Time-to-Event Haplotype Analysis
 
 - [`hfactioncpx12`](http://kkholst.github.io/mets/reference/hfactioncpx12.md)
-  : hfaction, subset of block randmized study HF-ACtion from WA package
+  : hfaction, subset of block randomized study HF-ACtion from WA package
 
 - [`iidBaseline()`](http://kkholst.github.io/mets/reference/iidBaseline.md)
-  : Influence functions or IID decomposition of baseline for
-  recrec/phreg/cifregFG
+  : Influence Functions or IID Decomposition of Baseline
 
-- [`npc`](http://kkholst.github.io/mets/reference/internal.md)
-  [`plotcr`](http://kkholst.github.io/mets/reference/internal.md)
-  [`nonparcuminc`](http://kkholst.github.io/mets/reference/internal.md)
-  [`simnordic`](http://kkholst.github.io/mets/reference/internal.md)
-  [`corsim.prostate`](http://kkholst.github.io/mets/reference/internal.md)
-  [`alpha2kendall`](http://kkholst.github.io/mets/reference/internal.md)
-  [`alpha2spear`](http://kkholst.github.io/mets/reference/internal.md)
-  [`coefmat`](http://kkholst.github.io/mets/reference/internal.md)
-  [`piecewise.twostage`](http://kkholst.github.io/mets/reference/internal.md)
-  [`surv.boxarea`](http://kkholst.github.io/mets/reference/internal.md)
-  [`faster.reshape`](http://kkholst.github.io/mets/reference/internal.md)
-  [`piecewise.data`](http://kkholst.github.io/mets/reference/internal.md)
-  [`simBinPlack`](http://kkholst.github.io/mets/reference/internal.md)
-  [`simBinFam`](http://kkholst.github.io/mets/reference/internal.md)
-  [`simBinFam2`](http://kkholst.github.io/mets/reference/internal.md)
-  [`simSurvFam`](http://kkholst.github.io/mets/reference/internal.md)
-  [`corsim.prostate.random`](http://kkholst.github.io/mets/reference/internal.md)
-  [`simnordic.random`](http://kkholst.github.io/mets/reference/internal.md)
-  [`simCox`](http://kkholst.github.io/mets/reference/internal.md)
-  [`sim`](http://kkholst.github.io/mets/reference/internal.md)
-  [`grouptable`](http://kkholst.github.io/mets/reference/internal.md)
-  [`jumptimes`](http://kkholst.github.io/mets/reference/internal.md)
-  [`folds`](http://kkholst.github.io/mets/reference/internal.md)
-  [`ace.family.design`](http://kkholst.github.io/mets/reference/internal.md)
-  [`ascertained.pairs`](http://kkholst.github.io/mets/reference/internal.md)
-  [`CCbinomial.twostage`](http://kkholst.github.io/mets/reference/internal.md)
-  [`coarse.clust`](http://kkholst.github.io/mets/reference/internal.md)
-  [`concordanceTwinACE`](http://kkholst.github.io/mets/reference/internal.md)
-  [`concordanceTwostage`](http://kkholst.github.io/mets/reference/internal.md)
-  [`fast.cluster`](http://kkholst.github.io/mets/reference/internal.md)
-  [`force.same.cens`](http://kkholst.github.io/mets/reference/internal.md)
-  [`ilap`](http://kkholst.github.io/mets/reference/internal.md)
-  [`kendall.ClaytonOakes.twin.ace`](http://kkholst.github.io/mets/reference/internal.md)
-  [`kendall.normal.twin.ace`](http://kkholst.github.io/mets/reference/internal.md)
-  [`make.pairwise.design`](http://kkholst.github.io/mets/reference/internal.md)
-  [`make.pairwise.design.competing`](http://kkholst.github.io/mets/reference/internal.md)
-  [`matplot.mets.twostage`](http://kkholst.github.io/mets/reference/internal.md)
-  [`object.defined`](http://kkholst.github.io/mets/reference/internal.md)
-  [`p11.binomial.twostage.RV`](http://kkholst.github.io/mets/reference/internal.md)
-  [`predictPairPlack`](http://kkholst.github.io/mets/reference/internal.md)
-  [`simbinClaytonOakes.family.ace`](http://kkholst.github.io/mets/reference/internal.md)
-  [`simbinClaytonOakes.pairs`](http://kkholst.github.io/mets/reference/internal.md)
-  [`simbinClaytonOakes.twin.ace`](http://kkholst.github.io/mets/reference/internal.md)
-  [`simClaytonOakes.family.ace`](http://kkholst.github.io/mets/reference/internal.md)
-  [`simClaytonOakes.twin.ace`](http://kkholst.github.io/mets/reference/internal.md)
-  [`simFrailty.simple`](http://kkholst.github.io/mets/reference/internal.md)
-  [`simCompete.simple`](http://kkholst.github.io/mets/reference/internal.md)
-  [`simCompete.twin.ace`](http://kkholst.github.io/mets/reference/internal.md)
-  [`twin.polygen.design`](http://kkholst.github.io/mets/reference/internal.md)
-  [`procform`](http://kkholst.github.io/mets/reference/internal.md)
-  [`procform3`](http://kkholst.github.io/mets/reference/internal.md)
-  [`procformdata`](http://kkholst.github.io/mets/reference/internal.md)
-  [`drop.specials`](http://kkholst.github.io/mets/reference/internal.md)
-  : For internal use
+- [`ilap()`](http://kkholst.github.io/mets/reference/ilap.md) : Inverse
+  Laplace Transform Helper
 
-- [`interval.logitsurv.discrete()`](http://kkholst.github.io/mets/reference/interval.logitsurv.discrete.md)
-  : Discrete time to event interval censored data
+- [`interval_logitsurv_discrete()`](http://kkholst.github.io/mets/reference/interval_logitsurv_discrete.md)
+  : Discrete Time-to-Event Analysis with Interval Censoring
 
 - [`ipw()`](http://kkholst.github.io/mets/reference/ipw.md) : Inverse
   Probability of Censoring Weights
@@ -314,8 +258,11 @@
 - [`ipw2()`](http://kkholst.github.io/mets/reference/ipw2.md) : Inverse
   Probability of Censoring Weights
 
+- [`jumptimes()`](http://kkholst.github.io/mets/reference/jumptimes.md)
+  : Extract Event (Jump) Times
+
 - [`km()`](http://kkholst.github.io/mets/reference/km.md) : Kaplan-Meier
-  with robust standard errors
+  with Robust Standard Errors
 
 - [`lifecourse()`](http://kkholst.github.io/mets/reference/lifecourse.md)
   : Life-course plot
@@ -325,7 +272,7 @@
   : Life table
 
 - [`logitSurv()`](http://kkholst.github.io/mets/reference/logitSurv.md)
-  : Proportional odds survival model
+  : Proportional Odds Survival Model
 
 - [`mediatorSurv()`](http://kkholst.github.io/mets/reference/mediatorSurv.md)
   : Mediation analysis in survival context
@@ -348,27 +295,32 @@
   data
 
 - [`mlogit()`](http://kkholst.github.io/mets/reference/mlogit.md) :
-  Multinomial regression based on phreg regression
+  Multinomial Regression Based on phreg
 
 - [`multcif`](http://kkholst.github.io/mets/reference/multcif.md) :
   Multivariate Cumulative Incidence Function example data set
 
 - [`np`](http://kkholst.github.io/mets/reference/np.md) : np data set
 
+- [`robust.basehaz.phreg()`](http://kkholst.github.io/mets/reference/phreg-helpers.md)
+  [`summarybase.phreg()`](http://kkholst.github.io/mets/reference/phreg-helpers.md)
+  [`conftype()`](http://kkholst.github.io/mets/reference/phreg-helpers.md)
+  : Robust Baseline Hazard Standard Errors
+
 - [`phreg()`](http://kkholst.github.io/mets/reference/phreg.md) : Fast
-  Cox PH regression
+  Cox Proportional Hazards Regression
 
 - [`phreg_IPTW()`](http://kkholst.github.io/mets/reference/phreg_IPTW.md)
-  : IPTW Cox, Inverse Probaibilty of Treatment Weighted Cox regression
+  : IPTW Cox Regression (Inverse Probability of Treatment Weighted)
 
 - [`phreg_rct()`](http://kkholst.github.io/mets/reference/phreg_rct.md)
-  : Lu-Tsiatis More Efficient Log-Rank for Randomized studies with
-  baseline covariates
+  : Lu-Tsiatis More Efficient Log-Rank for Randomized Studies with
+  Baseline Covariates
 
 - [`phreg_weibull()`](http://kkholst.github.io/mets/reference/phreg_weibull.md)
   : Weibull-Cox regression
 
-- [`plack.cif()`](http://kkholst.github.io/mets/reference/plack.cif.md)
+- [`plack_cif()`](http://kkholst.github.io/mets/reference/plack_cif.md)
   : plack Computes concordance for or.cif based model, that is Plackett
   random effects model
 
@@ -381,100 +333,103 @@
 - [`pmvn()`](http://kkholst.github.io/mets/reference/pmvn.md) :
   Multivariate normal distribution function
 
+- [`predict(`*`<mlogit>`*`)`](http://kkholst.github.io/mets/reference/predict.mlogit.md)
+  : Predictions from Multinomial Regression
+
 - [`predict(`*`<phreg>`*`)`](http://kkholst.github.io/mets/reference/predict.phreg.md)
-  : Predictions from proportional hazards model
-
-- [`predictRisk()`](http://kkholst.github.io/mets/reference/predictRisk.md)
-  : Risk predictions to work with riskRegression package
-
-- [`predictRisk(`*`<binreg>`*`)`](http://kkholst.github.io/mets/reference/predictRisk.binreg.md)
-  : Risk predictions to work with riskRegression package
+  : Predictions from Proportional Hazards Model
 
 - [`print(`*`<casewise>`*`)`](http://kkholst.github.io/mets/reference/print.casewise.md)
   : prints Concordance test
 
-- [`prob.exceed.recurrent()`](http://kkholst.github.io/mets/reference/prob.exceed.recurrent.md)
-  : Estimation of probability of more that k events for recurrent events
-  process
+- [`prob_exceed_recurrent()`](http://kkholst.github.io/mets/reference/prob_exceed_recurrent.md)
+  : Estimate the probability of exceeding k recurrent events by time t
 
 - [`prt`](http://kkholst.github.io/mets/reference/prt.md) : Prostate
   data set
 
-- [`random.cif()`](http://kkholst.github.io/mets/reference/random.cif.md)
+- [`random_cif()`](http://kkholst.github.io/mets/reference/random_cif.md)
   : Random effects model for competing risks data
 
-- [`rchaz()`](http://kkholst.github.io/mets/reference/rchaz.md) :
-  Simulation of Piecewise constant hazard model (Cox).
+- [`ratioATE()`](http://kkholst.github.io/mets/reference/ratioATE.md) :
+  Ratio of Average Treatment Effects
 
-- [`rchazC()`](http://kkholst.github.io/mets/reference/rchazC.md) :
-  Piecewise constant hazard distribution
+- [`rchaz()`](http://kkholst.github.io/mets/reference/rchaz.md) :
+  Simulation of Piecewise Constant Hazard Model (Cox)
+
+- [`rchazl()`](http://kkholst.github.io/mets/reference/rchazl.md) :
+  Multiple Cause Piecewise Constant Hazard Simulation
 
 - [`rcrisk()`](http://kkholst.github.io/mets/reference/rcrisk.md) :
   Simulation of Piecewise constant hazard models with two causes (Cox).
 
 - [`recreg()`](http://kkholst.github.io/mets/reference/recreg.md) :
-  Recurrent events regression with terminal event
+  Recurrent Events Regression with Terminal Event
 
-- [`recurrentMarginal()`](http://kkholst.github.io/mets/reference/recurrentMarginal.md)
-  : Fast recurrent marginal mean when death is possible
+- [`recregIPCW()`](http://kkholst.github.io/mets/reference/recregIPCW.md)
+  : IPCW Estimator for Recurrent Events
 
-- [`resmean.phreg()`](http://kkholst.github.io/mets/reference/resmean.phreg.md)
-  : Restricted mean for stratified Kaplan-Meier or Cox model with
-  martingale standard errors
+- [`recurrent_marginal()`](http://kkholst.github.io/mets/reference/recurrent_marginal.md)
+  [`recurrentMarginal()`](http://kkholst.github.io/mets/reference/recurrent_marginal.md)
+  : Marginal mean estimation for recurrent events with a terminal event
 
 - [`resmeanATE()`](http://kkholst.github.io/mets/reference/resmeanATE.md)
-  : Average Treatment effect for Restricted Mean for censored competing
-  risks data using IPCW
+  : Average Treatment Effect for Restricted Mean Time
 
 - [`resmeanIPCW()`](http://kkholst.github.io/mets/reference/resmeanIPCW.md)
-  : Restricted IPCW mean for censored survival data
+  : Restricted IPCW Mean for Censored Survival Data
 
-- [`rpch()`](http://kkholst.github.io/mets/reference/rpch.md) :
-  Piecewise constant hazard distribution
+- [`resmean_phreg()`](http://kkholst.github.io/mets/reference/resmean_phreg.md)
+  : Restricted Mean for Stratified Kaplan-Meier or Cox Model
 
 - [`rweibullcox()`](http://kkholst.github.io/mets/reference/rweibullcox.md)
   : Simulate observations from a Weibull distribution
 
-- [`sim.cif()`](http://kkholst.github.io/mets/reference/sim.cif.md) :
-  Simulation of output from Cumulative incidence regression model
-
-- [`sim.phreg()`](http://kkholst.github.io/mets/reference/sim.phreg.md)
-  : Simulation of output from Cox model.
-
-- [`sim.phregs()`](http://kkholst.github.io/mets/reference/sim.phregs.md)
-  : Simulation of cause specific from Cox models.
-
-- [`sim.recurrent()`](http://kkholst.github.io/mets/reference/sim.recurrent.md)
-  : Simulation of two-stage recurrent events data based on Cox/Cox or
-  Cox/Ghosh-Lin structure
-
-- [`simAalenFrailty()`](http://kkholst.github.io/mets/reference/simAalenFrailty.md)
-  : Simulate from the Aalen Frailty model
-
-- [`simClaytonOakes()`](http://kkholst.github.io/mets/reference/simClaytonOakes.md)
+- [`sim_ClaytonOakes()`](http://kkholst.github.io/mets/reference/sim_ClaytonOakes.md)
   : Simulate from the Clayton-Oakes frailty model
 
-- [`simClaytonOakesWei()`](http://kkholst.github.io/mets/reference/simClaytonOakesWei.md)
+- [`sim_ClaytonOakesWei()`](http://kkholst.github.io/mets/reference/sim_ClaytonOakesWei.md)
   : Simulate from the Clayton-Oakes frailty model
 
-- [`simGLcox()`](http://kkholst.github.io/mets/reference/simGLcox.md) :
-  Simulation of two-stage recurrent events data based on Cox/Cox or
-  Cox/Ghosh-Lin structure
+- [`sim_GLcox()`](http://kkholst.github.io/mets/reference/sim_GLcox.md)
+  : Simulation of Two-Stage Recurrent Events Data
 
-- [`simMultistate()`](http://kkholst.github.io/mets/reference/simMultistate.md)
-  : Simulation of illness-death model
+- [`sim_cif()`](http://kkholst.github.io/mets/reference/sim_cif.md) :
+  Simulation of Output from Cumulative Incidence Regression Model
 
-- [`simRecurrent()`](http://kkholst.github.io/mets/reference/simRecurrent.md)
-  : Simulation of recurrent events data based on cumulative hazards for
-  event and death process
+- [`sim_multistate()`](http://kkholst.github.io/mets/reference/sim_multistate.md)
+  : Simulation of Illness-Death Model
 
-- [`simRecurrentII()`](http://kkholst.github.io/mets/reference/simRecurrentII.md)
-  : Simulation of recurrent events data based on cumulative hazards with
-  two types of recurrent events
+- [`sim_multistateII()`](http://kkholst.github.io/mets/reference/sim_multistateII.md)
+  : Illness-Death Competing Risks with Two Causes of Death
 
-- [`simRecurrentTS()`](http://kkholst.github.io/mets/reference/simRecurrentTS.md)
-  : Simulation of recurrent events data based on cumulative hazards:
-  Two-stage model
+- [`sim_phreg()`](http://kkholst.github.io/mets/reference/sim_phreg.md)
+  : Simulation of Output from Cox Model
+
+- [`sim_phregs()`](http://kkholst.github.io/mets/reference/sim_phregs.md)
+  : Simulation of Cause-Specific Cox Models
+
+- [`sim_recurrent()`](http://kkholst.github.io/mets/reference/sim_recurrent.md)
+  : Simulate recurrent events with a single event type and a terminal
+  event
+
+- [`sim_recurrentII()`](http://kkholst.github.io/mets/reference/sim_recurrentII.md)
+  : Simulate recurrent events with two event types and a terminal event
+
+- [`sim_recurrentTS()`](http://kkholst.github.io/mets/reference/sim_recurrentTS.md)
+  : Simulate recurrent events from a two-stage model with structured
+  gamma frailties
+
+- [`sim_recurrent_ts()`](http://kkholst.github.io/mets/reference/sim_recurrent_ts.md)
+  : Simulate recurrent events from a two-stage Cox or Ghosh-Lin model
+
+- [`sumstrata()`](http://kkholst.github.io/mets/reference/strata-numeric.md)
+  [`cumsumstrata()`](http://kkholst.github.io/mets/reference/strata-numeric.md)
+  [`revcumsumstrata()`](http://kkholst.github.io/mets/reference/strata-numeric.md)
+  [`revcumsum()`](http://kkholst.github.io/mets/reference/strata-numeric.md)
+  [`matdoubleindex()`](http://kkholst.github.io/mets/reference/strata-numeric.md)
+  [`mdi()`](http://kkholst.github.io/mets/reference/strata-numeric.md) :
+  Stratified Cumulative and Summary Operations
 
 - [`summary(`*`<cor>`*`)`](http://kkholst.github.io/mets/reference/summary.cor.md)
   : Summary for dependence models for competing risks
@@ -483,24 +438,59 @@
   : Reporting OR (exp(coef)) from glm with binomial link and glm
   predictions
 
-- [`survival.twostage()`](http://kkholst.github.io/mets/reference/survival.twostage.md)
-  : Twostage survival model for multivariate survival data
+- [`summaryTimeobject()`](http://kkholst.github.io/mets/reference/summaryTimeobject.md)
+  : Summarize a Time-Varying Estimate with Confidence Bands
+
+- [`surv_boxarea()`](http://kkholst.github.io/mets/reference/surv_boxarea.md)
+  : Bivariate Survival Data on Rectangular Regions
+
+- [`survival.twostage()`](http://kkholst.github.io/mets/reference/survival-helpers.md)
+  [`matplot.mets.twostage()`](http://kkholst.github.io/mets/reference/survival-helpers.md)
+  [`alpha2spear()`](http://kkholst.github.io/mets/reference/survival-helpers.md)
+  [`alpha2kendall()`](http://kkholst.github.io/mets/reference/survival-helpers.md)
+  [`piecewise_twostage()`](http://kkholst.github.io/mets/reference/survival-helpers.md)
+  [`piecewise_data()`](http://kkholst.github.io/mets/reference/survival-helpers.md)
+  : Survival Twostage Helpers
 
 - [`survivalG()`](http://kkholst.github.io/mets/reference/survivalG.md)
-  : G-estimator for Cox and Fine-Gray model
+  : G-Estimator for Cox and Fine-Gray Models
 
-- [`test.conc()`](http://kkholst.github.io/mets/reference/test.conc.md)
-  : Concordance test Compares two concordance estimates
+- [`survival_twostage()`](http://kkholst.github.io/mets/reference/survival_twostage.md)
+  : Twostage Survival Model for Multivariate Survival Data
+
+- [`test_casewise()`](http://kkholst.github.io/mets/reference/test_casewise.md)
+  : Test for Independence Using Casewise Concordance
+
+- [`test_conc()`](http://kkholst.github.io/mets/reference/test_conc.md)
+  : Compare Two Concordance Estimates
+
+- [`test_logrankRecurrent()`](http://kkholst.github.io/mets/reference/test_logrankRecurrent.md)
+  : Logrank-type test for comparing recurrent event marginal means
+  between groups
+
+- [`test_marginalMean()`](http://kkholst.github.io/mets/reference/test_marginalMean.md)
+  : Pepe-Mori Test for Marginal Mean Comparison
 
 - [`tetrachoric()`](http://kkholst.github.io/mets/reference/tetrachoric.md)
   : Estimate parameters from odds-ratio
 
+- [`tie_breaker()`](http://kkholst.github.io/mets/reference/tie_breaker.md)
+  : Break ties in event times for recurrent event data
+
 - [`ttpd`](http://kkholst.github.io/mets/reference/ttpd.md) : ttpd
   discrete survival data on interval form
 
-- [`twin.clustertrunc()`](http://kkholst.github.io/mets/reference/twin.clustertrunc.md)
-  : Estimation of twostage model with cluster truncation in bivariate
-  situation
+- [`p11_binomial_twostage_RV()`](http://kkholst.github.io/mets/reference/twin-design.md)
+  [`concordanceTwostage()`](http://kkholst.github.io/mets/reference/twin-design.md)
+  [`concordanceTwinACE()`](http://kkholst.github.io/mets/reference/twin-design.md)
+  [`kendall_ClaytonOakes_twin_ace()`](http://kkholst.github.io/mets/reference/twin-design.md)
+  [`kendall.ClaytonOakes.twin.ace()`](http://kkholst.github.io/mets/reference/twin-design.md)
+  [`kendall_normal_twin_ace()`](http://kkholst.github.io/mets/reference/twin-design.md)
+  [`ascertained_pairs()`](http://kkholst.github.io/mets/reference/twin-design.md)
+  [`twin.polygen.design()`](http://kkholst.github.io/mets/reference/twin-design.md)
+  [`ace_family_design()`](http://kkholst.github.io/mets/reference/twin-design.md)
+  [`make_pairwise_design()`](http://kkholst.github.io/mets/reference/twin-design.md)
+  : Concordance Probability from Twostage Model
 
 - [`twinbmi`](http://kkholst.github.io/mets/reference/twinbmi.md) : BMI
   data set
@@ -515,8 +505,7 @@
   Stutter data set
 
 - [`twostageMLE()`](http://kkholst.github.io/mets/reference/twostageMLE.md)
-  : Twostage survival model fitted by pseudo MLE
+  : Twostage Survival Model Fitted by Pseudo MLE
 
 - [`twostageREC()`](http://kkholst.github.io/mets/reference/twostageREC.md)
-  : Fittting of Two-stage recurrent events random effects model based on
-  Cox/Cox or Cox/Ghosh-Lin marginals
+  : Fitting of Two-Stage Recurrent Events Random Effects Model

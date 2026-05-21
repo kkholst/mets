@@ -2,74 +2,71 @@
 
 ## Overview
 
-Fit
+We fit
 
-- binomial-regression IPCW, binreg
-- additive Lin-Ying model, aalenMets
-- cox model phreg
-- standard logistic regression via binreg
+- binomial regression with IPCW: `binreg`
+- additive Lin-Ying model: `aalenMets`
+- Cox model: `phreg`
+- standard logistic regression via `binreg`
 
 in the context of mediation analysis using mediation weights as in the
-medFlex package. We thus fit natural effects models, that for example on
-the binary scale might state that $$\begin{array}{r}
-{\text{logit}(P\left( Y\left( x,M\left( x^{*} \right) \right) = 1|Z \right) = \beta_{0} + \beta_{1}x + \beta_{2}x^{*} + \beta_{3}^{T}Z,}
-\end{array}$$ in this case the the Natural Direct Effect (NDE) for fixed
-covariates $Z$ is $$\begin{array}{r}
-{\text{OR}_{1,0|Z}^{\text{NDE}} = \frac{\text{odds}\left( Y\left( 1,M(x) \right)|Z \right)}{\text{odds}\left( Y\left( 0,M(x) \right)|Z \right)} = \exp\left( \beta_{1} \right),}
-\end{array}$$ and the Natural Inderect Effect (NIE) for fixed covariates
-$Z$ is $$\begin{array}{r}
-{\text{OR}_{1,0|Z}^{\text{NIE}} = \frac{\text{odds}\left( Y\left( x,M(1) \right)|Z \right)}{\text{odds}\left( Y\left( x,M(0) \right)|Z \right)} = \exp\left( \beta_{2} \right).}
-\end{array}$$ See the medFlex package for additional discussion of the
-parametrization.
+`medFlex` package. We thus fit natural effects models; for example, on
+the binary scale: \begin{align\*} \mbox{logit}(P(Y(x,M(x^\*))=1\| Z) =
+\beta_0+ \beta_1 x + \beta_2 x^\* + \beta_3^T Z, \end{align\*} In this
+case the Natural Direct Effect (NDE) for fixed covariates Z is
+\begin{align\*} \mbox{OR}\_{1,0\|Z}^{\mbox{NDE}} =
+\frac{\mbox{odds}(Y(1,M(x))\|Z)}{\mbox{odds}(Y(0,M(x))\|Z)} =
+\exp(\beta_1), \end{align\*} and the Natural Indirect Effect (NIE) for
+fixed covariates Z is \begin{align\*} \mbox{OR}\_{1,0\|Z}^{\mbox{NIE}} =
+\frac{\mbox{odds}(Y(x,M(1))\|Z)}{\mbox{odds}(Y(x,M(0))\|Z)} =
+\exp(\beta_2). \end{align\*} See the `medFlex` package for additional
+discussion of the parametrisation.
 
-The mediator can be
+The mediator can be:
 
-- binomial using glm-binomial.
-- multnomial via the mlogit function of mets
+- binomial, using `glm` with family `binomial`.
+- multinomial, via the `mlogit` function in `mets`.
 
 Both mediator and exposure must be coded as factors.
 
-In the below example these are
+In the example below:
 
-- mediator: gp.f
-- exposure : dnr.f
+- mediator: `gp.f`
+- exposure: `dnr.f`
 
-and the outcome model is concerned with the risk/hazard of cause=2.
+The outcome model concerns the risk/hazard of cause 2.
 
-The key is that the standard errors are computed using the i.i.d
-influence functions and a Taylor expansion to deal with the uncertainty
-from the mediation weights.
+Standard errors are computed using i.i.d. influence functions and a
+Taylor expansion to account for uncertainty in the mediation weights.
 
 ## Simulated Data
 
-First we simulate some data that mimics that of Kumar et al 2012. This
-is data from multiple myeloma patients treated with allogeneic stem cell
-transplantation from the Center for International Blood and Marrow
-Transplant Research (CIBMTR) Kumar et al (2012), “Trends in allogeneic
-stem cell transplantation for multiple myeloma: a CIBMTR analysis”. The
-data used in this paper consist of patients transplanted from 1995 to
-2005, and we compared the outcomes between transplant periods: 2001-2005
-(N=488) versus 1995-2000 (N=375). The two competing events were relapse
-(cause 2) and treatment-related mortality (TRM, cause 1)) defined as
-death without relapse. considered the following risk covariates:
-transplant time period (gp (main interest of the study): 1 for
-transplanted in 2001-2005 versus 0 for transplanted in 1995-2000), donor
-type (dnr: 1 for Unrelated or other related donor (N=280) versus 0 for
-HLA-identical sibling (N=584)), prior autologous transplant (preauto: 1
-for Auto+Allo transplant (N=399) versus 0 for allogeneic transplant
-alone (N=465)) and time to transplant (ttt24: 1 for more than 24 months
-(N=289) versus 0 for less than or equal to 24 months (N=575))).
+First we simulate data that mimics the dataset from Kumar et al. (2012),
+which consists of multiple myeloma patients treated with allogeneic stem
+cell transplantation from the Center for International Blood and Marrow
+Transplant Research (CIBMTR). The data cover patients transplanted from
+1995 to 2005, comparing outcomes between transplant periods: 2001–2005
+(N=488) versus 1995–2000 (N=375). The two competing events were relapse
+(cause 2) and treatment-related mortality (TRM, cause 1), defined as
+death without relapse. Kumar et al. (2012) considered the following risk
+covariates: transplant period (`gp`, the main variable of interest: 1
+for 2001–2005, 0 for 1995–2000), donor type (`dnr`: 1 for unrelated or
+other related donor (N=280), 0 for HLA-identical sibling (N=584)), prior
+autologous transplant (`preauto`: 1 for auto+allo transplant (N=399), 0
+for allogeneic alone (N=465)), and time to transplant (`ttt24`: 1 for
+more than 24 months (N=289), 0 for 24 months or less (N=575)).
 
-The interest is then on the effect of the period (gp) and the possible
-mediation via the amount of unrealted or related donors (dnr). A
-somewhat artificial example ! All adjusted for other important
-counfounders.
+The interest is in the effect of transplant period (`gp`) and possible
+mediation via the proportion of unrelated or related donors (`dnr`) — a
+somewhat artificial example. All analyses are adjusted for other
+important confounders.
 
 ``` r
+
  library(mets)
  runb <- 0
  options(warn=-1)
- set.seed(1000) # to control output in simulatins for p-values below.
+ set.seed(1000) # to control output in simulations for p-values below.
 
 n <- 200; k.boot <- 10; 
 
@@ -85,19 +82,21 @@ dat$ftime <- 1
 
 ## Mediation Weights
 
-Then compute the mediation weights based on a mediation model
+We compute the mediation weights based on a model for the mediator:
 
 ``` r
+
 weightmodel <- fit <- glm(gp.f~dnr.f+preauto+ttt24,data=dat,family=binomial)
 wdata <- medweight(fit,data=dat)
 ```
 
 ## Binomial Regression
 
-A simple multvariate regression of the probaibility of relapse at 50
-months with both exposure and mediator (given the other covariates)
+A simple multivariate regression of the probability of relapse at 50
+months with both exposure and mediator (given the other covariates):
 
 ``` r
+
 aaMss2 <- binreg(Event(time,status)~gp+dnr+preauto+ttt24+cluster(id),data=dat,time=50,cause=2)
 summary(aaMss2)
 #>    n events
@@ -123,9 +122,10 @@ summary(aaMss2)
 
 ## Binomial regression IPCW Mediation Analysis
 
-We first look at the probability of relapse at 50 months
+We first look at the probability of relapse at 50 months:
 
 ``` r
+
 ### binomial regression ###########################################################
 aaMss <- binreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
         time=50,weights=wdata$weights,cause=2)
@@ -174,13 +174,15 @@ summary(ll)
 if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
 ```
 
-So the NDE is $1.40(0.72,2.76)$ and the NIE is $1.32(1.05,1.66)$.
+The estimated NDE is 1.40 (95% CI: 0.72, 2.76) and the NIE is 1.32 (95%
+CI: 1.05, 1.66).
 
 ## Mediation Analysis
 
-We here also illustrate how to use the other models mentioned above.
+We illustrate how to use the other models mentioned above.
 
 ``` r
+
 ### lin-ying model ################################################################
 aaMss <- aalenMets(Surv(time/100,status==2)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
            weights=wdata$weights)
@@ -203,14 +205,14 @@ summary(aaMss)
 #> 
 #>    n events
 #>  400    196
-#> coeffients:
+#> coefficients:
 #>         Estimate     S.E.  dU^-1/2 P-value
 #> dnr.f01 0.414565 0.213724 0.157231  0.0524
 #> dnr.f11 0.100656 0.039308 0.144971  0.0104
 #> preauto 0.284460 0.232166 0.162375  0.2205
 #> ttt24   0.185561 0.226044 0.160886  0.4117
 #> 
-#> exp(coeffients):
+#> exp(coefficients):
 #>         Estimate    2.5%  97.5%
 #> dnr.f01  1.51371 0.99568 2.3013
 #> dnr.f11  1.10590 1.02389 1.1945
@@ -244,14 +246,14 @@ summary(aaMss)
 #>  400    196
 #> 
 #>  200 clusters
-#> coeffients:
+#> coefficients:
 #>         Estimate    S.E. dU^-1/2 P-value
 #> dnr.f01  0.18943 0.21986 0.15855  0.3889
 #> dnr.f11  0.18730 0.04083 0.14503  0.0000
 #> preauto  0.41452 0.22783 0.16098  0.0688
 #> ttt24    0.17304 0.22892 0.16308  0.4497
 #> 
-#> exp(coeffients):
+#> exp(coefficients):
 #>         Estimate    2.5%  97.5%
 #> dnr.f01  1.20856 0.78545 1.8596
 #> dnr.f11  1.20599 1.11324 1.3065
@@ -287,14 +289,14 @@ summary(aaMss)
 #>  400    196
 #> 
 #>  200 clusters
-#> coeffients:
+#> coefficients:
 #>         Estimate     S.E.  dU^-1/2 P-value
 #> dnr.f01 0.357168 0.339848 0.158937  0.2933
 #> dnr.f11 0.272392 0.064166 0.145076  0.0000
 #> preauto 0.657010 0.326082 0.160361  0.0439
 #> ttt24   0.191333 0.353606 0.167443  0.5884
 #> 
-#> exp(coeffients):
+#> exp(coefficients):
 #>         Estimate    2.5%  97.5%
 #> dnr.f01  1.42928 0.73424 2.7822
 #> dnr.f11  1.31310 1.15792 1.4891
@@ -370,12 +372,13 @@ if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary
 
 ## Multinomial regression
 
-Also works with mediator with more than two levels
+Also works with a mediator with more than two levels:
 
-- meditor: wmi in 4 categories
-- exposure: age in 4 categories
+- mediator: `wmi` in 4 categories
+- exposure: `age` in 4 categories
 
 ``` r
+
 library(mets)
 data(tTRACE)
 dcut(tTRACE) <- ~. 
@@ -391,6 +394,7 @@ summary(MultMed)
 ```
 
 ``` r
+
 summary(MultMed)
 #>     n events
 #>  4000   2016
@@ -424,10 +428,11 @@ summary(MultMed)
 ## SessionInfo
 
 ``` r
+
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -446,22 +451,22 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] mets_1.3.9
+#> [1] mets_1.3.10
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           
-#>  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        
-#>  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            
-#> [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           
-#> [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
+#>  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        
+#>  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            
+#> [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           
+#> [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        
 #> [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   
-#> [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       
-#> [22] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      
-#> [25] fs_1.6.6               htmlwidgets_1.6.4      Rcpp_1.1.1            
-#> [28] future_1.68.0          lattice_0.22-7         systemfonts_1.3.1     
-#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.46.1     
-#> [34] parallel_4.5.2         splines_4.5.2          Matrix_1.7-4          
-#> [37] bslib_0.9.0            tools_4.5.2            RcppArmadillo_15.2.3-1
-#> [40] globals_0.18.0         survival_3.8-3         pkgdown_2.2.0         
+#> [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       
+#> [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      
+#> [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        
+#> [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     
+#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     
+#> [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
+#> [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1
+#> [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         
 #> [43] cachem_1.1.0           desc_1.4.3
 ```

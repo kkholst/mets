@@ -6,9 +6,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Marginal modelling of clustered survival data • mets</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="../katex-auto.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Marginal modelling of clustered survival data">
 </head>
@@ -20,7 +21,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,10 +38,10 @@
     <li><a class="dropdown-item" href="../articles/binomial-family.html">Analysis of multivariate binomial data: family analysis</a></li>
     <li><a class="dropdown-item" href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a></li>
     <li><a class="dropdown-item" href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a></li>
-    <li><a class="dropdown-item" href="../articles/binreg-TRS.html">Two-Stage Randomization for for Competing risks and Survival outcomes</a></li>
+    <li><a class="dropdown-item" href="../articles/binreg-TRS.html">Two-Stage Randomization for Competing risks and Survival outcomes</a></li>
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
-    <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">Cooking Survival Data: 5-Minute Recipes</a></li>
     <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
@@ -80,7 +81,7 @@
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2026-01-14</h4>
+            <h4 data-toc-skip class="date">2026-05-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/marginal-cox.Rmd" class="external-link"><code>vignettes/marginal-cox.Rmd</code></a></small>
       <div class="d-none name"><code>marginal-cox.Rmd</code></div>
@@ -91,17 +92,15 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>A basic component for our modelling of multivariate survival data is
-that many models are build around marginals that on Cox form. The
-marginal Cox model can be fitted efficiently in the mets package, in
-particular the handling of strata and robust standard errors is
-optimized.</p>
+<p>A basic component of our modelling of multivariate survival data is
+that many models are built around marginals on Cox form. The marginal
+Cox model can be fitted efficiently in the mets package, in particular
+the handling of strata and robust standard errors is optimized.</p>
 <p>The basic models assumes that each subject has a marginal on Cox-form
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mrow><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>k</mi><mo>,</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>X</mi><mrow><mi>k</mi><mi>i</mi></mrow><mi>T</mi></msubsup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex"> 
+<span class="math display">
 \lambda_{g(k,i)}(t) \exp( X_{ki}^T \beta).
-</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>k</mi><mo>,</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">g(k,i)</annotation></semantics></math>
-gives the strata for the subject.</p>
+</span> where <span class="math inline">g(k,i)</span> gives the strata
+for the subject.</p>
 <p>We here discuss and show how to get robust standard errors of</p>
 <ul>
 <li><p>the regression parameters</p></li>
@@ -111,19 +110,17 @@ gives the strata for the subject.</p>
 <ul>
 <li>cumulative residuals score test</li>
 </ul>
-<p>First we generate some data from the Clayton-Oakes model, with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>5</mn><annotation encoding="application/x-tex">5</annotation></semantics></math>
-members in each cluster and a variance parameter at
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>2</mn><annotation encoding="application/x-tex">2</annotation></semantics></math></p>
+<p>First we generate some data from the Clayton-Oakes model, with <span class="math inline">5</span> members in each cluster and a variance
+parameter at <span class="math inline">2</span></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>warn<span class="op">=</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span> <span class="co"># to control output in simulatins for p-values below.</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span> <span class="co"># to control output in simulations for p-values below.</span></span>
 <span> <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
 <span> <span class="va">k</span> <span class="op">&lt;-</span> <span class="fl">5</span></span>
 <span> <span class="va">theta</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
-<span> <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simClaytonOakes.html">simClaytonOakes</a></span><span class="op">(</span><span class="va">n</span>,<span class="va">k</span>,<span class="va">theta</span>,<span class="fl">0.3</span>,<span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<p>The data is on has one subject per row.</p>
+<span> <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_ClaytonOakes.html">sim_ClaytonOakes</a></span><span class="op">(</span><span class="va">n</span>,<span class="va">k</span>,<span class="va">theta</span>,<span class="fl">0.3</span>,<span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<p>The data has one subject per row.</p>
 <ul>
 <li>time : time of event</li>
 <li>status : 1 for event and 0 for censoring</li>
@@ -132,65 +129,52 @@ members in each cluster and a variance parameter at
 </ul>
 <p>Now we fit the model and produce robust standard errors for both
 regression parameters and baseline.</p>
-<p>First, recall that the baseline for strata
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math>
-is asymptotically equivalent to
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>g</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>A</mi><mi>g</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munder><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>g</mi></mrow></munder><mrow><mo stretchy="true" form="prefix">(</mo><munder><mo>∑</mo><mrow><mi>i</mi><mo>:</mo><mi>k</mi><mi>i</mi><mo>∈</mo><mi>g</mi></mrow></munder><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><mfrac><mn>1</mn><msub><mi>S</mi><mrow><mn>0</mn><mo>,</mo><mi>g</mi></mrow></msub></mfrac><mi>d</mi><msubsup><mi>M</mi><mrow><mi>k</mi><mi>i</mi></mrow><mi>g</mi></msubsup><mo>−</mo><msup><mi>P</mi><mi>g</mi></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>β</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-\hat A_g(t) - A_g(t)  &amp; = \sum_{k \in g} \left( \sum_{i: ki \in g} \int_0^t \frac{1}{S_{0,g}} dM_{ki}^g  - P^g(t) \beta_k \right) 
-\end{align}</annotation></semantics></math> with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>P</mi><mi>g</mi></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><msub><mi>E</mi><mi>g</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msub><mover><mi>Λ</mi><mo accent="true">̂</mo></mover><mi>g</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">P^g(t) = \int_0^t E_g(s) d \hat \Lambda_g(s)</annotation></semantics></math>
-the derivative of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><mn>1</mn><mi>/</mi><msub><mi>S</mi><mrow><mn>0</mn><mo>,</mo><mi>g</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msub><mi>N</mi><mrow><mo>⋅</mo><mi>g</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\int_0^t 1/S_{0,g}(s) dN_{\cdot g}</annotation></semantics></math>
-wrt to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>,
-and
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mover><mi>β</mi><mo accent="true">̂</mo></mover><mo>−</mo><mi>β</mi></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>I</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mn>1</mn></mrow></msup><munder><mo>∑</mo><mi>k</mi></munder><mrow><mo stretchy="true" form="prefix">(</mo><munder><mo>∑</mo><mi>i</mi></munder><msubsup><mo>∫</mo><mn>0</mn><mi>τ</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mo>−</mo><msub><mi>E</mi><mi>g</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msubsup><mi>M</mi><mrow><mi>k</mi><mi>i</mi></mrow><mi>g</mi></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><munder><mo>∑</mo><mi>k</mi></munder><msub><mi>β</mi><mi>k</mi></msub></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-\hat \beta  - \beta  &amp; = I(\tau)^{-1} \sum_k ( \sum_i \int_0^\tau (Z_{ki} - E_{g}) dM_{ki}^g ) =  \sum_k \beta_{k} 
-\end{align}</annotation></semantics></math> with
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>M</mi><mrow><mi>k</mi><mi>i</mi></mrow><mi>g</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msub><mi>N</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><msub><mi>Y</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msub><mi>Λ</mi><mrow><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>k</mi><mo>,</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>β</mi><mi>k</mi></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>I</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mn>1</mn></mrow></msup><munder><mo>∑</mo><mi>i</mi></munder><msubsup><mo>∫</mo><mn>0</mn><mi>τ</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mo>−</mo><msub><mi>E</mi><mi>g</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msubsup><mi>M</mi><mrow><mi>k</mi><mi>i</mi></mrow><mi>g</mi></msubsup></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
- M_{ki}^g(t) &amp;  = N_{ki}(t) - \int_0^t Y_{ki}(s) \exp( Z_{ki} \beta) d \Lambda_{g(k,i)}(t), \\
- \beta_{k} &amp; =  I(\tau)^{-1} \sum_i \int_0^\tau (Z_{ki} - E_{g}) dM_{ki}^g 
-\end{align}</annotation></semantics></math> the basic 0-mean processes,
-that are martingales in the iid setting, and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">I(t)</annotation></semantics></math>
-is the derivative of the total score,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>U</mi><mo accent="true">̂</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\hat U(t,\beta))</annotation></semantics></math>,
-with respect to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
-evaluated at time
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>.</p>
-<p>The variance of the baseline of strata g is estimated by
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><munder><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mi>g</mi></mrow></munder><msup><mrow><mo stretchy="true" form="prefix">(</mo><munder><mo>∑</mo><mrow><mi>i</mi><mo>:</mo><mi>k</mi><mi>i</mi><mo>∈</mo><mi>g</mi></mrow></munder><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><mfrac><mn>1</mn><msub><mi>S</mi><mrow><mn>0</mn><mo>,</mo><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>k</mi><mo>,</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub></mfrac><mi>d</mi><msubsup><mover><mi>M</mi><mo accent="true">̂</mo></mover><mrow><mi>k</mi><mi>i</mi></mrow><mi>g</mi></msubsup><mo>−</mo><msup><mi>P</mi><mi>g</mi></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>β</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-\sum_{k \in g} ( \sum_{i: ki \in g} \int_0^t \frac{1}{S_{0,g(k,i)}} d\hat M_{ki}^g - P^g(t) \beta_k )^2
-\end{align}</annotation></semantics></math> that can be computed using
-the particular structure of
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>d</mi><msubsup><mover><mi>M</mi><mo accent="true">̂</mo></mover><mrow><mi>i</mi><mi>k</mi></mrow><mi>g</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>d</mi><msub><mi>N</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mfrac><mn>1</mn><msub><mi>S</mi><mrow><mn>0</mn><mo>,</mo><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>i</mi><mo>,</mo><mi>k</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub></mfrac><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msub><mi>N</mi><mrow><mi>g</mi><mi>.</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-d \hat M_{ik}^g(t) &amp; =  dN_{ik}(t) -  \frac{1}{S_{0,g(i,k)}} \exp(Z_{ik} \beta) dN_{g.}(t) 
-\end{align}</annotation></semantics></math></p>
+<p>First, recall that the baseline for strata <span class="math inline">g</span> is asymptotically equivalent to <span class="math display">\begin{align}
+\hat A_g(t) - A_g(t)  &amp; = \sum_{k \in g} \left( \sum_{i: ki \in g}
+\int_0^t \frac{1}{S_{0,g}} dM_{ki}^g  - P^g(t) \beta_k \right)
+\end{align}</span> with <span class="math inline">P^g(t) = \int_0^t
+E_g(s) d \hat \Lambda_g(s)</span> the derivative of <span class="math inline">\int_0^t 1/S_{0,g}(s) dN_{\cdot g}</span> wrt to
+<span class="math inline">\beta</span>, and <span class="math display">\begin{align}
+\hat \beta  - \beta  &amp; = I(\tau)^{-1} \sum_k ( \sum_i \int_0^\tau
+(Z_{ki} - E_{g}) dM_{ki}^g ) =  \sum_k \beta_{k}
+\end{align}</span> with <span class="math display">\begin{align}
+M_{ki}^g(t) &amp;  = N_{ki}(t) - \int_0^t Y_{ki}(s) \exp( Z_{ki} \beta)
+d \Lambda_{g(k,i)}(t), \\
+\beta_{k} &amp; =  I(\tau)^{-1} \sum_i \int_0^\tau (Z_{ki} - E_{g})
+dM_{ki}^g
+\end{align}</span> the basic 0-mean processes, that are martingales in
+the iid setting, and <span class="math inline">I(t)</span> is the
+derivative of the total score, <span class="math inline">\hat
+U(t,\beta))</span>, with respect to <span class="math inline">\beta</span> evaluated at time <span class="math inline">t</span>.</p>
+<p>The variance of the baseline of strata g is estimated by <span class="math display">\begin{align}
+\sum_{k \in g} ( \sum_{i: ki \in g} \int_0^t \frac{1}{S_{0,g(k,i)}}
+d\hat M_{ki}^g - P^g(t) \beta_k )^2
+\end{align}</span> that can be computed using the particular structure
+of <span class="math display">\begin{align}
+d \hat M_{ik}^g(t) &amp; =  dN_{ik}(t) -  \frac{1}{S_{0,g(i,k)}}
+\exp(Z_{ik} \beta) dN_{g.}(t)
+\end{align}</span></p>
 <p>This robust variance of the baseline and the iid decomposition for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
-is computed in mets as:</p>
+<span class="math inline">\beta</span> is computed in mets as:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span>   <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>,data<span class="op">=</span><span class="va">data</span><span class="op">)</span></span>
 <span>   <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     n events</span></span>
 <span><span class="co">#&gt;  5000   4854</span></span>
-<span><span class="co">#&gt; coeffients:</span></span>
+<span><span class="co">#&gt; coefficients:</span></span>
 <span><span class="co">#&gt;   Estimate     S.E.  dU^-1/2 P-value</span></span>
 <span><span class="co">#&gt; x 0.287859 0.028177 0.028897       0</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; exp(coeffients):</span></span>
+<span><span class="co">#&gt; exp(coefficients):</span></span>
 <span><span class="co">#&gt;   Estimate   2.5%  97.5%</span></span>
 <span><span class="co">#&gt; x   1.3336 1.2619 1.4093</span></span>
 <span>   <span class="co"># robust standard errors attached to output</span></span>
-<span>   <span class="va">rob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">robust.phreg</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span></code></pre></div>
-<p>We can get the iid decomposition of the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>β</mi><mo accent="true">̂</mo></mover><mo>−</mo><mi>β</mi></mrow><annotation encoding="application/x-tex">\hat \beta - \beta</annotation></semantics></math>
-by</p>
+<span>   <span class="va">rob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">robust_phreg</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span></code></pre></div>
+<p>We can get the iid decomposition of the <span class="math inline">\hat \beta - \beta</span> by</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span>   <span class="co"># making iid decomposition of regression parameters</span></span>
-<span>   <span class="va">betaiid</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://kkholst.github.io/lava/reference/IC.html" class="external-link">IC</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
+<span>   <span class="va">betaiid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/IC.default.html" class="external-link">IC</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
 <span>   <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">betaiid</span><span class="op">)</span></span>
 <span><span class="co">#&gt;             x</span></span>
 <span><span class="co">#&gt; 1 -0.34616008</span></span>
@@ -234,41 +218,32 @@ the dependence parameter</p>
 <div class="section level2">
 <h2 id="goodness-of-fit">Goodness of fit<a class="anchor" aria-label="anchor" href="#goodness-of-fit"></a>
 </h2>
-<p>The observed score process is given by
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>U</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mover><mi>β</mi><mo accent="true">̂</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munder><mo>∑</mo><mi>k</mi></munder><munder><mo>∑</mo><mi>i</mi></munder><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mo>−</mo><msub><mover><mi>E</mi><mo accent="true">̂</mo></mover><mi>g</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msubsup><mover><mi>M</mi><mo accent="true">̂</mo></mover><mrow><mi>k</mi><mi>i</mi></mrow><mi>g</mi></msubsup></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-U(t,\hat \beta) &amp; = \sum_k \sum_i \int_0^t (Z_{ki} - \hat E_g ) d \hat M_{ki}^g 
-\end{align}</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math>
-is strata
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>k</mi><mo>,</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">g(k,i)</annotation></semantics></math>.
-The observed score has the iid decomposition
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mover><mi>U</mi><mo accent="true">̂</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><munder><mo>∑</mo><mi>k</mi></munder><munder><mo>∑</mo><mi>i</mi></munder><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mo>−</mo><msub><mi>E</mi><mi>g</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msubsup><mi>M</mi><mrow><mi>k</mi><mi>i</mi></mrow><mi>g</mi></msubsup><mo>−</mo><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><munder><mo>∑</mo><mi>k</mi></munder><msub><mi>β</mi><mi>k</mi></msub></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-\hat U(t) = \sum_k \sum_i  \int_0^t (Z_{ki} - E_g) dM_{ki}^g  - 
-    I(t)  \sum_k \beta_k 
-\end{align}</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mi>k</mi></msub><annotation encoding="application/x-tex">\beta_k</annotation></semantics></math>
-is the iid decomposition of the score process for the true
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>β</mi><mi>k</mi></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>I</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mn>1</mn></mrow></msup><munder><mo>∑</mo><mi>i</mi></munder><msubsup><mo>∫</mo><mn>0</mn><mi>τ</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mo>−</mo><msub><mi>E</mi><mi>g</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msubsup><mi>M</mi><mrow><mi>k</mi><mi>i</mi></mrow><mi>g</mi></msubsup></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-\beta_k  &amp; =  I(\tau)^{-1} \sum_i \int_0^\tau (Z_{ki} - E_g ) d  M_{ki}^g 
-\end{align}</annotation></semantics></math> and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">I(t)</annotation></semantics></math>
-is the derivative of the total score,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>U</mi><mo accent="true">̂</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\hat U(t,\beta))</annotation></semantics></math>,
-with respect to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
-evaluated at time
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>.</p>
+<p>The observed score process is given by <span class="math display">\begin{align}
+U(t,\hat \beta) &amp; = \sum_k \sum_i \int_0^t (Z_{ki} - \hat E_g ) d
+\hat M_{ki}^g
+\end{align}</span> where <span class="math inline">g</span> is strata
+<span class="math inline">g(k,i)</span>. The observed score has the iid
+decomposition <span class="math display">\begin{align}
+\hat U(t) = \sum_k \sum_i  \int_0^t (Z_{ki} - E_g) dM_{ki}^g  -
+    I(t)  \sum_k \beta_k
+\end{align}</span> where <span class="math inline">\beta_k</span> is the
+iid decomposition of the score process for the true <span class="math inline">\beta</span> <span class="math display">\begin{align}
+\beta_k  &amp; =  I(\tau)^{-1} \sum_i \int_0^\tau (Z_{ki} - E_g )
+d  M_{ki}^g
+\end{align}</span> and <span class="math inline">I(t)</span> is the
+derivative of the total score, <span class="math inline">\hat
+U(t,\beta))</span>, with respect to <span class="math inline">\beta</span> evaluated at time <span class="math inline">t</span>.</p>
 <p>This observed score can be resampled given it is on iid form in terms
 of clusters.</p>
 <p>Now using the cumulative score process for checking proportional
 hazards</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gout</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://kkholst.github.io/lava/reference/gof.html" class="external-link">gof</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">gout</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/gof.html" class="external-link">gof</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
 <span><span class="va">gout</span></span>
 <span><span class="co">#&gt; Cumulative score process test for Proportionality:</span></span>
 <span><span class="co">#&gt;   Sup|U(t)|  pval</span></span>
 <span><span class="co">#&gt; x  30.24353 0.401</span></span></code></pre></div>
-<p>The p-value reflects wheter the observed score process is consistent
+<p>The p-value reflects whether the observed score process is consistent
 with the model.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">gout</span><span class="op">)</span></span></code></pre></div>
@@ -278,38 +253,31 @@ with the model.</p>
 </h3>
 <p>The score processes can be resampled as in Lin, Wei, Ying (1993)
 using the martingale structure, such that the observed score process is
-resampled by
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><munder><mo>∑</mo><mi>k</mi></munder><munder><mo>∑</mo><mi>i</mi></munder><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><msub><mi>g</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mo>−</mo><msub><mi>E</mi><mi>g</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msub><mi>N</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mo>−</mo><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><msup><mi>I</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>g</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><msubsup><mo>∫</mo><mn>0</mn><mi>τ</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mo>−</mo><msub><mi>E</mi><mi>g</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msub><mi>N</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-  \sum_k \sum_i \int_0^t g_{ki} (Z_{ki} - E_g) dN_{ki}  - I(t)  I^{-1}(\tau) g_{ki} \int_0^{\tau} (Z_{ki} - E_g) dN_{ki} .
-\end{align}</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><annotation encoding="application/x-tex">g_{ki}</annotation></semantics></math>
-are i.i.d. standard normals.</p>
+resampled by <span class="math display">\begin{align}
+  \sum_k \sum_i \int_0^t g_{ki} (Z_{ki} - E_g) dN_{ki}  -
+I(t)  I^{-1}(\tau) g_{ki} \int_0^{\tau} (Z_{ki} - E_g) dN_{ki} .
+\end{align}</span> where <span class="math inline">g_{ki}</span> are
+i.i.d. standard normals.</p>
 <p>Based on the zero mean processes we more generally with clusters can
 resample the score process. For resampling of score process we need
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>U</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>,</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munder><mo>∑</mo><mi>k</mi></munder><munder><mo>∑</mo><mi>i</mi></munder><msub><mi>g</mi><mi>k</mi></msub><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mo>−</mo><msub><mi>E</mi><mi>g</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msubsup><mi>M</mi><mrow><mi>k</mi><mi>i</mi></mrow><mi>g</mi></msubsup></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
-U(t,\beta) &amp; = \sum_k \sum_i g_k \int_0^t (Z_{ki} - E_g ) dM_{ki}^g 
-\end{align}</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math>
-is strata. We write
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mi>k</mi></msub><annotation encoding="application/x-tex">g_k</annotation></semantics></math>
-as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><annotation encoding="application/x-tex">g_{ki}</annotation></semantics></math>
-and thus repeating
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mi>k</mi></msub><annotation encoding="application/x-tex">g_k</annotation></semantics></math>
-within each cluster.</p>
-<p>Computations are done using that
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mo>−</mo><msub><mi>E</mi><mi>g</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msubsup><mi>M</mi><mrow><mi>k</mi><mi>i</mi></mrow><mi>g</mi></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mo>−</mo><msub><mi>E</mi><mi>g</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msubsup><mi>N</mi><mrow><mi>k</mi><mi>i</mi></mrow><mi>g</mi></msubsup><mo>−</mo><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mo>−</mo><msub><mi>E</mi><mi>g</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>Y</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>u</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><msup><mi>Λ</mi><mi>g</mi></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>u</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-\int_0^t (Z_{ki} - E_{g}) dM_{ki}^g &amp; = \int_0^t (Z_{ki} - E_{g}) dN_{ki}^g - \int_0^{t} (Z_{ki} - E_{g})  Y_{ki}(u) d\Lambda^g(u)  
-\end{align*}</annotation></semantics></math> therefore and summing the
-compensator part with the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>g</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><annotation encoding="application/x-tex">g_{ki}</annotation></semantics></math>
-multipliers then gives for each strata
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"></mtd><mtd columnalign="left" style="text-align: left"><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><mfrac><mrow><msubsup><mi>S</mi><mrow><mn>1</mn><mi>g</mi></mrow><mi>w</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mi>u</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mi>S</mi><mrow><mn>0</mn><mi>g</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>u</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mi>d</mi><msub><mi>N</mi><mrow><mi>g</mi><mi>.</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>v</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msubsup><mo>∫</mo><mn>0</mn><mi>t</mi></msubsup><msub><mi>E</mi><mi>g</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>u</mi><mo stretchy="true" form="postfix">)</mo></mrow><mfrac><mrow><msubsup><mi>S</mi><mrow><mn>0</mn><mi>g</mi></mrow><mi>w</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mi>u</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mi>S</mi><mrow><mn>0</mn><mi>g</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>u</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mi>d</mi><msub><mi>N</mi><mrow><mi>g</mi><mi>.</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>v</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-   &amp;  \int_0^t \frac{S_{1g}^w(u)}{S_{0g}(u)} dN_{g.}(v) -  \int_0^t E_{g}(u) \frac{S_{0g}^w(u)}{S_{0g}(u)} dN_{g.}(v)
-\end{align*}</annotation></semantics></math> with<br><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>S</mi><mrow><mi>j</mi><mi>g</mi></mrow><mi>w</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munder><mo>∑</mo><mrow><mi>k</mi><mi>i</mi><mo>∈</mo><mi>g</mi></mrow></munder><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><msubsup><mi>Z</mi><mrow><mi>k</mi><mi>i</mi></mrow><mi>j</mi></msubsup><msub><mi>Y</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>g</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>S</mi><mrow><mi>j</mi><mi>g</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><munder><mo>∑</mo><mrow><mi>k</mi><mi>i</mi><mo>∈</mo><mi>g</mi></mrow></munder><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><msubsup><mi>Z</mi><mrow><mi>k</mi><mi>i</mi></mrow><mi>j</mi></msubsup><msub><mi>Y</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
-S_{jg}^w(t) &amp; =  \sum_{ki \in g} \exp(Z_{ki} \beta) Z_{ki}^j Y_{ki}(t) g_{ki}  \\
-S_{jg}(t) &amp; =  \sum_{ki \in g} \exp(Z_{ki} \beta) Z_{ki}^j Y_{ki}(t).
-\end{align*}</annotation></semantics></math></p>
+<span class="math display">\begin{align}
+U(t,\beta) &amp; = \sum_k \sum_i g_k \int_0^t (Z_{ki} - E_g ) dM_{ki}^g
+\end{align}</span> where <span class="math inline">g</span> is strata.
+We write <span class="math inline">g_k</span> as <span class="math inline">g_{ki}</span> and thus repeating <span class="math inline">g_k</span> within each cluster.</p>
+<p>Computations are done using that <span class="math display">\begin{align*}
+\int_0^t (Z_{ki} - E_{g}) dM_{ki}^g &amp; = \int_0^t (Z_{ki} - E_{g})
+dN_{ki}^g - \int_0^{t} (Z_{ki} - E_{g})  Y_{ki}(u) d\Lambda^g(u)  
+\end{align*}</span> therefore and summing the compensator part with the
+<span class="math inline">g_{ki}</span> multipliers then gives for each
+strata <span class="math inline">g</span> <span class="math display">\begin{align*}
+   &amp;  \int_0^t \frac{S_{1g}^w(u)}{S_{0g}(u)} dN_{g.}(v) -  \int_0^t
+E_{g}(u) \frac{S_{0g}^w(u)}{S_{0g}(u)} dN_{g.}(v)
+\end{align*}</span> with<br><span class="math display">\begin{align*}
+S_{jg}^w(t) &amp; =  \sum_{ki \in g} \exp(Z_{ki} \beta) Z_{ki}^j
+Y_{ki}(t) g_{ki}  \\
+S_{jg}(t) &amp; =  \sum_{ki \in g} \exp(Z_{ki} \beta) Z_{ki}^j
+Y_{ki}(t).
+\end{align*}</span></p>
 </div>
 </div>
 <div class="section level2">
@@ -319,30 +287,26 @@ S_{jg}(t) &amp; =  \sum_{ki \in g} \exp(Z_{ki} \beta) Z_{ki}^j Y_{ki}(t).
 coefficient within clusters by using Cox’s partial likelihood stratified
 on clusters.</p>
 <p>Note, here that the data is generated with a different subject
-specific structure, so we will not recover the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
-at 0.3 and the model will not be a proportional Cox model, we we would
-also expect to reject “proportionality” with the gof-test.</p>
-<p>The model can be thought of as
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mrow><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>k</mi><mo>,</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>X</mi><mrow><mi>k</mi><mi>i</mi></mrow><mi>T</mi></msubsup><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex"> 
+specific structure, so we will not recover <span class="math inline">\beta = 0.3</span> and the model will not be a
+proportional Cox model; we would therefore also expect to reject
+“proportionality” with the goodness-of-fit test.</p>
+<p>The model can be thought of as <span class="math display">
 \lambda_{g(k,i)} (t) \exp( X_{ki}^T \beta)
-</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mi>g</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\lambda_g(t)</annotation></semantics></math>
-is some cluster specific baseline.</p>
-<p>The regression coefficient
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
-can be estimated by using the partial likelihood for clusters.</p>
+</span> where <span class="math inline">\lambda_g(t)</span> is some
+cluster specific baseline.</p>
+<p>The regression coefficient <span class="math inline">\beta</span> can
+be estimated by using the partial likelihood for clusters.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="va">x</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span>,data<span class="op">=</span><span class="va">data</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     n events</span></span>
 <span><span class="co">#&gt;  5000   4854</span></span>
-<span><span class="co">#&gt; coeffients:</span></span>
+<span><span class="co">#&gt; coefficients:</span></span>
 <span><span class="co">#&gt;   Estimate     S.E.  dU^-1/2 P-value</span></span>
 <span><span class="co">#&gt; x 0.406307 0.032925 0.039226       0</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; exp(coeffients):</span></span>
+<span><span class="co">#&gt; exp(coefficients):</span></span>
 <span><span class="co">#&gt;   Estimate   2.5%  97.5%</span></span>
 <span><span class="co">#&gt; x   1.5013 1.4074 1.6013</span></span></code></pre></div>
 </div>
@@ -351,9 +315,9 @@ can be estimated by using the partial likelihood for clusters.</p>
 </h2>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.5.2 (2025-10-31)</span></span>
+<span><span class="co">#&gt; R version 4.6.0 (2026-04-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.3 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -372,23 +336,23 @@ can be estimated by using the partial likelihood for clusters.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.9</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.10</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           </span></span>
-<span><span class="co">#&gt;  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        </span></span>
-<span><span class="co">#&gt;  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            </span></span>
-<span><span class="co">#&gt; [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           </span></span>
-<span><span class="co">#&gt; [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        </span></span>
+<span><span class="co">#&gt;  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           </span></span>
+<span><span class="co">#&gt;  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        </span></span>
+<span><span class="co">#&gt;  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            </span></span>
+<span><span class="co">#&gt; [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           </span></span>
+<span><span class="co">#&gt; [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        </span></span>
 <span><span class="co">#&gt; [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   </span></span>
-<span><span class="co">#&gt; [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       </span></span>
-<span><span class="co">#&gt; [22] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      </span></span>
-<span><span class="co">#&gt; [25] fs_1.6.6               htmlwidgets_1.6.4      Rcpp_1.1.1            </span></span>
-<span><span class="co">#&gt; [28] future_1.68.0          lattice_0.22-7         systemfonts_1.3.1     </span></span>
-<span><span class="co">#&gt; [31] digest_0.6.39          R6_2.6.1               parallelly_1.46.1     </span></span>
-<span><span class="co">#&gt; [34] parallel_4.5.2         splines_4.5.2          Matrix_1.7-4          </span></span>
-<span><span class="co">#&gt; [37] bslib_0.9.0            tools_4.5.2            RcppArmadillo_15.2.3-1</span></span>
-<span><span class="co">#&gt; [40] globals_0.18.0         survival_3.8-3         pkgdown_2.2.0         </span></span>
+<span><span class="co">#&gt; [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       </span></span>
+<span><span class="co">#&gt; [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      </span></span>
+<span><span class="co">#&gt; [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        </span></span>
+<span><span class="co">#&gt; [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     </span></span>
+<span><span class="co">#&gt; [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     </span></span>
+<span><span class="co">#&gt; [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          </span></span>
+<span><span class="co">#&gt; [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1</span></span>
+<span><span class="co">#&gt; [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         </span></span>
 <span><span class="co">#&gt; [43] cachem_1.1.0           desc_1.4.3</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -1,6 +1,9 @@
-# Estimates the casewise concordance based on Concordance and marginal estimate using prodlim but no testing
+# Estimate Casewise Concordance from prodlim Objects
 
-.. content for description (no empty lines) ..
+Estimates the casewise concordance based on concordance and marginal
+estimates derived from `prodlim` objects. Unlike `test_casewise`, this
+function does not perform hypothesis testing but focuses on estimation
+and plotting.
 
 ## Usage
 
@@ -12,16 +15,47 @@ casewise(conc, marg, cause.marg)
 
 - conc:
 
-  Concordance
+  Concordance object from `prodlim` (output of `bicomprisk` with
+  `prodlim=TRUE`).
 
 - marg:
 
-  Marginal estimate
+  Marginal cumulative incidence object from `prodlim` (output of
+  `prodlim`).
 
 - cause.marg:
 
-  specififes which cause that should be used for marginal cif based on
-  prodlim
+  Specifies which cause should be used for the marginal CIF based on the
+  `Event` object.
+
+## Value
+
+An object of class `"casewise"` containing:
+
+- casewise:
+
+  Matrix with time, casewise concordance, and standard errors.
+
+- marg:
+
+  Matrix with time, marginal CIF, and standard errors.
+
+- concordance:
+
+  Matrix with time, concordance, and standard errors.
+
+- timer:
+
+  Time points used.
+
+- P1, se.P1:
+
+  Extracted concordance values and SEs.
+
+## See also
+
+[`test_casewise`](http://kkholst.github.io/mets/reference/test_casewise.md),
+[`bicomprisk`](http://kkholst.github.io/mets/reference/bicomprisk.md)
 
 ## Author
 
@@ -33,13 +67,13 @@ Thomas Scheike
  ## Reduce Ex.Timings
 library(prodlim)
 data(prt);
-prt <- force.same.cens(prt,cause="status")
+prt <- force_same_cens(prt,cause="status")
 
-### marginal cumulative incidence of prostate cancer##' 
+### marginal cumulative incidence of prostate cancer
 outm <- prodlim(Hist(time,status)~+1,data=prt)
 
 times <- 60:100
-cifmz <- predict(outm,cause=2,time=times,newdata=data.frame(zyg="MZ")) ## cause is 2 (second cause) 
+cifmz <- predict(outm,cause=2,time=times,newdata=data.frame(zyg="MZ"))
 cifdz <- predict(outm,cause=2,time=times,newdata=data.frame(zyg="DZ"))
 
 ### concordance for MZ and DZ twins

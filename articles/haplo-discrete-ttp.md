@@ -2,29 +2,29 @@
 
 ## Haplotype Analysis for discrete TTP
 
-Cycle-specific logistic regression of haplo-type effects with known
-haplo-type probabilities. Given observed genotype G and unobserved
-haplotypes H we here mix out over the possible haplotypes using that
-$P\left( H|G \right)$ is given as input.
+Cycle-specific logistic regression of haplotype effects with known
+haplotype probabilities. Given observed genotype G and unobserved
+haplotypes H, we marginalise over the possible haplotypes using P(H\|G)
+supplied as input.
 
-$$\begin{aligned}
-{S\left( t|x,G \right)} & {= E(S\left( t\left| x,H) \right|G \right) = \sum\limits_{h \in G}P\left( h|G \right)S\left( t|z,h \right)}
-\end{aligned}$$ so survival can be computed by mixing out over possible
-h given g.
+\begin{align\*} S(t\|x,G) & = E( S(t\|x,H) \| G) = \sum\_{h \in G}
+P(h\|G) S(t\|z,h) \end{align\*} so survival can be computed by
+marginalising over possible h given g.
 
 Survival is based on logistic regression for the discrete hazard
-function of the form $$\begin{aligned}
-{\text{logit}\left( P\left( T = t|T > = t,x,h \right) \right)} & {= \alpha_{t} + x(h)beta}
-\end{aligned}$$ where x(h) is a regression design of x and haplotypes
-$h = \left( h_{1},h_{2} \right)$.
+function of the form \begin{align\*} \mbox{logit}(P(T=t \mid T \geq t,
+x, h)) & = \alpha_t + x(h)^T \beta \end{align\*} where x(h) is a
+regression design of x and haplotypes h=(h_1,h_2).
 
-Simple binomial data can be fitted using this function.
+Simple binomial data can also be fitted using this function.
 
-For standard errors we assume that haplotype probabilities are known.
+Standard errors are computed assuming that the haplotype probabilities
+are known.
 
 We are particularly interested in the types haplotypes:
 
 ``` r
+
 types <- c("DCGCGCTCACG","DTCCGCTGACG","ITCAGTTGACG","ITCCGCTGAGG")
 
 ## some haplotypes frequencies for simulations 
@@ -53,10 +53,11 @@ print(hapfreqs)
 #> ITCCCCTGAGG    19 ITCCCCTGAGG 0.000653
 ```
 
-Among the types of interest we look up the frequencies and choose a
-baseline
+Among the haplotypes of interest we look up the frequencies and choose a
+baseline:
 
 ``` r
+
 www <-which(hapfreqs$haplotype %in% types)
 hapfreqs$freq[www]
 #> [1] 0.138387 0.103394 0.048124 0.291273
@@ -66,9 +67,10 @@ baseline
 #> [1] "DTGCGCTCGCG"
 ```
 
-We have cycle specific data with $id$ and outcome $y$
+We have cycle-specific data with id and outcome y:
 
 ``` r
+
 haploX  <- haplo$haploX
 dlist(haploX,.~id|id %in% c(1,4,7))
 #> id: 1
@@ -91,10 +93,11 @@ dlist(haploX,.~id|id %in% c(1,4,7))
 #> 39 1 1  0  0  0  3     3        0
 ```
 
-and a list of possible haplo-types for each id and how likely they are
-$p$ (the sum of within each id is 1):
+and a list of possible haplotypes for each id and their probabilities p
+(the probabilities within each id sum to 1):
 
 ``` r
+
 ghaplos <- haplo$ghaplos
 head(ghaplos)
 #>    id      haplo1      haplo2          p
@@ -108,13 +111,14 @@ head(ghaplos)
 
 The first id=1 has the haplotype fully observed, but id=2 has two
 possible haplotypes consistent with the observed genotype for this id,
-the probabiblities are 7% and 93%, respectively.
+the probabilities are 7% and 93%, respectively.
 
 With the baseline given above we can specify a regression design that
-gives an effect if a “type” is present (sm=0), or an additive effect of
-haplotypes (sm=1):
+gives an effect if a haplotype of the specified type is present
+(`sm=0`), or an additive effect of haplotypes (`sm=1`):
 
 ``` r
+
 designftypes <- function(x,sm=0) {
 hap1=x[1]
 hap2=x[2]
@@ -124,10 +128,11 @@ return(y)
 }
 ```
 
-To fit the model we start by constructing a time-design (named X) and
-takes the haplotype distributions for each id
+To fit the model we first construct a time design matrix (named `X`) and
+supply the haplotype distributions for each id:
 
 ``` r
+
 haploX$time <- haploX$times
 Xdes <- model.matrix(~factor(time),haploX)
 colnames(Xdes) <- paste("X",1:ncol(Xdes),sep="")
@@ -145,10 +150,11 @@ head(X)
 #> 6  1 0    6  1  0  0  0  0  1
 ```
 
-Now we can fit the model with the design given by the designfunction
+We can now fit the model with the design given by the design function:
 
 ``` r
-out <- haplo.surv.discrete(X=X,y="y",time.name="time",
+
+out <- haplo_surv_discrete(X=X,y="y",time.name="time",
       Haplos=Haplos,desnames=desnames,designfunc=designftypes) 
 names(out$coef) <- c(desnames,types)
 out$coef
@@ -170,12 +176,13 @@ summary(out)
 #> ITCCGCTGAGG  0.31667  0.1361  0.04989  0.5834 1.999e-02
 ```
 
-Haplotypes “DCGCGCTCACG” “DTCCGCTGACG” gives increased hazard of
-pregnancy
+Haplotypes `"DCGCGCTCACG"` and `"DTCCGCTGACG"` give an increased hazard
+of pregnancy.
 
-The data was generated with these true coefficients
+The data were generated with these true coefficients:
 
 ``` r
+
 tcoef=c(-1.93110204,-0.47531630,-0.04118204,-1.57872602,-0.22176426,-0.13836416,
 0.88830288,0.60756224,0.39802821,0.32706859)
 
@@ -193,9 +200,10 @@ cbind(out$coef,tcoef)
 #> ITCCGCTGAGG  0.31666905  0.32706859
 ```
 
-The design fitted can be found in the output
+The fitted design matrix can be found in the output:
 
 ``` r
+
 head(out$X,10)
 #>    X1 X2 X3 X4 X5 X6 haplo1 haplo2 haplo3 haplo4
 #> 1   1  0  0  0  0  0      0      0      0      0
@@ -213,10 +221,11 @@ head(out$X,10)
 ## SessionInfo
 
 ``` r
+
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -235,22 +244,22 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] mets_1.3.9
+#> [1] mets_1.3.10
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           
-#>  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        
-#>  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            
-#> [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           
-#> [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
+#>  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        
+#>  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            
+#> [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           
+#> [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        
 #> [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   
-#> [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       
-#> [22] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      
-#> [25] fs_1.6.6               htmlwidgets_1.6.4      Rcpp_1.1.1            
-#> [28] future_1.68.0          lattice_0.22-7         systemfonts_1.3.1     
-#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.46.1     
-#> [34] parallel_4.5.2         splines_4.5.2          Matrix_1.7-4          
-#> [37] bslib_0.9.0            tools_4.5.2            RcppArmadillo_15.2.3-1
-#> [40] globals_0.18.0         survival_3.8-3         pkgdown_2.2.0         
+#> [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       
+#> [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      
+#> [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        
+#> [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     
+#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     
+#> [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
+#> [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1
+#> [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         
 #> [43] cachem_1.1.0           desc_1.4.3
 ```

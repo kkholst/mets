@@ -2,78 +2,78 @@
 
 ## Binomial Regression for censored data
 
-The binreg function can fit a logistic link model with IPCW adjustment
-for a specific time-point, and can thus be used for describing survival
-or competing risks data. The function can be used for large data and is
-completely scalable, that is, linear in the data. A nice feature is that
-influcence functions are computed and are available, and can thus be
-used for all other settings based on these parameters.
+The `binreg` function fits a logistic link model with IPCW adjustment
+for a specific time-point, and can thus be used for both survival and
+competing risks data. Computation is linear in data size, and influence
+functions are computed and available for downstream calculations.
 
-In addition and to summarize
+Key features:
 
-- the censoring weights can be strata dependent
+- the censoring weights can be stratum-dependent
 - predictions can be computed with standard errors
-- computation time linear in data
-  - including standard errors
-- clusters can be given and then cluster corrected standard errors are
-  computed
+- computation time is linear in data size, including standard errors
+- cluster-corrected standard errors are available via the `clusters`
+  argument
 
 ## Details
 
 The binreg function does direct binomial regression for one time-point,
-$t$, fitting the model $$\begin{aligned}
-{P\left( T \leq t,\epsilon = 1|X \right)} & {= \text{expit}\left( X^{T}\beta \right) = F_{1}(t,X,\beta)}
-\end{aligned}$$ to an IPCW adjusted estmating equation (EE) with
-response $Y(t) = I(T \leq t,\epsilon = 1)$$$\begin{aligned}
-{U\left( \beta,{\widehat{G}}_{c} \right) =} & {X\left( Y(t)\frac{\Delta(t)}{{\widehat{G}}_{c}\left( T_{i} \land t \right)} - \text{expit}\left( X^{T}\beta \right) \right) = 0,}
-\end{aligned}$$ with $G_{c}(t) = P(C > t)$, the censoring survival
-distribution, and with
-$\Delta(t) = I\left( C_{i} > T_{i} \land t \right)$ the indicator of
-being uncensored at time $t$ (type=“I”). The default type=“II” is to
-augment with a censoring term, that is solve $$\begin{aligned}
- & {U\left( \beta,{\widehat{G}}_{c} \right) + \int_{0}^{t}X\frac{\widehat{E}\left( Y(t)|T > u \right)}{{\widehat{G}}_{c}(u)}d{\widehat{M}}_{c}(u) = 0}
-\end{aligned}$$ where $M_{c}(u)$ is the censoring martingale, this
-typically improves the performance. This is equivlent to the
-pseudo-value approach (see Overgaard (2025)).
+t, fitting the model \begin{align\*} P(T \leq t, \epsilon=1 \| X ) & =
+\mbox{expit}( X^T \beta) = F_1(t,X,\beta) \end{align\*} based on an IPCW
+adjusted estimating equation (EE) with response Y(t)=I(T \leq t,
+\epsilon=1 ) \begin{align\*} U(\beta,\hat G_c) = & X ( Y(t) \frac{
+\Delta(t) }{\hat G_c(T_i \wedge t)} - \mbox{expit}( X^T \beta)) = 0,
+\end{align\*} with G_c(t)=P(C\>t), the censoring survival distribution,
+and with \Delta(t) = I( C_i \> T_i \wedge t) the indicator of being
+uncensored at time t (type=“I”).
 
-The influence function for the type=“II” estimator is $$\begin{array}{r}
-{U\left( \beta,G_{c} \right) + \int_{0}^{t}X\frac{E\left( Y|T > u \right)}{G_{c}(u)}dM_{c}(u) - \int_{0}^{t}\frac{E\left( X|T > u \right)E\left( Y|T > u \right)}{G_{c}(u)}dM_{c}(u) - \int_{0}^{t}\frac{E\left( XY|T > u \right)}{G_{c}(u)}dM_{c}(u)}
-\end{array}$$ and for type=“I” $$\begin{aligned}
- & {U(\beta) + \int_{0}^{t}\frac{E\left( XY|T > u \right)}{G_{c}(u)}dM_{c}(u).}
-\end{aligned}$$ The means $E\left( XY(t)|T > u \right)$ and
-$E\left( Y(t)|T > u \right)$ are estimated by IPCW estimators among
-survivors to get estimates of the influence functions.
+The default type=“II” is to augment with a censoring term, that is solve
+\begin{align\*} & U(\beta,\hat G_c) + \int_0^t X \frac{\hat E(Y(t)\|
+T\>u)}{\hat G_c(u)} d\hat M_c(u) =0 \end{align\*} where M_c(u) is the
+censoring martingale, this typically improves the performance. This is
+equivalent to the pseudo-value approach (see Overgaard (2025)).
 
-The function logitIPCW instead considers $$\begin{aligned}
-{U^{glm}\left( \beta,{\widehat{G}}_{c} \right) =} & {\frac{\Delta(t)}{{\widehat{G}}_{c}\left( T_{i} \land t \right)}X\left( Y(t) - \text{expit}\left( X^{T}\beta \right) \right) = 0.}
-\end{aligned}$$ This score equation is quite similar to those of the
-binreg, and exactly the same when the censoring model is
-fully-nonparametric.
+The influence function for the type=“II” estimator is \begin{align\*}
+U(\beta,G_c) + \int_0^t X \frac{E(Y\| T\>u)}{G_c(u)} d M_c(u) - \int_0^t
+\frac{E(X\| T\>u) E(Y\| T\>u)}{G_c(u)} d M_c(u) - \int_0^t \frac{E( X
+Y\| T\>u)}{G_c(u)} d M_c(u) \end{align\*} and for type=“I”
+\begin{align\*} & U(\beta) + \int_0^t \frac{E( X Y\| T\>u)}{G_c(u)} d
+M_c(u). \end{align\*} The means E(X Y(t) \| T\>u) and E(Y(t)\| T\>u) are
+estimated by IPCW estimators among survivors to get estimates of the
+influence functions.
 
-The logitIPCW has influence function $$\begin{aligned}
- & {U^{glm}\left( \beta,G_{c} \right) + \int_{0}^{t}\frac{E\left( X\left( Y - F_{1}(t,\beta) \right)|T > u \right)}{G_{c}(u)}dM_{c}(u)}
-\end{aligned}$$
+The function logitIPCW instead considers \begin{align\*}
+U^{glm}(\beta,\hat G_c) = & \frac{ \Delta(t) }{\hat G_c(T_i \wedge t)} X
+( Y(t) - \mbox{expit}( X^T \beta)) = 0. \end{align\*} This score
+equation is quite similar to those of the binreg, and exactly the same
+when the censoring model is fully-nonparametric.
+
+The logitIPCW has influence function \begin{align\*} &
+U^{glm}(\beta,G_c) + \int_0^t \frac{E( X ( Y - F_1(t,\beta)) \|
+T\>u)}{G_c(u)} d M_c(u) \end{align\*}
 
 Which estimator performs the best depends on the censoring distribution
 and it seems that the binreg with type=“II” performs overall quite
-nicely (see Blanche et al (2023) and Overgaard (2024)). For the full
+nicely (see Blanche et al (2023) and Overgaard (2025)). For the full
 estimated censoring model all estimators have the same influence
 function (see Blanche et al (2023)).
 
 Additional functions logitATE, and binregATE computes the average
-treatment effect. We demonstrate this in another vignette.
+treatment effect based on propensity and outcome modelling. We
+demonstrate this in another vignette.
 
-The functions logitATE/binregATE can be used there is no censoring and
-we thus have simple binary outcome.
+The functions logitATE/binregATE can be used when there is no censoring
+and we thus have simple binary outcome.
 
-The variance is based on sandwich formula with IPCW adjustment (using
-the influence functions), and naive.var is the variance under known
+The variance is based on a sandwich formula with IPCW adjustment (using
+the influence functions), and `naive.var` is the variance under a known
 censoring model. The influence functions are stored in the output.
-Clusters can be specified to get cluster corrected standard errors.
+Clusters can be specified to obtain cluster-corrected standard errors.
 
 ## Examples
 
 ``` r
+
  library(mets)
  options(warn=-1)
  set.seed(1000) # to control output in random noise just below.
@@ -81,7 +81,7 @@ Clusters can be specified to get cluster corrected standard errors.
  bmt$time <- bmt$time+runif(nrow(bmt))*0.01
  bmt$id <- 1:408
 
- # logistic regresion with IPCW binomial regression 
+ # logistic regression with IPCW binomial regression 
  out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
  summary(out)
 #>    n events
@@ -104,6 +104,7 @@ Clusters can be specified to get cluster corrected standard errors.
 We can also compute predictions using the estimates
 
 ``` r
+
  predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
 #>        pred         se     lower     upper
 #> 1 0.3502406 0.04847582 0.2552280 0.4452533
@@ -113,6 +114,7 @@ We can also compute predictions using the estimates
 Further the censoring model can depend on strata
 
 ``` r
+
  outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
  summary(outs)
 #>    n events
@@ -134,10 +136,11 @@ Further the censoring model can depend on strata
 
 ## Absolute risk differences and ratio
 
-Now for illustrations I wish to consider the absolute risk difference
-depending on tcell
+Now for illustrations we consider the absolute risk difference depending
+on tcell
 
 ``` r
+
  outs <- binreg(Event(time,cause)~tcell,bmt,time=50,cens.model=~strata(tcell))
  summary(outs)
 #>    n events
@@ -158,6 +161,7 @@ depending on tcell
 the risk difference is
 
 ``` r
+
 ps <-  predict(outs,data.frame(tcell=c(0,1)),se=TRUE)
 ps
 #>        pred         se     lower     upper
@@ -167,12 +171,13 @@ sum( c(1,-1) * ps[,1])
 #> [1] 0.1192264
 ```
 
-Getting the standard errors are easy enough since the two-groups are
-independent. In the case where we in addition had adjusted for other
-covariates, however, we would need the to apply the delta-theorem thus
-using the relevant covariances along the lines of
+Getting the standard errors is straightforward since the two groups are
+independent. If we had additionally adjusted for other covariates,
+however, we would need to apply the delta theorem using the relevant
+covariances, along the lines of:
 
 ``` r
+
 dd <- data.frame(tcell=c(0,1))
 p <- predict(outs,dd)
 
@@ -186,22 +191,23 @@ riskdifratio <- function(p,contrast=c(1,-1)) {
 }
      
 estimate(outs,f=riskdifratio,dd,null=c(0,1,1))
-#>      Estimate Std.Err     2.5%  97.5% P-value
-#> [p1]   0.1192 0.07344 -0.02471 0.2632 0.10448
-#> [p2]   1.3894 0.32197  0.75833 2.0204 0.22652
-#> [p3]   0.7197 0.16679  0.39284 1.0467 0.09291
-#> 
-#>  Null Hypothesis: 
+#>    Estimate Std.Err     2.5%  97.5% P-value
+#> p1   0.1192 0.07344 -0.02471 0.2632 0.10448
+#> p2   1.3894 0.32197  0.75833 2.0204 0.22652
+#> p3   0.7197 0.16679  0.39284 1.0467 0.09291
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
 #>   [p1] = 0
 #>   [p2] = 1
 #>   [p3] = 1 
 #>  
-#> chisq = 12.0249, df = 3, p-value = 0.007298
+#> chisq = 12.0249, df = 2, p-value = 0.002448
 ```
 
 same as
 
 ``` r
+
 run <- 0
 if (run==1) {
 library(prodlim)
@@ -211,75 +217,14 @@ spl
 }
 ```
 
-## Augmenting the Binomial Regression
-
-Rather than using a larger censoring model we can also compute an
-augmentation term and then fit the binomial regression model based on
-this augmentation term. Here we compute the augmentation based on
-stratified non-parametric estimates of $F_{1}\left( t,S(X) \right)$,
-where $S(X)$ gives strata based on $X$ as a working model.
-
-Computes the augmentation term for each individual as well as the sum
-$$\begin{aligned}
-A & {= \int_{0}^{t}H(u,X)\frac{1}{S^{*}(u,s)}\frac{1}{G_{c}(u)}dM_{c}(u)}
-\end{aligned}$$ with $$\begin{aligned}
-{H(u,X)} & {= F_{1}^{*}\left( t,S(X) \right) - F_{1}^{*}\left( u,S(X) \right)}
-\end{aligned}$$ using a KM for $G_{c}(t)$ and a working model for
-cumulative baseline related to $F_{1}^{*}(t,s)$ and $s$ is strata,
-$S^{*}(t,s) = 1 - F_{1}^{*}(t,s) - F_{2}^{*}(t,s)$.
-
-Standard errors computed under assumption of correct but estimated
-$G_{c}(s)$ model.
-
-``` r
- data(bmt)
- dcut(bmt,breaks=2) <- ~age 
- out1<-BinAugmentCifstrata(Event(time,cause)~platelet+agecat.2+
-              strata(platelet,agecat.2),data=bmt,cause=1,time=40)
- summary(out1)
-#>    n events
-#>  408    157
-#> 
-#>  408 clusters
-#> coeffients:
-#>                      Estimate  Std.Err     2.5%    97.5% P-value
-#> (Intercept)          -0.51295  0.17090 -0.84791 -0.17799  0.0027
-#> platelet             -0.63011  0.23585 -1.09237 -0.16785  0.0075
-#> agecat.2(0.203,1.94]  0.55926  0.21211  0.14353  0.97500  0.0084
-#> 
-#> exp(coeffients):
-#>                      Estimate    2.5%  97.5%
-#> (Intercept)           0.59873 0.42831 0.8370
-#> platelet              0.53253 0.33542 0.8455
-#> agecat.2(0.203,1.94]  1.74938 1.15434 2.6512
-
- out2<-BinAugmentCifstrata(Event(time,cause)~platelet+agecat.2+
-     strata(platelet,agecat.2)+strataC(platelet),data=bmt,cause=1,time=40)
- summary(out2)
-#>    n events
-#>  408    157
-#> 
-#>  408 clusters
-#> coeffients:
-#>                      Estimate  Std.Err     2.5%    97.5% P-value
-#> (Intercept)          -0.51346  0.17109 -0.84879 -0.17814  0.0027
-#> platelet             -0.63636  0.23653 -1.09996 -0.17276  0.0071
-#> agecat.2(0.203,1.94]  0.56280  0.21229  0.14672  0.97889  0.0080
-#> 
-#> exp(coeffients):
-#>                      Estimate    2.5%  97.5%
-#> (Intercept)           0.59842 0.42793 0.8368
-#> platelet              0.52922 0.33288 0.8413
-#> agecat.2(0.203,1.94]  1.75559 1.15803 2.6615
-```
-
 ## SessionInfo
 
 ``` r
+
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -298,22 +243,22 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] mets_1.3.9
+#> [1] mets_1.3.10
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           
-#>  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        
-#>  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            
-#> [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           
-#> [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
+#>  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        
+#>  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            
+#> [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           
+#> [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        
 #> [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   
-#> [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       
-#> [22] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      
-#> [25] fs_1.6.6               htmlwidgets_1.6.4      Rcpp_1.1.1            
-#> [28] future_1.68.0          lattice_0.22-7         systemfonts_1.3.1     
-#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.46.1     
-#> [34] parallel_4.5.2         splines_4.5.2          Matrix_1.7-4          
-#> [37] bslib_0.9.0            tools_4.5.2            RcppArmadillo_15.2.3-1
-#> [40] globals_0.18.0         survival_3.8-3         pkgdown_2.2.0         
+#> [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       
+#> [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      
+#> [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        
+#> [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     
+#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     
+#> [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
+#> [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1
+#> [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         
 #> [43] cachem_1.1.0           desc_1.4.3
 ```

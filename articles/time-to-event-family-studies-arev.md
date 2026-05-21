@@ -23,6 +23,7 @@ twin, and vice-versa.
 First looking at the data
 
 ``` r
+
 library(mets)
  set.seed(122)
  data(prt)
@@ -63,6 +64,7 @@ model with death and cancer.
 First estimating the marginal hazards for each country.
 
 ``` r
+
  # Marginal Cox model here stratified on country without covariates 
  margph <- phreg(Surv(time,cancer)~strata(country)+cluster(id),data=prt)
  plot(margph)
@@ -76,11 +78,13 @@ Then we fit a two-stage random effects models with country specific
 marginals and random-effects variances that differ for MZ and DZ twins.
 
 ``` r
+
 # Clayton-Oakes, MLE , overall variance
 fitco1<-twostageMLE(margph,data=prt,theta=2.7)
 ```
 
 ``` r
+
  summary(fitco1)
 #> Dependence parameter for Clayton-Oakes model
 #> Variance of Gamma distributed random effects
@@ -96,10 +100,12 @@ fitco1<-twostageMLE(margph,data=prt,theta=2.7)
 ```
 
 ``` r
-fitco2 <- survival.twostage(margph,data=prt,theta=2.7,clusters=prt$id,var.link=0)
+
+fitco2 <- survival_twostage(margph,data=prt,theta=2.7,clusters=prt$id,var.link=0)
 ```
 
 ``` r
+
  summary(fitco2)
 #> Dependence parameter for Clayton-Oakes model
 #> Variance of Gamma distributed random effects
@@ -117,11 +123,13 @@ fitco2 <- survival.twostage(margph,data=prt,theta=2.7,clusters=prt$id,var.link=0
 With different random effects for MZ and DZ
 
 ``` r
+
  mm <- model.matrix(~-1+factor(zyg),prt)
  fitco3<-twostageMLE(margph,data=prt,theta=1,theta.des=mm)
 ```
 
 ``` r
+
  summary(fitco3)
 #> Dependence parameter for Clayton-Oakes model
 #> Variance of Gamma distributed random effects
@@ -138,10 +146,12 @@ With different random effects for MZ and DZ
 ```
 
 ``` r
-fitco4 <- survival.twostage(margph,data=prt,theta=1,clusters=prt$id,var.link=0,theta.des=mm)
+
+fitco4 <- survival_twostage(margph,data=prt,theta=1,clusters=prt$id,var.link=0,theta.des=mm)
 ```
 
 ``` r
+
  summary(fitco4)
 #> Dependence parameter for Clayton-Oakes model
 #> Variance of Gamma distributed random effects
@@ -161,30 +171,32 @@ fitco4 <- survival.twostage(margph,data=prt,theta=1,clusters=prt$id,var.link=0,t
 #> factor(zyg)MZ     5.42 3.54  7.31
 
  ## mz kendalls tau
- kendall.ClaytonOakes.twin.ace(fitco4$theta[2],0,K=1000)$mz.kendall
+ kendall_ClaytonOakes_twin_ace(fitco4$theta[2],0,K=1000)$mz.kendall
 #> [1] 0.7380818
  ## dz kendalls tau
- kendall.ClaytonOakes.twin.ace(fitco4$theta[1],0,K=1000)$mz.kendall
+ kendall_ClaytonOakes_twin_ace(fitco4$theta[1],0,K=1000)$mz.kendall
 #> [1] 0.4154807
 ```
 
 The dependence of MZ twins is much stronger, and is summarized by a
-variance at $5.42$ in contrast to the $DZ$ variance at $1.32$.
+variance at 5.42 in contrast to the DZ variance at 1.32.
 
 Now we look at the polygenic modelling for survival data, here applied
 to the cause specific hazards.
 
 ``` r
+
  ### setting up design for random effects and parameters of random effects
- desace <- twin.polygen.design(prt,type="ace")
+ desace <- twin_polygen_design(prt,type="ace")
 
  ### ace model 
- fitace <- survival.twostage(margph,data=prt,theta=1,
+ fitace <- survival_twostage(margph,data=prt,theta=1,
        clusters=prt$id,var.link=0,model="clayton.oakes",
        numDeriv=1,random.design=desace$des.rv,theta.des=desace$pardes)
 ```
 
 ``` r
+
  summary(fitace)
 #> Dependence parameter for Clayton-Oakes model
 #> Variance of Gamma distributed random effects
@@ -213,6 +225,7 @@ to the cause specific hazards.
 ```
 
 ``` r
+
  ### ace model with positive random effects variances
  # fitacee <- survival.twostage(margph,data=prt,theta=1,
  #      clusters=prt$id,var.link=1,model="clayton.oakes",
@@ -220,19 +233,20 @@ to the cause specific hazards.
  #summary(fitacee)
  
  ### ae model 
- #desae <- twin.polygen.design(prt,type="ae")
+ #desae <- twin_polygen_design(prt,type="ae")
  #fitae <- survival.twostage(margph,data=prt,theta=1,
  #      clusters=prt$id,var.link=0,model="clayton.oakes",
  #      numDeriv=1,random.design=desae$des.rv,theta.des=desae$pardes)
  #summary(fitae)
 
  ### de model 
- desde <- twin.polygen.design(prt,type="de")
+ desde <- twin_polygen_design(prt,type="de")
  fitde <- survival.twostage(margph,data=prt,theta=1,clusters=prt$id,var.link=0,model="clayton.oakes",
 numDeriv=1,random.design=desde$des.rv,theta.des=desde$pardes)                            
 ```
 
 ``` r
+
 summary(fitde)
 #> Dependence parameter for Clayton-Oakes model
 #> Variance of Gamma distributed random effects
@@ -274,6 +288,7 @@ For simplicity we do not do this for each country even though as we show
 there are big differences between the countries.
 
 ``` r
+
 prt <-  force.same.cens(prt,cause="status")
 
  dtable(prt,~status+cancer)
@@ -299,6 +314,7 @@ prt <-  force.same.cens(prt,cause="status")
 ```
 
 ``` r
+
  ## cumulative incidence with cluster standard errors.
  cif1 <- cif(Event(time,status)~strata(country)+cluster(id),prt,cause=2)
  plot(cif1,se=1)
@@ -307,6 +323,7 @@ prt <-  force.same.cens(prt,cause="status")
 ![](time-to-event-family-studies-arev_files/figure-html/concordance-1.png)
 
 ``` r
+
 
  cifa <- cif(Event(time,status)~+1,prt,cause=2)
 
@@ -319,6 +336,7 @@ p11dz <- p11$model$"DZ"
 ```
 
 ``` r
+
  par(mfrow=c(1,2))
  ## Concordance
  plot(p11mz,ylim=c(0,0.1));
@@ -332,6 +350,7 @@ takes the marginals into account when evaluating the strength of the
 association.
 
 ``` r
+
  library(prodlim)
  outm <- prodlim(Hist(time,status)~+1,data=prt)
 
@@ -371,6 +390,7 @@ association.
 ![](time-to-event-family-studies-arev_files/figure-html/concordance2-1.png)
 
 ``` r
+
 
  summary(cdz)
 #> Casewise concordance and standard errors 
@@ -481,6 +501,7 @@ association.
 
 ``` r
 
+
  dd <- bicompriskData(Event(time,status)~country+strata(zyg)+id(id),data=prt,cause=c(2,2))
  conczyg <- cif(Event(time,status)~strata(zyg)+cluster(id),data=dd,cause=1)
 
@@ -506,6 +527,7 @@ well as the marginal, and combine the iid decompositions when estimating
 the standard error. We also do this ignoring country differences.
 
 ``` r
+
  ### new version of Casewise for specific time-point based on binreg 
  dd <- bicompriskData(Event(time,status)~country+strata(zyg)+id(id),data=prt,cause=c(2,2))
  newdata <- data.frame(zyg=c("DZ","MZ"),id=1)
@@ -523,6 +545,7 @@ the standard error. We also do this ignoring country differences.
 ```
 
 ``` r
+
  cse 
 #> $coef
 #>     Estimate      2.5%     97.5%
@@ -542,6 +565,7 @@ even though clearly DK has a much lower cumulative incidence of prostate
 cancer.
 
 ``` r
+
  ### semi-parametric modelling of concordance 
  dd <- bicompriskData(Event(time,status)~country+strata(zyg)+id(id),data=prt,cause=c(2,2))
  regconc <- cifreg(Event(time,status)~country*zyg,data=dd,prop=NULL)
@@ -558,20 +582,21 @@ cancer.
 ```
 
 ``` r
+
 slr
 #> 
 #>      n events
 #>  14222    106
 #> 
 #>  14222 clusters
-#> coeffients:
+#> coefficients:
 #>                Estimate    S.E. dU^-1/2 P-value
 #> countryFinland  1.30427 0.35262 0.35146  0.0002
 #> countryNorway   0.94077 0.39999 0.39365  0.0187
 #> countrySweden   1.08494 0.32247 0.31871  0.0008
 #> zygMZ           1.02335 0.20283 0.19873  0.0000
 #> 
-#> exp(coeffients):
+#> exp(coefficients):
 #>                Estimate   2.5%  97.5%
 #> countryFinland   3.6850 1.8462 7.3552
 #> countryNorway    2.5619 1.1698 5.6111
@@ -587,6 +612,7 @@ Here we do the cumulative incidence random effects modelling (commented
 out to avoid timereg dependence)
 
 ``` r
+
  timereg <- 0
 if (timereg==1) {
   times <- seq(50,90,length.out=5)
@@ -609,6 +635,7 @@ if (timereg==1) {
 ```
 
 ``` r
+
 timereg <- 0
 if (timereg==1) {
   summary(outacem)
@@ -661,6 +688,7 @@ twins but different correlation parameter). Here we evaluate the risk of
 getting cancer before the last double cancer event (95 years)
 
 ``` r
+
 rm(prt)
 data(prt)
 prt0 <-  force.same.cens(prt, cause="status", cens.code=0, time="time", id="id")
@@ -672,11 +700,13 @@ tt <- seq(70, tau, length.out=5) ## Time points to evaluate model in
 ```
 
 ``` r
+
 b0 <- bptwin.time(cancer ~ 1, data=prt0, id="id", zyg="zyg", DZ="DZ", type="cor",
               cens.formula=Surv(time,status==0)~zyg, breaks=tau)
 ```
 
 ``` r
+
 summary(b0)
 #> 
 #>                Estimate   Std.Err        Z   p-value    
@@ -718,11 +748,13 @@ summary(b0)
 Liability threshold model with ACE random effects structure
 
 ``` r
+
 b1 <- bptwin.time(cancer ~ 1, data=prt0, id="id", zyg="zyg", DZ="DZ", type="ace",
               cens.formula=Surv(time,status==0)~zyg, breaks=tau)
 ```
 
 ``` r
+
 summary(b1)
 #> 
 #>             Estimate  Std.Err        Z p-value    
@@ -769,6 +801,7 @@ indistinguishable from the flexible bivariate Probit model as seen by
 the IPCW weighted AIC measure
 
 ``` r
+
 AIC(b0, b1)
 #>    df AIC
 #> b0  3   6
@@ -778,11 +811,13 @@ AIC(b0, b1)
 ACE model with marginal adjusted for country
 
 ``` r
+
 b2 <- bptwin.time(cancer ~ country, data=prt0, id="id", zyg="zyg", DZ="DZ", type="ace",
               cens.formula=Surv(time,status==0)~zyg+country, breaks=95)
 ```
 
 ``` r
+
 summary(b2)
 #> 
 #>                Estimate  Std.Err        Z   p-value    
@@ -828,6 +863,7 @@ summary(b2)
 ```
 
 ``` r
+
 bt0 <- bptwin.time(cancer ~ 1, data=prt0, id="id", zyg="zyg", DZ="DZ", type="ace", 
               cens.formula=Surv(time,status==0)~zyg,
               summary.function=function(x) x, breaks=tt)
@@ -836,6 +872,7 @@ concMZ <- Reduce(rbind, lapply(bt0$coef, function(x) x$probMZ["Concordance",,dro
 ```
 
 ``` r
+
 par(mfrow=c(1,2))
 plot(tt, h2[,1], type="s", lty=1, col=cols[3], xlab="Age", ylab="Heritability", ylim=c(0,1))
 lava::confband(tt, h2[,2], h2[,3],polygon=TRUE, step=TRUE, col=lava::Col(cols[3], 0.1), border=NA)
@@ -848,16 +885,17 @@ lava::confband(tt, concMZ[,2], concMZ[,3],polygon=TRUE, step=TRUE, col=lava::Col
 Bivariate probit model at time different time points
 
 ``` r
+
 system.time(a.mz <- biprobit.time(cancer~1, id="id", data=subset(prt0, zyg=="MZ"),
                                cens.formula = Surv(time,status==0)~1, pairs.only=TRUE,
                                 breaks=tt))
 #>    user  system elapsed 
-#>   0.263   0.291   0.225
+#>   0.282   0.278   0.232
 system.time(a.dz <- biprobit.time(cancer~1, id="id", data=subset(prt0, zyg=="DZ"),
                                cens.formula = Event(time,status==0)~1, pairs.only=TRUE,
                                breaks=tt))
 #>    user  system elapsed 
-#>   0.374   0.276   0.322
+#>   0.383   0.294   0.348
 
 #system.time(a.zyg <- biprobit.time(cancer~1, rho=~1+zyg, id="id", data=prt, 
 #                               cens.formula = Event(time,status==0)~1,
@@ -905,6 +943,7 @@ plot(a.dz, col=cols[2], lty=ltys[2], add=TRUE)
 Bivariate probit model adjusting for country
 
 ``` r
+
 a.mz_country <- biprobit.time(cancer~country, id="id", data=subset(prt0, zyg=="MZ"),
                                cens.formula = Surv(time,status==0)~country, pairs.only=TRUE,
                                 breaks=tt)
@@ -917,6 +956,7 @@ s_dz_country <- summary(a.dz_country)
 ```
 
 ``` r
+
 s_mz_country
 #> $Concordance
 #>    Time    Estimate        2.5%      97.5%
@@ -1016,6 +1056,7 @@ s_dz_country
 ```
 
 ``` r
+
 ## ACE model (time-varying) with and without adjustment for country
 a1 <- bptwin.time(cancer~1, id="id", data=prt0, type="ace",
                               zyg="zyg", DZ="DZ", 
@@ -1029,6 +1070,7 @@ a1 <- bptwin.time(cancer~1, id="id", data=prt0, type="ace",
 ```
 
 ``` r
+
 plot(a.mz, which=c(6), xlab="Age", ylab="Correlation", ylim=c(0,1), col=cols[1], lty=ltys[1], legend=NULL, alpha=.1)
 plot(a.dz, which=c(6), col=cols[2], lty=ltys[2], legend=NULL, add=TRUE, alpha=.1)
 legend("topleft", c("MZ tetrachoric correlation", "DZ tetrachoric correlation"),
@@ -1038,6 +1080,7 @@ legend("topleft", c("MZ tetrachoric correlation", "DZ tetrachoric correlation"),
 ![](time-to-event-family-studies-arev_files/figure-html/unnamed-chunk-19-1.png)
 
 ``` r
+
 
 plot(a.mz, which=c(4), xlab="Age", ylab="Relative Recurrence Risk",
      ylim=c(1,20), col=cols[1], lty=ltys[1], legend=NULL, lwd=2, alpha=.1)
@@ -1050,6 +1093,7 @@ legend("topright", c("MZ relative recurrence risk", "DZ relative recurrence risk
 
 ``` r
 
+
 plot(a1, which=c(5,6), xlab="Age", ylab="Correlation", ylim=c(0,1), col=cols[1:2], lty=ltys[1:2], lwd=2, alpha=0.1,
      legend=c("MZ tetrachoric correlation", "DZ tetrachoric correlation"))
 ```
@@ -1057,6 +1101,7 @@ plot(a1, which=c(5,6), xlab="Age", ylab="Correlation", ylim=c(0,1), col=cols[1:2
 ![](time-to-event-family-studies-arev_files/figure-html/unnamed-chunk-19-3.png)
 
 ``` r
+
 
 plot(a1, which=c(1), xlab="Age", ylim=c(0,1), col="black", lty=1, ylab="Heritability", legend=NULL, alpha=.1)
 ```
@@ -1066,10 +1111,11 @@ plot(a1, which=c(1), xlab="Age", ylim=c(0,1), col="black", lty=1, ylab="Heritabi
 ## SessionInfo
 
 ``` r
+
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.6.0 (2026-04-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -1088,22 +1134,23 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] prodlim_2025.04.28 mets_1.3.9        
+#> [1] prodlim_2026.03.11 mets_1.3.10       
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] Matrix_1.7-4           future.apply_1.20.1    jsonlite_2.0.0        
-#>  [4] compiler_4.5.2         Rcpp_1.1.1             parallel_4.5.2        
-#>  [7] jquerylib_0.1.4        globals_0.18.0         splines_4.5.2         
-#> [10] systemfonts_1.3.1      textshaping_1.0.4      yaml_2.3.12           
-#> [13] fastmap_1.2.0          lattice_0.22-7         R6_2.6.1              
-#> [16] knitr_1.51             htmlwidgets_1.6.4      future_1.68.0         
-#> [19] desc_1.4.3             bslib_0.9.0            rlang_1.1.7           
-#> [22] cachem_1.1.0           xfun_0.55              fs_1.6.6              
-#> [25] sass_0.4.10            cli_3.6.5              pkgdown_2.2.0         
-#> [28] digest_0.6.39          grid_4.5.2             mvtnorm_1.3-3         
-#> [31] lifecycle_1.0.5        lava_1.8.2             RcppArmadillo_15.2.3-1
-#> [34] timereg_2.0.7          evaluate_1.0.5         data.table_1.18.0     
-#> [37] numDeriv_2016.8-1.1    listenv_0.10.0         codetools_0.2-20      
-#> [40] ragg_1.5.0             survival_3.8-3         parallelly_1.46.1     
-#> [43] rmarkdown_2.30         tools_4.5.2            htmltools_0.5.9
+#>  [1] Matrix_1.7-5           future.apply_1.20.2    jsonlite_2.0.0        
+#>  [4] compiler_4.6.0         Rcpp_1.1.1-1.1         parallel_4.6.0        
+#>  [7] jquerylib_0.1.4        globals_0.19.1         splines_4.6.0         
+#> [10] systemfonts_1.3.2      textshaping_1.0.5      yaml_2.3.12           
+#> [13] fastmap_1.2.0          lattice_0.22-9         R6_2.6.1              
+#> [16] knitr_1.51             htmlwidgets_1.6.4      future_1.70.0         
+#> [19] desc_1.4.3             bslib_0.11.0           rlang_1.2.0           
+#> [22] cachem_1.1.0           xfun_0.57              fs_2.1.0              
+#> [25] sass_0.4.10            cli_3.6.6              pkgdown_2.2.0         
+#> [28] digest_0.6.39          grid_4.6.0             mvtnorm_1.3-7         
+#> [31] lifecycle_1.0.5        lava_1.9.1             RcppArmadillo_15.2.6-1
+#> [34] timereg_2.0.7          evaluate_1.0.5         data.table_1.18.4     
+#> [37] numDeriv_2016.8-1.1    listenv_0.10.1         codetools_0.2-20      
+#> [40] ragg_1.5.2             stats4_4.6.0           survival_3.8-6        
+#> [43] parallelly_1.47.0      rmarkdown_2.31         tools_4.6.0           
+#> [46] htmltools_0.5.9
 ```

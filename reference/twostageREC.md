@@ -1,9 +1,8 @@
-# Fittting of Two-stage recurrent events random effects model based on Cox/Cox or Cox/Ghosh-Lin marginals
+# Fitting of Two-Stage Recurrent Events Random Effects Model
 
-Fittting of Two-stage recurrent events random effects model based on
-Cox/Cox or Cox/Ghosh-Lin marginals. Random effects model fore recurrent
-events with terminal event. Marginal models fitted first and given to
-twostageREC function.
+Fits a two-stage random effects model for recurrent events with a
+terminal event. Marginal models (Cox or Ghosh-Lin) are fitted first and
+passed to this function.
 
 ## Usage
 
@@ -34,80 +33,114 @@ twostageREC(
 
 - margsurv:
 
-  marginal model for terminal event
+  Marginal model for the terminal event (object of class `"phreg"`).
 
 - recurrent:
 
-  marginal model for recurrent events
+  Marginal model for recurrent events (object of class `"phreg"` or
+  `"recreg"`).
 
 - data:
 
-  used for fitting
+  Data frame used for fitting.
 
 - theta:
 
-  starting value for total variance of gamma frailty
+  Starting value for total variance of gamma frailty.
 
 - model:
 
-  can fully shared "full", partly shared "shared", or non-shared where
-  the random effect acts only on recurrent events
+  Model type: `"full"` (fully shared), `"shared"` (partly shared), or
+  `"non-shared"`.
 
 - ghosh.lin:
 
-  to force use ghosh.lin marginals based on recurrent (taking baseline
-  and coefficients)
+  Logical; if `TRUE`, forces use of Ghosh-Lin marginals based on the
+  recurrent model.
 
 - theta.des:
 
-  regression design for variance
+  Regression design for variance parameters.
 
 - var.link:
 
-  possible link function 1 is exponential link
+  Link function for variance (1 for exponential).
 
 - method:
 
-  NR
+  Optimization method (default "NR").
 
 - no.opt:
 
-  to not optimize
+  Logical; if `TRUE`, skips optimization.
 
 - weights:
 
-  possible weights
+  Weights.
 
 - se.cluster:
 
-  to combine influence functions for naive variance based on these
-  clusters GEE style
+  Clusters for SE calculation (GEE style).
 
 - fnu:
 
-  a function to make transformation for nu (amount shared)
+  Function to transform \\\nu\\ (amount shared).
 
 - nufix:
 
-  to fix the amount shared
+  Logical; if `TRUE`, fixes the amount shared.
 
 - nu:
 
-  starting value for amount shared
+  Starting value for the amount shared.
 
 - numderiv:
 
-  uses numerical derivatives for some derivatives
+  Logical; if `TRUE`, uses numerical derivatives.
 
 - derivmethod:
 
-  method for numerical derivative
+  Method for numerical derivative.
 
 - ...:
 
-  arguments for
+  Arguments for the optimizer.
+
+## Value
+
+An object of class `"twostageREC"` containing:
+
+- coef:
+
+  Estimated coefficients.
+
+- var:
+
+  Variance-covariance matrix.
+
+- theta:
+
+  Dependence parameters.
+
+- model:
+
+  Model type.
+
+## Details
+
+Supports:
+
+- Cox/Cox marginals.
+
+- Cox/Ghosh-Lin marginals.
+
+- Fully shared, partly shared, or non-shared random effects.
 
 ## References
 
 Scheike (2026), Two-stage recurrent events random effects models, LIDA,
-to appear
+to appear.
+
+## Author
+
+Thomas Scheike

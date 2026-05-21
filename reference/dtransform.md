@@ -36,7 +36,7 @@ dsummary(xx,ll+ll2~I(agemena>15))
 #>  Mean   :4.048   Mean   :NaN   
 #>  3rd Qu.:4.557   3rd Qu.: NA   
 #>  Max.   :4.707   Max.   : NA   
-#>                  NA's   :1859  
+#>                  NAs    :1859  
 #> ------------------------------------------------------------ 
 #> I(agemena > 15): TRUE
 #>        ll             ll2      

@@ -1,7 +1,8 @@
-# Percentage of years lost due to cause regression
+# Percentage of Years Lost Due to a Cause Regression
 
-Estimates the percentage of the years lost that is due to a cause and
-how covariates affects this percentage by doing ICPW regression.
+Estimates the percentage of the restricted mean time lost (RMTL) that is
+attributable to a specific cause and models how covariates affect this
+percentage using IPCW regression.
 
 ## Usage
 
@@ -12,18 +13,19 @@ binregRatio(
   cause = 1,
   time = NULL,
   beta = NULL,
-  type = c("II", "I"),
+  type = c("III", "II", "I"),
   offset = NULL,
   weights = NULL,
   cens.weights = NULL,
   cens.model = ~+1,
   se = TRUE,
+  relative.to.causes = NULL,
   kaplan.meier = TRUE,
   cens.code = 0,
   no.opt = FALSE,
   method = "nr",
   augmentation = NULL,
-  outcome = c("cif", "rmtl"),
+  outcome = c("rmtl", "cif"),
   model = c("logit", "exp", "lin"),
   Ydirect = NULL,
   ...
@@ -34,110 +36,188 @@ binregRatio(
 
 - formula:
 
-  formula with outcome (see `coxph`)
+  Formula with an outcome (see `coxph`). The first covariate on the RHS
+  is typically the treatment or group indicator. Can include
+  `cluster(id)`.
 
 - data:
 
-  data frame
+  Data frame containing the variables.
 
 - cause:
 
-  cause of interest (numeric variable)
+  Numeric code of the cause of interest.
 
 - time:
 
-  time of interest
+  Time point \\t\\ for the analysis. Required.
 
 - beta:
 
-  starting values
+  Starting values for optimization (default NULL, uses zeros).
 
 - type:
 
-  "II" adds augmentation term, and "I" classical outcome IPCW regression
+  Type of estimator: `"I"` (IPCW only), `"II"` (IPCW + augmentation), or
+  `"III"` (IPCW + complex augmentation). Default is `"III"`.
 
 - offset:
 
-  offsets for partial likelihood
+  Offsets for the partial likelihood.
 
 - weights:
 
-  for score equations
+  Weights for the score equations.
 
 - cens.weights:
 
-  censoring weights
+  External censoring weights (if provided, `cens.model` is ignored).
 
 - cens.model:
 
-  only stratified cox model without covariates
+  Formula for the censoring model (default `~+1`, stratified KM). Can
+  include [`strata()`](https://rdrr.io/pkg/survival/man/strata.html) for
+  stratified censoring.
 
 - se:
 
-  to compute se's based on IPCW
+  Logical; if TRUE, computes standard errors based on IPCW (default
+  TRUE).
+
+- relative.to.causes:
+
+  If not NULL, compares the RMTL of the specified `cause` to the RMTL of
+  the causes in this vector (the denominator becomes the sum of these
+  causes).
 
 - kaplan.meier:
 
-  uses Kaplan-Meier for IPCW in contrast to exp(-Baseline)
+  Logical; if TRUE, uses Kaplan-Meier for IPCW weights; if FALSE, uses
+  \\\exp(-\text{cumulative hazard})\\.
 
 - cens.code:
 
-  gives censoring code
+  Censoring code (default 0).
 
 - no.opt:
 
-  to not optimize
+  Logical; if TRUE, skips optimization and uses `beta` directly.
 
 - method:
 
-  for optimization
+  Optimization method: `"nr"` (Newton-Raphson) or `"nlm"`.
 
 - augmentation:
 
-  to augment binomial regression
+  Initial augmentation term (used for type "II" and "III").
 
 - outcome:
 
-  can do CIF regression "cif"=F(t\|X), "rmtl"=E( t- min(T, t) \| X)"
+  Outcome type: `"rmtl"` (years lost) or `"cif"` (cumulative incidence).
 
 - model:
 
-  logit, exp or lin(ear)
+  Link function: `"logit"` (default), `"exp"`, or `"lin"`.
 
 - Ydirect:
 
-  use this Y instead of outcome constructed inside the program, should
-  be a matrix with two column for numerator and denominator.
+  Matrix with two columns (numerator, denominator) to use directly as
+  the response.
 
 - ...:
 
-  Additional arguments to lower level funtions
+  Additional arguments passed to lower-level functions.
+
+## Value
+
+An object of class `"binreg"` and `"ratio"` containing:
+
+- coef:
+
+  Coefficient estimates.
+
+- se.coef:
+
+  Standard errors.
+
+- var:
+
+  Variance-covariance matrix.
+
+- iid:
+
+  Influence function decomposition (with censoring adjustment).
+
+- iidI:
+
+  Influence function without censoring adjustment.
+
+- naive.var:
+
+  Variance assuming known censoring.
+
+- time:
+
+  Time point used.
+
+- cause:
+
+  Cause of interest.
+
+- Causes:
+
+  Set of causes considered in the denominator.
+
+- Yipcw:
+
+  IPCW-adjusted response matrix.
+
+- coefI, varI:
+
+  Results from the initial (type "I") fit.
+
+- augmentation:
+
+  Final augmentation term used.
 
 ## Details
 
-Let the years lost be \$\$Y1= t- min(T ,) \$\$ and the years lost due to
-cause 1 \$\$Y2= I(epsilon==1) ( t- min(T ,t) \$\$ , then we model the
-ratio \$\$logit( E(Y2 \| X)/E(Y1 \| X)) = X^T \beta \$\$. Estimation is
-based on on binomial regresion IPCW response estimating equation: \$\$ X
-( \Delta^{ipcw}(t) Y2 expit(X^T \beta) - Y1 ) = 0 \$\$ where
-\$\$\Delta^{ipcw}(t) = I((min(t,T)\< C)/G_c(min(t,T)-)\$\$ is IPCW
-adjustment of the response \$\$Y(t)= I(T \leq t, \epsilon=1 )\$\$.
+Let the total years lost be \\Y = t - \min(T, t)\\ and the years lost
+due to cause 1 be \\Y_1 = I(\epsilon=1) (t - \min(T, t))\\. The function
+models the ratio: \$\$ \text{logit}\left( \frac{E(Y_1 \| X)}{E(Y \| X)}
+\right) = X^T \beta \$\$
 
-(type="I") sovlves this estimating equation using a stratified
-Kaplan-Meier for the censoring distribution. For (type="II") the default
-an additional censoring augmentation term \$\$X \int E(Y(t)\|
-T\>s)/G_c(s) d \hat M_c\$\$ is added.
+Estimation is based on a binomial regression IPCW response estimating
+equation: \$\$ X \left( \Delta^{\text{ipcw}}(t) \left( Y \cdot
+\text{expit}(X^T \beta) - Y_1 \right) \right) = 0 \$\$ where
+\\\Delta^{\text{ipcw}}(t) = I(\min(t,T) \< C) / G_c(\min(t,T))\\ is the
+IPCW adjustment.
 
-The variance is based on the squared influence functions that are also
-returned as the iid component. naive.var is variance under known
-censoring model.
+The function supports three types of estimators:
 
-Censoring model may depend on strata (cens.model=~strata(gX)).
+- `"I"`: Classical outcome IPCW regression (no augmentation).
+
+- `"II"`: Adds a censoring augmentation term \\X \int E(Z(t)\|
+  T\>s)/G_c(s) d \hat M_c\\ to improve efficiency (requires an initial
+  estimate of \\\beta\\).
+
+- `"III"`: Adds a more complex augmentation term separating the
+  expectations of \\Y\\ and \\Y_1\\ for further efficiency gains.
+
+The variance is based on the squared influence functions (IID). A
+"naive" variance (assuming known censoring) is also provided for
+comparison.
 
 ## References
 
-Scheike & Tanaka (2025), Restricted mean time lost ratio regression:
-Percentage of restricted mean time lost due to specific cause, WIP
+Scheike, T. & Tanaka, S. (2025). Restricted mean time lost ratio
+regression: Percentage of restricted mean time lost due to specific
+cause. WIP.
+
+## See also
+
+[`resmeanIPCW`](http://kkholst.github.io/mets/reference/resmeanIPCW.md),
+[`binreg`](http://kkholst.github.io/mets/reference/binreg.md)
 
 ## Author
 
@@ -146,34 +226,33 @@ Thomas Scheike
 ## Examples
 
 ``` r
-library(mets)
 data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 
-rmst30 <- rmstIPCW(Event(time,cause!=0)~platelet+tcell+age,bmt,time=30,cause=1)
-rmst301 <- rmstIPCW(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=1)
-rmst302 <- rmstIPCW(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=2)
+rmtl30 <- rmstIPCW(Event(time,cause!=0)~platelet+tcell+age, bmt, time=30, cause=1, outcome="rmtl")
+rmtl301 <- rmstIPCW(Event(time,cause)~platelet+tcell+age, bmt, time=30, cause=1)
+rmtl302 <- rmstIPCW(Event(time,cause)~platelet+tcell+age, bmt, time=30, cause=2)
 
-estimate(rmst30)
-#>             Estimate Std.Err     2.5%    97.5%   P-value
-#> (Intercept)   2.6104 0.05744  2.49778  2.72294 0.000e+00
-#> platelet      0.2450 0.08435  0.07970  0.41035 3.674e-03
-#> tcell         0.1456 0.11877 -0.08719  0.37838 2.202e-01
-#> age          -0.1728 0.03794 -0.24718 -0.09844 5.255e-06
-estimate(rmst301)
+estimate(rmtl30)
+#>             Estimate Std.Err    2.5%   97.5%   P-value
+#> (Intercept)   2.7657 0.05104  2.6657  2.8658 0.000e+00
+#> platelet     -0.3004 0.11176 -0.5194 -0.0813 7.201e-03
+#> tcell        -0.1455 0.14445 -0.4286  0.1377 3.139e-01
+#> age           0.2015 0.04824  0.1069  0.2960 2.961e-05
+estimate(rmtl301)
 #>             Estimate Std.Err    2.5%      97.5%    P-value
-#> (Intercept)   2.4449 0.07291  2.3020  2.5878403 1.655e-246
-#> platelet     -0.4519 0.16738 -0.7799 -0.1238183  6.940e-03
-#> tcell        -0.4935 0.25140 -0.9862 -0.0007153  4.967e-02
-#> age           0.2746 0.06538  0.1465  0.4027874  2.658e-05
-estimate(rmst302)
+#> (Intercept)   2.4449 0.07291  2.3020  2.5878254 1.618e-246
+#> platelet     -0.4519 0.16739 -0.7800 -0.1238266  6.940e-03
+#> tcell        -0.4937 0.25146 -0.9866 -0.0008656  4.960e-02
+#> age           0.2747 0.06538  0.1466  0.4028542  2.648e-05
+estimate(rmtl302)
 #>             Estimate Std.Err    2.5%  97.5%   P-value
-#> (Intercept)  1.45850  0.1362  1.1915 1.7255 9.617e-27
-#> platelet    -0.01886  0.2224 -0.4548 0.4171 9.324e-01
-#> tcell        0.40810  0.2648 -0.1108 0.9270 1.232e-01
-#> age          0.04566  0.1191 -0.1878 0.2791 7.014e-01
+#> (Intercept)  1.45849  0.1362  1.1915 1.7255 9.621e-27
+#> platelet    -0.01890  0.2224 -0.4548 0.4170 9.323e-01
+#> tcell        0.40759  0.2648 -0.1113 0.9265 1.237e-01
+#> age          0.04576  0.1191 -0.1877 0.2792 7.008e-01
 
-## percentage of total cumulative incidence due to cause 1
-rmtlratioI <- rmtlRatio(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=1)
+## Percentage of total RMTL due to cause 1
+rmtlratioI <- rmtlRatio(Event(time,cause)~platelet+tcell+age, bmt, time=30, cause=1)
 summary(rmtlratioI)
 #>    n events
 #>  408    154
@@ -181,82 +260,44 @@ summary(rmtlratioI)
 #>  408 clusters
 #> coeffients:
 #>              Estimate   Std.Err      2.5%     97.5% P-value
-#> (Intercept)  0.977101  0.178189  0.627856  1.326345  0.0000
-#> platelet    -0.412142  0.323288 -1.045775  0.221490  0.2024
-#> tcell       -0.855816  0.419188 -1.677408 -0.034223  0.0412
-#> age          0.217651  0.168416 -0.112439  0.547741  0.1962
+#> (Intercept)  0.973135  0.177855  0.624545  1.321725  0.0000
+#> platelet    -0.402875  0.323413 -1.036753  0.231002  0.2129
+#> tcell       -0.845357  0.419214 -1.667002 -0.023712  0.0437
+#> age          0.214462  0.168387 -0.115571  0.544495  0.2028
 #> 
 #> exp(coeffients):
 #>             Estimate    2.5%  97.5%
-#> (Intercept)  2.65674 1.87359 3.7672
-#> platelet     0.66223 0.35142 1.2479
-#> tcell        0.42494 0.18686 0.9664
-#> age          1.24315 0.89365 1.7293
+#> (Intercept)  2.64623 1.86740 3.7499
+#> platelet     0.66840 0.35460 1.2599
+#> tcell        0.42940 0.18881 0.9766
+#> age          1.23920 0.89086 1.7237
 #> 
 #> 
 
-pp <- predict(rmtlratioI,bmt[1:5,])
+newdata <- data.frame(platelet=1, tcell=1, age=1)
+pp <- predict(rmtlratioI, newdata)
 pp
-#>        pred         se     lower     upper
-#> 1 0.7349115 0.03513428 0.6660483 0.8037747
-#> 2 0.7529172 0.03812709 0.6781881 0.8276463
-#> 3 0.7839582 0.05014699 0.6856701 0.8822463
-#> 4 0.7828518 0.04965019 0.6855374 0.8801661
-#> 5 0.7243286 0.03566672 0.6544218 0.7942353
+#>        pred        se    lower     upper
+#> 1 0.4848458 0.1092229 0.270769 0.6989226
 
-newdata <- data.frame(platelet=1,tcell=1,age=1)
-## percentage of total cumulative incidence due to cause 1
-cifratio <- binregRatio(Event(time,cause)~platelet+tcell+age,bmt,time=30,cause=1)
+## Percentage of total cumulative incidence due to cause 1
+cifratio <- binregRatio(Event(time,cause)~platelet+tcell+age, bmt, time=30, cause=1, model="cif")
 summary(cifratio)
 #>    n events
 #>  408    154
 #> 
 #>  408 clusters
 #> coeffients:
-#>             Estimate  Std.Err     2.5%    97.5% P-value
-#> (Intercept)  0.91183  0.17554  0.56778  1.25589  0.0000
-#> platelet    -0.46563  0.31922 -1.09128  0.16003  0.1447
-#> tcell       -1.06111  0.41568 -1.87583 -0.24639  0.0107
-#> age          0.21200  0.16115 -0.10384  0.52784  0.1883
-#> 
-#> exp(coeffients):
-#>             Estimate    2.5%  97.5%
-#> (Intercept)  2.48888 1.76434 3.5109
-#> platelet     0.62774 0.33579 1.1735
-#> tcell        0.34607 0.15323 0.7816
-#> age          1.23615 0.90137 1.6953
+#>               Estimate    Std.Err       2.5%      97.5% P-value
+#> (Intercept)  0.7239521  0.0355963  0.6541846  0.7937196  0.0000
+#> platelet    -0.0889619  0.0730427 -0.2321228  0.0541991  0.2232
+#> tcell       -0.1951701  0.1005726 -0.3922888  0.0019486  0.0523
+#> age          0.0452930  0.0358278 -0.0249281  0.1155142  0.2062
 #> 
 #> 
-pp <- predict(cifratio,newdata)
+#> 
+pp <- predict(cifratio, newdata)
 pp
-#>        pred       se     lower    upper
-#> 1 0.4006137 0.106969 0.1909544 0.610273
-
-rmtlratioI <- binregRatio(Event(time,cause)~platelet+tcell+age,bmt,
-                               time=30,cause=1,outcome="rmtl")
-summary(rmtlratioI)
-#>    n events
-#>  408    154
-#> 
-#>  408 clusters
-#> coeffients:
-#>              Estimate   Std.Err      2.5%     97.5% P-value
-#> (Intercept)  0.977101  0.178189  0.627856  1.326345  0.0000
-#> platelet    -0.412142  0.323288 -1.045775  0.221490  0.2024
-#> tcell       -0.855816  0.419188 -1.677408 -0.034223  0.0412
-#> age          0.217651  0.168416 -0.112439  0.547741  0.1962
-#> 
-#> exp(coeffients):
-#>             Estimate    2.5%  97.5%
-#> (Intercept)  2.65674 1.87359 3.7672
-#> platelet     0.66223 0.35142 1.2479
-#> tcell        0.42494 0.18686 0.9664
-#> age          1.24315 0.89365 1.7293
-#> 
-#> 
-
-pp <- predict(rmtlratioI,newdata)
-pp
-#>        pred        se    lower     upper
-#> 1 0.4817067 0.1092932 0.267492 0.6959214
+#>        pred        se     lower     upper
+#> 1 0.4851132 0.1050915 0.2791377 0.6910887
 ```

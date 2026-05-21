@@ -6,9 +6,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Analysis of bivariate binomial data: Twin analysis • mets</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="../katex-auto.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Analysis of bivariate binomial data: Twin analysis">
 </head>
@@ -20,7 +21,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,10 +38,10 @@
     <li><a class="dropdown-item" href="../articles/binomial-family.html">Analysis of multivariate binomial data: family analysis</a></li>
     <li><a class="dropdown-item" href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a></li>
     <li><a class="dropdown-item" href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a></li>
-    <li><a class="dropdown-item" href="../articles/binreg-TRS.html">Two-Stage Randomization for for Competing risks and Survival outcomes</a></li>
+    <li><a class="dropdown-item" href="../articles/binreg-TRS.html">Two-Stage Randomization for Competing risks and Survival outcomes</a></li>
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
-    <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">Cooking Survival Data: 5-Minute Recipes</a></li>
     <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
@@ -80,7 +81,7 @@
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2026-01-14</h4>
+            <h4 data-toc-skip class="date">2026-05-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/binomial-twin.Rmd" class="external-link"><code>vignettes/binomial-twin.Rmd</code></a></small>
       <div class="d-none name"><code>binomial-twin.Rmd</code></div>
@@ -91,14 +92,14 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>When looking at bivariate binomial data with the aim of learning
-about the dependence that is present, possibly after correcting for some
-covariates many models are available.</p>
+<p>When analysing bivariate binomial data with the aim of learning about
+the dependence present, possibly after adjusting for covariates, many
+models are available.</p>
 <ul>
-<li>Random-effects models logistic regression covered elsewhere (glmer
-in lme4).</li>
+<li>Random-effects logistic regression models covered elsewhere
+(<code>glmer</code> in <code>lme4</code>).</li>
 </ul>
-<p>in the mets package you can fit the</p>
+<p>In the mets package you can fit the</p>
 <ul>
 <li><p>Pairwise odds ratio model</p></li>
 <li>
@@ -119,22 +120,18 @@ ACE, ADE ,AE and so forth.</li>
 </ul>
 <p>Typically it can be hard or impossible to specify random effects
 models with special structure among the parameters of the random
-effects. This is possible in our models.</p>
-<p>To be concrete about the model structure assume that we have paired
-binomial data
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>Y</mi><mn>1</mn></msub><mo>,</mo><msub><mi>Y</mi><mn>2</mn></msub><mo>,</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><msub><mi>X</mi><mo stretchy="false" form="postfix">)</mo></msub><mn>2</mn></mrow><annotation encoding="application/x-tex">(Y_1, Y_2, X_1, X_)2</annotation></semantics></math>
-where the responses are
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mn>1</mn></msub><mo>,</mo><msub><mi>Y</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">Y_1, Y_2</annotation></semantics></math>
-and we have covariates
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><msub><mi>X</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">X_1, X_2</annotation></semantics></math>.</p>
+effects. This is possible with our models.</p>
+<p>To be concrete about the model structure, assume that we have paired
+binomial data <span class="math inline">(Y_1, Y_2, X_1, X_2)</span>
+where the responses are <span class="math inline">Y_1, Y_2</span> and
+the covariates are <span class="math inline">X_1, X_2</span>.</p>
 <p>We start by giving a brief description of these different models.
 First we for bivariate data one can specify the marginal probability
-using logistic regression models
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>l</mi><mi>o</mi><mi>g</mi><mi>i</mi><mi>t</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>α</mi><mi>i</mi></msub><mo>+</mo><msubsup><mi>X</mi><mi>i</mi><mi>T</mi></msubsup><mi>β</mi><mi>i</mi><mo>=</mo><mn>1</mn><mo>,</mo><mn>2</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">
+using logistic regression models <span class="math display">
 logit(P(Y_i=1|X_i)) = \alpha_i + X_i^T \beta  i=1,2.
-</annotation></semantics></math> These model can be estimated under
-working independence .</p>
-<p>A typical twin analysis will typically consist of looking at both</p>
+</span> These models can be estimated under working independence (Zeger
+and Liang, 1986).</p>
+<p>A typical twin analysis will consist of looking at both</p>
 <ul>
 <li><p>Pairwise odds ratio model</p></li>
 <li><p>Bivariate Probit model</p></li>
@@ -147,179 +144,122 @@ bivariate probit model.</p>
 <div class="section level2">
 <h2 id="biprobit-with-random-effects">Biprobit with random effects<a class="anchor" aria-label="anchor" href="#biprobit-with-random-effects"></a>
 </h2>
-<p>For these model we assume that given random effects
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
-and a covariate vector
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mn>12</mn></msub><annotation encoding="application/x-tex">V_{12}</annotation></semantics></math>
-we have independent logistic regression models
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mi>r</mi><mi>o</mi><mi>b</mi><mi>i</mi><mi>t</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><msub><mi>X</mi><mi>i</mi></msub><mo>,</mo><mi>Z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>α</mi><mi>i</mi></msub><mo>+</mo><msubsup><mi>X</mi><mi>i</mi><mi>T</mi></msubsup><mi>β</mi><mo>+</mo><msubsup><mi>V</mi><mn>12</mn><mi>T</mi></msubsup><mi>Z</mi><mi>i</mi><mo>=</mo><mn>1</mn><mo>,</mo><mn>2</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">
-probit(P(Y_i=1|X_i, Z)) = \alpha_i + X_i^T \beta + V_{12}^T Z  i=1,2.
-</annotation></semantics></math> where Z$ is a bivariate normal
-distribution with some covariance
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Σ</mi><annotation encoding="application/x-tex">\Sigma</annotation></semantics></math>.
-The general covariance structure
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Σ</mi><annotation encoding="application/x-tex">\Sigma</annotation></semantics></math>
-makes the model very flexible.</p>
+<p>For these models we assume that given random effects <span class="math inline">Z</span> and a covariate vector <span class="math inline">V_{12}</span> we have independent probit regression
+models <span class="math display">
+\mbox{probit}(P(Y_i=1|X_i, Z)) = \alpha_i + X_i^T \beta + V_{12}^T
+Z,  \quad i=1,2.
+</span> where <span class="math inline">Z</span> follows a bivariate
+normal distribution with covariance <span class="math inline">\Sigma</span>. The general covariance structure
+<span class="math inline">\Sigma</span> makes the model very
+flexible.</p>
 <p>We note that</p>
 <ul>
-<li>Paramters
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
-are subject specific</li>
-<li>The
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Σ</mi><annotation encoding="application/x-tex">\Sigma</annotation></semantics></math>
-will reflect dependence</li>
+<li>Parameters <span class="math inline">\beta</span> are
+subject-specific</li>
+<li>
+<span class="math inline">\Sigma</span> reflects the dependence
+structure</li>
 </ul>
-<p>The more standard link function
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>l</mi><mi>o</mi><mi>g</mi><mi>i</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">logit</annotation></semantics></math>
-rather than the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mi>r</mi><mi>o</mi><mi>b</mi><mi>i</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">probit</annotation></semantics></math>
-link is often used and implemented in for example . The advantage is
-that one now gets an odds-ratio interpretation of the subject specific
-effects, but one then needs numerical integration to fit the model.</p>
+<p>The more standard <span class="math inline">\mbox{logit}</span> link
+rather than the <span class="math inline">\mbox{probit}</span> link is
+often used and implemented in, for example, Tutz and Hennevogl (1996).
+The advantage is that one obtains an odds-ratio interpretation of the
+subject-specific effects, but numerical integration is then needed to
+fit the model.</p>
 <div class="section level3">
 <h3 id="pairwise-odds-ratio-model">Pairwise odds ratio model<a class="anchor" aria-label="anchor" href="#pairwise-odds-ratio-model"></a>
 </h3>
-<p>Now the pairwise odds ratio model the specifies that given $ X_1, X_2
-$ the marginal models are
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>l</mi><mi>o</mi><mi>g</mi><mi>i</mi><mi>t</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>α</mi><mi>i</mi></msub><mo>+</mo><msubsup><mi>X</mi><mi>i</mi><mi>T</mi></msubsup><mi>β</mi><mi>i</mi><mo>=</mo><mn>1</mn><mo>,</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">
+<p>The pairwise odds ratio model specifies that given <span class="math inline">X_1, X_2</span> the marginal models are <span class="math display">
 logit(P(Y_i=1|X_i)) = \alpha_i + X_i^T \beta  i=1,2
-</annotation></semantics></math></p>
-<p>The primary object of interest are the odds ratio between
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mn>1</mn></msub><annotation encoding="application/x-tex">Y_{1}</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mn>2</mn></msub><annotation encoding="application/x-tex">Y_{2}</annotation></semantics></math><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>γ</mi><mn>12</mn></msub><mo>=</mo><mfrac><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mo>=</mo><mn>1</mn><mo>,</mo><msub><mi>Y</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mo>=</mo><mn>0</mn><mo>,</mo><msub><mi>Y</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo>=</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mo>=</mo><mn>1</mn><mo>,</mo><msub><mi>Y</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo>=</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><mo>=</mo><mn>0</mn><mo>,</mo><msub><mi>Y</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex">
-\gamma_{12} = \frac{ P(  Y_{ki} =1 , Y_{kj} =1) P(  Y_{ki} =0 , Y_{kj} =0) }{ 
+</span></p>
+<p>The primary object of interest are the odds ratio between <span class="math inline">Y_{1}</span> and <span class="math inline">Y_{2}</span> <span class="math display">
+\gamma_{12} = \frac{ P(  Y_{ki} =1 , Y_{kj} =1) P(  Y_{ki} =0 , Y_{kj}
+=0) }{
   P(  Y_{ki} =1 , Y_{kj} =0) P(  Y_{ki} =0 , Y_{kj} =1) }
-</annotation></semantics></math> given
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mrow><mi>k</mi><mi>i</mi></mrow></msub><annotation encoding="application/x-tex">X_{ki}</annotation></semantics></math>,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mrow><mi>k</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">X_{kj}</annotation></semantics></math>,
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mrow><mi>k</mi><mi>j</mi><mi>i</mi></mrow></msub><annotation encoding="application/x-tex">Z_{kji}</annotation></semantics></math>.</p>
-<p>We model the odds ratio with the regression
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>γ</mi><mn>12</mn></msub><mo>=</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>Z</mi><mn>12</mn><mi>T</mi></msubsup><mi>λ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+</span> given <span class="math inline">X_{ki}</span>, <span class="math inline">X_{kj}</span>, and <span class="math inline">Z_{kji}</span>.</p>
+<p>We model the odds ratio with the regression <span class="math display">
 \gamma_{12} = \exp( Z_{12}^T \lambda)
-</annotation></semantics></math> Where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mn>12</mn></msub><annotation encoding="application/x-tex">Z_{12}</annotation></semantics></math>
-are some covarites that may influence the odds-ratio between between
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mn>1</mn></msub><annotation encoding="application/x-tex">Y_{1}</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mn>2</mn></msub><annotation encoding="application/x-tex">Y_{2}</annotation></semantics></math>
-and contains the marginal covariates, . This odds-ratio is given
-covariates as well as marginal covariates. The odds-ratio and marginals
-specify the joint bivariate distribution via the so-called
-Placckett-distribution.</p>
-<p>One way of fitting this model is the ALR algoritm, the alternating
-logistic regression ahd this has been described in several papers . We
-here simply estimate the parameters in a two stage-procedure</p>
+</span> Where <span class="math inline">Z_{12}</span> are covariates
+that may influence the odds ratio between <span class="math inline">Y_{1}</span> and <span class="math inline">Y_{2}</span> and contains the marginal covariates .
+This odds-ratio is given covariates as well as marginal covariates. The
+odds-ratio and marginals specify the joint bivariate distribution via
+the so-called Placckett-distribution.</p>
+<p>One way of fitting this model is the ALR (alternating logistic
+regression) algorithm, described in several papers (Kuk, 2004; Kuk,
+2007; Qaqish, 2012). We estimate the parameters in a two-stage
+procedure:</p>
 <ul>
 <li>Estimating the marginal parameters via GEE</li>
 <li>Using marginal estimates, estimate dependence parameters</li>
 </ul>
-<p>This gives efficient estimates of the dependence parameters because
-of orthogonality, but some efficiency may be gained for the marginal
-parameters by using the full likelihood or iterative fitting such as for
-the ALR.</p>
-<p>The pairwise odds-ratio model is very useful, but one do not have a
+<p>This gives efficient estimates of the dependence parameters due to
+orthogonality, though some efficiency may be gained for the marginal
+parameters by using the full likelihood or iterative fitting such as
+ALR.</p>
+<p>The pairwise odds-ratio model is very useful, but one does not have a
 random effects model.</p>
 </div>
 <div class="section level3">
 <h3 id="additive-gamma-model">Additive gamma model<a class="anchor" aria-label="anchor" href="#additive-gamma-model"></a>
 </h3>
-<p>Again we operate under marginal logistic regression models are
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>l</mi><mi>o</mi><mi>g</mi><mi>i</mi><mi>t</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>α</mi><mi>i</mi></msub><mo>+</mo><msubsup><mi>X</mi><mi>i</mi><mi>T</mi></msubsup><mi>β</mi><mi>i</mi><mo>=</mo><mn>1</mn><mo>,</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">
+<p>Again we operate under marginal logistic regression models are <span class="math display">
 logit(P(Y_i=1|X_i)) = \alpha_i + X_i^T \beta  i=1,2
-</annotation></semantics></math></p>
-<p>First with just one random effect
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
-we assume that conditional on
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
-the responses are independent and follow the model
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>l</mi><mi>o</mi><mi>g</mi><mi>i</mi><mi>t</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><msub><mi>X</mi><mi>i</mi></msub><mo>,</mo><mi>Z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mi>Z</mi><mo>⋅</mo><msup><mi>Ψ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>λ</mi><mo>•</mo></msub><mo>,</mo><msub><mi>λ</mi><mo>•</mo></msub><mo>,</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
-logit(P(Y_i=1|X_i,Z)) = exp( -Z \cdot \Psi^{-1}(\lambda_{\bullet},\lambda_{\bullet},P(Y_i=1|X_i)) )  
-</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Ψ</mi><annotation encoding="application/x-tex">\Psi</annotation></semantics></math>
-is the laplace transform of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
-where we assume that
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
-is gamma distributed with variance
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>λ</mi><mo>•</mo><mrow><mo>−</mo><mn>1</mn></mrow></msubsup><annotation encoding="application/x-tex">\lambda_{\bullet}^{-1}</annotation></semantics></math>
-and mean 1. In general
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Ψ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>λ</mi><mn>1</mn></msub><mo>,</mo><msub><mi>λ</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\Psi(\lambda_1,\lambda_2)</annotation></semantics></math>
-is the laplace transform of a Gamma distributed random effect with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
-with mean
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mn>1</mn></msub><mi>/</mi><msub><mi>λ</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">\lambda_1/\lambda_2</annotation></semantics></math>
-and variance
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mn>1</mn></msub><mi>/</mi><msubsup><mi>λ</mi><mn>2</mn><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">\lambda_1/\lambda_2^2</annotation></semantics></math>.</p>
+</span></p>
+<p>First with just one random effect <span class="math inline">Z</span>
+we assume that conditional on <span class="math inline">Z</span> the
+responses are independent and follow the model <span class="math display">
+logit(P(Y_i=1|X_i,Z)) = exp( -Z \cdot
+\Psi^{-1}(\lambda_{\bullet},\lambda_{\bullet},P(Y_i=1|X_i)) )  
+</span> where <span class="math inline">\Psi</span> is the laplace
+transform of <span class="math inline">Z</span> where we assume that
+<span class="math inline">Z</span> is gamma distributed with variance
+<span class="math inline">\lambda_{\bullet}^{-1}</span> and mean 1. In
+general <span class="math inline">\Psi(\lambda_1,\lambda_2)</span> is
+the laplace transform of a Gamma distributed random effect with <span class="math inline">Z</span> with mean <span class="math inline">\lambda_1/\lambda_2</span> and variance <span class="math inline">\lambda_1/\lambda_2^2</span>.</p>
 <p>We fit this model by</p>
 <ul>
 <li>Estimating the marginal parameters via GEE</li>
 <li>Using marginal estimates, estimate dependence parameters</li>
 </ul>
-<p>To deal with multiple random effects we consider random effects
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mi>i</mi></msub><mi>i</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><mi>d</mi></mrow><annotation encoding="application/x-tex">Z_i  i=1,...,d</annotation></semantics></math>
-such that
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mi>i</mi></msub><annotation encoding="application/x-tex">Z_i</annotation></semantics></math>
-is gamma distributed with * mean:
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mi>j</mi></msub><mi>/</mi><msub><mi>λ</mi><mo>•</mo></msub></mrow><annotation encoding="application/x-tex">\lambda_j/\lambda_{\bullet}</annotation></semantics></math>
-* variance:
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mi>j</mi></msub><mi>/</mi><msubsup><mi>λ</mi><mo>•</mo><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">\lambda_j/\lambda_{\bullet}^2</annotation></semantics></math>,
-where we define the scalar
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>λ</mi><mo>•</mo></msub><annotation encoding="application/x-tex">\lambda_{\bullet}</annotation></semantics></math>
+<p>To deal with multiple random effects we consider random effects <span class="math inline">Z_i  i=1,...,d</span> such that <span class="math inline">Z_i</span> is gamma distributed with * mean: <span class="math inline">\lambda_j/\lambda_{\bullet}</span> * variance: <span class="math inline">\lambda_j/\lambda_{\bullet}^2</span>, where we
+define the scalar <span class="math inline">\lambda_{\bullet}</span>
 below.</p>
-<p>Now given a cluster-specific design vector
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mn>12</mn></msub><annotation encoding="application/x-tex">V_{12}</annotation></semantics></math>
-we assume that
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>V</mi><mn>12</mn><mi>T</mi></msubsup><mi>Z</mi></mrow><annotation encoding="application/x-tex">
+<p>Now given a cluster-specific design vector <span class="math inline">V_{12}</span> we assume that <span class="math display">
 V_{12}^T Z
-</annotation></semantics></math> is gamma distributed with mean 1 and
-variance
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>λ</mi><mo>•</mo><mrow><mo>−</mo><mn>1</mn></mrow></msubsup><annotation encoding="application/x-tex">\lambda_{\bullet}^{-1}</annotation></semantics></math>
-such that critically the random effect variance is the same for all
-clusters. That is
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mo>•</mo></msub><mo>=</mo><msubsup><mi>V</mi><mn>12</mn><mi>T</mi></msubsup><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>λ</mi><mn>1</mn></msub><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msub><mi>λ</mi><mi>d</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">
- \lambda_{\bullet} = V_{12}^T (\lambda_1,...,\lambda_d)^T 
-</annotation></semantics></math> We return to some specific models
-below, and show how to fit the ACE and AE model using this set-up.</p>
+</span> is gamma distributed with mean 1 and variance <span class="math inline">\lambda_{\bullet}^{-1}</span> such that critically
+the random effect variance is the same for all clusters. That is <span class="math display">
+\lambda_{\bullet} = V_{12}^T (\lambda_1,...,\lambda_d)^T
+</span> We return to some specific models below, and show how to fit the
+ACE and AE model using this set-up.</p>
 <p>One last option in the model-specification is to specify how the
-parameters
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mn>1</mn></msub><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msub><mi>λ</mi><mi>d</mi></msub></mrow><annotation encoding="application/x-tex">\lambda_1,...,\lambda_d</annotation></semantics></math>
-are related. We thus can specify a matrix
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
-of dimension
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>×</mo><mi>d</mi></mrow><annotation encoding="application/x-tex">p \times d</annotation></semantics></math>
-such that
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>λ</mi><mn>1</mn></msub><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msub><mi>λ</mi><mi>d</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup><mo>=</mo><mi>M</mi><mi>θ</mi></mrow><annotation encoding="application/x-tex">
- (\lambda_1,...,\lambda_d)^T  = M \theta
-</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math>
-is d-dimensional. If
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
-is diagonal we have no restrictions on parameters.</p>
+parameters <span class="math inline">\lambda_1,...,\lambda_d</span> are
+related. We thus can specify a matrix <span class="math inline">M</span>
+of dimension <span class="math inline">p \times d</span> such that <span class="math display">
+(\lambda_1,...,\lambda_d)^T  = M \theta
+</span> where <span class="math inline">\theta</span> is d-dimensional.
+If <span class="math inline">M</span> is diagonal we have no
+restrictions on parameters.</p>
 <p>This parametrization is obtained with the var.par=0 option that thus
-estimates
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math>.</p>
+estimates <span class="math inline">\theta</span>.</p>
 <p>The DEFAULT parametrization instead estimates the variances of the
-random effecs (var.par=1) via the parameters
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ν</mi><annotation encoding="application/x-tex">\nu</annotation></semantics></math><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mi>ν</mi><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>λ</mi><mn>1</mn></msub><mi>/</mi><msubsup><mi>λ</mi><mo>•</mo><mn>2</mn></msubsup><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msub><mi>λ</mi><mi>d</mi></msub><mi>/</mi><msubsup><mi>λ</mi><mo>•</mo><mn>2</mn></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">
- M \nu = ( \lambda_1/\lambda_{\bullet}^2, ...,\lambda_d/\lambda_{\bullet}^2)^T
-</annotation></semantics></math></p>
-<p>The basic modelling assumption is now that given random effects
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Z</mi><mn>1</mn></msub><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msub><mi>Z</mi><mi>d</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Z=(Z_1,...,Z_d)</annotation></semantics></math>
-we have independent probabilites
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>l</mi><mi>o</mi><mi>g</mi><mi>i</mi><mi>t</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><msub><mi>X</mi><mi>i</mi></msub><mo>,</mo><mi>Z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msubsup><mi>V</mi><mrow><mn>12</mn><mo>,</mo><mi>i</mi></mrow><mi>T</mi></msubsup><mi>Z</mi><mo>⋅</mo><msup><mi>Ψ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>λ</mi><mo>•</mo></msub><mo>,</mo><msub><mi>λ</mi><mo>•</mo></msub><mo>,</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mi>i</mi><mo>=</mo><mn>1</mn><mo>,</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">
-logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot \Psi^{-1}(\lambda_{\bullet},\lambda_{\bullet},P(Y_i=1|X_i)) )   i=1,2
-</annotation></semantics></math></p>
+random effects (var.par=1) via the parameters <span class="math inline">\nu</span> <span class="math display">
+M \nu = ( \lambda_1/\lambda_{\bullet}^2,
+...,\lambda_d/\lambda_{\bullet}^2)^T
+</span></p>
+<p>The basic modelling assumption is now that given random effects <span class="math inline">Z=(Z_1,...,Z_d)</span> we have independent
+probabilites <span class="math display">
+logit(P(Y_i=1|X_i,Z)) = exp( -V_{12,i}^T Z \cdot
+\Psi^{-1}(\lambda_{\bullet},\lambda_{\bullet},P(Y_i=1|X_i)) )   i=1,2
+</span></p>
 <p>We fit this model by</p>
 <ul>
 <li>Estimating the marginal parameters via GEE</li>
 <li>Using marginal estimates, estimate dependence parameters</li>
 </ul>
-<p>Even though the model not formaly in this formulation allows negative
-correlation in practice the paramters can be negative and this reflects
-negative correlation. An advanatage is that no numerical integration is
-needed.</p>
+<p>Even though the model not formally in this formulation allows
+negative correlation in practice the parameters can be negative and this
+reflects negative correlation. An advantage is that no numerical
+integration is needed.</p>
 </div>
 <div class="section level3">
 <h3 id="the-twin-stutter-data">The twin-stutter data<a class="anchor" aria-label="anchor" href="#the-twin-stutter-data"></a>
@@ -379,7 +319,7 @@ the risk of stuttering.</p>
 <p>Now estimating the OR parameter. We see a strong dependence with an
 OR at around 8 that is clearly significant.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">bina</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span><span class="op">(</span><span class="va">margbin</span>,data<span class="op">=</span><span class="va">twinstut</span>,var.link<span class="op">=</span><span class="fl">1</span>,</span>
+<code class="sourceCode R"><span><span class="va">bina</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial_twostage.html">binomial_twostage</a></span><span class="op">(</span><span class="va">margbin</span>,data<span class="op">=</span><span class="va">twinstut</span>,var.link<span class="op">=</span><span class="fl">1</span>,</span>
 <span>                       clusters<span class="op">=</span><span class="va">twinstut</span><span class="op">$</span><span class="va">tvparnr</span>,detail<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bina</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Odds-Ratio (Plackett) model </span></span>
@@ -398,14 +338,14 @@ OR at around 8 that is clearly significant.</p>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
 <p>Now, and more interestingly, we consider an OR that depends on
-zygosity and note that MZ have a much larger OR than DZ twins. This type
-of trait is somewhat complicated to interpret, but clearly, one option
-is that that there is a genetic effect, alternatively there might be a
-stronger environmental effect for MZ twins.</p>
+zygosity and note that MZ twins have a much larger OR than DZ twins.
+This type of result is somewhat complex to interpret: one possibility is
+a genetic effect, another is a stronger shared environmental effect for
+MZ twins.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># design for OR dependence </span></span>
 <span><span class="va">theta.des</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span> <span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">zyg</span><span class="op">)</span>,data<span class="op">=</span><span class="va">twinstut</span><span class="op">)</span></span>
-<span><span class="va">bin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span><span class="op">(</span><span class="va">margbin</span>,data<span class="op">=</span><span class="va">twinstut</span>,var.link<span class="op">=</span><span class="fl">1</span>,</span>
+<span><span class="va">bin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial_twostage.html">binomial_twostage</a></span><span class="op">(</span><span class="va">margbin</span>,data<span class="op">=</span><span class="va">twinstut</span>,var.link<span class="op">=</span><span class="fl">1</span>,</span>
 <span>                          clusters<span class="op">=</span><span class="va">twinstut</span><span class="op">$</span><span class="va">tvparnr</span>,theta.des<span class="op">=</span><span class="va">theta.des</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bin</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Odds-Ratio (Plackett) model </span></span>
@@ -426,14 +366,14 @@ stronger environmental effect for MZ twins.</p>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
 <p>We now consider further regression modelling of the OR structure by
-considering possible interactions between sex and zygozsity. We see that
+considering possible interactions between sex and zygosity. We see that
 MZ has a much higher dependence and that males have a much lower
 dependence. We tested for interaction in this model and these were not
 significant.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">twinstut</span><span class="op">$</span><span class="va">cage</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">twinstut</span><span class="op">$</span><span class="va">age</span><span class="op">)</span></span>
 <span><span class="va">theta.des</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span> <span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">zyg</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span>,data<span class="op">=</span><span class="va">twinstut</span><span class="op">)</span></span>
-<span><span class="va">bina</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span><span class="op">(</span><span class="va">margbin</span>,data<span class="op">=</span><span class="va">twinstut</span>,var.link<span class="op">=</span><span class="fl">1</span>,</span>
+<span><span class="va">bina</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial_twostage.html">binomial_twostage</a></span><span class="op">(</span><span class="va">margbin</span>,data<span class="op">=</span><span class="va">twinstut</span>,var.link<span class="op">=</span><span class="fl">1</span>,</span>
 <span>                          clusters<span class="op">=</span><span class="va">twinstut</span><span class="op">$</span><span class="va">tvparnr</span>,theta.des<span class="op">=</span><span class="va">theta.des</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bina</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Dependence parameter for Odds-Ratio (Plackett) model </span></span>
@@ -457,76 +397,9 @@ significant.</p>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="alternative-syntax">Alternative syntax<a class="anchor" aria-label="anchor" href="#alternative-syntax"></a>
-</h3>
-<p>We now demonstrate how the models can fitted jointly and with anohter
-syntax, that ofcourse just fits the marginal model and subsequently fits
-the pairwise OR model.</p>
-<p>First noticing as before that MZ twins have a much higher
-dependence.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="co"># refers to zygosity of first subject in eash pair : zyg1</span></span>
-<span> <span class="co"># could also use zyg2 (since zyg2=zyg1 within twinpair's)</span></span>
-<span> <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/easy.binomial.twostage.html">easy.binomial.twostage</a></span><span class="op">(</span><span class="va">stutter</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span><span class="op">+</span><span class="va">age</span>,data<span class="op">=</span><span class="va">twinstut</span>,</span>
-<span>                response<span class="op">=</span><span class="st">"binstut"</span>,id<span class="op">=</span><span class="st">"tvparnr"</span>,var.link<span class="op">=</span><span class="fl">1</span>,</span>
-<span>                theta.formula<span class="op">=</span><span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">zyg1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Dependence parameter for Odds-Ratio (Plackett) model </span></span>
-<span><span class="co">#&gt; With log-link</span></span>
-<span><span class="co">#&gt; $estimates</span></span>
-<span><span class="co">#&gt;                    theta        se</span></span>
-<span><span class="co">#&gt; factor(zyg1)dz 0.1624942 1.0050473</span></span>
-<span><span class="co">#&gt; factor(zyg1)mz 3.7460315 0.7259771</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $or</span></span>
-<span><span class="co">#&gt;                Estimate Std.Err    2.5%   97.5% P-value</span></span>
-<span><span class="co">#&gt; factor(zyg1)dz    1.176   1.182  -1.141   3.494  0.3197</span></span>
-<span><span class="co">#&gt; factor(zyg1)mz   42.353  30.747 -17.910 102.616  0.1684</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $type</span></span>
-<span><span class="co">#&gt; [1] "plackett"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; attr(,"class")</span></span>
-<span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
-<p>Now considering all data and estimating separate effects for the OR
-for opposite sex DZ twins and same sex twins. We here find that os twins
-are not markedly different from the same sex DZ twins.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="co"># refers to zygosity of first subject in eash pair : zyg1</span></span>
-<span> <span class="co"># could also use zyg2 (since zyg2=zyg1 within twinpair's))</span></span>
-<span> </span>
-<span> <span class="va">desfs</span><span class="op">&lt;-</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">num1</span><span class="op">=</span><span class="st">"zyg1"</span>,<span class="va">num2</span><span class="op">=</span><span class="st">"zyg2"</span><span class="op">)</span></span>
-<span>         <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="va">num1</span><span class="op">]</span><span class="op">==</span><span class="st">"dz"</span>,<span class="va">x</span><span class="op">[</span><span class="va">num1</span><span class="op">]</span><span class="op">==</span><span class="st">"mz"</span>,<span class="va">x</span><span class="op">[</span><span class="va">num1</span><span class="op">]</span><span class="op">==</span><span class="st">"os"</span><span class="op">)</span><span class="op">*</span><span class="fl">1</span></span>
-<span>     </span>
-<span> <span class="va">margbinall</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">binstut</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span><span class="op">+</span><span class="va">age</span>,data<span class="op">=</span><span class="va">twinsall</span>,family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span> <span class="va">out3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/easy.binomial.twostage.html">easy.binomial.twostage</a></span><span class="op">(</span><span class="va">binstut</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span><span class="op">+</span><span class="va">age</span>,</span>
-<span>       data<span class="op">=</span><span class="va">twinsall</span>,response<span class="op">=</span><span class="st">"binstut"</span>,id<span class="op">=</span><span class="st">"tvparnr"</span>,var.link<span class="op">=</span><span class="fl">1</span>,</span>
-<span>       theta.formula<span class="op">=</span><span class="va">desfs</span>,desnames<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dz"</span>,<span class="st">"mz"</span>,<span class="st">"os"</span><span class="op">)</span><span class="op">)</span></span>
-<span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">out3</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Dependence parameter for Odds-Ratio (Plackett) model </span></span>
-<span><span class="co">#&gt; With log-link</span></span>
-<span><span class="co">#&gt; $estimates</span></span>
-<span><span class="co">#&gt;        theta        se</span></span>
-<span><span class="co">#&gt; dz 0.5278527 0.2396796</span></span>
-<span><span class="co">#&gt; mz 3.4850037 0.1864190</span></span>
-<span><span class="co">#&gt; os 0.7802940 0.2894394</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $or</span></span>
-<span><span class="co">#&gt;    Estimate Std.Err    2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; dz    1.695  0.4063  0.8989  2.492 3.016e-05</span></span>
-<span><span class="co">#&gt; mz   32.623  6.0815 20.7031 44.542 8.128e-08</span></span>
-<span><span class="co">#&gt; os    2.182  0.6316  0.9442  3.420 5.504e-04</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $type</span></span>
-<span><span class="co">#&gt; [1] "plackett"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; attr(,"class")</span></span>
-<span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
-</div>
-<div class="section level3">
 <h3 id="bivariate-probit-model">Bivariate Probit model<a class="anchor" aria-label="anchor" href="#bivariate-probit-model"></a>
 </h3>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">twinstut</span><span class="op">)</span></span>
 <span><span class="va">twinstut</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">twinstut</span>,<span class="va">zyg</span><span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mz"</span>,<span class="st">"dz"</span><span class="op">)</span><span class="op">)</span></span>
@@ -545,7 +418,7 @@ doing by comparing the correlations of MZ and DZ twins. Apart from
 regression correction in the mean this is an un-structured model, and
 the useful concordance and casewise concordance estimates can be
 reported from this analysis.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">b1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bptwin.html">bptwin</a></span><span class="op">(</span><span class="va">binstut</span><span class="op">~</span><span class="va">sex</span>,data<span class="op">=</span><span class="va">twinstut</span>,id<span class="op">=</span><span class="st">"tvparnr"</span>,zyg<span class="op">=</span><span class="st">"zyg"</span>,DZ<span class="op">=</span><span class="st">"dz"</span>,type<span class="op">=</span><span class="st">"un"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">b1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -592,7 +465,7 @@ are the sizes of the genetic component A and the environmental
 component, and we can compare with the results of the unstructed model
 above. Also formally we can test if this submodel is acceptable by a
 likelihood ratio test.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">b1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bptwin.html">bptwin</a></span><span class="op">(</span><span class="va">binstut</span><span class="op">~</span><span class="va">sex</span>,data<span class="op">=</span><span class="va">twinstut</span>,id<span class="op">=</span><span class="st">"tvparnr"</span>,zyg<span class="op">=</span><span class="st">"zyg"</span>,DZ<span class="op">=</span><span class="st">"dz"</span>,type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">b1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -631,7 +504,7 @@ likelihood ratio test.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;                          Estimate 2.5%    97.5%  </span></span>
 <span><span class="co">#&gt; Broad-sense heritability 0.76318  0.41002 1.11633</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">b0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bptwin.html">bptwin</a></span><span class="op">(</span><span class="va">binstut</span><span class="op">~</span><span class="va">sex</span>,data<span class="op">=</span><span class="va">twinstut</span>,id<span class="op">=</span><span class="st">"tvparnr"</span>,zyg<span class="op">=</span><span class="st">"zyg"</span>,DZ<span class="op">=</span><span class="st">"dz"</span>,type<span class="op">=</span><span class="st">"ae"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">b0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -677,10 +550,10 @@ DZ. We note that as before in the OR and biprobit model the dependence
 is much stronger for MZ twins. We also test if these are the same by
 parametrizing the OR model with an intercept. This clearly shows a
 significant difference.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">theta.des</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span> <span class="op">~</span><span class="op">-</span><span class="fl">1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">zyg</span><span class="op">)</span>,data<span class="op">=</span><span class="va">twinstut</span><span class="op">)</span></span>
 <span><span class="va">margbin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">binstut</span><span class="op">~</span><span class="va">sex</span>,data<span class="op">=</span><span class="va">twinstut</span>,family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">bintwin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span><span class="op">(</span><span class="va">margbin</span>,data<span class="op">=</span><span class="va">twinstut</span>,model<span class="op">=</span><span class="st">"gamma"</span>,</span>
+<span><span class="va">bintwin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial_twostage.html">binomial_twostage</a></span><span class="op">(</span><span class="va">margbin</span>,data<span class="op">=</span><span class="va">twinstut</span>,model<span class="op">=</span><span class="st">"gamma"</span>,</span>
 <span>     clusters<span class="op">=</span><span class="va">twinstut</span><span class="op">$</span><span class="va">tvparnr</span>,detail<span class="op">=</span><span class="fl">0</span>,theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">/</span><span class="fl">1</span>,var.link<span class="op">=</span><span class="fl">1</span>,</span>
 <span>     theta.des<span class="op">=</span><span class="va">theta.des</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bintwin</span><span class="op">)</span></span>
@@ -706,7 +579,7 @@ significant difference.</p>
 <span><span class="co"># test for same dependence in MZ and DZ </span></span>
 <span><span class="va">theta.des</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span> <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">zyg</span><span class="op">)</span>,data<span class="op">=</span><span class="va">twinstut</span><span class="op">)</span></span>
 <span><span class="va">margbin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">binstut</span><span class="op">~</span><span class="va">sex</span>,data<span class="op">=</span><span class="va">twinstut</span>,family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">bintwin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span><span class="op">(</span><span class="va">margbin</span>,data<span class="op">=</span><span class="va">twinstut</span>,model<span class="op">=</span><span class="st">"gamma"</span>,</span>
+<span><span class="va">bintwin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial_twostage.html">binomial_twostage</a></span><span class="op">(</span><span class="va">margbin</span>,data<span class="op">=</span><span class="va">twinstut</span>,model<span class="op">=</span><span class="st">"gamma"</span>,</span>
 <span>     clusters<span class="op">=</span><span class="va">twinstut</span><span class="op">$</span><span class="va">tvparnr</span>,detail<span class="op">=</span><span class="fl">0</span>,theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">/</span><span class="fl">1</span>,var.link<span class="op">=</span><span class="fl">1</span>,</span>
 <span>     theta.des<span class="op">=</span><span class="va">theta.des</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bintwin</span><span class="op">)</span></span>
@@ -732,15 +605,14 @@ significant difference.</p>
 <div class="section level3">
 <h3 id="polygenic-modelling-1">Polygenic modelling<a class="anchor" aria-label="anchor" href="#polygenic-modelling-1"></a>
 </h3>
-<p>First setting up the random effects design for the random effects and
-the the relationship between variance parameters. We see that the
-genetic random effect has size one for MZ and 0.5 for DZ subjects, that
-have shared and non-shared genetic components with variance 0.5 such
-that the total genetic variance is the same for all subjects. The shared
-environmental effect is the samme for all. Thus two parameters with
-these bands.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">twin.polygen.design</a></span><span class="op">(</span><span class="va">twinstut</span>,id<span class="op">=</span><span class="st">"tvparnr"</span>,zygname<span class="op">=</span><span class="st">"zyg"</span>,zyg<span class="op">=</span><span class="st">"dz"</span>,type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span></span>
+<p>First setting up the random effects design and the relationship
+between variance parameters. We see that the genetic random effect has
+size 1 for MZ and 0.5 for DZ subjects, who have shared and non-shared
+genetic components with variance 0.5 such that the total genetic
+variance is the same for all subjects. The shared environmental effect
+is the same for all. Thus two parameters with these constraints.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twin-design.html">twin_polygen_design</a></span><span class="op">(</span><span class="va">twinstut</span>,id<span class="op">=</span><span class="st">"tvparnr"</span>,zygname<span class="op">=</span><span class="st">"zyg"</span>,zyg<span class="op">=</span><span class="st">"dz"</span>,type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">des.rv</span>,<span class="va">twinstut</span><span class="op">$</span><span class="va">tvparnr</span><span class="op">)</span>,<span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    MZ DZ DZns1 DZns2 env   </span></span>
 <span><span class="co">#&gt; 1   1  0     0     0   1  1</span></span>
@@ -764,9 +636,9 @@ these bands.</p>
 component, is 1.5 and the environmental variance is -0.5. Thus
 suggesting that the ACE model does not fit the data. When the random
 design is given we automatically use the gamma fralty model.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">margbin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">binstut</span><span class="op">~</span><span class="va">sex</span>,data<span class="op">=</span><span class="va">twinstut</span>,family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">bintwin1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span><span class="op">(</span><span class="va">margbin</span>,data<span class="op">=</span><span class="va">twinstut</span>,</span>
+<span><span class="va">bintwin1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial_twostage.html">binomial_twostage</a></span><span class="op">(</span><span class="va">margbin</span>,data<span class="op">=</span><span class="va">twinstut</span>,</span>
 <span>     clusters<span class="op">=</span><span class="va">twinstut</span><span class="op">$</span><span class="va">tvparnr</span>,detail<span class="op">=</span><span class="fl">0</span>,theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">/</span><span class="fl">1</span>,var.link<span class="op">=</span><span class="fl">0</span>,</span>
 <span>     random.design<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">des.rv</span>,theta.des<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">pardes</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bintwin1</span><span class="op">)</span></span>
@@ -796,8 +668,8 @@ design is given we automatically use the gamma fralty model.</p>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
 <p>For this model we estimate the concordance and casewise concordance
 as well as the marginal rates of stuttering for females.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/internal.html">concordanceTwinACE</a></span><span class="op">(</span><span class="va">bintwin1</span>,type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/twin-design.html">concordanceTwinACE</a></span><span class="op">(</span><span class="va">bintwin1</span>,type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $MZ</span></span>
 <span><span class="co">#&gt;                      Estimate  Std.Err     2.5%   97.5%   P-value</span></span>
 <span><span class="co">#&gt; concordance          0.009738 0.004010 0.001878 0.01760 1.517e-02</span></span>
@@ -811,10 +683,10 @@ as well as the marginal rates of stuttering for females.</p>
 <span><span class="co">#&gt; marginal             0.020452 0.005083  0.0104894 0.03041 5.733e-05</span></span></code></pre></div>
 <p>The E component was not consistent with the fit of the data and we
 now consider instead the AE model.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/internal.html">twin.polygen.design</a></span><span class="op">(</span><span class="va">twinstut</span>,id<span class="op">=</span><span class="st">"tvparnr"</span>,zygname<span class="op">=</span><span class="st">"zyg"</span>,zyg<span class="op">=</span><span class="st">"dz"</span>,type<span class="op">=</span><span class="st">"ae"</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twin-design.html">twin.polygen.design</a></span><span class="op">(</span><span class="va">twinstut</span>,id<span class="op">=</span><span class="st">"tvparnr"</span>,zygname<span class="op">=</span><span class="st">"zyg"</span>,zyg<span class="op">=</span><span class="st">"dz"</span>,type<span class="op">=</span><span class="st">"ae"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">bintwin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial.twostage.html">binomial.twostage</a></span><span class="op">(</span><span class="va">margbin</span>,data<span class="op">=</span><span class="va">twinstut</span>,</span>
+<span><span class="va">bintwin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/binomial_twostage.html">binomial_twostage</a></span><span class="op">(</span><span class="va">margbin</span>,data<span class="op">=</span><span class="va">twinstut</span>,</span>
 <span>     clusters<span class="op">=</span><span class="va">twinstut</span><span class="op">$</span><span class="va">tvparnr</span>,detail<span class="op">=</span><span class="fl">0</span>,theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">/</span><span class="fl">1</span>,var.link<span class="op">=</span><span class="fl">0</span>,</span>
 <span>     random.design<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">des.rv</span>,theta.des<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">pardes</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bintwin</span><span class="op">)</span></span>
@@ -841,8 +713,8 @@ now consider instead the AE model.</p>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "summary.mets.twostage"</span></span></code></pre></div>
 <p>Again, the concordance can be computed:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/internal.html">concordanceTwinACE</a></span><span class="op">(</span><span class="va">bintwin</span>,type<span class="op">=</span><span class="st">"ae"</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/twin-design.html">concordanceTwinACE</a></span><span class="op">(</span><span class="va">bintwin</span>,type<span class="op">=</span><span class="st">"ae"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $MZ</span></span>
 <span><span class="co">#&gt;                      Estimate  Std.Err     2.5%   97.5%   P-value</span></span>
 <span><span class="co">#&gt; concordance          0.009236 0.003778 0.001831 0.01664 1.450e-02</span></span>
@@ -859,11 +731,11 @@ now consider instead the AE model.</p>
 <div class="section level2">
 <h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
 </h2>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.5.2 (2025-10-31)</span></span>
+<span><span class="co">#&gt; R version 4.6.0 (2026-04-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.3 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -882,24 +754,25 @@ now consider instead the AE model.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.9</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.10</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           </span></span>
-<span><span class="co">#&gt;  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        </span></span>
-<span><span class="co">#&gt;  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            </span></span>
-<span><span class="co">#&gt; [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           </span></span>
-<span><span class="co">#&gt; [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        </span></span>
-<span><span class="co">#&gt; [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   </span></span>
-<span><span class="co">#&gt; [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       </span></span>
-<span><span class="co">#&gt; [22] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      </span></span>
-<span><span class="co">#&gt; [25] fs_1.6.6               ucminf_1.2.2           htmlwidgets_1.6.4     </span></span>
-<span><span class="co">#&gt; [28] Rcpp_1.1.1             future_1.68.0          lattice_0.22-7        </span></span>
-<span><span class="co">#&gt; [31] systemfonts_1.3.1      digest_0.6.39          R6_2.6.1              </span></span>
-<span><span class="co">#&gt; [34] parallelly_1.46.1      parallel_4.5.2         splines_4.5.2         </span></span>
-<span><span class="co">#&gt; [37] Matrix_1.7-4           bslib_0.9.0            tools_4.5.2           </span></span>
-<span><span class="co">#&gt; [40] RcppArmadillo_15.2.3-1 globals_0.18.0         survival_3.8-3        </span></span>
-<span><span class="co">#&gt; [43] pkgdown_2.2.0          cachem_1.1.0           desc_1.4.3</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] Matrix_1.7-5           future.apply_1.20.2    jsonlite_2.0.0        </span></span>
+<span><span class="co">#&gt;  [4] ucminf_1.2.3           compiler_4.6.0         Rcpp_1.1.1-1.1        </span></span>
+<span><span class="co">#&gt;  [7] parallel_4.6.0         jquerylib_0.1.4        globals_0.19.1        </span></span>
+<span><span class="co">#&gt; [10] splines_4.6.0          systemfonts_1.3.2      textshaping_1.0.5     </span></span>
+<span><span class="co">#&gt; [13] yaml_2.3.12            fastmap_1.2.0          lattice_0.22-9        </span></span>
+<span><span class="co">#&gt; [16] R6_2.6.1               knitr_1.51             htmlwidgets_1.6.4     </span></span>
+<span><span class="co">#&gt; [19] future_1.70.0          desc_1.4.3             bslib_0.11.0          </span></span>
+<span><span class="co">#&gt; [22] rlang_1.2.0            cachem_1.1.0           xfun_0.57             </span></span>
+<span><span class="co">#&gt; [25] fs_2.1.0               sass_0.4.10            cli_3.6.6             </span></span>
+<span><span class="co">#&gt; [28] pkgdown_2.2.0          digest_0.6.39          grid_4.6.0            </span></span>
+<span><span class="co">#&gt; [31] mvtnorm_1.3-7          lifecycle_1.0.5        lava_1.9.1            </span></span>
+<span><span class="co">#&gt; [34] RcppArmadillo_15.2.6-1 timereg_2.0.7          evaluate_1.0.5        </span></span>
+<span><span class="co">#&gt; [37] numDeriv_2016.8-1.1    listenv_0.10.1         codetools_0.2-20      </span></span>
+<span><span class="co">#&gt; [40] ragg_1.5.2             survival_3.8-6         stats4_4.6.0          </span></span>
+<span><span class="co">#&gt; [43] parallelly_1.47.0      rmarkdown_2.31         tools_4.6.0           </span></span>
+<span><span class="co">#&gt; [46] htmltools_0.5.9</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

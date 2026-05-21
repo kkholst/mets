@@ -6,9 +6,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>dUtility data-frame manipulations • mets</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="../katex-auto.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="dUtility data-frame manipulations">
 </head>
@@ -20,7 +21,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,10 +38,10 @@
     <li><a class="dropdown-item" href="../articles/binomial-family.html">Analysis of multivariate binomial data: family analysis</a></li>
     <li><a class="dropdown-item" href="../articles/binomial-twin.html">Analysis of bivariate binomial data: Twin analysis</a></li>
     <li><a class="dropdown-item" href="../articles/binreg-ate.html">Average treatment effect (ATE) for Competing risks and binary outcomes</a></li>
-    <li><a class="dropdown-item" href="../articles/binreg-TRS.html">Two-Stage Randomization for for Competing risks and Survival outcomes</a></li>
+    <li><a class="dropdown-item" href="../articles/binreg-TRS.html">Two-Stage Randomization for Competing risks and Survival outcomes</a></li>
     <li><a class="dropdown-item" href="../articles/binreg.html">Binomial Regression for Survival and Competing Risks Data</a></li>
     <li><a class="dropdown-item" href="../articles/cifreg.html">Cumulative Incidence Regression</a></li>
-    <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">WIP: Cooking survival data, 5 minute recipes</a></li>
+    <li><a class="dropdown-item" href="../articles/cooking-survival-data.html">Cooking Survival Data: 5-Minute Recipes</a></li>
     <li><a class="dropdown-item" href="../articles/cumulative-cost.html">IPCW Cumulative Cost</a></li>
     <li><a class="dropdown-item" href="../articles/glm-utility.html">GEE cluster standard errors and predictions for glm objects</a></li>
     <li><a class="dropdown-item" href="../articles/haplo-discrete-ttp.html">Haplotype Discrete Survival Models</a></li>
@@ -80,7 +81,7 @@
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2026-01-14</h4>
+            <h4 data-toc-skip class="date">2026-05-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/basic-dutils.Rmd" class="external-link"><code>vignettes/basic-dutils.Rmd</code></a></small>
       <div class="d-none name"><code>basic-dutils.Rmd</code></div>
@@ -94,38 +95,40 @@
 <ul>
 <li>Renaming variables, Deleting variables</li>
 <li>Looking at the data</li>
-<li>Making new variales for the analysis</li>
+<li>Making new variables for the analysis</li>
 <li>Making factors (groupings)</li>
 <li>Working with factors</li>
 <li>Making a factor from existing numeric variable and vice versa</li>
 </ul>
-<p>Here are some key data-manipulation steps on a data-frame which is
-how we typically organize our data in R. After having read the data into
-R it will typically be a data-frame, if not we can force it to be a
-data-frame. The basic idea of the utility functions is to get a simple
-and easy to type way of making simple data-manipulation on a data-frame
-much like what is possible in SAS or STATA.</p>
-<p>The functions, say, dcut, dfactor and so on are all functions that
-basically does what the base R cut, factor do, but are easier to use in
-the context of data-frames and have additional functionality.</p>
+<p>Here are some key data-manipulation steps on a data frame, which is
+how we typically organise our data in R. After reading the data into R
+it will typically be a data frame; if not, we can force it to be one.
+The basic idea of the utility functions is to provide a simple and
+easy-to-type way of performing common data manipulations on a data
+frame, much like what is possible in SAS or Stata.</p>
+<p>The functions <code>dcut</code>, <code>dfactor</code>, and so on do
+essentially what the base R <code>cut</code> and <code>factor</code>
+functions do, but are easier to use in the context of data frames and
+have additional functionality.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">melanoma</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">is.data.frame</a></span><span class="op">(</span><span class="va">melanoma</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
-<p>Here we work on the melanoma data that is already read into R and is
-a data-frame.</p>
+<p>Here we work on the melanoma data, which has already been read into R
+and is a data frame.</p>
 </div>
 <div class="section level2">
 <h2 id="dutility-functions">dUtility functions<a class="anchor" aria-label="anchor" href="#dutility-functions"></a>
 </h2>
 <p>The structure for all functions is</p>
 <ul>
-<li>dfunction(dataframe,y~x|ifcond,…)</li>
+<li><code>dfunction(dataframe, y~x|ifcond, ...)</code></li>
 </ul>
-<p>to use the function on y in a dataframe grouped by x if condition
-ifcond is valid. The basic functions are</p>
+<p>to apply the function to <code>y</code> in a data frame, grouped by
+<code>x</code>, and only when condition <code>ifcond</code> is
+satisfied. The basic functions are:</p>
 <p>Data processing * dsort * dreshape * dcut * drm, drename, ddrop,
 dkeep, dsubset * drelevel * dlag * dfactor, dnumeric</p>
 <p>Data aggregation * dby, dby2 * dscalar, deval, daggregate * dmean,
@@ -133,18 +136,18 @@ dsd, dsum, dquantile, dcor * dtable, dcount</p>
 <p>Data summaries * dhead, dtail, * dsummary, * dprint, dlist, dlevels,
 dunique</p>
 <p>A generic function daggregate, daggr, can be called with a function
-as the argument</p>
+as the argument:</p>
 <ul>
-<li>daggregate(dataframe,y~x|ifcond,fun=function,…)</li>
+<li><code>daggregate(dataframe, y~x|ifcond, fun=function, ...)</code></li>
 </ul>
-<p>without the grouping variable (x)</p>
+<p>or without the grouping variable (<code>x</code>):</p>
 <ul>
-<li>daggregate(dataframe,~y|ifcond,fun=function,…)</li>
+<li><code>daggregate(dataframe, ~y|ifcond, fun=function, ...)</code></li>
 </ul>
-<p>A useful feature is that y and x as well as the subset condition can
-be specified using regular-expressions or by wildcards (default). Here
-to illustrate this, we compute the means of certain variables.</p>
-<p>First just oveall</p>
+<p>A useful feature is that <code>y</code> and <code>x</code> as well as
+the subset condition can be specified using regular expressions or
+wildcards (default). Here we compute the means of certain variables.</p>
+<p>First, overall:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/dcor.html">dmean</a></span><span class="op">(</span><span class="va">melanoma</span>,<span class="op">~</span><span class="va">thick</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">thick</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         thick I(log(thick)) </span></span>
@@ -189,19 +192,19 @@ to illustrate this, we compute the means of certain variables.</p>
 <span><span class="va">melanoma</span><span class="op">=</span><span class="fu"><a href="../reference/dcut.html">drm</a></span><span class="op">(</span><span class="va">melanoma</span>,<span class="op">~</span><span class="va">thick</span><span class="op">+</span><span class="va">sex</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">melanoma</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "no"     "status" "days"   "ulc"</span></span></code></pre></div>
-<p>or sas style</p>
+<p>or SAS style:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">melanoma</span><span class="op">)</span></span>
 <span><span class="va">melanoma</span><span class="op">=</span><span class="fu"><a href="../reference/dcut.html">ddrop</a></span><span class="op">(</span><span class="va">melanoma</span>,<span class="op">~</span><span class="va">thick</span><span class="op">+</span><span class="va">sex</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">melanoma</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "no"     "status" "days"   "ulc"</span></span></code></pre></div>
-<p>alternatively we can also keep certain variables</p>
+<p>alternatively, we can keep certain variables:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">melanoma</span><span class="op">)</span></span>
 <span><span class="va">melanoma</span><span class="op">=</span><span class="fu"><a href="../reference/dcut.html">dkeep</a></span><span class="op">(</span><span class="va">melanoma</span>,<span class="op">~</span><span class="va">thick</span><span class="op">+</span><span class="va">sex</span><span class="op">+</span><span class="va">status</span><span class="op">+</span><span class="va">days</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">melanoma</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "thick"  "sex"    "status" "days"</span></span></code></pre></div>
-<p>This can also be done with direct asignment</p>
+<p>This can also be done with direct assignment</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">melanoma</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/dcut.html">ddrop</a></span><span class="op">(</span><span class="va">melanoma</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">~</span><span class="va">thick</span><span class="op">+</span><span class="va">sex</span></span>
@@ -230,8 +233,8 @@ the data-frame</p>
 <span><span class="co">#&gt;  $ ulc   : int  1 0 0 0 1 1 1 1 1 1 ...</span></span>
 <span><span class="co">#&gt;  $ thick : int  676 65 134 290 1208 484 516 1288 322 741 ...</span></span>
 <span><span class="co">#&gt;  $ sex   : int  1 1 1 0 1 1 1 1 0 0 ...</span></span></code></pre></div>
-<p>The data can in Rstudio be seen as a data-table but to list certain
-parts of the data in output window</p>
+<p>The data can be viewed as a data table in RStudio, but to list
+certain parts of the data in the output window:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/dprint.html">dlist</a></span><span class="op">(</span><span class="va">melanoma</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     no  status days ulc thick sex</span></span>
@@ -291,7 +294,7 @@ parts of the data in output window</p>
 <span><span class="co">#&gt;  Mean   :0.3854  </span></span>
 <span><span class="co">#&gt;  3rd Qu.:1.0000  </span></span>
 <span><span class="co">#&gt;  Max.   :1.0000</span></span></code></pre></div>
-<p>or for specfic variables</p>
+<p>or for specific variables</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/dcor.html">dsummary</a></span><span class="op">(</span><span class="va">melanoma</span>,<span class="op">~</span><span class="va">thick</span><span class="op">+</span><span class="va">status</span><span class="op">+</span><span class="va">sex</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      thick          status          sex        </span></span>
@@ -360,7 +363,7 @@ parts of the data in output window</p>
 <span><span class="co">#&gt;  Mean   : 361.1   Mean   :1.722  </span></span>
 <span><span class="co">#&gt;  3rd Qu.: 484.0   3rd Qu.:2.000  </span></span>
 <span><span class="co">#&gt;  Max.   :1466.0   Max.   :3.000</span></span></code></pre></div>
-<p>To make more complex conditions need to use the I()</p>
+<p>For more complex conditions, use <code><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I()</a></code>:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/dcor.html">dsummary</a></span><span class="op">(</span><span class="va">melanoma</span>,<span class="va">thick</span><span class="op">+</span><span class="va">days</span><span class="op">+</span><span class="va">status</span><span class="op">~</span><span class="va">sex</span><span class="op">|</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">thick</span><span class="op">&lt;</span><span class="fl">97</span> <span class="op">&amp;</span> <span class="va">sex</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; sex: 1</span></span>
@@ -466,7 +469,7 @@ parts of the data in output window</p>
 <span><span class="co">#&gt; 6 469      1  204   1   484   1</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="making-new-variales-for-the-analysis">Making new variales for the analysis<a class="anchor" aria-label="anchor" href="#making-new-variales-for-the-analysis"></a>
+<h2 id="making-new-variables-for-the-analysis">Making new variables for the analysis<a class="anchor" aria-label="anchor" href="#making-new-variables-for-the-analysis"></a>
 </h2>
 <p>To define a bunch of new covariates within a data-frame</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
@@ -496,13 +499,13 @@ possible condition</p>
 <div class="section level2">
 <h2 id="making-factors-groupings">Making factors (groupings)<a class="anchor" aria-label="anchor" href="#making-factors-groupings"></a>
 </h2>
-<p>On the melanoma data the variable thick gives the thickness of the
-melanom tumour. For some analyses we would like to make a factor
-depending on the thickness. This can be done in several different
-ways</p>
+<p>On the melanoma data, the variable <code>thick</code> gives the
+thickness of the melanoma tumour. For some analyses we would like to
+create a factor depending on the thickness. This can be done in several
+different ways:</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">melanoma</span><span class="op">=</span><span class="fu"><a href="../reference/dcut.html">dcut</a></span><span class="op">(</span><span class="va">melanoma</span>,<span class="op">~</span><span class="va">thick</span>,breaks<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">200</span>,<span class="fl">500</span>,<span class="fl">800</span>,<span class="fl">2000</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>New variable is named thickcat.0 by default.</p>
+<p>New variable is named <code>thickcat.0</code> by default.</p>
 <p>To see levels of factors in data-frame</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/drelevel.html">dlevels</a></span><span class="op">(</span><span class="va">melanoma</span><span class="op">)</span></span>
@@ -616,8 +619,8 @@ quartiles with default names thick.cat.4</p>
 <span><span class="co">#&gt; thickcat4.2 #levels=:4 </span></span>
 <span><span class="co">#&gt; [1] "(97,194]"       "[10,97]"        "(194,356]"      "(356,1.74e+03]"</span></span>
 <span><span class="co">#&gt; -----------------------------------------</span></span></code></pre></div>
-<p>To combine levels of a factor (first combinining first 3 groups into
-one)</p>
+<p>To combine levels of a factor (first combining the first 3 groups
+into one):</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">melanoma</span> <span class="op">=</span> <span class="fu"><a href="../reference/drelevel.html">drelevel</a></span><span class="op">(</span><span class="va">melanoma</span>,<span class="op">~</span><span class="va">thickcat4</span>,newlevels<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/drelevel.html">dlevels</a></span><span class="op">(</span><span class="va">melanoma</span><span class="op">)</span></span>
@@ -683,7 +686,8 @@ another</p>
 <div class="section level2">
 <h2 id="making-a-factor-from-existing-numeric-variable-and-vice-versa">Making a factor from existing numeric variable and vice versa<a class="anchor" aria-label="anchor" href="#making-a-factor-from-existing-numeric-variable-and-vice-versa"></a>
 </h2>
-<p>A numeric variable “status” with values 1,2,3 into a factor by</p>
+<p>A numeric variable <code>status</code> with values 1, 2, 3 can be
+converted to a factor by:</p>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">melanoma</span><span class="op">)</span></span>
 <span><span class="va">melanoma</span> <span class="op">=</span> <span class="fu"><a href="../reference/drelevel.html">dfactor</a></span><span class="op">(</span><span class="va">melanoma</span>,<span class="op">~</span><span class="va">status</span>, labels<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"malignant-melanoma"</span>,<span class="st">"censoring"</span>,<span class="st">"dead-other"</span><span class="op">)</span><span class="op">)</span></span>
@@ -694,8 +698,8 @@ another</p>
 <span><span class="co">#&gt; sexl                                                    </span></span>
 <span><span class="co">#&gt; females                          28        91          7</span></span>
 <span><span class="co">#&gt; males                            29        43          7</span></span></code></pre></div>
-<p>A gender factor with values “M”, “F” can be converted into numerics
-by</p>
+<p>A gender factor with values <code>"M"</code>, <code>"F"</code> can be
+converted to numerics by:</p>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">melanoma</span> <span class="op">=</span> <span class="fu"><a href="../reference/drelevel.html">dnumeric</a></span><span class="op">(</span><span class="va">melanoma</span>,<span class="op">~</span><span class="va">sexl</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/dcor.html">dstr</a></span><span class="op">(</span><span class="va">melanoma</span>,<span class="st">"sex*"</span><span class="op">)</span></span>
@@ -725,9 +729,9 @@ by</p>
 </h2>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.5.2 (2025-10-31)</span></span>
+<span><span class="co">#&gt; R version 4.6.0 (2026-04-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.3 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -746,23 +750,23 @@ by</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] mets_1.3.9</span></span>
+<span><span class="co">#&gt; [1] mets_1.3.10</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] cli_3.6.5              knitr_1.51             rlang_1.1.7           </span></span>
-<span><span class="co">#&gt;  [4] xfun_0.55              textshaping_1.0.4      jsonlite_2.0.0        </span></span>
-<span><span class="co">#&gt;  [7] listenv_0.10.0         future.apply_1.20.1    lava_1.8.2            </span></span>
-<span><span class="co">#&gt; [10] htmltools_0.5.9        ragg_1.5.0             sass_0.4.10           </span></span>
-<span><span class="co">#&gt; [13] rmarkdown_2.30         grid_4.5.2             evaluate_1.0.5        </span></span>
+<span><span class="co">#&gt;  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           </span></span>
+<span><span class="co">#&gt;  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        </span></span>
+<span><span class="co">#&gt;  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            </span></span>
+<span><span class="co">#&gt; [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           </span></span>
+<span><span class="co">#&gt; [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        </span></span>
 <span><span class="co">#&gt; [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   </span></span>
-<span><span class="co">#&gt; [19] yaml_2.3.12            mvtnorm_1.3-3          lifecycle_1.0.5       </span></span>
-<span><span class="co">#&gt; [22] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      </span></span>
-<span><span class="co">#&gt; [25] fs_1.6.6               htmlwidgets_1.6.4      Rcpp_1.1.1            </span></span>
-<span><span class="co">#&gt; [28] future_1.68.0          lattice_0.22-7         systemfonts_1.3.1     </span></span>
-<span><span class="co">#&gt; [31] digest_0.6.39          R6_2.6.1               parallelly_1.46.1     </span></span>
-<span><span class="co">#&gt; [34] parallel_4.5.2         splines_4.5.2          Matrix_1.7-4          </span></span>
-<span><span class="co">#&gt; [37] bslib_0.9.0            tools_4.5.2            RcppArmadillo_15.2.3-1</span></span>
-<span><span class="co">#&gt; [40] globals_0.18.0         survival_3.8-3         pkgdown_2.2.0         </span></span>
+<span><span class="co">#&gt; [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       </span></span>
+<span><span class="co">#&gt; [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      </span></span>
+<span><span class="co">#&gt; [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        </span></span>
+<span><span class="co">#&gt; [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     </span></span>
+<span><span class="co">#&gt; [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     </span></span>
+<span><span class="co">#&gt; [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          </span></span>
+<span><span class="co">#&gt; [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1</span></span>
+<span><span class="co">#&gt; [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         </span></span>
 <span><span class="co">#&gt; [43] cachem_1.1.0           desc_1.4.3</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
