@@ -3,7 +3,7 @@
 ##' Performs cumulative score process residual tests for the proportional hazards (PH) 
 ##' assumption in Cox regression. The test statistics are based on the cumulative 
 ##' score process:
-##' \deqn{ U(t) = \int_0^t \hat M_i(s) d \hat \beta(s) }
+##' \deqn{ U(t) = \int_0^t (X_i - E(t) ) d \hat M_i(s) }
 ##' where \eqn{\hat M_i(s)} are the martingale residuals.
 ##' 
 ##' P-values are computed using the Lin, Wei, and Ying (1993) resampling method, which 
