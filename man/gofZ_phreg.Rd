@@ -52,8 +52,8 @@ linearity. It computes cumulative residuals evaluated at a grid of covariate val
 }
 \details{
 The test statistic is:
-\deqn{ U(z, \tau) = \int_0^\tau M(z)^T d \hat M }
-where \eqn{M(z)} is a design matrix based on indicator functions \eqn{I(Z_i \leq z_l)} 
+\deqn{ U(z, \tau) = \int_0^\tau K(z)^T d \hat M }
+where \eqn{K(z)} is a design matrix based on indicator functions \eqn{I(Z_i \leq z_l)} 
 for a grid of points \eqn{z_l}.
 
 The p-value is valid but depends on the chosen grid. As the number of break points increases, 

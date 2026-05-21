@@ -3,7 +3,7 @@
 ##' Performs cumulative score process residual tests for the proportional hazards (PH) 
 ##' assumption in Cox regression. The test statistics are based on the cumulative 
 ##' score process:
-##' \deqn{ U(t) = \int_0^t \hat M_i(s) d \hat \beta(s) }
+##' \deqn{ U(t) = \int_0^t (X_i - E(t) ) d \hat M_i(s) }
 ##' where \eqn{\hat M_i(s)} are the martingale residuals.
 ##' 
 ##' P-values are computed using the Lin, Wei, and Ying (1993) resampling method, which 
@@ -134,8 +134,8 @@ return(out)
 ##' or time-varying coefficients (interaction with time).
 ##'
 ##' The test statistic is:
-##' \deqn{ U(t) = \int_0^t M^T d \hat M }
-##' where \eqn{M} is the model matrix (e.g., a set of basis functions for a continuous covariate) 
+##' \deqn{ U(t) = \int_0^t K^T d \hat M }
+##' where \eqn{K} is the model matrix (e.g., a set of basis functions for a continuous covariate) 
 ##' and \eqn{\hat M} are the martingale residuals.
 ##'
 ##' P-values are based on the Lin, Wei, and Ying (1993) resampling method. The plot shows 
@@ -254,8 +254,8 @@ return(out)
 ##' linearity. It computes cumulative residuals evaluated at a grid of covariate values \eqn{z}.
 ##' 
 ##' The test statistic is:
-##' \deqn{ U(z, \tau) = \int_0^\tau M(z)^T d \hat M }
-##' where \eqn{M(z)} is a design matrix based on indicator functions \eqn{I(Z_i \leq z_l)} 
+##' \deqn{ U(z, \tau) = \int_0^\tau K(z)^T d \hat M }
+##' where \eqn{K(z)} is a design matrix based on indicator functions \eqn{I(Z_i \leq z_l)} 
 ##' for a grid of points \eqn{z_l}.
 ##'
 ##' The p-value is valid but depends on the chosen grid. As the number of break points increases, 
