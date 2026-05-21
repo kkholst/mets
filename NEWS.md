@@ -1,7 +1,10 @@
 # mets 1.3.10
   - Changed the naming of some functions for RMTL and RMST `resmean.phreg` to
-    `resmean_phreg` and  `cif.yearslost` to `cif_yearslost`  
-  - Cumulative incidence simulation with delayed entry `simul.cifs`, `sim.cif`, `sim.cifs`   
+    `resmean_phreg` and  `cif.yearslost` to `cif_yearslost`. Naming of functions have 
+    gone from "." to "_", for example `simul.cifs` have changed to `simul_cifs`. A few
+    exceptions due to backward compability, and for the same reason 
+    some functions appear with both "_" and ".". 
+  - Cumulative incidence simulation with delayed entry `simul_cifs`, `sim_cif`, `sim_cifs`   
   - Extension of `recreg` (Ghosh-Lin model) and `cifreg` (logit and Fine-Gray
     (cloglog) model) to deal with administrative censoring and additional random
     censoring.
