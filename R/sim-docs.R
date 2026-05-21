@@ -11,6 +11,7 @@
 ##'   \item{\code{simlogitSurvd}}{Simulate survival data using logistic model.}
 ##'   \item{\code{kumarsim}}{Simulate competing risks data (Kumaraswamy-type).}
 ##'   \item{\code{kumarsimRCT}}{Simulate RCT competing risks data (Kumaraswamy-type).}
+##'   \item{\code{extendCums}}{Extend cumulative hazard functions to a common time range by linear extrapolation.}
 ##' }
 ##'
 ##' @section Clayton-Oakes and Frailty Models:
@@ -42,7 +43,7 @@
 ##' }
 ##'
 ##' @name mets-simulation
-##' @aliases simrchaz simul_cifs simlogitSurvd kumarsim kumarsimRCT
+##' @aliases simrchaz simul_cifs simlogitSurvd kumarsim kumarsimRCT extendCums
 ##' @aliases  sim_ClaytonOakes_family_ace sim_ClaytonOakes_twin_ace
 ##' @aliases  sim_Compete_twin_ace sim_Compete_simple sim_Frailty_simple
 ##' @aliases  sim_BinPlack sim_BinFam sim_BinFam2

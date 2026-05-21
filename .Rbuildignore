@@ -1,3 +1,4 @@
+^revdep$
 ^\.ccls-cache$
 ^Dockerfile$
 ^Makefile$
