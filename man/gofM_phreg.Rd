@@ -50,8 +50,8 @@ or time-varying coefficients (interaction with time).
 }
 \details{
 The test statistic is:
-\deqn{ U(t) = \int_0^t M^T d \hat M }
-where \eqn{M} is the model matrix (e.g., a set of basis functions for a continuous covariate) 
+\deqn{ U(t) = \int_0^t K^T d \hat M }
+where \eqn{K} is the model matrix (e.g., a set of basis functions for a continuous covariate) 
 and \eqn{\hat M} are the martingale residuals.
 
 P-values are based on the Lin, Wei, and Ying (1993) resampling method. The plot shows 
