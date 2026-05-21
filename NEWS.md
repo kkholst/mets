@@ -3,7 +3,7 @@
     `resmean_phreg` and  `cif.yearslost` to `cif_yearslost`. Naming of functions have 
     gone from `.` to `_`, for example `simul.cifs` have changed to `simul_cifs`. A few
     exceptions due to backward compability, and for the same reason 
-    some functions appear with both `.` to `_`.
+    some functions appear with names with both `.` and `_`.
   - Cumulative incidence simulation with delayed entry `simul_cifs`, `sim_cif`, `sim_cifs`   
   - Extension of `recreg` (Ghosh-Lin model) and `cifreg` (logit and Fine-Gray
     (cloglog) model) to deal with administrative censoring and additional random
