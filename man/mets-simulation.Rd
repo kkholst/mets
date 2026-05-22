@@ -37,7 +37,6 @@ functions are primarily intended for use in examples and testing.
   \item{\code{simlogitSurvd}}{Simulate survival data using logistic model.}
   \item{\code{kumarsim}}{Simulate competing risks data (Kumaraswamy-type).}
   \item{\code{kumarsimRCT}}{Simulate RCT competing risks data (Kumaraswamy-type).}
-  \item{\code{extendCums}}{Extend cumulative hazard functions to a common time range by linear extrapolation.}
 }
 }
 
