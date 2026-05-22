@@ -7,7 +7,6 @@
 \alias{simlogitSurvd}
 \alias{kumarsim}
 \alias{kumarsimRCT}
-\alias{extendCums}
 \alias{sim_ClaytonOakes_family_ace}
 \alias{sim_ClaytonOakes_twin_ace}
 \alias{sim_Compete_twin_ace}
@@ -38,7 +37,6 @@ functions are primarily intended for use in examples and testing.
   \item{\code{simlogitSurvd}}{Simulate survival data using logistic model.}
   \item{\code{kumarsim}}{Simulate competing risks data (Kumaraswamy-type).}
   \item{\code{kumarsimRCT}}{Simulate RCT competing risks data (Kumaraswamy-type).}
-  \item{\code{extendCums}}{Extend cumulative hazard functions to a common time range by linear extrapolation.}
 }
 }
 
