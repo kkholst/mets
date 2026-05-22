@@ -7,7 +7,6 @@
 \alias{simlogitSurvd}
 \alias{kumarsim}
 \alias{kumarsimRCT}
-\alias{extendCums}
 \alias{sim_ClaytonOakes_family_ace}
 \alias{sim_ClaytonOakes_twin_ace}
 \alias{sim_Compete_twin_ace}

@@ -43,7 +43,7 @@
 ##' }
 ##'
 ##' @name mets-simulation
-##' @aliases simrchaz simul_cifs simlogitSurvd kumarsim kumarsimRCT extendCums
+##' @aliases simrchaz simul_cifs simlogitSurvd kumarsim kumarsimRCT
 ##' @aliases  sim_ClaytonOakes_family_ace sim_ClaytonOakes_twin_ace
 ##' @aliases  sim_Compete_twin_ace sim_Compete_simple sim_Frailty_simple
 ##' @aliases  sim_BinPlack sim_BinFam sim_BinFam2
