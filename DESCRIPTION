@@ -20,8 +20,8 @@ Depends:
     R (>= 3.5)
 Imports:
     Rcpp,
-    RcppArmadillo,
-    lava (>= 1.9.0),
+    RcppArmadillo (>= 0.12.8.0),
+    lava (>= 1.9.1),
     methods,
     mvtnorm,
     numDeriv,
@@ -41,6 +41,6 @@ Suggests:
     ucminf
 VignetteBuilder: knitr
 ByteCompile: yes
-LinkingTo: Rcpp, RcppArmadillo, mvtnorm
+LinkingTo: Rcpp, RcppArmadillo (>= 0.12.8.0), mvtnorm
 Encoding: UTF-8
 Config/roxygen2/version: 8.0.0

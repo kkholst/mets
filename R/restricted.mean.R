@@ -51,6 +51,7 @@
 ##'                 time=50, cens.model=~strata(platelet), model="exp")
 ##' summary(out)
 ##' 
+##' \donttest{ ## Reduce Ex.Timings
 ##' ## Weighted GLM version (RMST)
 ##' out2 <- logitIPCW(Event(time,cause!=0)~tcell+platelet+age, bmt,
 ##'             time=50, cens.model=~strata(platelet), model="exp", outcome="rmst")
@@ -82,6 +83,7 @@
 ##' ## Same as integrated cumulative incidence 
 ##' rmc1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet), data=bmt, times=30)
 ##' summary(rmc1)
+##' }
 ##' @aliases rmstIPCW 
 ##' @export
 resmeanIPCW  <- function(formula,data,outcome=c("rmst","rmtl"),...)
