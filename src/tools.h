@@ -1,7 +1,7 @@
 #ifndef TOOLS_H
 #define TOOLS_H
 
-#include <RcppArmadillo.h>
+#include <RcppArmadillo/Lighter>
 #include <Rmath.h>
 #include <iostream>
 #include <cmath>
