@@ -14,7 +14,7 @@ using namespace Rcpp;
     double vmax = time(time.n_elem-1);
     vec::const_iterator it;
     double upper=0.0; int pos=0;
-    for (int i=0; i<newtime.n_elem; i++) {
+    for (unsigned i=0; i<newtime.n_elem; i++) {
       if (newtime[i]>=vmax) {
       pos = time.n_elem-1;
       } else {
@@ -69,7 +69,7 @@ using namespace Rcpp;
 
 arma::uvec pmini(const arma::uvec& y,const int N) {/*{{{*/
     arma::uvec res  = y ;            // residuals
-    for(int i=0; i<y.n_elem; ++i) 
+    for(unsigned i=0; i<y.n_elem; ++i)
 	    if (y(i) < N) res(i) = y(i); else res(i) = N;
     return(res); 
 }
@@ -77,7 +77,7 @@ arma::uvec pmini(const arma::uvec& y,const int N) {/*{{{*/
 
 arma::colvec pminv(const arma::colvec& y,const double  N) {/*{{{*/
     arma::colvec res  = y ;            // residuals
-    for(int i=0; i<y.n_elem; ++i) 
+    for(unsigned i=0; i<y.n_elem; ++i)
 	    if (y(i) < N) res(i) = y(i); else res(i) = N;
     return(res); 
 }
@@ -95,7 +95,7 @@ arma::colvec pminv(const arma::colvec& y,const double  N) {/*{{{*/
     arma::uvec posp1=pmini(pos+1,n-1); 
 
     output.col(0) = tau; 
-    for(int i=0;i<N;++i) 
+    for(unsigned i=0; i<N; ++i)
     {
         if (posp1(i)==pos(i)) output(i,1) = ftime(n-1); 
         else  {
@@ -121,7 +121,7 @@ arma::colvec pminv(const arma::colvec& y,const double  N) {/*{{{*/
     pos=pmini(pos,n-1); 
     arma::uvec posp1=pmini(pos+1,n-1); 
 
-    for(int i=0;i<N;++i) 
+    for(unsigned i=0; i<N; ++i)
     {
         if (posp1(i)==pos(i)) output = ftime(n-1); 
         else  {
@@ -153,7 +153,7 @@ arma::colvec simbase(const arma::mat& cum,const double rr,const double max,const
 	Rcpp::NumericVector texp= Rcpp::rexp(maxit, rr); 
 	int ant=0; 
 
-	for (unsigned i=0; i<maxit; i++) {
+	for (int i=0; i<maxit; i++) {
 	      double cumentry=interpolate3(cum,lentry); 
 	      double t1= cumentry+texp(i);
 	      double rrx=interpolate3(cumi,t1); 
