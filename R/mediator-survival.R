@@ -76,6 +76,7 @@ return(wdata)
 ##' @param ... Additional arguments to survival model 
 ##' @author Thomas Scheike
 ##' @examples
+##' \donttest{ ## Reduce Ex.Timings
 ##' n <- 400
 ##' dat <- kumarsimRCT(n,rho1=0.5,rho2=0.5,rct=2,censpar=c(0,0,0,0),
 ##'           beta = c(-0.67, 0.59, 0.55, 0.25, 0.98, 0.18, 0.45, 0.31),
@@ -101,6 +102,7 @@ return(wdata)
 ##' summary(ll)
 ##' ## not run bootstrap (to save time)
 ##' ## bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=500)
+##' }
 ##'
 ##' @aliases  BootmediatorSurv 
 ##' @export

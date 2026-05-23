@@ -130,6 +130,7 @@
 ##' fitco1<-twostageMLE(margph,data=diabetes,theta=1.0)
 ##' summary(fitco1)
 ##'
+##' \donttest{ ## Reduce Ex.Timings
 ##' ### Plackett model
 ##' mph <- phreg(Surv(time,status)~treat+cluster(id),data=diabetes)
 ##' fitp <- survival_twostage(mph,data=diabetes,theta=3.0,Nit=40,
@@ -159,6 +160,7 @@
 ##'                           id="cluster",timevar="time",
 ##'                           status="status",model="clayton.oakes",silent=0)
 ##' summary(udp)
+##' }
 ##'
 ##' \donttest{ ## Reduce Ex.Timings
 ##' ### Same model using the strata option, a bit slower
