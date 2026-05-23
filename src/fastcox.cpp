@@ -1,6 +1,6 @@
 // [[Rcpp::depends("RcppArmadillo")]]
 
-#include <RcppArmadillo/Lighter>
+#include <RcppArmadillo.h>
 #include <Rmath.h>
 #include <vector>
 #include "twostage.h"

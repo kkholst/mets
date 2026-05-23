@@ -1,7 +1,7 @@
 #ifndef MVN_H
 #define MVN_H
 
-#include <RcppArmadillo/Lighter>
+#include <RcppArmadillo.h>
 #include <Rmath.h>
 #include <cmath>
 /* #include <iostream> */

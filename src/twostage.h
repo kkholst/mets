@@ -1,4 +1,4 @@
-#include <RcppArmadillo/Lighter>
+#include <RcppArmadillo.h>
 
 using namespace arma;
 using namespace Rcpp;

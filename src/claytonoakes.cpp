@@ -1,4 +1,4 @@
-#include <RcppArmadillo/Lighter>
+#include <RcppArmadillo.h>
 #include <algorithm>
 #include <iostream>
 #include <vector>

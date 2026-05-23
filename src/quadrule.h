@@ -2,7 +2,7 @@
 #define GAUSSHERMITE_H
 
 #include <algorithm>
-#include <RcppArmadillo/Lighter>
+#include <RcppArmadillo.h>
 
 class QuadRule {
 private:
