@@ -1,25 +1,18 @@
 ---
 title: "Binomial Regression for Survival and Competing Risks Data"
 author: Klaus Holst & Thomas Scheike
-date: "`r Sys.Date()`"
+date: "2026-05-23"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes
-    fig_width: 7.15
-    fig_height: 5.5 
 vignette: >
   %\VignetteIndexEntry{Binomial Regression for Survival and Competing Risks Data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+<!-- DO NOT EDIT: auto-generated from the .Rmd.orig source -->
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-library(mets)
-```
+
 
 Binomial Regression for censored data 
 =====================================
@@ -98,7 +91,8 @@ Examples
 ========
 
 
-```{r}
+
+``` r
  library(mets)
  options(warn=-1)
  set.seed(1000) # to control output in random noise just below.
@@ -109,18 +103,53 @@ Examples
  # logistic regression with IPCW binomial regression 
  out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
  summary(out)
+#>    n events
+#>  408    160
+#> 
+#>  408 clusters
+#> coeffients:
+#>              Estimate   Std.Err      2.5%     97.5% P-value
+#> (Intercept) -0.180338  0.126748 -0.428760  0.068084  0.1548
+#> tcell       -0.418545  0.345480 -1.095675  0.258584  0.2257
+#> platelet    -0.437644  0.240978 -0.909952  0.034665  0.0694
+#> 
+#> exp(coeffients):
+#>             Estimate    2.5%  97.5%
+#> (Intercept)  0.83499 0.65132 1.0705
+#> tcell        0.65800 0.33431 1.2951
+#> platelet     0.64556 0.40254 1.0353
 ```
 
 We can also compute predictions using the estimates 
-```{r}
+
+``` r
  predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
+#>        pred         se     lower     upper
+#> 1 0.3502406 0.04847582 0.2552280 0.4452533
+#> 2 0.2618207 0.06969334 0.1252217 0.3984196
 ```
 
 Further the censoring model can depend on strata 
 
-```{r}
+
+``` r
  outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
  summary(outs)
+#>    n events
+#>  408    160
+#> 
+#>  408 clusters
+#> coeffients:
+#>              Estimate   Std.Err      2.5%     97.5% P-value
+#> (Intercept) -0.180697  0.127414 -0.430424  0.069030  0.1561
+#> tcell       -0.365928  0.350632 -1.053154  0.321299  0.2967
+#> platelet    -0.433494  0.240270 -0.904415  0.037428  0.0712
+#> 
+#> exp(coeffients):
+#>             Estimate    2.5%  97.5%
+#> (Intercept)  0.83469 0.65023 1.0715
+#> tcell        0.69355 0.34884 1.3789
+#> platelet     0.64824 0.40478 1.0381
 ```
 
 Absolute risk differences and ratio
@@ -128,24 +157,44 @@ Absolute risk differences and ratio
 
 Now for illustrations we consider the absolute risk difference depending on tcell 
 
-```{r}
+
+``` r
  outs <- binreg(Event(time,cause)~tcell,bmt,time=50,cens.model=~strata(tcell))
  summary(outs)
+#>    n events
+#>  408    160
+#> 
+#>  408 clusters
+#> coeffients:
+#>             Estimate  Std.Err     2.5%    97.5% P-value
+#> (Intercept) -0.30054  0.11153 -0.51914 -0.08194  0.0070
+#> tcell       -0.51741  0.33981 -1.18342  0.14860  0.1278
+#> 
+#> exp(coeffients):
+#>             Estimate    2.5%  97.5%
+#> (Intercept)  0.74042 0.59503 0.9213
+#> tcell        0.59606 0.30623 1.1602
 ```
 
 the risk difference is 
 
-```{r}
+
+``` r
 ps <-  predict(outs,data.frame(tcell=c(0,1)),se=TRUE)
 ps
+#>        pred         se     lower     upper
+#> 1 0.4254253 0.02726306 0.3719897 0.4788609
+#> 2 0.3061988 0.06819019 0.1725461 0.4398516
 sum( c(1,-1) * ps[,1])
+#> [1] 0.1192264
 ```
 
 Getting the standard errors is straightforward since the two groups are
 independent. If we had additionally adjusted for other covariates, however, we would need
 to apply the delta theorem using the relevant covariances, along the lines of:
 
-```{r}
+
+``` r
 dd <- data.frame(tcell=c(0,1))
 p <- predict(outs,dd)
 
@@ -159,11 +208,23 @@ riskdifratio <- function(p,contrast=c(1,-1)) {
 }
      
 estimate(outs,f=riskdifratio,dd,null=c(0,1,1))
+#>    Estimate Std.Err     2.5%  97.5% P-value
+#> p1   0.1192 0.07344 -0.02471 0.2632 0.10448
+#> p2   1.3894 0.32197  0.75833 2.0204 0.22652
+#> p3   0.7197 0.16679  0.39284 1.0467 0.09291
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
+#>   [p1] = 0
+#>   [p2] = 1
+#>   [p3] = 1 
+#>  
+#> chisq = 12.0249, df = 2, p-value = 0.002448
 ```
 
 same as 
 
-```{r}
+
+``` r
 run <- 0
 if (run==1) {
 library(prodlim)
@@ -178,7 +239,43 @@ spl
 SessionInfo
 ============
 
-```{r}
+
+``` r
 sessionInfo()
+#> R version 4.6.0 (2026-04-24)
+#> Platform: x86_64-pc-linux-gnu
+#> Running under: Ubuntu 24.04.4 LTS
+#> 
+#> Matrix products: default
+#> BLAS:   /home/kkzh/.asdf/installs/r/4.6.0/lib/R/lib/libRblas.so 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
+#> 
+#> locale:
+#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+#> 
+#> time zone: Europe/Copenhagen
+#> tzcode source: system (glibc)
+#> 
+#> attached base packages:
+#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+#> 
+#> other attached packages:
+#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.10   
+#> 
+#> loaded via a namespace (and not attached):
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
+#>  [4] xfun_0.57              otel_0.2.0             future.apply_1.20.2   
+#>  [7] listenv_0.10.1         lava_1.9.1             stats4_4.6.0          
+#> [10] grid_4.6.0             evaluate_1.0.5         mvtnorm_1.3-7         
+#> [13] numDeriv_2016.8-1.1    compiler_4.6.0         codetools_0.2-20      
+#> [16] Rcpp_1.1.1-1.1         ucminf_1.2.3           future_1.70.0         
+#> [19] lattice_0.22-9         digest_0.6.39          parallelly_1.47.0     
+#> [22] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
+#> [25] tools_4.6.0            RcppArmadillo_15.2.6-1 globals_0.19.1
 ```
 

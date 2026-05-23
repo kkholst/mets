@@ -1,12 +1,10 @@
 ---
 title: "IPCW Cumulative Cost"
 author: Klaus Holst & Thomas Scheike
-date: "`r Sys.Date()`"
+date: "2026-05-23"
 output:
   rmarkdown::html_vignette:
-    fig_caption: yes
-    # fig_width: 7.15
-    # fig_height: 5.5 
+    fig_caption: no
 header-includes: 
   - \usepackage{tikz}
 vignette: >
@@ -14,20 +12,9 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+<!-- DO NOT EDIT: auto-generated from the .Rmd.orig source -->
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  #dev="svg",
-  dpi=50,
-  fig.width=7, fig.height=5.5,
-  out.width="600px",
-  fig.retina=1,
-  comment = "#>"
-)
-fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE")
-library(mets)
-```
+
 
 Overview
 ========
@@ -95,7 +82,8 @@ HF-action data
 Using the HF-action data, we simulate a severity score for each event.
 
 
-```{r}
+
+``` r
 library(mets)
 data(hfactioncpx12)
 hf <- hfactioncpx12
@@ -106,40 +94,117 @@ outNZ <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(i
 			 +marks(severity),hf,cause=1,death.code=2)
 plot(outNZ,se=TRUE)
 summary(outNZ,times=3) 
+#> [[1]]
+#>     new.time     mean        se  CI-2.5% CI-97.5% strata
+#> 682        3 11.11151 0.6910881 9.836302 12.55203      0
+#> 
+#> [[2]]
+#>     new.time     mean        se  CI-2.5% CI-97.5% strata
+#> 601        3 9.874025 0.6937881 8.603704 11.33191      1
 
 outN <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,
 		       cause=1,death.code=2)
 plot(outN,se=TRUE,add=TRUE)
+```
+
+![](figure/cumulative-cost-unnamed-chunk-2-1.png)
+
+``` r
 summary(outN,times=3) 
+#> [[1]]
+#>     new.time     mean        se  CI-2.5% CI-97.5% strata
+#> 682        3 2.118496 0.1138572 1.906692 2.353829      0
+#> 
+#> [[2]]
+#>     new.time     mean        se  CI-2.5% CI-97.5% strata
+#> 601        3 1.924062 0.1216577 1.699801 2.177912      1
 ```
 
 For comparison we also compute the IPCW estimates with and without marks at time 3 using the linear model,
 and note that they are identical. Standard errors are based on different formulae that are asymptotically
 equivalent, and we note that they are very similar.
 
-```{r}
+
+``` r
 outNZ3 <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id)+marks(severity),data=hf,
 		  cause=1,death.code=2,time=3,cens.model=~strata(treatment),model="lin")
 summary(outNZ3)
+#>    n events
+#>  741   1281
+#> 
+#>  741 clusters
+#> coeffients:
+#>            Estimate  Std.Err     2.5%    97.5% P-value
+#> treatment0 11.11151  0.69107  9.75703 12.46598       0
+#> treatment1  9.87403  0.69372  8.51436 11.23369       0
 head(iid(outNZ3))
+#>            [,1]       [,2]
+#> 1  0.0124490201 0.00000000
+#> 2  0.0221674074 0.00000000
+#> 3  0.0000000000 0.02380208
+#> 4 -0.0223323887 0.00000000
+#> 5 -0.0006315006 0.00000000
+#> 6 -0.0371624689 0.00000000
 
 outN3 <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id),data=hf,cause=1,death.code=2,time=3,
 		 cens.model=~strata(treatment),model="lin")
 summary(outN3)
+#>    n events
+#>  741   1281
+#> 
+#>  741 clusters
+#> coeffients:
+#>            Estimate Std.Err    2.5%   97.5% P-value
+#> treatment0  2.11850 0.11385 1.89535 2.34164       0
+#> treatment1  1.92406 0.12165 1.68564 2.16248       0
 head(iid(outN3))
+#>            [,1]        [,2]
+#> 1  0.0004542472 0.000000000
+#> 2  0.0009756994 0.000000000
+#> 3  0.0000000000 0.009301496
+#> 4 -0.0029668336 0.000000000
+#> 5 -0.0001120764 0.000000000
+#> 6 -0.0070693971 0.000000000
 ```
 
 We also apply the semiparametric proportional cost model with IPCW adjustment: 
 
-```{r}
+
+``` r
 propNZ <- recreg(Event(entry,time,status)~treatment+marks(severity)+cluster(id),data=hf,cause=1,death.code=2)
 summary(propNZ) 
+#> 
+#>     n events
+#>  2132   1391
+#> 
+#>  741 clusters
+#> coefficients:
+#>             Estimate      S.E.   dU^-1/2 P-value
+#> treatment1 -0.138380  0.088834  0.023629  0.1193
+#> 
+#> exp(coefficients):
+#>            Estimate    2.5%  97.5%
+#> treatment1  0.87077 0.73162 1.0364
 plot(propNZ,main="Baselines")
      
 GL <- recreg(Event(entry,time,status)~treatment+cluster(id),hf,cause=1,death.code=2)
 summary(GL)
+#> 
+#>     n events
+#>  2132   1391
+#> 
+#>  741 clusters
+#> coefficients:
+#>             Estimate      S.E.   dU^-1/2 P-value
+#> treatment1 -0.110404  0.078656  0.053776  0.1604
+#> 
+#> exp(coefficients):
+#>            Estimate    2.5%  97.5%
+#> treatment1  0.89547 0.76754 1.0447
 plot(GL,add=TRUE,col=2)
 ```
+
+![](figure/cumulative-cost-unnamed-chunk-4-1.png)
 Those treated have 14\% lower cumulative severity and 11\% lower expected number of events.
 
 
@@ -148,12 +213,92 @@ Exceed threshold
 
 Finally, we estimate the probability of exceeding cumulative severity thresholds of 1, 5, and 10:
 
-```{r}
+
+``` r
 ooNZ <- prob_exceed_recurrent(Event(entry,time,status)~strata(treatment)+cluster(id)+marks(severity),data=hf,
 			      cause=1,death.code=2,exceed=c(1,5,10,20))
 plot(ooNZ,strata=1)
 plot(ooNZ,strata=2,add=TRUE)
+```
+
+![](figure/cumulative-cost-unnamed-chunk-5-1.png)
+
+``` r
 summary(ooNZ,times=3)
+#> $`0`
+#> $`0`$prob
+#>            times           
+#>                3 2.99865085
+#> N<1            3 0.04526295
+#> exceed>=1      3 0.95473705
+#> exceed>=5      3 0.91747371
+#> exceed>=10     3 0.80652629
+#> exceed>=20     3 0.54711578
+#> 
+#> $`0`$se
+#>            times           
+#>                3 2.99865085
+#> N<1            3 0.01846437
+#> exceed>=1      3 0.01846437
+#> exceed>=5      3 0.02337160
+#> exceed>=10     3 0.03591698
+#> exceed>=20     3 0.04986960
+#> 
+#> $`0`$lower
+#>      times           
+#> [1,]     3 2.99865085
+#> [2,]     3 0.08077514
+#> [3,]     3 0.91922486
+#> [4,]     3 0.87279095
+#> [5,]     3 0.73911503
+#> [6,]     3 0.45760655
+#> 
+#> $`0`$upper
+#>      times            
+#> [1,]     3 2.998650853
+#> [2,]     3 0.008378819
+#> [3,]     3 0.991621181
+#> [4,]     3 0.964444024
+#> [5,]     3 0.880085818
+#> [6,]     3 0.654133291
+#> 
+#> 
+#> $`1`
+#> $`1`$prob
+#>            times           
+#>                3 2.99865085
+#> N<1            3 0.01766525
+#> exceed>=1      3 0.98233475
+#> exceed>=5      3 0.96103565
+#> exceed>=10     3 0.81294277
+#> exceed>=20     3 0.50657726
+#> 
+#> $`1`$se
+#>            times           
+#>                3 2.99865085
+#> N<1            3 0.01040641
+#> exceed>=1      3 0.01040641
+#> exceed>=5      3 0.01434812
+#> exceed>=10     3 0.03730653
+#> exceed>=20     3 0.05792904
+#> 
+#> $`1`$lower
+#>      times           
+#> [1,]     3 2.99865085
+#> [2,]     3 0.03785115
+#> [3,]     3 0.96214885
+#> [4,]     3 0.93332132
+#> [5,]     3 0.74301525
+#> [6,]     3 0.40486250
+#> 
+#> $`1`$upper
+#>      times          
+#> [1,]     3 2.9986509
+#> [2,]     3 0.0000000
+#> [3,]     3 1.0000000
+#> [4,]     3 0.9895729
+#> [5,]     3 0.8894514
+#> [6,]     3 0.6338461
 ```
 
 Cumulative time lost for recurrent events
@@ -166,13 +311,29 @@ The cumulative time lost for recurrent events is defined as
 where $\mu(t) = E( N(t) )$ is the marginal mean of the recurrent events at time $t$.
 
 
-```{r}
+
+``` r
 hf$lost5 <- 5-hf$time
 
 RecLost <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id)+marks(lost5),data=hf,
 		   cause=1,death.code=2,time=5,cens.model=~strata(treatment),model="lin")
 summary(RecLost)
+#>    n events
+#>  741   1391
+#> 
+#>  741 clusters
+#> coeffients:
+#>            Estimate Std.Err    2.5%   97.5% P-value
+#> treatment0  8.58300 0.42951 7.74118 9.42482       0
+#> treatment1  7.66234 0.46400 6.75292 8.57177       0
 head(iid(RecLost))
+#>            [,1]       [,2]
+#> 1  0.0016920221 0.00000000
+#> 2  0.0073388996 0.00000000
+#> 3  0.0000000000 0.02120478
+#> 4 -0.0095548150 0.00000000
+#> 5 -0.0005696809 0.00000000
+#> 6 -0.0201750011 0.00000000
 ```
 
 
@@ -180,6 +341,42 @@ SessionInfo
 ============
 
 
-```{r}
+
+``` r
 sessionInfo()
+#> R version 4.6.0 (2026-04-24)
+#> Platform: x86_64-pc-linux-gnu
+#> Running under: Ubuntu 24.04.4 LTS
+#> 
+#> Matrix products: default
+#> BLAS:   /home/kkzh/.asdf/installs/r/4.6.0/lib/R/lib/libRblas.so 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
+#> 
+#> locale:
+#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+#> 
+#> time zone: Europe/Copenhagen
+#> tzcode source: system (glibc)
+#> 
+#> attached base packages:
+#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+#> 
+#> other attached packages:
+#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.10   
+#> 
+#> loaded via a namespace (and not attached):
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
+#>  [4] xfun_0.57              otel_0.2.0             future.apply_1.20.2   
+#>  [7] listenv_0.10.1         lava_1.9.1             stats4_4.6.0          
+#> [10] grid_4.6.0             evaluate_1.0.5         mvtnorm_1.3-7         
+#> [13] numDeriv_2016.8-1.1    compiler_4.6.0         codetools_0.2-20      
+#> [16] Rcpp_1.1.1-1.1         ucminf_1.2.3           future_1.70.0         
+#> [19] lattice_0.22-9         digest_0.6.39          parallelly_1.47.0     
+#> [22] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
+#> [25] tools_4.6.0            RcppArmadillo_15.2.6-1 globals_0.19.1
 ```

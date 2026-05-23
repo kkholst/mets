@@ -1,0 +1,179 @@
+---
+title: "IPCW Cumulative Cost"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: no
+header-includes: 
+  - \usepackage{tikz}
+vignette: >
+  %\VignetteIndexEntry{IPCW Cumulative Cost}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  #dev="svg",
+  #out.width="600px",
+  comment = "#>"
+)
+library(mets)
+```
+
+Overview
+========
+
+We describe how to perform regression modelling for cumulative cost
+\begin{align*}
+{\cal U}(t) & = \int_0^t Z(s) dN(s)
+\end{align*}
+where $N(s)$ is a counting process that registers the times at which costs are realised and accumulated,
+and $Z(t)$ is the cost (or mark) at the event times. The counting process can be
+a mix of random and fixed times, and the data are represented in counting process format with
+the marks/costs attached to the event times. There are many additional uses of
+such cumulative processes; for example, when considering time lost in a recurrent events setting, which we return to
+below.
+
+We can estimate the marginal mean of the cumulative process
+\begin{align*}
+\nu(t) & = E ( {\cal U}(t) )  
+\end{align*}
+possibly for strata with standard errors based on the derived influence function. 
+
+We provide semi-parametric regression modelling using the  proportional model 
+\begin{align*}
+E ( {\cal U}(t) | X) & = \Lambda_0(t) \exp( X^T \beta).
+\end{align*}
+
+In addition for a fixed time-point $t \in [0,\tau]$ we can estimate the mean given covariates
+\begin{align*}
+E ( {\cal U}(t) | X) & = \exp( X^T \beta) 
+\end{align*}
+where $\tau$ is some maximum follow-up time. 
+
+ - These quantities are estimated under independent right-censoring given $X$, using IPCW-adjusted estimating equations,
+    - similarly to the Ghosh-Lin model for recurrent events.
+ - A terminal event can be specified.
+
+We also estimate the probability of exceeding thresholds over time
+\begin{align*}
+ P ( {\cal U}(t)  > k ) & = \mu_k(t),
+\end{align*}
+and in the setting with a terminal event this is based on a derived competing risks data structure that
+keeps track of the competing terminal event.
+
+\begin{tikzpicture}[
+    node distance=3.5cm,
+    box/.style={draw, rectangle, minimum width=2.8cm, minimum height=1cm, align=center}
+]
+% Nodes
+\node[box] (start) {At Risk};
+\node[box, right of=start, yshift=2.4cm] (exceed) {Exceed-k};
+\node[box, right of=start, yshift=-2.4cm] (death) {D};
+
+% Arrows with hazard labels
+\draw[->, thick] (start) -- node[below] {\hspace{2 cm} $F_{exceed-k}(t)$} (exceed);
+\draw[->, thick] (start) -- node[below] {$F_{D}(t)$} (death);
+\end{tikzpicture}
+
+Regression modelling of this quantity is also possible using competing risks
+regression models, for example via the `cifreg` function in mets.
+
+
+HF-action data
+==============
+
+Using the HF-action data, we simulate a severity score for each event.
+
+
+```{r}
+library(mets)
+data(hfactioncpx12)
+hf <- hfactioncpx12
+hf$severity <- abs((5+rnorm(741)*2))[hf$id]
+
+## marginal mean using formula  
+outNZ <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(id)
+			 +marks(severity),hf,cause=1,death.code=2)
+plot(outNZ,se=TRUE)
+summary(outNZ,times=3) 
+
+outN <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,
+		       cause=1,death.code=2)
+plot(outN,se=TRUE,add=TRUE)
+summary(outN,times=3) 
+```
+
+For comparison we also compute the IPCW estimates with and without marks at time 3 using the linear model,
+and note that they are identical. Standard errors are based on different formulae that are asymptotically
+equivalent, and we note that they are very similar.
+
+```{r}
+outNZ3 <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id)+marks(severity),data=hf,
+		  cause=1,death.code=2,time=3,cens.model=~strata(treatment),model="lin")
+summary(outNZ3)
+head(iid(outNZ3))
+
+outN3 <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id),data=hf,cause=1,death.code=2,time=3,
+		 cens.model=~strata(treatment),model="lin")
+summary(outN3)
+head(iid(outN3))
+```
+
+We also apply the semiparametric proportional cost model with IPCW adjustment: 
+
+```{r}
+propNZ <- recreg(Event(entry,time,status)~treatment+marks(severity)+cluster(id),data=hf,cause=1,death.code=2)
+summary(propNZ) 
+plot(propNZ,main="Baselines")
+     
+GL <- recreg(Event(entry,time,status)~treatment+cluster(id),hf,cause=1,death.code=2)
+summary(GL)
+plot(GL,add=TRUE,col=2)
+```
+Those treated have 14\% lower cumulative severity and 11\% lower expected number of events.
+
+
+Exceed threshold
+================
+
+Finally, we estimate the probability of exceeding cumulative severity thresholds of 1, 5, and 10:
+
+```{r}
+ooNZ <- prob_exceed_recurrent(Event(entry,time,status)~strata(treatment)+cluster(id)+marks(severity),data=hf,
+			      cause=1,death.code=2,exceed=c(1,5,10,20))
+plot(ooNZ,strata=1)
+plot(ooNZ,strata=2,add=TRUE)
+summary(ooNZ,times=3)
+```
+
+Cumulative time lost for recurrent events
+=========================================
+
+The cumulative time lost for recurrent events is defined as
+\begin{align*}
+  {\cal M}(t) = E\left[ \int_0^\tau (\tau-s) dN(s) \right] = \int_0^\tau \mu(s) ds
+\end{align*}
+where $\mu(t) = E( N(t) )$ is the marginal mean of the recurrent events at time $t$.
+
+
+```{r}
+hf$lost5 <- 5-hf$time
+
+RecLost <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id)+marks(lost5),data=hf,
+		   cause=1,death.code=2,time=5,cens.model=~strata(treatment),model="lin")
+summary(RecLost)
+head(iid(RecLost))
+```
+
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```

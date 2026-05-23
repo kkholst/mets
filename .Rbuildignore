@@ -19,3 +19,5 @@
 ^docs$
 ^pkgdown$
 ^\.github$
+^vignettes/rebuild-vignettes\.R$
+\.Rmd\.orig$
