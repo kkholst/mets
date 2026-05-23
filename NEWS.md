@@ -1,3 +1,6 @@
+# mets 1.3.11
+Development version
+
 # mets 1.3.10
   - Changed the naming of some functions for RMTL and RMST `resmean.phreg` to
     `resmean_phreg` and  `cif.yearslost` to `cif_yearslost`. Naming of functions have 
