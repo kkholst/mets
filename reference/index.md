@@ -190,6 +190,9 @@
 - [`eventpois()`](http://kkholst.github.io/mets/reference/eventpois.md)
   : Extract survival estimates from lifetable analysis
 
+- [`extendCums()`](http://kkholst.github.io/mets/reference/extendCums.md)
+  : Extend Cumulative Hazard Functions to Common Time Range
+
 - [`familyclusterWithProbands_index()`](http://kkholst.github.io/mets/reference/familyclusterWithProbands_index.md)
   : Finds all pairs within a cluster (famly) with the proband
   (case/control)

@@ -890,12 +890,12 @@ system.time(a.mz <- biprobit.time(cancer~1, id="id", data=subset(prt0, zyg=="MZ"
                                cens.formula = Surv(time,status==0)~1, pairs.only=TRUE,
                                 breaks=tt))
 #>    user  system elapsed 
-#>   0.282   0.278   0.232
+#>   0.254   0.269   0.215
 system.time(a.dz <- biprobit.time(cancer~1, id="id", data=subset(prt0, zyg=="DZ"),
                                cens.formula = Event(time,status==0)~1, pairs.only=TRUE,
                                breaks=tt))
 #>    user  system elapsed 
-#>   0.383   0.294   0.348
+#>   0.357   0.284   0.331
 
 #system.time(a.zyg <- biprobit.time(cancer~1, rho=~1+zyg, id="id", data=prt, 
 #                               cens.formula = Event(time,status==0)~1,

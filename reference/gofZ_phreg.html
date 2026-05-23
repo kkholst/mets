@@ -141,8 +141,8 @@ covariates with more than 2 levels.</p></dd>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The test statistic is:
-$$ U(z, \tau) = \int_0^\tau M(z)^T d \hat M $$
-where \(M(z)\) is a design matrix based on indicator functions \(I(Z_i \leq z_l)\)
+$$ U(z, \tau) = \int_0^\tau K(z)^T d \hat M $$
+where \(K(z)\) is a design matrix based on indicator functions \(I(Z_i \leq z_l)\)
 for a grid of points \(z_l\).</p>
 <p>The p-value is valid but depends on the chosen grid. As the number of break points increases,
 this test converges to the original Lin, Wei, and Ying test for linearity.</p>

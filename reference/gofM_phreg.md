@@ -91,8 +91,8 @@ An object of class `"gof.phreg"` containing:
 
 ## Details
 
-The test statistic is: \$\$ U(t) = \int_0^t M^T d \hat M \$\$ where
-\\M\\ is the model matrix (e.g., a set of basis functions for a
+The test statistic is: \$\$ U(t) = \int_0^t K^T d \hat M \$\$ where
+\\K\\ is the model matrix (e.g., a set of basis functions for a
 continuous covariate) and \\\hat M\\ are the martingale residuals.
 
 P-values are based on the Lin, Wei, and Ying (1993) resampling method.

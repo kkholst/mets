@@ -146,8 +146,8 @@ or time-varying coefficients (interaction with time).</p>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The test statistic is:
-$$ U(t) = \int_0^t M^T d \hat M $$
-where \(M\) is the model matrix (e.g., a set of basis functions for a continuous covariate)
+$$ U(t) = \int_0^t K^T d \hat M $$
+where \(K\) is the model matrix (e.g., a set of basis functions for a continuous covariate)
 and \(\hat M\) are the martingale residuals.</p>
 <p>P-values are based on the Lin, Wei, and Ying (1993) resampling method. The plot shows
 whether the residuals are consistent with the model across the range of the covariate.</p>

@@ -2,8 +2,8 @@
 
 Performs cumulative score process residual tests for the proportional
 hazards (PH) assumption in Cox regression. The test statistics are based
-on the cumulative score process: \$\$ U(t) = \int_0^t \hat M_i(s) d \hat
-\beta(s) \$\$ where \\\hat M_i(s)\\ are the martingale residuals.
+on the cumulative score process: \$\$ U(t) = \int_0^t (X_i - E(t) ) d
+\hat M_i(s) \$\$ where \\\hat M_i(s)\\ are the martingale residuals.
 
 ## Usage
 

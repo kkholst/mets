@@ -82,8 +82,8 @@ An object of class `"gof.phreg"` with type "Zmodelmatrix" containing:
 
 ## Details
 
-The test statistic is: \$\$ U(z, \tau) = \int_0^\tau M(z)^T d \hat M
-\$\$ where \\M(z)\\ is a design matrix based on indicator functions
+The test statistic is: \$\$ U(z, \tau) = \int_0^\tau K(z)^T d \hat M
+\$\$ where \\K(z)\\ is a design matrix based on indicator functions
 \\I(Z_i \leq z_l)\\ for a grid of points \\z_l\\.
 
 The p-value is valid but depends on the chosen grid. As the number of
