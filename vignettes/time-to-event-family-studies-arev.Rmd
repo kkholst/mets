@@ -605,15 +605,17 @@ clearly DK has a much lower cumulative incidence of prostate cancer.
 #>  countrySweden:zygMZ 
 #>            -1.325599
  ### interaction test
- wald.test(regconc,coef.null=5:7)
-#>       lin.comb        se     lower      upper       pval
-#> [1,] -1.267368 0.8706047 -2.973722  0.4389863 0.14546656
-#> [2,] -2.146122 0.9434922 -3.995332 -0.2969109 0.02292648
-#> [3,] -1.325599 0.8219447 -2.936581  0.2853827 0.10679673
-#> 
-#> 	Wald test
-#> 
-#> data:  
+ estimate(regconc, contrast=list(5,6,7))
+#>                      Estimate Std.Err   2.5%   97.5% P-value
+#> countryFinland:zygMZ   -1.267  0.8706 -2.974  0.4390 0.14547
+#> countryNorway:zygMZ    -2.146  0.9435 -3.995 -0.2969 0.02293
+#> countrySweden:zygMZ    -1.326  0.8219 -2.937  0.2854 0.10680
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
+#>   [countryFinland:zygMZ] = 0
+#>   [countryNorway:zygMZ] = 0
+#>   [countrySweden:zygMZ] = 0 
+#>  
 #> chisq = 5.2661, df = 3, p-value = 0.1533
 
  regconc <- cifreg(Event(time,status)~country+zyg,data=dd,prop=NULL)
@@ -655,8 +657,6 @@ slr
 #> countryNorway    2.5619 1.1698 5.6111
 #> countrySweden    2.9592 1.5729 5.5676
 #> zygMZ            2.7825 1.8697 4.1408
-### library(Publish)
-### publish(round(slr$exp.coef[,-c(2,5)],2),latex=TRUE,digits=2)
 ```
 
 Competing risk using additive Gamma
@@ -941,12 +941,12 @@ system.time(a.mz <- biprobit.time(cancer~1, id="id", data=subset(prt0, zyg=="MZ"
                                cens.formula = Surv(time,status==0)~1, pairs.only=TRUE,
                                 breaks=tt))
 #>    user  system elapsed 
-#>   0.168   0.000   0.169
+#>   0.180   0.000   0.181
 system.time(a.dz <- biprobit.time(cancer~1, id="id", data=subset(prt0, zyg=="DZ"),
                                cens.formula = Event(time,status==0)~1, pairs.only=TRUE,
                                breaks=tt))
 #>    user  system elapsed 
-#>   0.350   0.000   0.353
+#>   0.313   0.000   0.314
 
 #system.time(a.zyg <- biprobit.time(cancer~1, rho=~1+zyg, id="id", data=prt, 
 #                               cens.formula = Event(time,status==0)~1,
@@ -1002,7 +1002,7 @@ system.time(a.dz_country <- biprobit.time(cancer~country, id="id", data=subset(p
                                cens.formula = Event(time,status==0)~country, pairs.only=TRUE,
                                breaks=tt))
 #>    user  system elapsed 
-#>   0.453   0.000   0.454
+#>   0.461   0.000   0.463
 
 s_mz_country <- summary(a.mz_country)
 s_dz_country <- summary(a.dz_country)
