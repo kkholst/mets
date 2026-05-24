@@ -35,8 +35,13 @@ readme:
 
 testall: test slowtest
 
+v:
+	@$(R) -q -e "pkgdown::build_articles()"
+	@echo "Vignettes build in `docs/articles/`"
+
 vignettes:
-	cd vignettes && Rscript rebuild-vignettes.R
+	@cd vignettes && Rscript rebuild-vignettes.R
+	@$(MAKE) v
 
 vignettes/%.Rmd: FORCE
 	cd vignettes && Rscript rebuild-vignettes.R $*.Rmd.orig
@@ -45,9 +50,6 @@ FORCE:
 
 init: doc
 	@$(R) -q -e "Rcpp::compileAttributes()"
-
-v:
-	@$(R) -q -e "devtools::build_vignettes(clean=FALSE, install=FALSE, quiet=FALSE)"
 
 roxy: doc
 
