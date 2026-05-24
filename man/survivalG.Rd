@@ -62,6 +62,7 @@ fg1 <- cifreg(Event(time, cause) ~ tcell.f + platelet + age, bmt,
               cause = 1, cox.prep = TRUE, propodds = NULL)
 summary(survivalG(fg1, bmt, 50))
 
+\donttest{ ## Reduce Ex.Timings
 # Cox model
 ss <- phreg(Surv(time, event) ~ tcell.f + platelet + age, bmt)
 summary(survivalG(ss, bmt, 50))
@@ -77,6 +78,7 @@ plot(sst)
 # Among treated (specify id to link influence functions)
 ss <- phreg(Surv(time, event) ~ tcell.f + platelet + age + cluster(id), bmt)
 summary(survivalG(ss, subset(bmt, tcell == 1), 50))
+}
 }
 \author{
 Thomas Scheike

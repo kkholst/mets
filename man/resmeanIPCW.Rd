@@ -63,6 +63,7 @@ out <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet+age, bmt,
                 time=50, cens.model=~strata(platelet), model="exp")
 summary(out)
 
+\donttest{ ## Reduce Ex.Timings
 ## Weighted GLM version (RMST)
 out2 <- logitIPCW(Event(time,cause!=0)~tcell+platelet+age, bmt,
             time=50, cens.model=~strata(platelet), model="exp", outcome="rmst")
@@ -94,6 +95,7 @@ estimate(out)
 ## Same as integrated cumulative incidence 
 rmc1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet), data=bmt, times=30)
 summary(rmc1)
+}
 }
 \references{
 Scheike, T. and Holst, K. K. (2024). Restricted mean time lost for survival and competing risks data using mets in R. WIP.
