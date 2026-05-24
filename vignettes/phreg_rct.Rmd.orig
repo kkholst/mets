@@ -1,5 +1,5 @@
 ---
-title: "Randomization for Cox Type rate models "
+title: "Randomization for Cox Type rate models"
 author: Klaus Holst & Thomas Scheike
 date: "`r Sys.Date()`"
 output:
@@ -206,6 +206,8 @@ We here use the propensity score model $P(A1=B1|A0)$ that uses the
 observed frequencies on arm $B1$ among those starting out on either $A1$ or $A2$.
 
 ```{r}
+#| fig.alt: >
+#|   IPTW survival estimates for four treatment regimes.
 data(calgb8923)
 calgt <- calgb8923
 

@@ -42,6 +42,8 @@ summaryGLM(glm1,id=bmt$id)
 Predictions are equally straightforward:
 
 ```{r}
+#| fig.alt: >
+#|   GLM predicted probabilities with confidence region.
 age <- seq(-2,2,by=0.1)
 nd <- data.frame(platelet=0,age=seq(-2,2,by=0.1))
 pnd <- predictGLM(glm1,nd)

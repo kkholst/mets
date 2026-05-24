@@ -121,12 +121,16 @@ We now look at the plot  with robust standard errors
 
 
 ```{r}
+#| fig.alt: >
+#|   Cumulative baseline hazard with robust standard errors.
   plot(rob,se=TRUE,robust=TRUE,col=3)
 ```
 
 We can also make survival prediction with robust standard errors using the phreg.
 
 ```{r}
+#| fig.alt: >
+#|   Survival predictions with robust standard errors.
   pp <-  predict(out,data[1:20,],se=TRUE,robust=TRUE)
   plot(pp,se=TRUE,whichx=1:10)
 ```
@@ -172,6 +176,8 @@ The p-value reflects whether the observed score process is consistent with
 the model. 
 
 ```{r}
+#| fig.alt: >
+#|   Cumulative score process for goodness of fit.
   plot(gout)
 ```
 

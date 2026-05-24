@@ -6,7 +6,7 @@ output:
   rmarkdown::html_vignette:
     fig_caption: no
 vignette: >
-  %\VignetteIndexEntry{Average treatment effect (ATE) based on the Cox and Fine-Gray model}
+  %\VignetteIndexEntry{G-Computation or standardization for the Cox, Fine-Gray and binomial regression models for survival data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -42,6 +42,8 @@ We begin by looking at the cumulative incidence via a Fine-Gray model for both c
 standardised cumulative incidence for cause 1.
 
 ```{r}
+#| fig.alt: >
+#|   Standardized cumulative incidence for cause 1.
 library(mets)
 set.seed(100)
 
@@ -65,6 +67,8 @@ plot(cif1time,type="risk");
 Now looking at the survival probability 
 
 ```{r}
+#| fig.alt: >
+#|   Standardized survival probability over time.
 ss <- phreg(Surv(time,event)~tcell+platelet+age,bmt)
 sss <- survivalG(ss,bmt,time=50)
 summary(sss)

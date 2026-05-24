@@ -90,9 +90,12 @@ Using the HF-action data, we simulate a severity score for each event.
 
 
 ```{r}
+#| fig.alt: >
+#|   Marginal mean cumulative cost by treatment.
 library(mets)
 data(hfactioncpx12)
 hf <- hfactioncpx12
+set.seed(1)
 hf$severity <- abs((5+rnorm(741)*2))[hf$id]
 
 ## marginal mean using formula  
@@ -126,6 +129,8 @@ head(iid(outN3))
 We also apply the semiparametric proportional cost model with IPCW adjustment: 
 
 ```{r}
+#| fig.alt: >
+#|   Proportional cost model baseline estimates.
 propNZ <- recreg(Event(entry,time,status)~treatment+marks(severity)+cluster(id),data=hf,cause=1,death.code=2)
 summary(propNZ) 
 plot(propNZ,main="Baselines")
@@ -143,6 +148,8 @@ Exceed threshold
 Finally, we estimate the probability of exceeding cumulative severity thresholds of 1, 5, and 10:
 
 ```{r}
+#| fig.alt: >
+#|   Probability of exceeding cumulative cost thresholds.
 ooNZ <- prob_exceed_recurrent(Event(entry,time,status)~strata(treatment)+cluster(id)+marks(severity),data=hf,
 			      cause=1,death.code=2,exceed=c(1,5,10,20))
 plot(ooNZ,strata=1)

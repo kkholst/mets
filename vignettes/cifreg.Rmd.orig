@@ -96,6 +96,8 @@ so the effect of an increase in $X_1$ is $\beta_1$ and leads to $1-F_1(t,X)$ on 
 We have a look at the non-parametric cumulative incidence curves
 
 ```{r}
+#| fig.alt: >
+#|   Nonparametric cumulative incidence curves by covariate strata.
  par(mfrow=c(1,2))
  cifs1 <- cif(Event(time,status)~strata(Z1,Z2),dats,cause=1)
  plot(cifs1)
@@ -107,6 +109,8 @@ We have a look at the non-parametric cumulative incidence curves
 Now fitting the Fine-Gray model 
 
 ```{r}
+#| fig.alt: >
+#|   Fine-Gray model predicted cumulative incidence curves.
  fg <- cifregFG(Event(time,status)~Z1+Z2,data=dats,cause=1)
  summary(fg)
 
@@ -137,6 +141,8 @@ and then used to obtain standard errors for predictions.
 We plot the predictions with confidence intervals for predictions at time point 5:
 
 ```{r,pred-cif}
+#| fig.alt: >
+#|   Fine-Gray predictions with confidence intervals at time 5.
 ### predictions with CI based on iid decomposition of baseline and beta
 fg <- cifregFG(Event(time,status)~Z1+Z2,data=dats,cause=1)
 Biid <- iidBaseline(fg,time=5)

@@ -195,6 +195,8 @@ We here use the propensity score model $P(A1=B1|A0)$ that uses the
 observed frequencies on arm $B1$ among those starting out on either $A1$ or $A2$.
 
 ```{r plot_phreg_IPTW}
+#| fig.alt: >
+#|   Survival estimates for four treatment regimes.
 data(calgb8923)
 calgt <- calgb8923
 

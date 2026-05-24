@@ -77,6 +77,8 @@ model with death and cancer.
 First estimating the marginal hazards for each country. 
 
 ```{r, label=survival-marginal}
+#| fig.alt: >
+#|   Marginal cumulative hazard of cancer by country.
  # Marginal Cox model here stratified on country without covariates 
  margph <- phreg(Surv(time,cancer)~strata(country)+cluster(id),data=prt)
  plot(margph)
@@ -203,6 +205,8 @@ prt <-  force.same.cens(prt,cause="status")
 
 
 ```{r, label=concordance}
+#| fig.alt: >
+#|   Cumulative incidence of cancer by country.
  ## cumulative incidence with cluster standard errors.
  cif1 <- cif(Event(time,status)~strata(country)+cluster(id),prt,cause=2)
  plot(cif1,se=1)
@@ -216,6 +220,8 @@ p11dz <- p11$model$"DZ"
 ```
  
 ```{r}
+#| fig.alt: >
+#|   Concordance probability for MZ and DZ twins.
  par(mfrow=c(1,2))
  ## Concordance
  plot(p11mz,ylim=c(0,0.1));
@@ -227,6 +233,8 @@ that takes the marginals into account when evaluating the strength
 of the association. 
      
 ```{r, label=concordance2}
+#| fig.alt: >
+#|   Concordance and casewise concordance for MZ and DZ twins.
  library(prodlim)
  outm <- prodlim(Hist(time,status)~+1,data=prt)
 
@@ -269,6 +277,8 @@ of the association.
 
 
 ```{r, label=concordance3}
+#| fig.alt: >
+#|   Concordance and casewise concordance by zygosity.
 
  dd <- bicompriskData(Event(time,status)~country+strata(zyg)+id(id),data=prt,cause=c(2,2))
  conczyg <- cif(Event(time,status)~strata(zyg)+cluster(id),data=dd,cause=1)
@@ -478,6 +488,8 @@ concMZ <- Reduce(rbind, lapply(bt0$coef, function(x) x$probMZ["Concordance",,dro
 ```
 
 ```{r}
+#| fig.alt: >
+#|   Heritability and concordance over age from ACE model.
 par(mfrow=c(1,2))
 plot(tt, h2[,1], type="s", lty=1, col=cols[3], xlab="Age", ylab="Heritability", ylim=c(0,1))
 lava::confband(tt, h2[,2], h2[,3],polygon=TRUE, step=TRUE, col=lava::Col(cols[3], 0.1), border=NA)
@@ -488,6 +500,8 @@ lava::confband(tt, concMZ[,2], concMZ[,3],polygon=TRUE, step=TRUE, col=lava::Col
 
 Bivariate probit model at time different time points
 ```{r, label=biprobittime1}
+#| fig.alt: >
+#|   Concordance from bivariate probit model over time.
 system.time(a.mz <- biprobit.time(cancer~1, id="id", data=subset(prt0, zyg=="MZ"),
                                cens.formula = Surv(time,status==0)~1, pairs.only=TRUE,
                                 breaks=tt))
@@ -544,6 +558,8 @@ a1 <- bptwin.time(cancer~1, id="id", data=prt0, type="ace",
 
 
 ```{r}
+#| fig.alt: >
+#|   Tetrachoric correlation, relative recurrence risk, and heritability over age.
 plot(a.mz, which=c(6), xlab="Age", ylab="Correlation", ylim=c(0,1), col=cols[1], lty=ltys[1], legend=NULL, alpha=.1)
 plot(a.dz, which=c(6), col=cols[2], lty=ltys[2], legend=NULL, add=TRUE, alpha=.1)
 legend("topleft", c("MZ tetrachoric correlation", "DZ tetrachoric correlation"),

@@ -78,6 +78,8 @@ We note that the probability of an event (pregnancy) is considerably higher for 
 Now using this discrete survival model we simulate some data from this model 
 
 ```{r}
+#| fig.alt: >
+#|   Discrete survival predictions with standard errors.
 set.seed(1000) # to control output in simulations for p-values below.
 n <- 200
 Z <- matrix(rbinom(n*4,1,0.5),n,4)

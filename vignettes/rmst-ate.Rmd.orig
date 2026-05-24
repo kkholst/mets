@@ -57,6 +57,8 @@ For a fully saturated model with a complete censoring model these estimators are
 
 
 ```{r}
+#| fig.alt: >
+#|   Restricted mean survival and years lost by cause.
 set.seed(101)
 
      data(bmt); bmt$time <- bmt$time+runif(nrow(bmt))*0.001
