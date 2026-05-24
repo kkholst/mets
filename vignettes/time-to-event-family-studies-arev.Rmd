@@ -606,8 +606,15 @@ clearly DK has a much lower cumulative incidence of prostate cancer.
 #>            -1.325599
  ### interaction test
  wald.test(regconc,coef.null=5:7)
-#> Error in `wald.test()`:
-#> ! could not find function "wald.test"
+#>       lin.comb        se     lower      upper       pval
+#> [1,] -1.267368 0.8706047 -2.973722  0.4389863 0.14546656
+#> [2,] -2.146122 0.9434922 -3.995332 -0.2969109 0.02292648
+#> [3,] -1.325599 0.8219447 -2.936581  0.2853827 0.10679673
+#> 
+#> 	Wald test
+#> 
+#> data:  
+#> chisq = 5.2661, df = 3, p-value = 0.1533
 
  regconc <- cifreg(Event(time,status)~country+zyg,data=dd,prop=NULL)
  regconc
@@ -934,12 +941,12 @@ system.time(a.mz <- biprobit.time(cancer~1, id="id", data=subset(prt0, zyg=="MZ"
                                cens.formula = Surv(time,status==0)~1, pairs.only=TRUE,
                                 breaks=tt))
 #>    user  system elapsed 
-#>   0.170   0.000   0.176
+#>   0.168   0.000   0.169
 system.time(a.dz <- biprobit.time(cancer~1, id="id", data=subset(prt0, zyg=="DZ"),
                                cens.formula = Event(time,status==0)~1, pairs.only=TRUE,
                                breaks=tt))
 #>    user  system elapsed 
-#>   0.251   0.000   0.251
+#>   0.350   0.000   0.353
 
 #system.time(a.zyg <- biprobit.time(cancer~1, rho=~1+zyg, id="id", data=prt, 
 #                               cens.formula = Event(time,status==0)~1,
@@ -995,7 +1002,7 @@ system.time(a.dz_country <- biprobit.time(cancer~country, id="id", data=subset(p
                                cens.formula = Event(time,status==0)~country, pairs.only=TRUE,
                                breaks=tt))
 #>    user  system elapsed 
-#>   0.363   0.000   0.362
+#>   0.453   0.000   0.454
 
 s_mz_country <- summary(a.mz_country)
 s_dz_country <- summary(a.dz_country)
@@ -1180,24 +1187,24 @@ sessionInfo()
 #> tzcode source: system (glibc)
 #> 
 #> attached base packages:
-#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+#> [1] splines   stats     graphics  grDevices utils     datasets  methods  
+#> [8] base     
 #> 
 #> other attached packages:
-#> [1] prodlim_2026.03.11 mets_1.3.10       
+#> [1] prodlim_2026.03.11 timereg_2.0.7      survival_3.8-6     mets_1.3.10       
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] vctrs_0.7.3            cli_3.6.6              knitr_1.51            
-#>  [4] rlang_1.2.0            xfun_0.57              otel_0.2.0            
-#>  [7] data.table_1.18.4      glue_1.8.1             future.apply_1.20.2   
-#> [10] listenv_0.10.1         lava_1.9.1             stats4_4.6.0          
-#> [13] grid_4.6.0             evaluate_1.0.5         lifecycle_1.0.5       
-#> [16] yaml_2.3.12            mvtnorm_1.3-7          numDeriv_2016.8-1.1   
-#> [19] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      
-#> [22] ucminf_1.2.3           Rcpp_1.1.1-1.1         future_1.70.0         
+#>  [4] rlang_1.2.0            xfun_0.57              KernSmooth_2.23-26    
+#>  [7] otel_0.2.0             data.table_1.18.4      glue_1.8.1            
+#> [10] future.apply_1.20.2    listenv_0.10.1         lava_1.9.1            
+#> [13] stats4_4.6.0           grid_4.6.0             evaluate_1.0.5        
+#> [16] lifecycle_1.0.5        yaml_2.3.12            mvtnorm_1.3-7         
+#> [19] numDeriv_2016.8-1.1    compiler_4.6.0         codetools_0.2-20      
+#> [22] Rcpp_1.1.1-1.1         ucminf_1.2.3           future_1.70.0         
 #> [25] lattice_0.22-9         digest_0.6.39          pillar_1.11.1         
-#> [28] parallelly_1.47.0      parallel_4.6.0         splines_4.6.0         
-#> [31] Matrix_1.7-5           tools_4.6.0            RcppArmadillo_15.2.6-1
-#> [34] globals_0.19.1         survival_3.8-6
+#> [28] parallelly_1.47.0      parallel_4.6.0         Matrix_1.7-5          
+#> [31] tools_4.6.0            RcppArmadillo_15.2.6-1 globals_0.19.1
 ```
 
 

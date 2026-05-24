@@ -336,7 +336,7 @@ clearly DK has a much lower cumulative incidence of prostate cancer.
  regconc <- cifreg(Event(time,status)~country*zyg,data=dd,prop=NULL)
  regconc
  ### interaction test
- wald.test(regconc,coef.null=5:7)
+ estimate(regconc, contrast=list(5,6,7))
 
  regconc <- cifreg(Event(time,status)~country+zyg,data=dd,prop=NULL)
  regconc
@@ -348,8 +348,6 @@ clearly DK has a much lower cumulative incidence of prostate cancer.
 
 ```{r}
 slr
-### library(Publish)
-### publish(round(slr$exp.coef[,-c(2,5)],2),latex=TRUE,digits=2)
 ```
 
 Competing risk using additive Gamma

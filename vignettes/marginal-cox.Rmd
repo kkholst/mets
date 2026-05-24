@@ -317,17 +317,17 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] mets_1.3.10
+#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.10   
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
 #>  [4] xfun_0.57              otel_0.2.0             future.apply_1.20.2   
-#>  [7] listenv_0.10.1         lava_1.9.1             grid_4.6.0            
-#> [10] evaluate_1.0.5         yaml_2.3.12            mvtnorm_1.3-7         
-#> [13] numDeriv_2016.8-1.1    timereg_2.0.7          compiler_4.6.0        
-#> [16] codetools_0.2-20       Rcpp_1.1.1-1.1         future_1.70.0         
-#> [19] lattice_0.22-9         digest_0.6.39          parallelly_1.47.0     
-#> [22] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
-#> [25] tools_4.6.0            RcppArmadillo_15.2.6-1 globals_0.19.1        
-#> [28] survival_3.8-6
+#>  [7] listenv_0.10.1         lava_1.9.1             stats4_4.6.0          
+#> [10] grid_4.6.0             evaluate_1.0.5         yaml_2.3.12           
+#> [13] mvtnorm_1.3-7          numDeriv_2016.8-1.1    compiler_4.6.0        
+#> [16] codetools_0.2-20       Rcpp_1.1.1-1.1         ucminf_1.2.3          
+#> [19] future_1.70.0          lattice_0.22-9         digest_0.6.39         
+#> [22] parallelly_1.47.0      parallel_4.6.0         splines_4.6.0         
+#> [25] Matrix_1.7-5           tools_4.6.0            RcppArmadillo_15.2.6-1
+#> [28] globals_0.19.1
 ```

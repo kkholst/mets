@@ -263,7 +263,7 @@ out <- recurrent_marginal(Event(entry,time,status)~cluster(id),data=rr,cause=1,d
 plot(out,se=TRUE,ylab="marginal mean",col=2)
 ```
 
-![](figure/recurrent-events-unnamed-chunk-4-1.png)
+<img src="figure/recurrent-events-unnamed-chunk-4-1.png" alt="Death rate, event rate, and marginal mean."  />
 
 We can also extract the estimate in different time-points 
 
@@ -294,7 +294,7 @@ out <- recurrent_marginal(Event(entry,time,status)~strata(strata)+cluster(id),
 plot(out,se=TRUE,ylab="marginal mean",col=1:2)
 ```
 
-![](figure/recurrent-events-unnamed-chunk-6-1.png)
+<img src="figure/recurrent-events-unnamed-chunk-6-1.png" alt="Stratified death rate, event rate, and marginal mean."  />
 
 We can compare different marginal mean test (IPCW based) with a log-rank test  
 
@@ -369,7 +369,7 @@ out <- recurrentMarginalPhreg(xr,xdr)
 plot(out,se=TRUE,ylab="marginal mean",col=1:2)
 ```
 
-![](figure/recurrent-events-unnamed-chunk-8-1.png)
+<img src="figure/recurrent-events-unnamed-chunk-8-1.png" alt="Cox-adjusted death rate, event rate, and marginal mean."  />
 
 ``` r
 
@@ -394,7 +394,7 @@ dtable(rr,~status+death,level=2)
 mets:::showfitsimList(rr,list(base1,base1,base4),list(dr,base4))
 ```
 
-![](figure/recurrent-events-unnamed-chunk-9-1.png)
+<img src="figure/recurrent-events-unnamed-chunk-9-1.png" alt="Simulated vs true rates for multiple recurrent event types."  />
 
 Improving efficiency 
 ======================
@@ -480,7 +480,7 @@ for (t in times) {
 legend("bottomright",c("Eff-pred"),lty=1,col=c(1,3))
 ```
 
-![](figure/recurrent-events-unnamed-chunk-10-1.png)
+<img src="figure/recurrent-events-unnamed-chunk-10-1.png" alt="Augmented marginal mean estimates."  />
 
 In the case where covariates might be important but we are still interested in the marginal mean 
 we can also augment wrt these covariates 
@@ -549,7 +549,7 @@ One can also do regression modelling , using the model
 \begin{align*}
 E(N_1(t) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
 \end{align*}
-then Ghost-Lin suggested IPCW score equations that are implemented in the recreg function of mets. 
+then Ghosh-Lin suggested IPCW score equations that are implemented in the recreg function of mets. 
 
 First we generate data that from a Ghosh-Lin model with regression coefficients 
 $\beta=(-0.3,0.3)$ and the baseline given by base1, this is done under the assumption that the death 
@@ -587,7 +587,7 @@ plot(outs,add=TRUE,col=2)
 lines(scalecumhaz(base1,1),col=3,lwd=2)
 ```
 
-![](figure/recurrent-events-unnamed-chunk-12-1.png)
+<img src="figure/recurrent-events-unnamed-chunk-12-1.png" alt="Ghosh-Lin regression baseline estimates."  />
 
 We note that for the extended censoring model we gain a little efficiency and that the estimates are close to the true values. 
 
@@ -665,7 +665,7 @@ plot(outC,col=2,add=TRUE)
 plot(outCW,col=3,add=TRUE)
 ```
 
-![](figure/recurrent-events-unnamed-chunk-15-1.png)
+<img src="figure/recurrent-events-unnamed-chunk-15-1.png" alt="Composite outcome baseline estimates."  />
 
 Predictions and standard errors can be computed via the iid decompositions of the baseline and the regression coefficients. We illustrate this
 for the standard Ghosh-Lin model 
@@ -826,7 +826,7 @@ pred1c <- predict(out1c,data.frame(Z1=0:1,Z2=0),se=1)
 plot(pred1c,se=1,add=TRUE)
 ```
 
-![](figure/recurrent-events-unnamed-chunk-21-1.png)
+<img src="figure/recurrent-events-unnamed-chunk-21-1.png" alt="Ghosh-Lin predictions with confidence intervals."  />
 
 The censoring weights for the random censoring and the combined censoring
 
@@ -838,7 +838,7 @@ plot(km07,col=1)
 plot(km0,add=TRUE,col=2,lwd=2)
 ```
 
-![](figure/recurrent-events-unnamed-chunk-22-1.png)
+<img src="figure/recurrent-events-unnamed-chunk-22-1.png" alt="Censoring weight estimates by strata."  />
 
 
 Two-stage modelling 
@@ -1010,7 +1010,7 @@ plot(margsurv); lines(dr,col=3);
 plot(recurrent); lines(base1,col=3)
 ```
 
-![](figure/recurrent-events-unnamed-chunk-25-1.png)
+<img src="figure/recurrent-events-unnamed-chunk-25-1.png" alt="Cox rates for survivors vs true baselines."  />
 
 We can also simulate data with underlying dependence from the two-stage model (`simGLcox`) or using
 `simRecurrent` random effects models, for Cox-Cox or Ghosh-Lin-Cox models.
@@ -1089,7 +1089,7 @@ oo <- prob_exceed_recurrent(Event(entry,time,statusD)~cluster(id),rr,cause=1,dea
 plot(oo,types=1:5)
 ```
 
-![](figure/recurrent-events-unnamed-chunk-27-1.png)
+<img src="figure/recurrent-events-unnamed-chunk-27-1.png" alt="Probability of exceeding k events over time."  />
 
 We can also look at the mean and variance based on the estimators just described 
 
@@ -1100,7 +1100,7 @@ with(oo,plot(time,meanN,col=2,type="l"))
 with(oo,plot(time,varN,type="l"))
 ```
 
-![](figure/recurrent-events-unnamed-chunk-28-1.png)
+<img src="figure/recurrent-events-unnamed-chunk-28-1.png" alt="Mean and variance of recurrent events process."  />
 
 
 Multiple events
