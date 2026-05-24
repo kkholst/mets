@@ -1,7 +1,7 @@
 ---
 title: "Cooking Survival Data: 5-Minute Recipes"
 author: Klaus Holst & Thomas Scheike
-date: "2026-05-23"
+date: "2026-05-24"
 output:
   rmarkdown::html_vignette:
     fig_caption: no
@@ -10,7 +10,7 @@ header-includes:
   - \usepackage{tikz}
   - \usetikzlibrary{positioning, arrows.meta,calc}
 vignette: >
-  %\VignetteIndexEntry{Cooking survival data, 5 minutes recipes}
+  %\VignetteIndexEntry{Cooking Survival Data: 5-Minute Recipes}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -135,7 +135,7 @@ Now we fit a simple Cox model
  plot(scox1,col=2); plot(cox1,add=TRUE,col=1)
 ```
 
-![](figure/cooking-survival-data-unnamed-chunk-4-1.png)
+<img src="figure/cooking-survival-data-unnamed-chunk-4-1.png" alt="Cumulative hazard: simulated vs fitted Cox model."  />
 
 ``` r
 
@@ -158,7 +158,7 @@ Now we fit a simple Cox model
  plot(scox1,col=2); plot(cox10,add=TRUE,col=1)
 ```
 
-![](figure/cooking-survival-data-unnamed-chunk-4-2.png)
+<img src="figure/cooking-survival-data-unnamed-chunk-4-2.png" alt="Cumulative hazard: simulated vs fitted Cox model."  />
 
 Multiple Cox models for cause-specific hazards can be combined. Below we draw the
 covariates manually; alternatively, `sim_phregs` draws covariates directly from
@@ -188,7 +188,7 @@ the data.
  plot(cox2); plot(scox2,add=TRUE,col=2)
 ```
 
-![](figure/cooking-survival-data-unnamed-chunk-5-1.png)
+<img src="figure/cooking-survival-data-unnamed-chunk-5-1.png" alt="Cumulative hazard: competing risks Cox models, two causes."  />
 
 ``` r
  cbind(cox1$coef,scox1$coef,cox2$coef,scox2$coef)
@@ -220,7 +220,7 @@ We now consider a fully nonparametric model with stratified baselines.
  plot(cc1,add=TRUE,col=3)
 ```
 
-![](figure/cooking-survival-data-unnamed-chunk-6-1.png)
+<img src="figure/cooking-survival-data-unnamed-chunk-6-1.png" alt="Cumulative hazard: stratified nonparametric model."  />
 
 We now fit cause-specific hazard models with three causes (treating censoring as one of them)
 and generate competing risks data with hazards taken from the fitted Cox models.
@@ -256,7 +256,7 @@ The following example includes stratified baselines for some of the models:
  plot(cox2); plot(scox2,add=TRUE,col=2); 
 ```
 
-![](figure/cooking-survival-data-stratified-1.png)
+<img src="figure/cooking-survival-data-stratified-1.png" alt="Cumulative hazard: stratified competing risks models."  />
 
 ``` r
  
@@ -281,7 +281,7 @@ The following example includes stratified baselines for some of the models:
  plot(cox2); plot(scox2,add=TRUE); 
 ```
 
-![](figure/cooking-survival-data-stratified-2.png)
+<img src="figure/cooking-survival-data-stratified-2.png" alt="Cumulative hazard: stratified competing risks models."  />
 
 One further example, again fully nonparametric:
 
@@ -316,7 +316,7 @@ One further example, again fully nonparametric:
  plot(scox3,col=2); plot(cox3,add=TRUE,col=1)
 ```
 
-![](figure/cooking-survival-data-unnamed-chunk-7-1.png)
+<img src="figure/cooking-survival-data-unnamed-chunk-7-1.png" alt="Cumulative hazard: fully nonparametric competing risks."  />
 
 **Summary of simulation functions**
 
@@ -395,7 +395,7 @@ plot(cox1); plot(scox1, add = TRUE, col = 2)
 plot(cox2); plot(scox2, add = TRUE, col = 2)
 ```
 
-![](figure/cooking-survival-data-entry-stratified-1.png)
+<img src="figure/cooking-survival-data-entry-stratified-1.png" alt="Cumulative hazard: delayed entry competing risks."  />
 
 # Parametric hazard models
 While the semi‑parametric Cox model provides substantial flexibility for
@@ -451,7 +451,7 @@ lines(tt, pr[, 1, 1], lty=2, lwd=2)
 lines(tt, pr[, 1, 2], lty = 1, lwd = 2)
 ```
 
-![](figure/cooking-survival-data-weibull1-1.png)
+<img src="figure/cooking-survival-data-weibull1-1.png" alt="Cumulative hazard: Weibull vs Cox stratified model."  />
 
 To simulate data we can use the `rweibullcox()` function. Note that the
 `stats::rweibull()` function gives a different parametrization where the
@@ -630,7 +630,7 @@ data to validate the procedure.
  lines(base1,lwd=2)
 ```
 
-![](figure/cooking-survival-data-unnamed-chunk-9-1.png)
+<img src="figure/cooking-survival-data-unnamed-chunk-9-1.png" alt="Multistate model: estimated vs true transition rates."  />
 
 
 # Cumulative incidence 
@@ -752,7 +752,7 @@ plot(ciff)
 lines(attr(dats,"Lam1"))
 ```
 
-![](figure/cooking-survival-data-unnamed-chunk-10-1.png)
+<img src="figure/cooking-survival-data-unnamed-chunk-10-1.png" alt="Cumulative incidence: logistic and cloglog link models."  />
 
 We can also use the parameters based on fitted models 
 
@@ -786,7 +786,7 @@ We can also use the parameters based on fitted models
  plot(cif2); plot(scif2,add=TRUE,col=2)
 ```
 
-![](figure/cooking-survival-data-unnamed-chunk-11-1.png)
+<img src="figure/cooking-survival-data-unnamed-chunk-11-1.png" alt="Cumulative incidence: fitted model vs simulated data."  />
 
 
 ## CIF Delayed entry
@@ -841,7 +841,7 @@ and for the logit-link as
  plot(pcif1,add=TRUE)
 ```
 
-![](figure/cooking-survival-data-unnamed-chunk-12-1.png)
+<img src="figure/cooking-survival-data-unnamed-chunk-12-1.png" alt="Cumulative incidence: single cause with delayed entry."  />
 
 Combining two causes drawn with restriction $F_1+\tilde F_2 \leq 1$, thus modifying $\tilde F_2= F_2 (1-F_1(\tau))$ where 
 $F_1$ and $F_2$ are the two input cumulative incidence models 
@@ -858,7 +858,7 @@ $F_1$ and $F_2$ are the two input cumulative incidence models
  plot(pcif1,add=TRUE)
 ```
 
-![](figure/cooking-survival-data-unnamed-chunk-13-1.png)
+<img src="figure/cooking-survival-data-unnamed-chunk-13-1.png" alt="Cumulative incidence: two causes with delayed entry."  />
 
 Here we again combine two causes, now using parametric baselines via `simul_cifs`.
 The baselines for $F_1$ and $F_2$ are returned as attributes; note that $F_2$ is modified
@@ -893,7 +893,7 @@ F1base <- 1-exp(-baset)
 lines(timet,F1base,lwd=3)
 ```
 
-![](figure/cooking-survival-data-unnamed-chunk-14-1.png)
+<img src="figure/cooking-survival-data-unnamed-chunk-14-1.png" alt="Cumulative incidence: parametric baselines with delayed entry."  />
 
 
 # Recurrent events
@@ -954,7 +954,7 @@ library(mets)
  plot(dr,add=TRUE)
 ```
 
-![](figure/cooking-survival-data-unnamed-chunk-15-1.png)
+<img src="figure/cooking-survival-data-unnamed-chunk-15-1.png" alt="Recurrent events: two-stage Cox model."  />
 
 Now with Ghosh-Lin and Cox marginals:
 
@@ -986,7 +986,7 @@ Now with Ghosh-Lin and Cox marginals:
  plot(dr,add=TRUE)
 ```
 
-![](figure/cooking-survival-data-unnamed-chunk-16-1.png)
+<img src="figure/cooking-survival-data-unnamed-chunk-16-1.png" alt="Recurrent events: Ghosh-Lin and Cox model."  />
 
 We can also fit and simulate from stratified models:
 
@@ -1022,7 +1022,7 @@ plot(xr); plot(rxr,add=TRUE)
 plot(dr,add=TRUE,col=2); plot(rdr,add=TRUE,col=2)
 ```
 
-![](figure/cooking-survival-data-unnamed-chunk-17-1.png)
+<img src="figure/cooking-survival-data-unnamed-chunk-17-1.png" alt="Recurrent events: stratified two-stage model."  />
 
 ``` r
 ###
@@ -1051,7 +1051,7 @@ plot(glr); plot(rxr,add=TRUE)
 plot(dr,add=TRUE,col=2); plot(rdr,add=TRUE,col=2)
 ```
 
-![](figure/cooking-survival-data-unnamed-chunk-17-2.png)
+<img src="figure/cooking-survival-data-unnamed-chunk-17-2.png" alt="Recurrent events: stratified two-stage model."  />
 
 
 Frailty models (simulations based on the rates/intensities) 
@@ -1069,7 +1069,7 @@ Frailty models (simulations based on the rates/intensities)
  mets:::showfitsim(causes=1,rr,dr,base1,base1,which=1:2)
 ```
 
-![](figure/cooking-survival-data-unnamed-chunk-18-1.png)
+<img src="figure/cooking-survival-data-unnamed-chunk-18-1.png" alt="Recurrent events: frailty model simulations."  />
 
 ``` r
 
@@ -1083,7 +1083,7 @@ Frailty models (simulations based on the rates/intensities)
  mets:::showfitsim(causes=2,rr,dr,base1,base4,which=1:2)
 ```
 
-![](figure/cooking-survival-data-unnamed-chunk-18-2.png)
+<img src="figure/cooking-survival-data-unnamed-chunk-18-2.png" alt="Recurrent events: frailty model simulations."  />
 
 ``` r
 
@@ -1100,7 +1100,7 @@ Frailty models (simulations based on the rates/intensities)
  mets:::showfitsimList(rr,cumhaz,drl) 
 ```
 
-![](figure/cooking-survival-data-unnamed-chunk-18-3.png)
+<img src="figure/cooking-survival-data-unnamed-chunk-18-3.png" alt="Recurrent events: frailty model simulations."  />
 
 
 # SessionInfo
@@ -1138,10 +1138,11 @@ sessionInfo()
 #>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
 #>  [4] xfun_0.57              otel_0.2.0             future.apply_1.20.2   
 #>  [7] listenv_0.10.1         lava_1.9.1             stats4_4.6.0          
-#> [10] grid_4.6.0             evaluate_1.0.5         mvtnorm_1.3-7         
-#> [13] numDeriv_2016.8-1.1    compiler_4.6.0         codetools_0.2-20      
-#> [16] Rcpp_1.1.1-1.1         ucminf_1.2.3           future_1.70.0         
-#> [19] lattice_0.22-9         digest_0.6.39          parallelly_1.47.0     
-#> [22] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
-#> [25] tools_4.6.0            RcppArmadillo_15.2.6-1 globals_0.19.1
+#> [10] grid_4.6.0             evaluate_1.0.5         yaml_2.3.12           
+#> [13] mvtnorm_1.3-7          numDeriv_2016.8-1.1    compiler_4.6.0        
+#> [16] codetools_0.2-20       Rcpp_1.1.1-1.1         ucminf_1.2.3          
+#> [19] future_1.70.0          lattice_0.22-9         digest_0.6.39         
+#> [22] parallelly_1.47.0      parallel_4.6.0         splines_4.6.0         
+#> [25] Matrix_1.7-5           tools_4.6.0            RcppArmadillo_15.2.6-1
+#> [28] globals_0.19.1
 ```

@@ -10,7 +10,7 @@ header-includes:
   - \usepackage{tikz}
   - \usetikzlibrary{positioning, arrows.meta,calc}
 vignette: >
-  %\VignetteIndexEntry{Cooking survival data, 5 minutes recipes}
+  %\VignetteIndexEntry{Cooking Survival Data: 5-Minute Recipes}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -114,6 +114,8 @@ the cumulative hazard `cumhaz`:
 Now we fit a simple Cox model
 
 ```{r}
+#| fig.alt: >
+#|   Cumulative hazard: simulated vs fitted Cox model.
  library(mets)
  n <- nsim
  data(bmt)
@@ -145,6 +147,8 @@ covariates manually; alternatively, `sim_phregs` draws covariates directly from
 the data.
 
 ```{r}
+#| fig.alt: >
+#|   Cumulative hazard: competing risks Cox models, two causes.
  data(bmt); 
  cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
  cox2 <- phreg(Surv(time,cause==2)~tcell+platelet,data=bmt)
@@ -171,6 +175,8 @@ the data.
 We now consider a fully nonparametric model with stratified baselines.
 
 ```{r}
+#| fig.alt: >
+#|   Cumulative hazard: stratified nonparametric model.
  data(sTRACE)
  dtable(sTRACE,~chf+diabetes)
  coxs <-   phreg(Surv(time,status==9)~strata(diabetes,chf),data=sTRACE)
@@ -190,6 +196,8 @@ and generate competing risks data with hazards taken from the fitted Cox models.
 The following example includes stratified baselines for some of the models:
 
 ```{r,stratified}
+#| fig.alt: >
+#|   Cumulative hazard: stratified competing risks models.
  ## competing risks with phreg 
  cox0 <- phreg(Surv(time,cause==0)~tcell+platelet,data=bmt)
  cox1 <- phreg(Surv(time,cause==1)~tcell+platelet,data=bmt)
@@ -229,6 +237,8 @@ The following example includes stratified baselines for some of the models:
 One further example, again fully nonparametric:
 
 ```{r}
+#| fig.alt: >
+#|   Cumulative hazard: fully nonparametric competing risks.
  library(mets)
  n <- nsim
  data(bmt)
@@ -284,6 +294,8 @@ We here illustrate how to simulate from a competing risks model based on
 Cox hazards. 
 
 ```{r sim-phregs, label="entry-stratified"}
+#| fig.alt: >
+#|   Cumulative hazard: delayed entry competing risks.
 data(bmt)
 cox0 <- phreg(Surv(time, cause == 0) ~ tcell + platelet+age,          data = bmt)
 cox1 <- phreg(Surv(time, cause == 1) ~ tcell + platelet+age,          data = bmt)
@@ -330,6 +342,8 @@ Revisiting the TRACE data example we can compare the predictions from the Cox
 and the Weibull-Cox model stratified by `chf` and with a proportional hazard
 effect of `age` 
 ```{r weibull1}
+#| fig.alt: >
+#|   Cumulative hazard: Weibull vs Cox stratified model.
 data(sTRACE, package = "mets")
 dat <- sTRACE
 cox1 <- phreg(Surv(time, status > 0) ~ strata(chf) + I(age - 67), data = sTRACE)
@@ -444,6 +458,8 @@ data to validate the procedure.
 
 
 ```{r}
+#| fig.alt: >
+#|   Multistate model: estimated vs true transition rates.
  data(CPH_HPN_CRBSI)
  dr <- CPH_HPN_CRBSI$terminal
  base1 <- CPH_HPN_CRBSI$crbsi 
@@ -545,6 +561,8 @@ baselines and covariate effects stored in those objects.
 
 
 ```{r}
+#| fig.alt: >
+#|   Cumulative incidence: logistic and cloglog link models.
 library(mets)
 nsim <- 400
 rho1 <- 0.4; rho2 <- 2
@@ -569,6 +587,8 @@ lines(attr(dats,"Lam1"))
 We can also use the parameters based on fitted models 
 
 ```{r}
+#| fig.alt: >
+#|   Cumulative incidence: fitted model vs simulated data.
  data(bmt)
  ################################################################
  #  simulating several causes with specific cumulatives 
@@ -627,6 +647,8 @@ and for the logit-link as
 
 
 ```{r}
+#| fig.alt: >
+#|   Cumulative incidence: single cause with delayed entry.
  data(bmt)
  ## two cloglog 
  cif1 <-  cifregFG(Event(time,cause)~tcell+platelet,data=bmt,cause=1)
@@ -647,6 +669,8 @@ Combining two causes drawn with restriction $F_1+\tilde F_2 \leq 1$, thus modify
 $F_1$ and $F_2$ are the two input cumulative incidence models 
 
 ```{r}
+#| fig.alt: >
+#|   Cumulative incidence: two causes with delayed entry.
  dd <- sim_cifs(list(cif1,cif2),nsim,data=bmt,entry=entry)
 
  ## logistic link; nonparametric Aalen-Johansen with delayed entry
@@ -663,6 +687,8 @@ to satisfy the constraint $F_1 + F_2 \leq 1$ (remember that due to the restricti
 
 
 ```{r}
+#| fig.alt: >
+#|   Cumulative incidence: parametric baselines with delayed entry.
 rho1 <- 0.3; rho2 <- 4
 set.seed(100)
 beta=c(0.3,-0.3,-0.3,0.3)
@@ -712,6 +738,8 @@ The following example fits Cox models for recurrent events and the terminal even
 then simulates data from the estimated two-stage model and re-estimates to verify recovery of the parameters.
 
 ```{r}
+#| fig.alt: >
+#|   Recurrent events: two-stage Cox model.
 library(mets)
  data(hfactioncpx12)
  hf <- hfactioncpx12
@@ -743,6 +771,8 @@ library(mets)
 Now with Ghosh-Lin and Cox marginals:
 
 ```{r}
+#| fig.alt: >
+#|   Recurrent events: Ghosh-Lin and Cox model.
  recGL <- recreg(Event(entry,time,status)~treatment+cluster(id),hf,death.code=2)
  estimate(recGL)
  estimate(dr)
@@ -765,6 +795,8 @@ Now with Ghosh-Lin and Cox marginals:
 We can also fit and simulate from stratified models:
 
 ```{r}
+#| fig.alt: >
+#|   Recurrent events: stratified two-stage model.
 data(hfactioncpx12)
 hf <- hfactioncpx12
 hf$x <- as.numeric(hf$treatment)
@@ -803,6 +835,8 @@ plot(dr,add=TRUE,col=2); plot(rdr,add=TRUE,col=2)
 Frailty models (simulations based on the rates/intensities) 
 
 ```{r}
+#| fig.alt: >
+#|   Recurrent events: frailty model simulations.
  data(CPH_HPN_CRBSI)
  dr <- CPH_HPN_CRBSI$terminal
  base1 <- CPH_HPN_CRBSI$crbsi 

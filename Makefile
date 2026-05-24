@@ -37,7 +37,7 @@ testall: test slowtest
 
 v:
 	@$(R) -q -e "pkgdown::build_articles()"
-	@echo "Vignettes build in `docs/articles/`"
+	@echo "Vignettes build in docs/articles/"
 
 vignettes:
 	@cd vignettes && Rscript rebuild-vignettes.R
