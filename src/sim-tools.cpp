@@ -67,7 +67,7 @@ using namespace Rcpp;
   }
 /*}}}*/
 
-arma::uvec pmini(const arma::uvec& y,const int N) {/*{{{*/
+arma::uvec pmini(const arma::uvec& y,const unsigned int N) {/*{{{*/
     arma::uvec res  = y ;            // residuals
     for(unsigned i=0; i<y.n_elem; ++i)
 	    if (y(i) < N) res(i) = y(i); else res(i) = N;
