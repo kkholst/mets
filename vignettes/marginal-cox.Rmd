@@ -1,30 +1,18 @@
 ---
 title: "Marginal modelling of clustered survival data"
 author: Klaus Holst & Thomas Scheike
-date: "`r Sys.Date()`"
+date: "2026-05-24"
 output:
   rmarkdown::html_vignette:
-    fig_caption: yes
-    # fig_width: 7.15
-    # fig_height: 5.5        
+    fig_caption: no
 vignette: >
   %\VignetteIndexEntry{Marginal modelling of clustered survival data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+<!-- DO NOT EDIT: auto-generated from the .Rmd.orig source -->
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  ##dev="png",
-  dpi=50,
-  fig.width=7.15, fig.height=5.5,
-  out.width="600px",
-  fig.retina=1,
-  comment = "#>"  
-)
-library(mets)
-```
+
 
 Overview 
 ========
@@ -54,7 +42,8 @@ First we generate some data from the Clayton-Oakes model, with $5$ members
 in each cluster and a variance parameter at $2$  
 
 
-```{r}
+
+``` r
  library(mets)
  options(warn=-1)
  set.seed(1000) # to control output in simulations for p-values below.
@@ -104,44 +93,83 @@ d \hat M_{ik}^g(t) & =  dN_{ik}(t) -  \frac{1}{S_{0,g(i,k)}} \exp(Z_{ik} \beta) 
 
 This robust variance of the baseline and the iid decomposition for $\beta$ is
 computed in mets as: 
-```{r}
+
+``` r
    out <- phreg(Surv(time,status)~x+cluster(cluster),data=data)
    summary(out)
+#> 
+#>     n events
+#>  5000   4854
+#> coefficients:
+#>   Estimate     S.E.  dU^-1/2 P-value
+#> x 0.287859 0.028177 0.028897       0
+#> 
+#> exp(coefficients):
+#>   Estimate   2.5%  97.5%
+#> x   1.3336 1.2619 1.4093
    # robust standard errors attached to output
    rob <- robust_phreg(out)
 ```
 
 We can get the iid decomposition of the $\hat \beta - \beta$ by 
 
-```{r}
+
+``` r
    # making iid decomposition of regression parameters
    betaiid <- IC(out)
    head(betaiid)
+#>             x
+#> 1 -0.34616008
+#> 2 -1.44918926
+#> 3 -0.03898156
+#> 4  0.42156050
+#> 5  0.34253904
+#> 6 -0.07706668
    # robust standard errors
    crossprod(betaiid/NROW(betaiid))^.5
+#>            x
+#> x 0.02817714
    # same as 
 ```
 
 We now look at the plot  with robust standard errors 
 
 
-```{r}
+
+``` r
   plot(rob,se=TRUE,robust=TRUE,col=3)
 ```
 
+<img src="figure/marginal-cox-unnamed-chunk-5-1.png" alt="Cumulative baseline hazard with robust standard errors."  />
+
 We can also make survival prediction with robust standard errors using the phreg.
 
-```{r}
+
+``` r
   pp <-  predict(out,data[1:20,],se=TRUE,robust=TRUE)
   plot(pp,se=TRUE,whichx=1:10)
 ```
 
+<img src="figure/marginal-cox-unnamed-chunk-6-1.png" alt="Survival predictions with robust standard errors."  />
+
 
 Finally, just to check that we can recover the model we also estimate the dependence parameter 
 
-```{r}
+
+``` r
 tt <- twostageMLE(out,data=data)
 summary(tt)
+#> Dependence parameter for Clayton-Oakes model
+#> Variance of Gamma distributed random effects
+#> $estimates
+#>                 Coef.         SE        z P-val Kendall tau        SE
+#> dependence1 0.5316753 0.03497789 15.20032     0   0.2100093 0.0109146
+#> 
+#> $type
+#> NULL
+#> 
+#> attr(,"class")
+#> [1] "summary.mets.twostage"
 ```
 
 Goodness of fit 
@@ -168,17 +196,24 @@ clusters.
 
 Now using the cumulative score process for checking proportional 
 hazards 
-```{r}
+
+``` r
 gout <- gof(out)
 gout
+#> Cumulative score process test for Proportionality:
+#>   Sup|U(t)|  pval
+#> x  30.24353 0.401
 ```
 
 The p-value reflects whether the observed score process is consistent with
 the model. 
 
-```{r}
+
+``` r
   plot(gout)
 ```
+
+<img src="figure/marginal-cox-unnamed-chunk-9-1.png" alt="Cumulative score process for goodness of fit."  />
 
 Computational aspects
 --------------------
@@ -236,15 +271,63 @@ where $\lambda_g(t)$ is some cluster specific baseline.
 The regression coefficient $\beta$ can be estimated by using the 
 partial likelihood for clusters. 
 
-```{r}
+
+``` r
  out <- phreg(Surv(time,status)~x+strata(cluster),data=data)
  summary(out)
+#> 
+#>     n events
+#>  5000   4854
+#> coefficients:
+#>   Estimate     S.E.  dU^-1/2 P-value
+#> x 0.406307 0.032925 0.039226       0
+#> 
+#> exp(coefficients):
+#>   Estimate   2.5%  97.5%
+#> x   1.5013 1.4074 1.6013
 ```
 
 SessionInfo
 ============
 
 
-```{r}
+
+``` r
 sessionInfo()
+#> R version 4.6.0 (2026-04-24)
+#> Platform: x86_64-pc-linux-gnu
+#> Running under: Ubuntu 24.04.4 LTS
+#> 
+#> Matrix products: default
+#> BLAS:   /home/kkzh/.asdf/installs/r/4.6.0/lib/R/lib/libRblas.so 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
+#> 
+#> locale:
+#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+#> 
+#> time zone: Europe/Copenhagen
+#> tzcode source: system (glibc)
+#> 
+#> attached base packages:
+#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+#> 
+#> other attached packages:
+#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.10   
+#> 
+#> loaded via a namespace (and not attached):
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
+#>  [4] xfun_0.57              otel_0.2.0             future.apply_1.20.2   
+#>  [7] listenv_0.10.1         lava_1.9.1             stats4_4.6.0          
+#> [10] grid_4.6.0             evaluate_1.0.5         yaml_2.3.12           
+#> [13] mvtnorm_1.3-7          numDeriv_2016.8-1.1    compiler_4.6.0        
+#> [16] codetools_0.2-20       Rcpp_1.1.1-1.1         ucminf_1.2.3          
+#> [19] future_1.70.0          lattice_0.22-9         digest_0.6.39         
+#> [22] parallelly_1.47.0      parallel_4.6.0         splines_4.6.0         
+#> [25] Matrix_1.7-5           tools_4.6.0            RcppArmadillo_15.2.6-1
+#> [28] globals_0.19.1
 ```

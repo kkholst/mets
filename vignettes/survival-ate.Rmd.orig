@@ -1,0 +1,123 @@
+---
+title: "G-Computation or standardization for the Cox, Fine-Gray and binomial regression models for survival data" 
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: no
+vignette: >
+  %\VignetteIndexEntry{G-Computation or standardization for the Cox, Fine-Gray and binomial regression models for survival data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mets)
+```
+
+
+G-computation for the Cox and Fine-Gray models 
+==============================================
+
+We compute the standardized estimator (G-estimation) based on the Cox or the Fine-Gray model:
+\[
+\hat S(t,A=a) = n^{-1} \sum_i S(t,A=a,X_i) 
+\]
+and this estimator has influence function
+\[
+S(t,A=a,X_i) -  S(t,A=a)  + E( D_{A_0(t), \beta} S(t,A=a,X_i)  ) \epsilon_i(t)
+\]
+where $\epsilon_i(t)$ is the iid decomposition 
+of the baseline and regression coefficients $(\hat A(t) - A(t), \hat \beta- \beta)$.
+
+These estimates have a causal interpretation under the assumption
+of no unmeasured confounders; even without the
+causal assumption, standardisation can still be a useful summary measure.
+
+We begin by looking at the cumulative incidence via a Fine-Gray model for both causes and plotting the
+standardised cumulative incidence for cause 1.
+
+```{r}
+#| fig.alt: >
+#|   Standardized cumulative incidence for cause 1.
+library(mets)
+set.seed(100)
+
+data(bmt); 
+bmt$time <- bmt$time+runif(nrow(bmt))*0.001
+dfactor(bmt) <- tcell~tcell
+bmt$event <- (bmt$cause!=0)*1
+
+fg1 <- cifregFG(Event(time,cause)~tcell+platelet+age,bmt,cause=1)
+Gfg1 <- survivalG(fg1,bmt,time=50)
+summary(Gfg1)
+
+fg2 <- cifregFG(Event(time,cause)~tcell+platelet+age,bmt,cause=2)
+summary(survivalG(fg2,bmt,time=50))
+
+cif1time <- survivalGtime(fg1,bmt)
+plot(cif1time,type="risk"); 
+
+```
+
+Now looking at the survival probability 
+
+```{r}
+#| fig.alt: >
+#|   Standardized survival probability over time.
+ss <- phreg(Surv(time,event)~tcell+platelet+age,bmt)
+sss <- survivalG(ss,bmt,time=50)
+summary(sss)
+
+Gtime <- survivalGtime(ss,bmt)
+plot(Gtime)
+```
+
+G-computation for the binomial regression
+==============================================
+
+We compare with similar estimates using doubly robust
+estimating equations via `binregATE`. The G-computation standardisation can also be computed using a specialised function that
+uses less memory and is faster for large data: `binregG`.
+
+```{r}
+
+## survival situation
+sr1 <- binregATE(Event(time,event)~tcell+platelet+age,bmt,cause=1,
+		 time=40, treat.model=tcell~platelet+age)
+summary(sr1)
+
+## relative risk effect 
+estimate(coef=sr1$riskDR,vcov=sr1$var.riskDR,f=function(p) p[2]/p[1],null=1)
+
+## competing risks 
+br1 <- binregATE(Event(time,cause)~tcell+platelet+age,bmt,cause=1,
+		 time=40,treat.model=tcell~platelet+age)
+summary(br1)
+```
+
+and using the specialized function 
+
+```{r}
+br1 <- binreg(Event(time,cause)~tcell+platelet+age,bmt,cause=1,time=40)
+Gbr1 <- binregG(br1,bmt,Avalues=NULL)
+summary(Gbr1)
+
+## contrasting average age to 1+2-sd age, Avalues
+Gbr2 <- binregG(br1,bmt,varname="age",Avalues=c(0,1,2))
+summary(Gbr2)
+```
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```
+
+

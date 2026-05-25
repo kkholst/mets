@@ -1,25 +1,18 @@
 ---
 title: "Analysis of multivariate binomial data: family analysis"
 author: Klaus Holst & Thomas Scheike
-date: "`r Sys.Date()`"
+date: "2026-05-24"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes
-    fig_width: 7.15
-    fig_height: 5.5    
 vignette: >
   %\VignetteIndexEntry{Analysis of multivariate binomial data: family analysis} 
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+<!-- DO NOT EDIT: auto-generated from the .Rmd.orig source -->
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-library(mets)
-```
+
 
 Overview 
 =============
@@ -57,22 +50,55 @@ We start by simulating family data with an additive gamma structure
 on ACE form.  Here 10000 families consisting of two parents and
 two children. The response is ybin and there is one covariate x. 
 
-```{r}
+
+``` r
  library(mets)
  library(timereg)
+#> Loading required package: survival
+#> 
+#> Attaching package: 'timereg'
+#> The following objects are masked from 'package:mets':
+#> 
+#>     Event, kmplot, plotConfregion
  set.seed(100)
  data <- sim_binClaytonOakes_family_ace(500,2,1,beta=NULL,alpha=NULL)
  data$number <- c(1,2,3,4)
  data$child <- 1*(data$number==3)
  head(data)
+#>   ybin x   type cluster number child
+#> 1    1 1 mother       1      1     0
+#> 2    1 0 father       1      2     0
+#> 3    1 0  child       1      3     1
+#> 4    1 1  child       1      4     0
+#> 5    1 1 mother       2      1     0
+#> 6    1 0 father       2      2     0
 ```
 
 We fit the marginal models, and here find a covariate effect at 0.3 for x. The marginals can be 
 specified as desired.
 
-```{r}
+
+``` r
  aa <- margbin <- glm(ybin~x,data=data,family=binomial())
  summary(aa)
+#> 
+#> Call:
+#> glm(formula = ybin ~ x, family = binomial(), data = data)
+#> 
+#> Coefficients:
+#>             Estimate Std. Error z value Pr(>|z|)    
+#> (Intercept)  0.49908    0.06387   7.814 5.52e-15 ***
+#> x            0.17531    0.09355   1.874   0.0609 .  
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#> 
+#> (Dispersion parameter for binomial family taken to be 1)
+#> 
+#>     Null deviance: 2610.2  on 1999  degrees of freedom
+#> Residual deviance: 2606.7  on 1998  degrees of freedom
+#> AIC: 2610.7
+#> 
+#> Number of Fisher Scoring iterations: 4
 ```
 
 Additive Gamma model 
@@ -90,25 +116,68 @@ two children also share half their genes with this specification.
 Below we also show an alternative specification of this model
 using all pairs. 
 
-```{r}
+
+``` r
 # make ace random effects design
 out <- ace_family_design(data,member="type",id="cluster")
 out$pardes
+#>       [,1] [,2]
+#>  [1,] 0.25    0
+#>  [2,] 0.25    0
+#>  [3,] 0.25    0
+#>  [4,] 0.25    0
+#>  [5,] 0.25    0
+#>  [6,] 0.25    0
+#>  [7,] 0.25    0
+#>  [8,] 0.25    0
+#>  [9,] 0.00    1
 head(out$des.rv,4)
+#>      m1 m2 m3 m4 f1 f2 f3 f4 env
+#> [1,]  1  1  1  1  0  0  0  0   1
+#> [2,]  0  0  0  0  1  1  1  1   1
+#> [3,]  1  1  0  0  1  1  0  0   1
+#> [4,]  1  0  1  0  1  0  1  0   1
 ```
 
 
 We can now fit the model calling the two-stage function
 
-```{r}
+
+``` r
 # fitting ace model for family structure
 ts <- binomial_twostage(margbin,data=data,clusters=data$cluster,
 theta=c(2,1),random.design=out$des.rv,theta.des=out$pardes)
 summary(ts)
+#> Dependence parameter for Clayton-Oakes model
+#> Variance of Gamma distributed random effects
+#> $estimates
+#>                theta        se
+#> dependence1 2.817486 0.8981749
+#> dependence2 1.137637 0.2806719
+#> 
+#> $type
+#> [1] "clayton.oakes"
+#> 
+#> $h
+#>             Estimate Std.Err   2.5%  97.5%   P-value
+#> dependence1   0.7124 0.09262 0.5308 0.8939 1.457e-14
+#> dependence2   0.2876 0.09262 0.1061 0.4692 1.899e-03
+#> 
+#> $vare
+#> NULL
+#> 
+#> $vartot
+#>    Estimate Std.Err  2.5% 97.5%   P-value
+#> p1    3.955  0.8668 2.256 5.654 5.051e-06
+#> 
+#> attr(,"class")
+#> [1] "summary.mets.twostage"
 # true variance parameters
 c(2,1)
+#> [1] 2 1
 # total variance 
 3
+#> [1] 3
 ```
 
 
@@ -124,25 +193,67 @@ which family each belongs to. We first simply supply the
 pairs and should get the same result as before.
 
 
-```{r}
+
+``` r
 mm <- familycluster_index(data$cluster)
 head(mm$familypairindex,n=20)
+#>  [1] 1 2 1 3 1 4 2 3 2 4 3 4 5 6 5 7 5 8 6 7
 pairs <- mm$pairs
 dim(pairs)
+#> [1] 3000    2
 head(pairs,12)
+#>       [,1] [,2]
+#>  [1,]    1    2
+#>  [2,]    1    3
+#>  [3,]    1    4
+#>  [4,]    2    3
+#>  [5,]    2    4
+#>  [6,]    3    4
+#>  [7,]    5    6
+#>  [8,]    5    7
+#>  [9,]    5    8
+#> [10,]    6    7
+#> [11,]    6    8
+#> [12,]    7    8
 ```
 
 Now with the pairs we fit the model 
 
-```{r}
+
+``` r
 tsp <- binomial_twostage(margbin,data=data,clusters=data$cluster,theta=c(2,1),detail=0,
         random.design=out$des.rv,theta.des=out$pardes,pairs=pairs)
 summary(tsp)
+#> Dependence parameter for Clayton-Oakes model
+#> Variance of Gamma distributed random effects
+#> $estimates
+#>                theta        se
+#> dependence1 2.817486 0.8981749
+#> dependence2 1.137637 0.2806719
+#> 
+#> $type
+#> [1] "clayton.oakes"
+#> 
+#> $h
+#>             Estimate Std.Err   2.5%  97.5%   P-value
+#> dependence1   0.7124 0.09262 0.5308 0.8939 1.457e-14
+#> dependence2   0.2876 0.09262 0.1061 0.4692 1.899e-03
+#> 
+#> $vare
+#> NULL
+#> 
+#> $vartot
+#>    Estimate Std.Err  2.5% 97.5%   P-value
+#> p1    3.955  0.8668 2.256 5.654 5.051e-06
+#> 
+#> attr(,"class")
+#> [1] "summary.mets.twostage"
 ```
 
 Here a random sample of pairs are given instead and we get other estimates. 
 
-```{r}
+
+``` r
 set.seed(100)
 ssid <- sort(sample(1:nrow(pairs),nrow(pairs)/2))
 tsd <- binomial_twostage(aa,data=data,clusters=data$cluster,
@@ -150,6 +261,30 @@ tsd <- binomial_twostage(aa,data=data,clusters=data$cluster,
                random.design=out$des.rv,iid=1,Nit=10,
   	           theta.des=out$pardes,pairs=pairs[ssid,])
 summary(tsd)
+#> Dependence parameter for Clayton-Oakes model
+#> Variance of Gamma distributed random effects
+#> $estimates
+#>                 theta        se
+#> dependence1 3.0275402 1.6045129
+#> dependence2 0.8135103 0.3895686
+#> 
+#> $type
+#> [1] "clayton.oakes"
+#> 
+#> $h
+#>             Estimate Std.Err     2.5%  97.5%   P-value
+#> dependence1   0.7882  0.1511  0.49210 1.0843 1.816e-07
+#> dependence2   0.2118  0.1511 -0.08431 0.5079 1.609e-01
+#> 
+#> $vare
+#> NULL
+#> 
+#> $vartot
+#>    Estimate Std.Err  2.5% 97.5% P-value
+#> p1    3.841   1.402 1.093 6.589 0.00615
+#> 
+#> attr(,"class")
+#> [1] "summary.mets.twostage"
 ```
 
 To specify such a model when only the pairs are available we show
@@ -163,27 +298,84 @@ Below we also show how to use only the random effects needed for each
 pair, which is typically simpler.
 
 
-```{r}
+
+``` r
 head(pairs[ssid,])
+#>      [,1] [,2]
+#> [1,]    1    2
+#> [2,]    1    3
+#> [3,]    2    3
+#> [4,]    2    4
+#> [5,]    3    4
+#> [6,]    6    8
 ids <- sort(unique(c(pairs[ssid,])))
 
 pairsids <- c(pairs[ssid,])
 pair.new <- matrix(fast.approx(ids,c(pairs[ssid,])),ncol=2)
 head(pair.new)
+#>      [,1] [,2]
+#> [1,]    1    2
+#> [2,]    1    3
+#> [3,]    2    3
+#> [4,]    2    4
+#> [5,]    3    4
+#> [6,]    5    7
 
 dataid <- dsort(data[ids,],"cluster")
 outid <- ace_family_design(dataid,member="type",id="cluster")
 outid$pardes
+#>       [,1] [,2]
+#>  [1,] 0.25    0
+#>  [2,] 0.25    0
+#>  [3,] 0.25    0
+#>  [4,] 0.25    0
+#>  [5,] 0.25    0
+#>  [6,] 0.25    0
+#>  [7,] 0.25    0
+#>  [8,] 0.25    0
+#>  [9,] 0.00    1
 head(outid$des.rv)
+#>      m1 m2 m3 m4 f1 f2 f3 f4 env
+#> [1,]  1  1  1  1  0  0  0  0   1
+#> [2,]  0  0  0  0  1  1  1  1   1
+#> [3,]  1  1  0  0  1  1  0  0   1
+#> [4,]  1  0  1  0  1  0  1  0   1
+#> [5,]  0  0  0  0  1  1  1  1   1
+#> [6,]  1  1  0  0  1  1  0  0   1
 ```
 
 Now fitting the model with the data set up 
 
-```{r}
+
+``` r
 aa <- glm(ybin~x,data=dataid,family=binomial())
 tsdid <- binomial_twostage(aa,data=dataid,clusters=dataid$cluster,
          theta=c(2,1),random.design=outid$des.rv,theta.des=outid$pardes,pairs=pair.new)
 summary(tsdid)
+#> Dependence parameter for Clayton-Oakes model
+#> Variance of Gamma distributed random effects
+#> $estimates
+#>                 theta       se
+#> dependence1 3.1389859 1.649758
+#> dependence2 0.8010544 0.399870
+#> 
+#> $type
+#> [1] "clayton.oakes"
+#> 
+#> $h
+#>             Estimate Std.Err     2.5%  97.5%   P-value
+#> dependence1   0.7967  0.1492  0.50421 1.0892 9.358e-08
+#> dependence2   0.2033  0.1492 -0.08917 0.4958 1.731e-01
+#> 
+#> $vare
+#> NULL
+#> 
+#> $vartot
+#>    Estimate Std.Err  2.5% 97.5%  P-value
+#> p1     3.94   1.438 1.121 6.759 0.006153
+#> 
+#> attr(,"class")
+#> [1] "summary.mets.twostage"
 ```
 
 We now specify the design specifically using the pairs. 
@@ -196,10 +388,27 @@ each pair. These basic things are constructed by certain functions
 for the ACE design. 
 
 
-```{r}
+
+``` r
 pair.types <-  matrix(dataid[c(t(pair.new)),"type"],byrow=T,ncol=2)
 head(pair.new,7)
+#>      [,1] [,2]
+#> [1,]    1    2
+#> [2,]    1    3
+#> [3,]    2    3
+#> [4,]    2    4
+#> [5,]    3    4
+#> [6,]    5    7
+#> [7,]    6    7
 head(pair.types,7)
+#>      [,1]     [,2]    
+#> [1,] "mother" "father"
+#> [2,] "mother" "child" 
+#> [3,] "father" "child" 
+#> [4,] "father" "child" 
+#> [5,] "child"  "child" 
+#> [6,] "father" "child" 
+#> [7,] "child"  "child"
 ###
 theta.des  <- rbind( c(rbind(c(1,0),  c(1,0),  c(0,1),  c(0,0))),
 		     c(rbind(c(0.5,0),c(0.5,0),c(0.5,0),c(0,1))))
@@ -244,22 +453,63 @@ effect.
 
 
 
-```{r}
+
+``` r
 # 3 rvs here 
 random.des
+#>      [,1] [,2] [,3] [,4]
+#> [1,]    1    0    1    0
+#> [2,]    0    1    1    0
+#> [3,]    1    1    0    1
+#> [4,]    1    0    1    1
 theta.des
+#>      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8]
+#> [1,]  1.0  1.0  0.0    0    0    0    1    0
+#> [2,]  0.5  0.5  0.5    0    0    0    0    1
 
 head(pairs.new)
+#>      [,1] [,2] [,3] [,4] [,5] [,6]
+#> [1,]    1    2    1    2    1    3
+#> [2,]    1    3    3    4    2    4
+#> [3,]    2    3    3    4    2    4
+#> [4,]    2    4    3    4    2    4
+#> [5,]    3    4    3    4    2    4
+#> [6,]    5    7    3    4    2    4
 ```
 
 Now fitting the model, and we see that it is a lot quicker due to the
 fewer random effects needed for pairs.  We need to also specify the number of
 parameters in this case. 
 
-```{r}
+
+``` r
 tsdid2 <- binomial_twostage(aa,data=dataid,clusters=dataid$cluster, theta=c(2,1),
            random.design=random.des,theta.des=theta.des,pairs=pairs.new,dim.theta=2)
 summary(tsdid2)
+#> Dependence parameter for Clayton-Oakes model
+#> Variance of Gamma distributed random effects
+#> $estimates
+#>                 theta       se
+#> dependence1 3.1389859 1.649758
+#> dependence2 0.8010544 0.399870
+#> 
+#> $type
+#> [1] "clayton.oakes"
+#> 
+#> $h
+#>             Estimate Std.Err     2.5%  97.5%   P-value
+#> dependence1   0.7967  0.1492  0.50421 1.0892 9.358e-08
+#> dependence2   0.2033  0.1492 -0.08917 0.4958 1.731e-01
+#> 
+#> $vare
+#> NULL
+#> 
+#> $vartot
+#>    Estimate Std.Err  2.5% 97.5%  P-value
+#> p1     3.94   1.438 1.121 6.759 0.006153
+#> 
+#> attr(,"class")
+#> [1] "summary.mets.twostage"
 ```
 
 The same model can be specifed even simpler via the kinship
@@ -269,19 +519,46 @@ shares a random effect with variance 0, and have two non-shared genetic
 effects with full variance, in addition to a fully shared environmental 
 effect.
 
-```{r}
+
+``` r
 kinship  <- rep(0.5,nrow(pair.types))
 kinship[pair.types[,1]=="mother" & pair.types[,2]=="father"] <- 0
 head(kinship,n=10)
+#>  [1] 0.0 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5
 
 out <- make_pairwise_design(pair.new,kinship,type="ace") 
 ```
 
-```{r}
+
+``` r
 tsdid3 <- binomial_twostage(aa,data=dataid,clusters=dataid$cluster,
              theta=c(2,1)/9,random.design=out$random.design,
              theta.des=out$theta.des,pairs=out$new.pairs,dim.theta=2)
 summary(tsdid3)
+#> Dependence parameter for Clayton-Oakes model
+#> Variance of Gamma distributed random effects
+#> $estimates
+#>                 theta       se
+#> dependence1 3.1389859 1.649758
+#> dependence2 0.8010544 0.399870
+#> 
+#> $type
+#> [1] "clayton.oakes"
+#> 
+#> $h
+#>             Estimate Std.Err     2.5%  97.5%   P-value
+#> dependence1   0.7967  0.1492  0.50421 1.0892 9.358e-08
+#> dependence2   0.2033  0.1492 -0.08917 0.4958 1.731e-01
+#> 
+#> $vare
+#> NULL
+#> 
+#> $vartot
+#>    Estimate Std.Err  2.5% 97.5%  P-value
+#> p1     3.94   1.438 1.121 6.759 0.006153
+#> 
+#> attr(,"class")
+#> [1] "summary.mets.twostage"
 ```
 
 
@@ -290,37 +567,85 @@ Pairwise dependence modelling
 ------------------------------
 
 
-```{r}
+
+``` r
 library(mets)
 set.seed(1000)
 data <- sim_binClaytonOakes_family_ace(500,2,1,beta=NULL,alpha=NULL)
 head(data)
+#>   ybin x   type cluster
+#> 1    0 1 mother       1
+#> 2    0 0 father       1
+#> 3    0 1  child       1
+#> 4    0 0  child       1
+#> 5    1 0 mother       2
+#> 6    1 0 father       2
 data$number <- c(1,2,3,4)
 data$child <- 1*(data$number==3)
 
 mm <- familycluster_index(data$cluster)
 head(mm$familypairindex,n=20)
+#>  [1] 1 2 1 3 1 4 2 3 2 4 3 4 5 6 5 7 5 8 6 7
 pairs <- mm$pairs
 dim(pairs)
+#> [1] 3000    2
 head(pairs,12)
+#>       [,1] [,2]
+#>  [1,]    1    2
+#>  [2,]    1    3
+#>  [3,]    1    4
+#>  [4,]    2    3
+#>  [5,]    2    4
+#>  [6,]    3    4
+#>  [7,]    5    6
+#>  [8,]    5    7
+#>  [9,]    5    8
+#> [10,]    6    7
+#> [11,]    6    8
+#> [12,]    7    8
 ```
 
 
-```{r}
+
+``` r
  dtypes <- interaction( data[pairs[,1],"type"], data[pairs[,2],"type"])
  dtypes <- droplevels(dtypes)
  table(dtypes)
+#> dtypes
+#>   child.child  father.child  mother.child mother.father 
+#>           500          1000          1000           500
  dm <- model.matrix(~-1+factor(dtypes))
 ```
 
 Now with the pairs we fit the model 
 
-```{r}
+
+``` r
 aa <- glm(ybin~x,data=data,family=binomial())
 
 tsp <- binomial_twostage(aa,data=data, clusters=data$cluster,
 		 theta.des=dm,pairs=cbind(pairs,1:nrow(dm)))
 summary(tsp)
+#> Dependence parameter for Odds-Ratio (Plackett) model
+#> $estimates
+#>                                theta        se
+#> factor(dtypes)child.child   3.520109 0.7143594
+#> factor(dtypes)father.child  3.871698 0.6055928
+#> factor(dtypes)mother.child  3.922180 0.6233304
+#> factor(dtypes)mother.father 1.328730 0.2657202
+#> 
+#> $log.or
+#>                             Estimate Std.Err    2.5%  97.5%   P-value
+#> factor(dtypes)child.child     1.2585  0.2029  0.8607 1.6562 5.596e-10
+#> factor(dtypes)father.....     1.3537  0.1564  1.0471 1.6603 4.952e-18
+#> factor(dtypes)mother.....     1.3666  0.1589  1.0552 1.6781 8.017e-18
+#> factor(dtypes)mother......1   0.2842  0.2000 -0.1077 0.6762 1.552e-01
+#> 
+#> $type
+#> [1] "plackett"
+#> 
+#> attr(,"class")
+#> [1] "summary.mets.twostage"
 ```
 
 
@@ -342,14 +667,28 @@ the odds-ratio of each pair. We set up the data and find all combinations
 within the pairs. Subsequently, we remove all the empty groups, by grouping
 together the factor levels 4:9, and then we construct the design. 
 
-```{r}
+
+``` r
 tdp <-cbind( dataid[pair.new[,1],],dataid[pair.new[,2],])
 names(tdp) <- c(paste(names(dataid),"1",sep=""),
 		paste(names(dataid),"2",sep=""))
 tdp <-transform(tdp,tt=interaction(type1,type2))
 dlevel(tdp)
+#> tt #levels=:6 
+#> [1] "child.child"   "father.child"  "mother.child"  "child.father" 
+#> [5] "father.father" "mother.father"
+#> -----------------------------------------
 drelevel(tdp,newlevels=list(mother.father=4:9)) <-  obs.types~tt
 dtable(tdp,~tt+obs.types)
+#> 
+#>               obs.types mother.father child.child father.child mother.child
+#> tt                                                                         
+#> child.child                         0         232            0            0
+#> father.child                        0           0          525            0
+#> mother.child                        0           0            0          510
+#> child.father                        0           0            0            0
+#> father.father                       0           0            0            0
+#> mother.father                     233           0            0            0
 tdp <- model.matrix(~-1+factor(obs.types),tdp)
 ```
 
@@ -362,7 +701,8 @@ To fit the OR model it is generally recommended to use the var.link to
 use the parametrization with log-odd-ratio regression.
 
 
-```{r}
+
+``` r
 ###porpair <- binomial.twostage(aa,data=dataid,clusters=dataid$cluster,
 ###           theta.des=tdp,pairs=pair.new,model="or",var.link=1)
 ###summary(porpair)
@@ -372,6 +712,42 @@ use the parametrization with log-odd-ratio regression.
 SessionInfo
 ============
 
-```{r}
+
+``` r
 sessionInfo()
+#> R version 4.6.0 (2026-04-24)
+#> Platform: x86_64-pc-linux-gnu
+#> Running under: Ubuntu 24.04.4 LTS
+#> 
+#> Matrix products: default
+#> BLAS:   /home/kkzh/.asdf/installs/r/4.6.0/lib/R/lib/libRblas.so 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
+#> 
+#> locale:
+#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+#> 
+#> time zone: Europe/Copenhagen
+#> tzcode source: system (glibc)
+#> 
+#> attached base packages:
+#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+#> 
+#> other attached packages:
+#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.10   
+#> 
+#> loaded via a namespace (and not attached):
+#>  [1] digest_0.6.39          numDeriv_2016.8-1.1    codetools_0.2-20      
+#>  [4] RcppArmadillo_15.2.6-1 Matrix_1.7-5           xfun_0.57             
+#>  [7] lattice_0.22-9         splines_4.6.0          lava_1.9.1            
+#> [10] knitr_1.51             parallel_4.6.0         mvtnorm_1.3-7         
+#> [13] cli_3.6.6              parallelly_1.47.0      grid_4.6.0            
+#> [16] future_1.70.0          compiler_4.6.0         globals_0.19.1        
+#> [19] tools_4.6.0            listenv_0.10.1         future.apply_1.20.2   
+#> [22] evaluate_1.0.5         Rcpp_1.1.1-1.1         otel_0.2.0            
+#> [25] rlang_1.2.0
 ```

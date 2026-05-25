@@ -1,27 +1,18 @@
 ---
 title: "Mediation Analysis for survival data"
 author: Klaus Holst & Thomas Scheike
-date: "`r Sys.Date()`"
+date: "2026-05-24"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes
-    fig_width: 7.15
-    fig_height: 5.5        
 vignette: >
   %\VignetteIndexEntry{Mediation Analysis for survival data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+<!-- DO NOT EDIT: auto-generated from the .Rmd.orig source -->
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  #dev="png",
-  comment = "#>"  
-)
-fullVignette <- Sys.getenv("_R_FULL_VIGNETTE_") %in% c("1","TRUE")
-library(mets)
-```
+
 
 Overview 
 ========
@@ -87,7 +78,8 @@ The interest is in the effect of transplant period (`gp`) and possible mediation
 via the proportion of unrelated or related donors (`dnr`) — a somewhat artificial example.
 All analyses are adjusted for other important confounders.
 
-```{r}
+
+``` r
  library(mets)
  runb <- 0
  options(warn=-1)
@@ -111,7 +103,8 @@ Mediation Weights
 
 We compute the mediation weights based on a model for the mediator:
 
-```{r}
+
+``` r
 weightmodel <- fit <- glm(gp.f~dnr.f+preauto+ttt24,data=dat,family=binomial)
 wdata <- medweight(fit,data=dat)
 ```
@@ -122,9 +115,29 @@ Binomial Regression
 A simple multivariate regression of the probability of relapse at 50 months with both
 exposure and mediator (given the other covariates):
 
-```{r}
+
+``` r
 aaMss2 <- binreg(Event(time,status)~gp+dnr+preauto+ttt24+cluster(id),data=dat,time=50,cause=2)
 summary(aaMss2)
+#>    n events
+#>  200     97
+#> 
+#>  200 clusters
+#> coeffients:
+#>             Estimate  Std.Err     2.5%    97.5% P-value
+#> (Intercept) -1.01508  0.31869 -1.63971 -0.39046  0.0014
+#> gp           1.08533  0.34216  0.41471  1.75594  0.0015
+#> dnr          0.51969  0.35757 -0.18113  1.22051  0.1461
+#> preauto      0.39417  0.35936 -0.31017  1.09851  0.2727
+#> ttt24        0.50469  0.38681 -0.25344  1.26283  0.1920
+#> 
+#> exp(coeffients):
+#>             Estimate    2.5%  97.5%
+#> (Intercept)  0.36237 0.19404 0.6767
+#> gp           2.96041 1.51394 5.7889
+#> dnr          1.68151 0.83433 3.3889
+#> preauto      1.48316 0.73332 2.9997
+#> ttt24        1.65648 0.77612 3.5354
 ```
 
 Binomial regression IPCW Mediation Analysis
@@ -132,14 +145,53 @@ Binomial regression IPCW Mediation Analysis
 
 We first look at the probability of relapse at 50 months:
 
-```{r, label=firstmodel}
+
+``` r
 ### binomial regression ###########################################################
 aaMss <- binreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
 		time=50,weights=wdata$weights,cause=2)
 summary(aaMss)
+#>    n events
+#>  400    194
+#> 
+#>  200 clusters
+#> coeffients:
+#>              Estimate   Std.Err      2.5%     97.5% P-value
+#> (Intercept) -0.535534  0.256218 -1.037712 -0.033356  0.0366
+#> dnr.f01      0.375817  0.348618 -0.307462  1.059095  0.2810
+#> dnr.f11      0.275383  0.071199  0.135836  0.414931  0.0001
+#> preauto      0.588221  0.350437 -0.098624  1.275066  0.0932
+#> ttt24        0.266179  0.363603 -0.446469  0.978827  0.4641
+#> 
+#> exp(coeffients):
+#>             Estimate    2.5%  97.5%
+#> (Intercept)  0.58536 0.35426 0.9672
+#> dnr.f01      1.45618 0.73531 2.8838
+#> dnr.f11      1.31704 1.14549 1.5143
+#> preauto      1.80078 0.90608 3.5789
+#> ttt24        1.30497 0.63988 2.6613
 
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
+#>    n events
+#>  400    194
+#> 
+#>  200 clusters
+#> coeffients:
+#>              Estimate   Std.Err      2.5%     97.5% P-value
+#> (Intercept) -0.535534  0.254832 -1.034995 -0.036073  0.0356
+#> dnr.f01      0.375817  0.317732 -0.246927  0.998560  0.2369
+#> dnr.f11      0.275383  0.117175  0.045726  0.505041  0.0188
+#> preauto      0.588221  0.346523 -0.090951  1.267394  0.0896
+#> ttt24        0.266179  0.366361 -0.451875  0.984233  0.4675
+#> 
+#> exp(coeffients):
+#>             Estimate    2.5%  97.5%
+#> (Intercept)  0.58536 0.35523 0.9646
+#> dnr.f01      1.45618 0.78120 2.7144
+#> dnr.f11      1.31704 1.04679 1.6571
+#> preauto      1.80078 0.91306 3.5516
+#> ttt24        1.30497 0.63643 2.6758
 if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
 ```
 
@@ -150,44 +202,192 @@ Mediation Analysis
 
 We illustrate how to use the other models mentioned above.
 
-```{r, label=multiplemodels}
+
+``` r
 ### lin-ying model ################################################################
 aaMss <- aalenMets(Surv(time/100,status==2)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
 		   weights=wdata$weights)
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
+#>    n events
+#>  400    196
+#> coeffients:
+#>          Estimate   Std.Err      2.5%     97.5% P-value
+#> dnr.f01  1.169592  0.739323 -0.279454  2.618637  0.1137
+#> dnr.f11  0.206757  0.131289 -0.050565  0.464078  0.1153
+#> preauto  0.617537  0.504302 -0.370877  1.605950  0.2207
+#> ttt24    0.457736  0.517822 -0.557175  1.472648  0.3767
 if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
 
 ### cox model ###############################################################################
 aaMss <- phreg(Surv(time,status==2)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
 	       weights=wdata$weights)
 summary(aaMss)
+#> 
+#>    n events
+#>  400    196
+#> coefficients:
+#>         Estimate     S.E.  dU^-1/2 P-value
+#> dnr.f01 0.414565 0.213724 0.157231  0.0524
+#> dnr.f11 0.100656 0.039308 0.144971  0.0104
+#> preauto 0.284460 0.232166 0.162375  0.2205
+#> ttt24   0.185561 0.226044 0.160886  0.4117
+#> 
+#> exp(coefficients):
+#>         Estimate    2.5%  97.5%
+#> dnr.f01  1.51371 0.99568 2.3013
+#> dnr.f11  1.10590 1.02389 1.1945
+#> preauto  1.32904 0.84318 2.0949
+#> ttt24    1.20389 0.77300 1.8750
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
+#>    n events
+#>  400    196
+#> coeffients:
+#>            Estimate     Std.Err        2.5%       97.5% P-value
+#> dnr.f01  0.41456472  0.20869639  0.00552731  0.82360212  0.0470
+#> dnr.f11  0.10065575  0.05121458  0.00027702  0.20103448  0.0494
+#> preauto  0.28445952  0.23037280 -0.16706288  0.73598192  0.2169
+#> ttt24    0.18556110  0.22549763 -0.25640614  0.62752835  0.4106
+#> 
+#> exp(coeffients):
+#>         Estimate    2.5%  97.5%
+#> dnr.f01  1.51371 1.00554 2.2787
+#> dnr.f11  1.10590 1.00028 1.2227
+#> preauto  1.32904 0.84615 2.0875
+#> ttt24    1.20389 0.77383 1.8730
 if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
 
 ### Fine-Gray #############################################################3
 aaMss <- cifreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
 		weights=wdata$weights,propodds=NULL,cause=2)
 summary(aaMss)
+#> 
+#>    n events
+#>  400    196
+#> 
+#>  200 clusters
+#> coefficients:
+#>         Estimate    S.E. dU^-1/2 P-value
+#> dnr.f01  0.18943 0.21986 0.15855  0.3889
+#> dnr.f11  0.18730 0.04083 0.14503  0.0000
+#> preauto  0.41452 0.22783 0.16098  0.0688
+#> ttt24    0.17304 0.22892 0.16308  0.4497
+#> 
+#> exp(coefficients):
+#>         Estimate    2.5%  97.5%
+#> dnr.f01  1.20856 0.78545 1.8596
+#> dnr.f11  1.20599 1.11324 1.3065
+#> preauto  1.51364 0.96849 2.3656
+#> ttt24    1.18892 0.75910 1.8621
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
+#>    n events
+#>  400    196
+#> 
+#>  200 clusters
+#> coeffients:
+#>          Estimate   Std.Err      2.5%     97.5% P-value
+#> dnr.f01  0.189426  0.233939 -0.269087  0.647939  0.4181
+#> dnr.f11  0.187298  0.047733  0.093744  0.280853  0.0001
+#> preauto  0.414517  0.230676 -0.037600  0.866634  0.0723
+#> ttt24    0.173042  0.230810 -0.279338  0.625422  0.4534
+#> 
+#> exp(coeffients):
+#>         Estimate    2.5%  97.5%
+#> dnr.f01  1.20856 0.76408 1.9116
+#> dnr.f11  1.20599 1.09828 1.3243
+#> preauto  1.51364 0.96310 2.3789
+#> ttt24    1.18892 0.75628 1.8690
 if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
 
 ### logit model  #############################################################3
 aaMss <- cifreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
 		weights=wdata$weights,cause=2)
 summary(aaMss)
+#> 
+#>    n events
+#>  400    196
+#> 
+#>  200 clusters
+#> coefficients:
+#>         Estimate     S.E.  dU^-1/2 P-value
+#> dnr.f01 0.357168 0.339848 0.158937  0.2933
+#> dnr.f11 0.272392 0.064166 0.145076  0.0000
+#> preauto 0.657010 0.326082 0.160361  0.0439
+#> ttt24   0.191333 0.353606 0.167443  0.5884
+#> 
+#> exp(coefficients):
+#>         Estimate    2.5%  97.5%
+#> dnr.f01  1.42928 0.73424 2.7822
+#> dnr.f11  1.31310 1.15792 1.4891
+#> preauto  1.92902 1.01806 3.6551
+#> ttt24    1.21086 0.60549 2.4215
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
+#>    n events
+#>  400    196
+#> 
+#>  200 clusters
+#> coeffients:
+#>          Estimate   Std.Err      2.5%     97.5% P-value
+#> dnr.f01  0.357168  0.351089 -0.330953  1.045289  0.3090
+#> dnr.f11  0.272392  0.068131  0.138857  0.405927  0.0001
+#> preauto  0.657010  0.328207  0.013736  1.300284  0.0453
+#> ttt24    0.191333  0.356086 -0.506583  0.889250  0.5910
+#> 
+#> exp(coeffients):
+#>         Estimate    2.5%  97.5%
+#> dnr.f01  1.42928 0.71824 2.8442
+#> dnr.f11  1.31310 1.14896 1.5007
+#> preauto  1.92902 1.01383 3.6703
+#> ttt24    1.21086 0.60255 2.4333
 if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
 
 ### binomial outcome  ############################
 aaMss <- binreg(Event(ftime,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
 		time=50,weights=wdata$weights,cens.weights=1,cause=2)
 summary(aaMss)
+#>    n events
+#>  400    196
+#> 
+#>  200 clusters
+#> coeffients:
+#>              Estimate   Std.Err      2.5%     97.5% P-value
+#> (Intercept) -0.674433  0.235285 -1.135583 -0.213284  0.0042
+#> dnr.f01      0.221834  0.318264 -0.401952  0.845620  0.4858
+#> dnr.f11      0.262722  0.060281  0.144572  0.380871  0.0000
+#> preauto      0.578077  0.319091 -0.047331  1.203484  0.0700
+#> ttt24        0.214442  0.328183 -0.428784  0.857669  0.5135
+#> 
+#> exp(coeffients):
+#>             Estimate    2.5%  97.5%
+#> (Intercept)  0.50944 0.32123 0.8079
+#> dnr.f01      1.24836 0.66901 2.3294
+#> dnr.f11      1.30046 1.15555 1.4636
+#> preauto      1.78261 0.95377 3.3317
+#> ttt24        1.23917 0.65130 2.3577
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
+#>    n events
+#>  400    196
+#> 
+#>  200 clusters
+#> coeffients:
+#>              Estimate   Std.Err      2.5%     97.5% P-value
+#> (Intercept) -0.674433  0.235022 -1.135069 -0.213798  0.0041
+#> dnr.f01      0.221834  0.286717 -0.340122  0.783789  0.4391
+#> dnr.f11      0.262722  0.107508  0.052011  0.473432  0.0145
+#> preauto      0.578077  0.315260 -0.039822  1.195975  0.0667
+#> ttt24        0.214442  0.329107 -0.430596  0.859480  0.5147
+#> 
+#> exp(coeffients):
+#>             Estimate    2.5%  97.5%
+#> (Intercept)  0.50944 0.32140 0.8075
+#> dnr.f01      1.24836 0.71168 2.1898
+#> dnr.f11      1.30046 1.05339 1.6055
+#> preauto      1.78261 0.96096 3.3068
+#> ttt24        1.23917 0.65012 2.3619
 if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
 ```
 
@@ -200,39 +400,108 @@ Also works with a mediator with more than two levels:
  * mediator: `wmi` in 4 categories
  * exposure: `age` in 4 categories
 
-```{r, label=multinom, cache=TRUE, eval=fullVignette}
+
+``` r
 library(mets)
 data(tTRACE)
 dcut(tTRACE) <- ~. 
 
 weightmodel <- fit <- mlogit(wmicat.4 ~agecat.4+vf+chf,data=tTRACE,family=binomial)
+#> Error in `str2lang()`:
+#> ! <text>:1:68: unexpected ','
+#> 1: Surv(time,status)~strata(idrow)+cluster(id) + Intercept2+agecat4601,
+#>                                                                        ^
 wdata <- medweight(fit,data=tTRACE)
+#> Error in `[.data.frame`:
+#> ! undefined columns selected
 
 aaMss <- binreg(Event(time,status)~agecat.40+ agecat.41+ vf+chf+cluster(id),data=wdata,
 		time=7,weights=wdata$weights,cause=9)
+#> Error:
+#> ! object 'agecat.40' not found
 summary(aaMss)
+#>    n events
+#>  400    196
+#> 
+#>  200 clusters
+#> coeffients:
+#>              Estimate   Std.Err      2.5%     97.5% P-value
+#> (Intercept) -0.674433  0.235285 -1.135583 -0.213284  0.0042
+#> dnr.f01      0.221834  0.318264 -0.401952  0.845620  0.4858
+#> dnr.f11      0.262722  0.060281  0.144572  0.380871  0.0000
+#> preauto      0.578077  0.319091 -0.047331  1.203484  0.0700
+#> ttt24        0.214442  0.328183 -0.428784  0.857669  0.5135
+#> 
+#> exp(coeffients):
+#>             Estimate    2.5%  97.5%
+#> (Intercept)  0.50944 0.32123 0.8079
+#> dnr.f01      1.24836 0.66901 2.3294
+#> dnr.f11      1.30046 1.15555 1.4636
+#> preauto      1.78261 0.95377 3.3317
+#> ttt24        1.23917 0.65130 2.3577
 MultMed <- mediatorSurv(aaMss,fit,data=tTRACE,wdata=wdata)
+#> Error:
+#> ! Mat::row(): index out of bounds
 summary(MultMed)
+#> Error:
+#> ! object 'MultMed' not found
 ```
 
-```{r  results="hide", echo=FALSE }
-## To save time building the vignettes on CRAN, we cache time consuming computations
-if (fullVignette) {
-  MultMed[c('iid','iid.w','iid.surv')] <- NULL
-  saveRDS(MultMed, "data/MultMed.rds")
-} else {
-  MultMed <- readRDS("data/MultMed.rds")
-}
+
+```
+#> Error:
+#> ! object 'MultMed' not found
 ```
 
-```{r}
+
+``` r
 summary(MultMed)
+#> Error:
+#> ! object 'MultMed' not found
 ```
 
 SessionInfo
 ============
 
 
-```{r}
+
+``` r
 sessionInfo()
+#> R version 4.6.0 (2026-04-24)
+#> Platform: x86_64-pc-linux-gnu
+#> Running under: Ubuntu 24.04.4 LTS
+#> 
+#> Matrix products: default
+#> BLAS:   /home/kkzh/.asdf/installs/r/4.6.0/lib/R/lib/libRblas.so 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
+#> 
+#> locale:
+#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+#> 
+#> time zone: Europe/Copenhagen
+#> tzcode source: system (glibc)
+#> 
+#> attached base packages:
+#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+#> 
+#> other attached packages:
+#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.10   
+#> 
+#> loaded via a namespace (and not attached):
+#>  [1] vctrs_0.7.3            cli_3.6.6              knitr_1.51            
+#>  [4] rlang_1.2.0            xfun_0.57              otel_0.2.0            
+#>  [7] glue_1.8.1             future.apply_1.20.2    listenv_0.10.1        
+#> [10] lava_1.9.1             stats4_4.6.0           grid_4.6.0            
+#> [13] evaluate_1.0.5         lifecycle_1.0.5        yaml_2.3.12           
+#> [16] mvtnorm_1.3-7          numDeriv_2016.8-1.1    compiler_4.6.0        
+#> [19] codetools_0.2-20       Rcpp_1.1.1-1.1         ucminf_1.2.3          
+#> [22] future_1.70.0          lattice_0.22-9         digest_0.6.39         
+#> [25] pillar_1.11.1          parallelly_1.47.0      parallel_4.6.0        
+#> [28] splines_4.6.0          Matrix_1.7-5           tools_4.6.0           
+#> [31] RcppArmadillo_15.2.6-1 globals_0.19.1
 ```

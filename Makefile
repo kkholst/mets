@@ -35,18 +35,25 @@ readme:
 
 testall: test slowtest
 
-vignette:
-	@_R_FULL_VIGNETTE_=1 $(R) -q -e "devtools::build_vignettes(clean=FALSE, quiet=FALSE)"
+v:
+	@$(R) -q -e "pkgdown::build_articles()"
+	@echo "Vignettes build in docs/articles/"
+
+vignettes:
+	@cd vignettes && Rscript rebuild-vignettes.R
+	@$(MAKE) v
+
+vignettes/%.Rmd: FORCE
+	cd vignettes && Rscript rebuild-vignettes.R $*.Rmd.orig
+
+FORCE:
 
 init: doc
 	@$(R) -q -e "Rcpp::compileAttributes()"
 
-v:
-	@$(R') -q -e "devtools::build_vignettes(clean=FALSE, install=FALSE, quiet=FALSE)"
-
 roxy: doc
 
-.PHONY: check doc test
+.PHONY: build check doc docs test tests vignettes
 
 .PHONY: export
 export:
@@ -56,10 +63,8 @@ export:
 DOCKER?=docker
 IMG?=mets
 
-.PHONY: dbuild
 build:
 	$(DOCKER) build . -f Dockerfile --tag $(IMG)
 
-.PHONY: drun
 drun:
 	$(DOCKER) run --cap-add SYS_PTRACE --priviliged -ti --rm -v $(PWD)/tmp:/data $(IMG) bash

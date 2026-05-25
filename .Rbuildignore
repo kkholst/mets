@@ -1,3 +1,4 @@
+figure$
 ^revdep$
 ^\.ccls-cache$
 ^Dockerfile$
@@ -19,3 +20,5 @@
 ^docs$
 ^pkgdown$
 ^\.github$
+^vignettes/rebuild-vignettes\.R$
+\.Rmd\.orig$

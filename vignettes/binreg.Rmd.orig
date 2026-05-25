@@ -1,0 +1,182 @@
+---
+title: "Binomial Regression for Survival and Competing Risks Data"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{Binomial Regression for Survival and Competing Risks Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mets)
+```
+
+Binomial Regression for censored data 
+=====================================
+
+The `binreg` function fits a logistic link model with IPCW adjustment for a specific time-point,
+and can thus be used for both survival and competing risks data.
+Computation is linear in data size, and influence functions are computed and available
+for downstream calculations.
+
+Key features:
+
+  - the censoring weights can be stratum-dependent
+  - predictions can be computed with standard errors
+  - computation time is linear in data size, including standard errors
+  - cluster-corrected standard errors are available via the `clusters` argument
+
+
+Details
+=======
+
+The binreg function does direct binomial regression for one time-point, $t$, fitting the model 
+\begin{align*}
+P(T \leq t, \epsilon=1 | X )  & = \mbox{expit}( X^T \beta)  = F_1(t,X,\beta)
+\end{align*}
+based on an IPCW adjusted estimating equation (EE) with response  $Y(t)=I(T \leq t, \epsilon=1 )$
+\begin{align*}
+ U(\beta,\hat G_c) = &  X ( Y(t) \frac{ \Delta(t) }{\hat G_c(T_i \wedge t)} - \mbox{expit}( X^T \beta)) = 0,
+\end{align*}
+with $G_c(t)=P(C>t)$, the  censoring survival distribution, and with $\Delta(t) = I( C_i > T_i \wedge t)$
+the indicator of being uncensored at time $t$ (type="I"). 
+
+The default type="II" is to augment with a censoring term, that is solve 
+\begin{align*}
+  &  U(\beta,\hat G_c) + \int_0^t X \frac{\hat E(Y(t)| T>u)}{\hat G_c(u)} d\hat M_c(u) =0 
+\end{align*}
+where $M_c(u)$ is the censoring martingale, this typically improves the performance. This is equivalent to the 
+pseudo-value approach (see Overgaard (2025)).
+
+The influence function for the type="II" estimator is 
+\begin{align*}
+    U(\beta,G_c) + \int_0^t X \frac{E(Y| T>u)}{G_c(u)} d M_c(u)  
+    - \int_0^t  \frac{E(X| T>u) E(Y| T>u)}{G_c(u)} d M_c(u) - \int_0^t \frac{E( X Y| T>u)}{G_c(u)} d M_c(u)  
+\end{align*}
+and for type="I"
+\begin{align*}
+  &  U(\beta) + \int_0^t \frac{E( X Y| T>u)}{G_c(u)} d M_c(u).
+\end{align*}
+The means $E(X Y(t) | T>u)$ and $E(Y(t)| T>u)$ are estimated by IPCW estimators among survivors to get 
+estimates of the influence functions.
+
+The function logitIPCW instead considers 
+\begin{align*}
+ U^{glm}(\beta,\hat G_c) = & \frac{ \Delta(t) }{\hat G_c(T_i \wedge t)}  X  ( Y(t) - \mbox{expit}( X^T \beta)) = 0.
+\end{align*}
+This score equation is quite similar to those of the binreg, and exactly the same when the censoring model is fully-nonparametric.
+
+The logitIPCW has influence function 
+\begin{align*}
+  &  U^{glm}(\beta,G_c) + \int_0^t \frac{E( X ( Y - F_1(t,\beta)) | T>u)}{G_c(u)} d M_c(u)  
+\end{align*}
+
+Which estimator performs the best depends on the censoring distribution and it seems that the binreg with type="II" performs 
+overall quite nicely (see Blanche et al (2023) and Overgaard (2025)).  For the full estimated censoring model all estimators have the
+same influence function (see Blanche et al (2023)).
+
+Additional functions logitATE, and binregATE computes the average treatment effect based on propensity and outcome modelling. 
+We demonstrate this in another vignette. 
+
+The functions logitATE/binregATE can be used when there is no censoring and we thus have simple binary outcome. 
+
+The variance is based on a sandwich formula with IPCW adjustment (using the influence functions),
+and `naive.var` is the variance under a known censoring model. The influence functions are stored in the output.
+Clusters can be specified to obtain cluster-corrected standard errors.
+
+Examples
+========
+
+
+```{r}
+ library(mets)
+ options(warn=-1)
+ set.seed(1000) # to control output in random noise just below.
+ data(bmt)
+ bmt$time <- bmt$time+runif(nrow(bmt))*0.01
+ bmt$id <- 1:408
+
+ # logistic regression with IPCW binomial regression 
+ out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
+ summary(out)
+```
+
+We can also compute predictions using the estimates 
+```{r}
+ predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
+```
+
+Further the censoring model can depend on strata 
+
+```{r}
+ outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
+ summary(outs)
+```
+
+Absolute risk differences and ratio
+===================================
+
+Now for illustrations we consider the absolute risk difference depending on tcell 
+
+```{r}
+ outs <- binreg(Event(time,cause)~tcell,bmt,time=50,cens.model=~strata(tcell))
+ summary(outs)
+```
+
+the risk difference is 
+
+```{r}
+ps <-  predict(outs,data.frame(tcell=c(0,1)),se=TRUE)
+ps
+sum( c(1,-1) * ps[,1])
+```
+
+Getting the standard errors is straightforward since the two groups are
+independent. If we had additionally adjusted for other covariates, however, we would need
+to apply the delta theorem using the relevant covariances, along the lines of:
+
+```{r}
+dd <- data.frame(tcell=c(0,1))
+p <- predict(outs,dd)
+
+riskdifratio <- function(p,contrast=c(1,-1)) {
+   outs$coef <- p
+   p <- predict(outs,dd)[,1]
+   pd <- sum(contrast*p)
+   r1 <- p[1]/p[2]
+   r2 <- p[2]/p[1]
+   return(c(pd,r1,r2))
+}
+     
+estimate(outs,f=riskdifratio,dd,null=c(0,1,1))
+```
+
+same as 
+
+```{r}
+run <- 0
+if (run==1) {
+library(prodlim)
+pl <- prodlim(Hist(time,cause)~tcell,bmt)
+spl <- summary(pl,times=50,asMatrix=TRUE)
+spl
+}
+```
+
+
+
+SessionInfo
+============
+
+```{r}
+sessionInfo()
+```
+

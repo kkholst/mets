@@ -1,0 +1,104 @@
+---
+title: "While Alive estimands for Recurrent Events"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{While Alive estimands for Recurrent Events}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mets)
+```
+
+
+While Alive estimands for Recurrent Events
+==========================================
+
+We consider two while-alive estimands for recurrent events data
+\begin{align*}
+ \frac{E(N(D \wedge t))}{E(D \wedge t)}
+\end{align*}
+and the mean of the subject specific events per time-unit 
+\begin{align*}
+ E( \frac{N(D \wedge t)}{D \wedge t} ) 
+\end{align*}
+for two treatment-groups in the case of an RCT. 
+For the mean of events per time-unit it has been seen that when the sample size is small 
+one can improve the finite sample properties by employing a transformation such as square or cube-root, and
+thus consider 
+\begin{align*}
+ E( (\frac{N(D \wedge t)}{D \wedge t})^.33 ) 
+\end{align*}
+
+```{r while-alive}
+data(hfactioncpx12)
+
+dtable(hfactioncpx12,~status)
+dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,death.code=2)
+summary(dd)
+
+dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,
+		   death.code=2,trans=.333)
+summary(dd,type="log")
+
+```
+
+We see that the ratio of means is not very different between groups, but that the subject-specific
+mean of events per time-unit shows that those on the active treatment have fewer events per time-unit on average.
+
+We can also fit a regression model for the mean of the subject-specific events per time-unit, here using the
+exponential link.
+
+```{r while-alive-reg}
+hfactioncpx12$age <- rnorm(741)[hfactioncpx12$id]
+hfactioncpx12$sex <- rbinom(741,1,0.5)[hfactioncpx12$id]
+
+dd <- WA_reg(Event(entry,time,status)~treatment+age+sex+cluster(id),hfactioncpx12,time=2,death.code=2)
+summary(dd)
+```
+
+Composite outcomes involving death and marks
+============================================
+
+The event count can be generalised in various ways by using outcomes other than $N(D \wedge t)$, for example,
+\begin{align*}
+ \tilde N(D \wedge t) = \int_0^t I(D \geq s) M(s) dN(s)  +  \sum_j  M_j I(D \leq t,\epsilon=j) )
+\end{align*}
+where $M(s)$ are the marks associated with $N(s)$ and $M_j$ are marks associated with the different
+causes of the terminal event. This provides an extension of the weighted composite outcomes measure of Mao \& Lin (2022).
+
+The marks (or weights) can be stochastic, for example when counting hospital expenses, and are
+stored as a vector in the data frame. The marks for the event times (defined through the causes) are then used.
+
+Here we weight death by 2 and otherwise count recurrent events as before (with weight 1):
+
+```{r wa-composite}
+hfactioncpx12$marks <- runif(nrow(hfactioncpx12))
+
+##ddmg <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,
+##cause=1:2,death.code=2,marks=hfactioncpx12$marks)
+##summary(ddmg)
+
+ddm <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,
+cause=1:2,death.code=2,marks=hfactioncpx12$status)
+
+```
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```
+
+

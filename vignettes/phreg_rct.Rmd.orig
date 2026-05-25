@@ -1,0 +1,454 @@
+---
+title: "Randomization for Cox Type rate models"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: no
+vignette: >
+  %\VignetteIndexEntry{Randomization for Cox Type rate models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mets)
+```
+
+Two-Stage Randomization for counting process outcomes
+========================================================
+
+Rate models are specified for $N_1(t)$, covering:
+
+   - survival data
+   - competing risks, cause-specific hazards
+   - recurrent events data
+
+
+Under simple randomization we can estimate the rate Cox model
+
+  - \(  \lambda_0(t) \exp(A_0 \beta_0) \)
+
+Under two-stage randomization we can estimate the rate Cox model
+
+  - \( \lambda_0(t) \exp(A_0 \beta_0 + A_1(t) \beta_1 ) \)
+
+
+The starting point is that Cox's partial likelihood score can be used for estimating parameters:
+ \begin{align*}
+   U(\beta) & = \int (A(t) - e(t)) dN_1(t)
+ \end{align*}
+ where $A(t)$ is the combined treatment vector over time.
+
+  - The solution will converge to $\beta^*$, the Struthers-Kalbfleisch solution of the score, with robust Lin-Wei standard errors.
+
+ The estimator can be augmented in different ways using additional covariates at the time of randomization and a censoring augmentation.
+ The solved estimating equation is
+ \begin{align*}
+ \sum_i   U_i - AUG_0 - AUG_1 + AUG_C   = 0
+ \end{align*}
+ using covariates from `augmentR0` to augment with
+ \begin{align*}
+ AUG_0 = ( A_0 - \pi_0(X_0) ) X_0 \gamma_0
+ \end{align*}
+ where $P(A_0=1|X_0)=\pi_0(X_0)$ (which does not depend on covariates under randomization),
+ and using covariates from `augmentR1` to augment with $R$ indicating whether the
+ second randomization takes place:
+ \begin{align*}
+ AUG_1 = R ( A_1 - \pi_1(X_1))  X_1 \gamma_1
+ \end{align*}
+ and the dynamic censoring augmentation
+ \begin{align*}
+  AUG_C =  \int_0^t \gamma_c(s)^T (e(s) - \bar e(s))  \frac{1}{G_c(s) } dM_c(s)
+ \end{align*}
+ where $\gamma_c(s)$ is chosen to minimise the variance given the dynamic covariates specified by `augmentC`.
+
+Propensity score models are always estimated unless a fixed value such as $\pi_0=1/2$ is requested, though
+it is generally better to estimate $\pi_0$ adaptively. Similarly, $\gamma_0$ and $\gamma_1$ are estimated to reduce the variance of $U_i$.
+
+
+  - Treatments must be given as factors.
+  - The treatment for the 2nd randomization may depend on the response.
+      - Treatment probabilities are estimated by default and uncertainty from this is adjusted for.
+      - `treat.model` must typically allow for interaction between treatment number and covariates.
+  - Randomization augmentation for the 1st and 2nd randomization is possible.
+       - `typesR=c("R0","R1","R01")`
+  - The censoring model can be stratified on observed baseline covariates.
+     - Default model stratifies on randomization `R0`.
+     - `cens.model` can be specified.
+  - Censoring augmentation is done dynamically over time with time-dependent covariates.
+      - `typesC=c("C","dynC")`: `C` for fixed coefficients and `dynC` for dynamic.
+      - Applied separately within each stratum of the censoring model.
+
+ Standard errors are estimated using the influence functions of all estimators, so tests of differences
+ can be computed subsequently.
+
+  - Variance adjustment for censoring augmentation is computed by subtracting the variance gain.
+  - Influence functions are given for the case with `R0` only.
+
+
+The times of randomization are specified by:
+
+   - `treat.var` is `"1"` when a randomization occurs.
+     - Default assumes all time points correspond to a treatment (the survival case without time-dependent covariates).
+     - For recurrent events, this must be specified as the first record for each subject; see example below.
+
+
+Data must be provided in start-stop-status survival format with:
+
+ - one status code indicating events of interest
+ - one code for censorings
+
+
+The phreg_rct can be used for counting process style data, and thus covers situations with 
+
+
+  - recurrent events 
+  - survival data
+  - cause-specific hazards (competing risks)
+
+and will in all cases compute augmentations  
+
+  - dynamic censoring augmentation
+     - dynC
+  - RCT augmentation 
+     - R0, R1 and R01
+
+
+
+Simple Randomization: Lu-Tsiatis marginal Cox model
+===================================================
+
+
+```{r}
+library(mets) 
+set.seed(100)
+
+## Lu, Tsiatis simulation
+data <- mets:::simLT(0.7,100)
+dfactor(data) <- Z.f~Z
+ 
+out <- phreg_rct(Surv(time,status)~Z.f,data=data,augmentR0=~X,augmentC=~factor(Z):X)
+summary(out)
+###out <- phreg_rct(Surv(time,status)~Z.f,data=data,augmentR0=~X,augmentC=~X)
+###out <- phreg_rct(Surv(time,status)~Z.f,data=data,augmentR0=~X,augmentC=~factor(Z):X,cens.model=~+1)
+```
+
+Results consistent with speff of  library(speff2trial) 
+
+```{r}
+###library(speff2trial) 
+library(mets)
+data(ACTG175)
+###
+data <- ACTG175[ACTG175$arms==0 | ACTG175$arms==1, ]
+data <- na.omit(data[,c("days","cens","arms","strat","cd40","cd80","age")])
+data$days <- data$days+runif(nrow(data))*0.01
+dfactor(data) <- arms.f~arms
+notrun <- 1
+
+if (notrun==0) { 
+fit1 <- speffSurv(Surv(days,cens)~cd40+cd80+age,data=data,trt.id="arms",fixed=TRUE)
+summary(fit1)
+}
+# 
+# Treatment effect
+#             Log HR       SE   LowerCI   UpperCI           p
+# Prop Haz  -0.70375  0.12352  -0.94584  -0.46165  1.2162e-08
+# Speff     -0.72430  0.12051  -0.96050  -0.48810  1.8533e-09
+
+out <- phreg_rct(Surv(days,cens)~arms.f,data=data,augmentR0=~cd40+cd80+age,augmentC=~cd40+cd80+age)
+summary(out)
+```
+
+The study is actually block-randomized,
+so the standard errors should be computed with an adjustment equivalent to augmenting with the block as a factor:
+
+```{r}
+dtable(data,~strat+arms)
+dfactor(data) <- strat.f~strat
+out <- phreg_rct(Surv(days,cens)~arms.f,data=data,augmentR0=~strat.f)
+summary(out)
+```
+
+Two-Stage Randomization CALGB-9823 for survival outcomes
+=========================================================
+
+We illustrate an analysis of one SMART (Sequential Multiple Assignment Randomised Trial) conducted by Cancer and
+Leukemia Group B Protocol 8923 (CALGB 8923), Stone and others (2001).
+388 patients were randomised to an initial treatment of GM-CSF ($A_1$) or standard chemotherapy
+($A_2$). Patients with complete remission and informed consent were then re-randomised to
+cytarabine only ($B_1$) or cytarabine plus mitoxantrone ($B_2$).
+
+We first compute the weighted risk-set  estimator based on estimated weights
+\begin{align*}
+\Lambda_{A1,B1}(t) & = \sum_i \int_0^t \frac{w_i(s)}{Y^w(s)} dN_i(s)
+\end{align*}
+where $w_i(s) = I(A0_i=A1) + (t>T_R) I(A1_i=B1)/\pi_1(X_i)$, that is 
+1 when you start on treatment $A1$ and
+then for those that changes to $B1$ at time $T_R$ then is scaled up 
+with the proportion doing this. This is equivalent to
+the IPTW (inverse probability of treatment weighted estimator). We estimate 
+the treatment regimes $A1, B1$ and $A2, B1$ by letting $A10$ indicate those that are consistent with ending on $B1$. 
+$A10$ then starts being $1$ and becomes $0$ if the subject is treated with $B2$, but stays $1$ if the subject is treated with $B1$. 
+We can then look at the two strata where $A0=0,A10=1$ and $A0=1,A10=1$. Similarly, for those that end being consistent with $B2$.
+Thus defining $A11$ to start being $1$, then stays $1$ if $B2$ is taken, and becomes $0$ if the second randomization is $B1$.
+
+  - the treatment models are for all time-points, unless the `weight.var` variable is given (1 for treatments, 0 otherwise) to accommodate a general start-stop format
+  - the treatment model may also depend on a response value
+  - standard errors are based on influence functions and is also computed for the baseline
+
+We here use the propensity score model $P(A1=B1|A0)$ that uses the 
+observed frequencies on arm $B1$ among those starting out on either $A1$ or $A2$.
+
+```{r}
+#| fig.alt: >
+#|   IPTW survival estimates for four treatment regimes.
+data(calgb8923)
+calgt <- calgb8923
+
+## tm <- At.f~factor(Count2)+age+sex+wbc
+## tm <- At.f~factor(Count2)
+tm <-  At.f~factor(Count2)*A0.f
+
+head(calgt)
+ll0 <- phreg_IPTW(Event(start,time,status==1)~strata(A0,A10)+cluster(id),calgt,treat.model=tm)
+pll0 <- predict(ll0,expand.grid(A0=0:1,A10=0,id=1))
+ll1 <- phreg_IPTW(Event(start,time,status==1)~strata(A0,A11)+cluster(id),calgt,treat.model=tm)
+pll1 <- predict(ll1,expand.grid(A0=0:1,A11=1,id=1))
+plot(pll0,se=1,lwd=2,col=1:2,lty=1,xlab="time (months)",xlim=c(0,30))
+plot(pll1,add=TRUE,col=3:4,se=1,lwd=2,lty=1,xlim=c(0,30))
+abline(h=0.25)
+legend("topright",c("A1B1","A2B1","A1B2","A2B2"),col=c(1,2,3,4),lty=1)
+
+summary(pll1,times=1:10)
+summary(pll0,times=1:10)
+```
+
+The propensity score model can be extended to use covariates to get increased efficiency.
+Note also that the propensity scores for $A0$ will cancel out in the different strata. 
+
+We now illustrate how to fit a  Cox model of the form
+\begin{align*}
+  & \lambda_{A0}(t) \exp( B1(t) \beta_1 + B2(t) \beta_2)
+\end{align*}
+where $\beta_0$ is the effect of treatment $A2$ and the effect of $B1$ 
+
+Now  comparing only those starting on A1/A2 to compare the effect of B1 versus B2
+
+```{r}
+library(mets)
+data(calgb8923)
+calgt <- calgb8923
+calgt$treatvar <- 1
+
+## making time-dependent indicators of going to B1/B2
+calgt$A10t <- calgt$A11t <- 0
+calgt <- dtransform(calgt,A10t=1,A1==0 & Count2==1)
+calgt <- dtransform(calgt,A11t=1,A1==1 & Count2==1)
+calgt0 <- subset(calgt,A0==0)
+
+ss0 <- phreg_rct(Event(start,time,status)~A10t+A11t+cluster(id),data=subset(calgt,A0==0),
+	 typesR=c("non","R1"),typesC=c("non","dynC"),
+	 treat.var="treatvar",treat.model=At.f~factor(Count2),
+	 augmentR1=~age+wbc+sex+TR,augmentC=~age+wbc+sex+TR+Count2)
+summary(ss0)
+
+ss1 <- phreg_rct(Event(start,time,status)~A10t+A11t+cluster(id),data=subset(calgt,A0==1),
+	 typesR=c("non","R1"),typesC=c("non","dynC"),
+	 treat.var="treatvar",treat.model=At.f~factor(Count2),
+	 augmentR1=~age+wbc+sex+TR,augmentC=~age+wbc+sex+TR+Count2)
+summary(ss1)
+```
+
+and a more structured model with both A0 and A1, that does not seem very reasonable based on 
+the above,
+
+```{r}
+ssf <- phreg_rct(Event(start,time,status)~A0.f+A10t+A11t+cluster(id),
+	 data=calgt,
+	 typesR=c("non","R0","R1","R01"),typesC=c("non","C","dynC"),
+	 treat.var="treatvar",treat.model=At.f~factor(Count2),
+	 augmentR0=~age+wbc+sex,augmentR1=~age+wbc+sex+TR,augmentC=~age+wbc+sex+TR+Count2)
+```
+
+
+
+Recurrent events: Simple Randomization
+======================================
+
+Recurrent events simulation with death and censoring.
+
+
+```{r}
+n <- 1000
+beta <- 0.15; 
+ data(CPH_HPN_CRBSI)
+ dr <- CPH_HPN_CRBSI$terminal
+ base1 <- CPH_HPN_CRBSI$crbsi 
+ base4 <- scalecumhaz(CPH_HPN_CRBSI$mechanical,0.5)
+
+cens <- rbind(c(0,0),c(2000,0.5),c(5110,3))
+ce <- 3; betao1 <- 0
+
+varz <- 1; dep=4; X <- z <- rgamma(n,1/varz)*varz
+Z0 <- NULL
+px <- 0.5
+if (betao1!=0) px <- lava::expit(betao1*X)      
+A0 <- rbinom(n,1,px)
+r1 <- exp(A0*beta[1])
+rd <- exp( A0 * 0.15)
+rc <- exp( A0 * 0 )
+###
+rr <-    mets:::simLUCox(n,base1,death.cumhaz=dr,r1=r1,Z0=X,dependence=dep,var.z=varz,cens=ce/5000)
+rr$A0 <- A0[rr$id]
+rr$z1 <- attr(rr,"z")[rr$id]
+rr$lz1 <- log(rr$z1)
+rr$X <- rr$lz1 
+rr$lX <- rr$z1
+rr$statusD <- rr$status
+rr <- dtransform(rr,statusD=2,death==1)
+rr <- count_history(rr)
+rr$Z <- rr$A0
+data <- rr
+data$Z.f <- as.factor(data$Z)
+data$treattime <- 0
+data <- dtransform(data,treattime=1,lbnr__id==1)
+dlist(data,start+stop+statusD+A0+z1+treattime+Count1~id|id %in% c(4,5))
+```
+
+Now we fit the model 
+
+```{r}
+fit2 <- phreg_rct(Event(start,stop,statusD)~Z.f+cluster(id),data=data,
+	 treat.var="treattime",typesR=c("non","R0"),typesC=c("non","C","dynC"),
+	 augmentR0=~z1,augmentC=~z1+Count1)
+summary(fit2)
+```
+
+ - Censoring model was stratified on Z.f
+ - treatment probabilities were estimated using the data
+
+
+Twostage Randomization: Recurrent events 
+=========================================
+
+
+
+```{r}
+n <- 500
+beta=c(0.3,0.3);betatr=0.3;betac=0;betao=0;betao1=0;ce=3;fixed=1;sim=1;dep=4;varz=1;ztr=0; ce <- 3
+## take possible frailty 
+Z0 <- rgamma(n,1/varz)*varz
+px0 <- 0.5; if (betao!=0) px0 <- expit(betao*Z0)
+A0 <- rbinom(n,1,px0)
+r1 <- exp(A0*beta[1])
+#
+px1 <- 0.5; if (betao1!=0) px1 <- expit(betao1*Z0)
+A1 <- rbinom(n,1,px1)
+r2 <- exp(A1*beta[2])
+rtr <- exp(A0*betatr[1])
+rr <-  mets:::simLUCox(n,base1,death.cumhaz=dr,cumhaz2=base1,rtr=rtr,betatr=0.3,A0=A0,Z0=Z0,
+		r1=r1,r2=r2,dependence=dep,var.z=varz,cens=ce/5000,ztr=ztr)
+rr$z1 <- attr(rr,"z")[rr$id]
+rr$A1 <- A1[rr$id]
+rr$A0 <- A0[rr$id]
+rr$lz1 <- log(rr$z1)
+rr <- count_history(rr,types=1:2)
+rr$A1t <- 0
+rr <- dtransform(rr,A1t=A1,Count2==1) 
+rr$At.f <- rr$A0
+rr$A0.f <- factor(rr$A0)
+rr$A1.f <- factor(rr$A1)
+rr <- dtransform(rr, At.f = A1, Count2 == 1)
+rr$At.f <- factor(rr$At.f)
+dfactor(rr)  <-  A0.f~A0
+rr$treattime <- 0
+rr <- dtransform(rr,treattime=1,lbnr__id==1)
+rr$lagCount2 <- dlag(rr$Count2)
+rr <- dtransform(rr,treattime=1,Count2==1 & (Count2!=lagCount2))
+dlist(rr,start+stop+statusD+A0+A1+A1t+At.f+Count2+z1+treattime+Count1~id|id %in% c(5,10))
+```
+
+Now fitting the model and computing different augmentations (true values 0.3 and 0.3)
+
+```{r}
+sse <- phreg_rct(Event(start,time,statusD)~A0.f+A1t+cluster(id),data=rr,
+	 typesR=c("non","R0","R1","R01"),typesC=c("non","C","dynC"),treat.var="treattime",
+	 treat.model=At.f~factor(Count2),
+	 augmentR0=~z1,augmentR1=~z1,augmentC=~z1+Count1+A1t)
+summary(sse)
+```
+
+  - `treat.model` codes $A_0$ and $A_1$ as `At.f`; here we allow a model that depends on the randomization to
+    be as adaptive as possible.
+  - For the observational case one can also adjust for covariates here.
+  - The censoring model was stratified on `A0.f`.
+
+
+Causal assumptions for Two-Stage Randomization: Recurrent events
+===============================================================
+
+We are interested in $N_1$ and also have death $N_d$.
+
+Given $X_0$, we require:
+
+  - \( A_0 \perp  N_1^0(), N_1^1(), N_d^0(), N_d^1() | X_0 \)
+  - positivity: \(  1 > \pi_0(X_0) > 0 \)
+
+Given $\bar X_1$, the history accumulated up to the time $T_R$ of the second randomization:
+
+  - \( A_1 \perp  N_1^0(), N_1^1(), N_d^0(), N_d^1() | \bar X_1 \)
+  - positivity: \(  1 > \pi_1(X_1) > 0 \)
+
+And consistency, to link counterfactual quantities to observed data.
+
+We must use an IPTW-weighted Cox score and augment as before.
+
+In addition we require that censoring is independent given, for example, $A_0$:
+
+  - Independent censoring.
+
+To use `phreg_rct` in this setting:
+
+ - Set `RCT=FALSE`.
+ - Propensity score models must be specified.
+ - The marginal estimate is based on the IPTW Cox model `phreg_IPTW`.
+    - When the same model is used for both the propensity scores and the augmentation models,
+      the augmentation models are not needed due to the adaptive nature of fitting the
+      propensity score models.
+
+
+```{r}
+fit2 <- phreg_rct(Event(start,stop,statusD)~Z.f+cluster(id),data=data,
+	 typesR=c("non","R0"),typesC=c("non","C","dynC"),
+         RCT=FALSE,treat.model=Z.f~z1,augmentR0=~z1,augmentC=~z1+Count1,
+	 treat.var="treattime")
+summary(fit2)
+```
+
+and for twostage randomization
+
+```{r}
+sse <- phreg_rct(Event(start,time,statusD)~A0.f+A1t+cluster(id),data=rr,
+	 typesR=c("non","R0","R1","R01"),typesC=c("non","C","dynC"),
+         treat.var="treattime",
+	 RCT=FALSE,treat.model=At.f~z1*factor(Count2),
+         augmentR0=~z1,augmentR1=~z1,augmentC=~z1+Count1+A1t)
+summary(sse)
+```
+
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```
+
+

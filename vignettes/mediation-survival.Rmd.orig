@@ -1,0 +1,229 @@
+---
+title: "Mediation Analysis for survival data"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{Mediation Analysis for survival data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  #dev="png",
+  comment = "#>"  
+)
+library(mets)
+```
+
+Overview 
+========
+
+We fit
+
+ * binomial regression with IPCW: `binreg`
+ * additive Lin-Ying model: `aalenMets`
+ * Cox model: `phreg`
+ * standard logistic regression via `binreg`
+
+in the context of mediation analysis using mediation weights as in the `medFlex` package.
+We thus fit natural effects models; for example, on the binary scale:
+\begin{align*}
+\mbox{logit}(P(Y(x,M(x^*))=1| Z)  = \beta_0+ \beta_1 x + \beta_2 x^* + \beta_3^T Z,
+\end{align*}
+In this case the Natural Direct Effect (NDE) for fixed covariates $Z$ is
+\begin{align*}
+ \mbox{OR}_{1,0|Z}^{\mbox{NDE}} = \frac{\mbox{odds}(Y(1,M(x))|Z)}{\mbox{odds}(Y(0,M(x))|Z)}  = \exp(\beta_1),
+\end{align*}
+and the Natural Indirect Effect (NIE) for fixed covariates $Z$ is
+\begin{align*}
+ \mbox{OR}_{1,0|Z}^{\mbox{NIE}} = \frac{\mbox{odds}(Y(x,M(1))|Z)}{\mbox{odds}(Y(x,M(0))|Z)} = \exp(\beta_2).
+\end{align*}
+See the `medFlex` package for additional discussion of the parametrisation.
+
+The mediator can be:
+
+ * binomial, using `glm` with family `binomial`.
+ * multinomial, via the `mlogit` function in `mets`.
+
+Both mediator and exposure must be coded as factors.
+
+In the example below:
+
+ * mediator: `gp.f`
+ * exposure: `dnr.f`
+
+The outcome model concerns the risk/hazard of cause 2.
+
+Standard errors are computed using i.i.d. influence functions and a Taylor expansion to account for uncertainty in the
+mediation weights.
+
+
+Simulated Data 
+==============
+
+First we simulate data that mimics the dataset from Kumar et al. (2012),
+which consists of multiple myeloma patients treated with allogeneic stem cell
+transplantation from the Center for International Blood and Marrow Transplant Research
+(CIBMTR). The data cover patients transplanted from 1995 to
+2005, comparing outcomes between transplant periods: 2001--2005 ($N=488$)
+versus 1995--2000 ($N=375$). The two competing events were
+relapse (cause 2) and treatment-related mortality (TRM, cause 1),
+defined as death without relapse.
+Kumar et al. (2012) considered the following risk covariates:
+transplant period (`gp`, the main variable of interest: 1 for 2001--2005, 0 for 1995--2000),
+donor type (`dnr`: 1 for unrelated or other related donor ($N=280$), 0 for HLA-identical sibling ($N=584$)),
+prior autologous transplant (`preauto`: 1 for auto+allo transplant ($N=399$), 0 for allogeneic alone ($N=465$)),
+and time to transplant (`ttt24`: 1 for more than 24 months ($N=289$), 0 for 24 months or less ($N=575$)).
+
+The interest is in the effect of transplant period (`gp`) and possible mediation
+via the proportion of unrelated or related donors (`dnr`) — a somewhat artificial example.
+All analyses are adjusted for other important confounders.
+
+```{r}
+ library(mets)
+ runb <- 0
+ options(warn=-1)
+ set.seed(1000) # to control output in simulations for p-values below.
+
+n <- 200; k.boot <- 10; 
+
+dat <- kumarsimRCT(n,rho1=0.5,rho2=0.5,rct=2,censpar=c(0,0,0,0),
+          beta = c(-0.67, 0.59, 0.55, 0.25, 0.98, 0.18, 0.45, 0.31),
+    treatmodel = c(-0.18, 0.56, 0.56, 0.54),restrict=1)
+dfactor(dat) <- dnr.f~dnr
+dfactor(dat) <- gp.f~gp
+drename(dat) <- ttt24~"ttt24*"
+dat$id <- 1:n
+dat$ftime <- 1
+```
+
+
+Mediation Weights
+=================
+
+We compute the mediation weights based on a model for the mediator:
+
+```{r}
+weightmodel <- fit <- glm(gp.f~dnr.f+preauto+ttt24,data=dat,family=binomial)
+wdata <- medweight(fit,data=dat)
+```
+
+Binomial Regression 
+===================
+
+A simple multivariate regression of the probability of relapse at 50 months with both
+exposure and mediator (given the other covariates):
+
+```{r}
+aaMss2 <- binreg(Event(time,status)~gp+dnr+preauto+ttt24+cluster(id),data=dat,time=50,cause=2)
+summary(aaMss2)
+```
+
+Binomial regression IPCW Mediation Analysis
+===========================================
+
+We first look at the probability of relapse at 50 months:
+
+```{r, label=firstmodel}
+### binomial regression ###########################################################
+aaMss <- binreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
+		time=50,weights=wdata$weights,cause=2)
+summary(aaMss)
+
+ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
+summary(ll)
+if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
+```
+
+The estimated NDE is $1.40$ (95% CI: $0.72$, $2.76$) and the NIE is $1.32$ (95% CI: $1.05$, $1.66$).
+
+Mediation Analysis
+====================
+
+We illustrate how to use the other models mentioned above.
+
+```{r, label=multiplemodels}
+### lin-ying model ################################################################
+aaMss <- aalenMets(Surv(time/100,status==2)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
+		   weights=wdata$weights)
+ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
+summary(ll)
+if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
+
+### cox model ###############################################################################
+aaMss <- phreg(Surv(time,status==2)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
+	       weights=wdata$weights)
+summary(aaMss)
+ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
+summary(ll)
+if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
+
+### Fine-Gray #############################################################3
+aaMss <- cifreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
+		weights=wdata$weights,propodds=NULL,cause=2)
+summary(aaMss)
+ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
+summary(ll)
+if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
+
+### logit model  #############################################################3
+aaMss <- cifreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
+		weights=wdata$weights,cause=2)
+summary(aaMss)
+ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
+summary(ll)
+if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
+
+### binomial outcome  ############################
+aaMss <- binreg(Event(ftime,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
+		time=50,weights=wdata$weights,cens.weights=1,cause=2)
+summary(aaMss)
+ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
+summary(ll)
+if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary(bll)}
+```
+
+
+Multinomial regression
+======================
+
+Also works with a mediator with more than two levels:
+
+ * mediator: `wmi` in 4 categories
+ * exposure: `age` in 4 categories
+
+```{r, label=multinom, eval=TRUE}
+library(mets)
+data(tTRACE)
+dcut(tTRACE) <- ~. 
+
+weightmodel <- fit <- mlogit(wmicat.4 ~agecat.4+vf+chf,data=tTRACE,family=binomial)
+wdata <- medweight(fit,data=tTRACE)
+
+aaMss <- binreg(Event(time,status)~agecat.40+ agecat.41+ vf+chf+cluster(id),data=wdata,
+		time=7,weights=wdata$weights,cause=9)
+summary(aaMss)
+MultMed <- mediatorSurv(aaMss,fit,data=tTRACE,wdata=wdata)
+summary(MultMed)
+```
+
+```{r  results="hide", echo=FALSE }
+MultMed[c('iid','iid.w','iid.surv')] <- NULL
+```
+
+```{r}
+summary(MultMed)
+```
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```

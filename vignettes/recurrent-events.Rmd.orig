@@ -1,0 +1,920 @@
+---
+title: "Recurrent events"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: no
+header-includes: 
+  - \usepackage{tikz}
+  - \usepackage{adjustbox}
+  - \usetikzlibrary{positioning, arrows.meta,calc}
+vignette: >
+  %\VignetteIndexEntry{Recurrent events}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  #dev="svg",
+  #out.width="600px",
+  comment = "#>"
+)
+library(mets)
+```
+
+Overview 
+========
+
+For recurrent events data it is often of interest to compute basic descriptive
+quantities to gain some understanding of the phenomenon being studied.
+We demonstrate how to compute:
+
+ * the marginal mean 
+   * AUC and logrank test for comparison of marginal means (also for special case with cumulative incidence)
+   * efficient marginal mean estimation with fast computation of standard errors
+ * the Ghosh-Lin Cox type regression for the marginal mean, possibly with composite outcomes. 
+   * efficient regression augmentation of the Ghosh-Lin model
+   * clusters can be specified
+   * allows a stratified baseline 
+ * the variance of a recurrent events process
+ * the probability of exceeding k events
+ * the two-stage recurrent events random effects model
+
+In addition several tools can be used for simulating recurrent events and
+bivariate recurrent events data, also with a possible terminating event: 
+
+ * recurrent events with multiple 
+   * event types 
+   * Cox type rates 
+ * with a terminal event with possibly multiple causes of death
+   * Cox type rates 
+ * frailty extensions
+ * the Ghosh-Lin model when the survival rate is on Cox form.
+   * frailty extensions
+ * The general illness death model with  Cox models for all hazards. 
+
+\begin{tikzpicture}[
+    sharp corners=2pt,
+    inner sep=4pt,
+    node distance=0.9cm,
+    >=latex,
+    mynode/.style={draw,minimum height=0.9cm,minimum width=2.6cm}
+]
+
+\node[mynode] (healthy) {healthy $(h)$};
+\node[mynode, right=of healthy] (e1) {1st event};
+\node[mynode, right=of e1] (e2) {2nd event};
+
+% Dots indicating continuation
+\node[right=0.6cm of e2] (dots) {$\cdots$};
+
+% Dead
+\node[mynode, below=of e1] (dead) {dead $(d)$};
+
+% Arrows along the event chain
+\draw[->] (healthy) -- (e1);
+\draw[->] (e1) -- (e2);
+\draw[->] (e2) -- (dots);
+
+% Arrows to 'dead'
+\draw[->] (healthy) -- (dead);
+\draw[->] (e1) -- (dead);
+\draw[->] (e2) -- (dead);
+
+\end{tikzpicture}
+
+
+Simulation of recurrent events
+==============================
+
+We start by simulating some recurrent events data with two event types having cumulative hazards
+
+ * $\Lambda_1(t)$ (rate among survivors)
+ * $\Lambda_2(t)$ (rate among survivors)
+ * $\Lambda_D(t)$
+
+ where types 1 and 2 are considered and the terminal event rate is given by
+ $\Lambda_D(t)$. The events are independent by default, but a random effects
+ structure can also be specified to generate dependence.
+
+ When simulating data, various random effects structures can be imposed to generate dependence:
+
+* Dependence=0: The intensities are independent.
+
+* Dependence=1: One gamma-distributed random effect $Z$. The intensities are
+    + $Z \lambda_1(t)$
+    + $Z \lambda_2(t)$
+    + $Z \lambda_D(t)$
+
+* Dependence=4: One gamma-distributed random effect $Z$. The intensities are
+    + $Z \lambda_1(t)$
+    + $Z \lambda_2(t)$
+    + $\lambda_D(t)$
+
+* Dependence=2: Normally distributed random effects $Z_1,Z_2,Z_d$ with variance (`var.z`) 
+  and correlation (`cor.mat`) that can be specified. The intensities are
+    + $\exp(Z_1) \lambda_1(t)$
+    + $\exp(Z_2) \lambda_2(t)$
+    + $\exp(Z_3) \lambda_D(t)$
+
+* Dependence=3: Gamma-distributed random effects $Z_1,Z_2,Z_d$ where the sum structure can be specified via a matrix
+   `cor.mat`. We compute $\tilde Z_j = \sum_k  Z_k^{cor.mat(j,k)}$ for $j=1,2,3$.
+   The intensities are
+    + $\tilde Z_1 \lambda_1(t)$
+    + $\tilde Z_2 \lambda_2(t)$
+    + $\tilde Z_3 \lambda_D(t)$
+
+We return to how to run the different set-ups later and start by simulating independent processes. 
+
+The key simulation functions are:
+
+ * `sim_recurrent`: simple simulation with one event type and death
+ * `sim_recurrentII`: extended version with possibly multiple types of recurrent events (rates can be zero);
+   allows Cox-type rates with subject-specific effects
+ * `sim_recurrent_list`: lists allowed for multiple event types and causes of death (competing risks);
+   allows Cox-type rates with subject-specific effects
+ * `sim_recurrent`: simulates from Cox-Cox (marginals) or Ghosh-Lin-Cox models
+
+Data can also be simulated from the Ghosh-Lin model where marginal rates among survivors are on Cox form:
+
+ * `simGLcox` (also `simRecurrentCox`): simulates from the Ghosh-Lin model
+   * with frailties, where the survival model for the terminal event is on Cox form
+   * simulates data where rates among survivors are on Cox form, with or without frailties
+
+see examples below for specific models. 
+
+
+Utility functions
+=================
+
+Two utility functions worth noting:
+
+ * `tie.breaker`: breaks ties among jump times, which is expected by the functions below.
+ * `count_history`: counts the number of previous jumps for each subject, i.e. $N_1(t-)$ and $N_2(t-)$.
+
+Marginal Mean 
+=============
+
+We start by estimating the marginal mean $E(N_1(t \wedge D))$ where $D$ is the time of the terminal event.
+The marginal mean is the average number of events observed before time $t$.
+
+This is based on a two-rate model for
+
+ * the type 1 events: $E(dN_1(t) | D > t)$
+ * the terminal event: $E(dN_d(t) | D > t)$
+
+and is defined as $\mu_1(t)=E(N_1(t))$ 
+\begin{align}
+   \int_0^t S(u) d R_1(u)	
+\end{align}
+where $S(t)=P(D \geq t)$ and $dR_1(t) = E(dN_1(t) | D > t)$ 
+
+and can therefore be estimated by a 
+
+ * Kaplan-Meier estimator, $\hat S(u)$ 
+ * Nelson-Aalen estimator for $R_1(t)$
+
+\begin{align}
+  \hat R_1(t) & =   \sum_i \int_0^t  \frac{1}{Y_\bullet (s)}  dN_{1i}(s)
+\end{align}
+where $Y_{\bullet}(t)= \sum_i Y_i(t)$ such that the estimator is 
+\begin{align}
+  \hat \mu_1(t) & =    \int_0^t \hat S(u) d\hat R_1(u),
+\end{align}
+see Cook & Lawless (1997) and Ghosh & Lin (2000).
+
+The variance can be estimated based on the asymptotic expansion
+of $\hat \mu_1(t) - \mu_1(t)$
+\begin{align*}
+  & \sum_i \int_0^t \frac{S(s)}{\pi(s)} dM_{i1}  - \mu_1(t) \int_0^t  \frac{1}{\pi(s)} dM_i^d +  \int_0^t \frac{\mu_1(s) }{\pi(s)} dM_i^d,
+\end{align*}
+
+with mean-zero processes 
+
+ * $M_i^d(t) = N_i^D(t)- \int_0^t Y_i(s) d \Lambda^D(s)$, 
+ * $M_{i1}(t) = N_{i1}(t) - \int_0^t Y_{i}(s) dR_1(s)$. 
+
+as described in Ghosh & Lin (2000).
+
+
+Generating data
+==================
+
+We start by generating some data to illustrate the computation of the marginal mean 
+
+```{r}
+library(mets)
+set.seed(1000) # to control output in simulations for p-values below.
+```
+
+```{r}
+ data(CPH_HPN_CRBSI)
+ dr <- CPH_HPN_CRBSI$terminal
+ base1 <- CPH_HPN_CRBSI$crbsi 
+ base4 <- CPH_HPN_CRBSI$mechanical
+
+rr <- sim_recurrent(400,base1,death.cumhaz=dr)
+rr$x <- rnorm(nrow(rr)) 
+rr$strata <- floor((rr$id-0.01)/100)
+dlist(rr,.~id| id %in% c(1,7,9))
+```
+
+The status variable keeps track of the recurrent events and their type, and death the timing of 
+death.
+
+To compute the marginal mean we simply estimate the two rates functions of the 
+number of events of interest and death by using the phreg function 
+(to start without covariates). Then the estimates are combined with standard 
+error computation in the recurrent_marginal function
+
+```{r}
+#| fig.alt: >
+#|   Death rate, event rate, and marginal mean.
+#  to fit non-parametric models with just a baseline 
+xr <- phreg(Surv(entry,time,status)~cluster(id),data=rr)
+xdr <- phreg(Surv(entry,time,death)~cluster(id),data=rr)
+par(mfrow=c(1,3))
+plot(xdr,se=TRUE)
+title(main="death")
+plot(xr,se=TRUE)
+# robust standard errors 
+rxr <-   robust_phreg(xr,fixbeta=1)
+plot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=4)
+
+# marginal mean of expected number of recurrent events 
+out <- recurrent_marginal(Event(entry,time,status)~cluster(id),data=rr,cause=1,death.code=2)
+plot(out,se=TRUE,ylab="marginal mean",col=2)
+```
+
+We can also extract the estimate in different time-points 
+
+```{r}
+summary(out,times=c(1000,2000))
+```
+
+The marginal mean can also be estimated in the stratified case:
+
+```{r}
+#| fig.alt: >
+#|   Stratified death rate, event rate, and marginal mean.
+xr <- phreg(Surv(entry,time,status)~strata(strata)+cluster(id),data=rr)
+xdr <- phreg(Surv(entry,time,death)~strata(strata)+cluster(id),data=rr)
+par(mfrow=c(1,3))
+plot(xdr,se=TRUE)
+title(main="death")
+plot(xr,se=TRUE)
+rxr <-   robust_phreg(xr,fixbeta=1)
+plot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=1:2)
+
+out <- recurrent_marginal(Event(entry,time,status)~strata(strata)+cluster(id),
+			 data=rr,cause=1,death.code=2)
+plot(out,se=TRUE,ylab="marginal mean",col=1:2)
+```
+
+We can compare different marginal mean test (IPCW based) with a log-rank test  
+
+```{r}
+test_logrankRecurrent(out)
+
+dd <- test_marginalMean(Event(entry,time,status)~strata(strata)+cluster(id),
+			 data=rr,cause=1,death.code=2)
+dd
+summary(dd)
+dd$RAUCl
+```
+
+The AUC suggest that strata 2 looses 3840 days less than strata 0. 
+
+
+If we adjust for covariates for the two rates we can still do
+predictions of marginal mean, what can be plotted is the baseline marginal mean, 
+that is for the covariates equal to 0 for both models. Predictions for specific 
+covariates can also be obtained with the recmarg (recurren marginal mean used 
+solely for predictions without standard error computation). 
+
+```{r}
+#| fig.alt: >
+#|   Cox-adjusted death rate, event rate, and marginal mean.
+# cox case
+xr <- phreg(Surv(entry,time,status)~x+cluster(id),data=rr)
+xdr <- phreg(Surv(entry,time,death)~x+cluster(id),data=rr)
+par(mfrow=c(1,3))
+plot(xdr,se=TRUE)
+title(main="death")
+plot(xr,se=TRUE)
+rxr <- robust_phreg(xr)
+plot(rxr,se=TRUE,robust=TRUE,add=TRUE,col=1:2)
+
+out <- recurrentMarginalPhreg(xr,xdr)
+plot(out,se=TRUE,ylab="marginal mean",col=1:2)
+
+#### predictions witout se's 
+###outX <- recmarg(xr,dr,Xr=1,Xd=1)
+###plot(outX,add=TRUE,col=3)
+```
+
+We here simulate multiple recurrent events processes with two causes of death causes  and exponential censoring with
+rate $3/5000$, all processes are assumed independent (dependence=0)
+
+```{r}
+#| fig.alt: >
+#|   Simulated vs true rates for multiple recurrent event types.
+rr <- sim_recurrent_list(100,list(base1,base1,base4),death.cumhaz=list(dr,base4),cens=3/5000,dependence=0)
+dtable(rr,~status+death,level=2)
+mets:::showfitsimList(rr,list(base1,base1,base4),list(dr,base4))
+```
+
+Improving efficiency 
+======================
+
+To illustrate how the efficiency can be improved using heterogenity in the data, we
+now simulate some data with strong heterogenity. The dynamic augmentation is 
+a regression on the history  for each subject consisting of the specified terms 
+terms:  Nt, Nt2 (Nt squared), expNt (exp(-Nt)), NtexpNt (Nt*exp(-Nt)) or by simply
+specifying these directly.  This was developed in Cortese and Scheike (2022).
+
+```{r}
+#| fig.alt: >
+#|   Augmented marginal mean estimates.
+rr <- sim_recurrentII(200,base1,base4,death.cumhaz=dr,cens=3/5000,dependence=4,var.z=1)
+rr <-  count_history(rr)
+
+rr <- transform(rr,statusD=status)
+rr <- dtransform(rr,statusD=3,death==1)
+dtable(rr,~statusD+status+death,level=2,response=1)
+
+##xr <- phreg(Surv(start,stop,status==1)~cluster(id),data=rr)
+##dr <- phreg(Surv(start,stop,death)~cluster(id),data=rr)
+# marginal mean of expected number of recurrent events 
+out <- recurrent_marginal(Event(start,stop,statusD)~cluster(id),data=rr,cause=1,death.code=3)
+
+times <- 500*(1:10)
+recEFF1 <- recurrent_marginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr,times=times,cens.code=0,
+				   death.code=3,cause=1,augment.model=~Nt)
+with( recEFF1, cbind(times,muP,semuP,muPAt,semuPAt,semuPAt/semuP))
+
+times <- 500*(1:10)
+###recEFF14 <- recurrent_marginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr,times=times,cens.code=0,
+###death.code=3,cause=1,augment.model=~Nt+Nt2+expNt+NtexpNt)
+###with(recEFF14,cbind(times,muP,semuP,muPAt,semuPAt,semuPAt/semuP))
+
+recEFF14 <- recurrent_marginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr,times=times,cens.code=0,
+death.code=3,cause=1,augment.model=~Nt+I(Nt^2)+I(exp(-Nt))+ I( Nt*exp(-Nt)))
+with(recEFF14,cbind(times,muP,semuP,muPAt,semuPAt,semuPAt/semuP))
+
+plot(out,se=TRUE,ylab="marginal mean",col=2)
+k <- 1
+for (t in times) {
+	ci1 <- c(recEFF1$muPAt[k]-1.96*recEFF1$semuPAt[k],
+  	         recEFF1$muPAt[k]+1.96*recEFF1$semuPAt[k])
+	ci2 <- c(recEFF1$muP[k]-1.96*recEFF1$semuP[k],
+  	         recEFF1$muP[k]+1.96*recEFF1$semuP[k])
+	lines(rep(t,2)-2,ci2,col=2,lty=1,lwd=2)
+	lines(rep(t,2)+2,ci1,col=1,lty=1,lwd=2)
+	k <- k+1
+}
+legend("bottomright",c("Eff-pred"),lty=1,col=c(1,3))
+```
+
+In the case where covariates might be important but we are still interested in the marginal mean 
+we can also augment wrt these covariates 
+
+```{r}
+n <- 200
+X <- matrix(rbinom(n*2,1,0.5),n,2)
+colnames(X) <- paste("X",1:2,sep="")
+###
+r1 <- exp( X %*% c(0.3,-0.3))
+rd <- exp( X %*% c(0.3,-0.3))
+rc <- exp( X %*% c(0,0))
+fz <- NULL
+rr <- mets:::sim_GLcox(n,base1,dr,var.z=0,r1=r1,rd=rd,rc=rc,fz,model="twostage",cens=3/5000) 
+rr <- cbind(rr,X[rr$id+1,])
+
+dtable(rr,~statusD+status+death,level=2,response=1)
+
+times <- seq(500,5000,by=500)
+recEFF1x <- recurrent_marginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr,times=times,
+				   cens.code=0,death.code=3,cause=1,augment.model=~X1+X2)
+with(recEFF1x, cbind(muP,muPA,muPAt,semuP,semuPA,semuPAt,semuPAt/semuP))
+
+out <- recurrent_marginal(Event(start,stop,statusD)~cluster(id),data=rr,cause=1,death.code=3)
+summary(out,times=times)
+```
+
+Regression models for the marginal mean 
+========================================
+
+One can also do regression modelling , using the model
+\begin{align*}
+E(N_1(t) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
+\end{align*}
+then Ghosh-Lin suggested IPCW score equations that are implemented in the recreg function of mets. 
+
+First we generate data that from a Ghosh-Lin model with regression coefficients 
+$\beta=(-0.3,0.3)$ and the baseline given by base1, this is done under the assumption that the death 
+rate given covariates is on Cox form with baseline dr: 
+
+```{r}
+#| fig.alt: >
+#|   Ghosh-Lin regression baseline estimates.
+n <- 100
+X <- matrix(rbinom(n*2,1,0.5),n,2)
+colnames(X) <- paste("X",1:2,sep="")
+###
+r1 <- exp( X %*% c(0.3,-0.3))
+rd <- exp( X %*% c(0.3,-0.3))
+rc <- exp( X %*% c(0,0))
+fz <- NULL
+rr <- mets:::sim_GLcox(n,base1,dr,var.z=1,r1=r1,rd=rd,rc=rc,fz,cens=1/5000,type=2) 
+rr <- cbind(rr,X[rr$id+1,])
+
+out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0)
+outs <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0,
+		cens.model=~strata(X1,X2))
+summary(out)$coef
+summary(outs)$coef
+
+## checking baseline
+par(mfrow=c(1,1))
+plot(out)
+plot(outs,add=TRUE,col=2)
+lines(scalecumhaz(base1,1),col=3,lwd=2)
+```
+
+We note that for the extended censoring model we gain a little efficiency and that the estimates are close to the true values. 
+
+Also possible to do IPCW regression at fixed time-point
+
+```{r}
+outipcw  <- recregIPCW(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
+		cens.code=0,times=2000)
+outipcws <- recregIPCW(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
+	    cens.code=0,times=2000,cens.model=~strata(X1,X2))
+summary(outipcw)$coef
+summary(outipcws)$coef
+```
+
+We can also do the Mao-Lin type composite outcome where we both count the recurrent events (cause 1) and deaths (cause 3)
+for example 
+\begin{align*}
+E(N_1(t) + I(D<t,\epsilon=3) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
+\end{align*}
+
+
+
+
+
+```{r}
+out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=c(1,3),
+		death.code=3,cens.code=0)
+summary(out)$coef
+```
+
+This can also be done with competing risks death 
+\begin{align*}
+E(w_1 N_1(t) + w_2 I(D<t,\epsilon=3) | X) &  = \Lambda_0(t)  \exp(X^T \beta)
+\end{align*}
+and with weights  $w_1,w_2$ that follow the causes, here 1 and 3. 
+We modify the data by changing some of the cause 3 deaths to cause 4
+
+```{r}
+#| fig.alt: >
+#|   Composite outcome baseline estimates.
+rr$binf <- rbinom(nrow(rr),1,0.5) 
+rr$statusDC <- rr$statusD
+rr <- dtransform(rr,statusDC=4, statusD==3 & binf==0)
+rr$weight <- 1
+rr <- dtransform(rr,weight=2,statusDC==3)
+
+outC  <- recreg(Event(start,stop,statusDC)~X1+X2+cluster(id),data=rr,cause=c(1,3),
+		 death.code=c(3,4),cens.code=0)
+summary(outC)$coef
+
+outCW  <- recreg(Event(start,stop,statusDC)~X1+X2+cluster(id),data=rr,cause=c(1,3),
+		  death.code=c(3,4),cens.code=0,wcomp=c(1,2))
+summary(outCW)$coef
+
+plot(out,ylab="Mean composite")
+plot(outC,col=2,add=TRUE)
+plot(outCW,col=3,add=TRUE)
+```
+
+Predictions and standard errors can be computed via the iid decompositions of the baseline and the regression coefficients. We illustrate this
+for the standard Ghosh-Lin model 
+
+```{r}
+out  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,cens.code=0)
+summary(out)
+baseiid <- iidBaseline(out,time=3000)
+GLprediid(baseiid,rr[1:5,])
+```
+
+The Ghosh-Lin model can be made more efficient by the regression augmentation method.
+First computing the augmentation and then in a second step the augmented estimator (Cortese and Scheike (2023)): 
+
+```{r}
+outA  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,cause=1,death.code=3,
+		 cens.code=0,augment.model=~Nt+X1+X2)
+summary(outA)$coef
+```
+
+We note that the simple augmentation improves the standard errors as expected. The data was generated assuming independence with
+previous number of events so it would suffice to augment only with the covariates. 
+
+
+
+Administrative censoring for the Ghosh-Lin model
+===============================================
+
+In the case of administative censoring with possible additional random censorering we can fit the Ghosh-Lin model using 
+risk-set adjustment for the administrative censorering and IPCW adjustment for the  random cenouring. We illustrate it using 
+simulated data from the two-stage model described below. 
+The advantage of this procedure is that we do not rely on any modelling assumptions for the administrative censoring that will
+often be the important part of the total censoring. 
+
+
+```{r}
+library(mets)
+rho1 <- 1; rho2 <- 0.5
+rate <- c(1,1)
+tt <- seq(0, 6, by = 0.01)
+base1 <- cbind(tt,rho1 * (1 - exp(-tt/rate[1])))
+drcumhaz <- cbind(tt,rho2 * (1 - exp(-tt/rate[2])))
+base13 <- cpred(base1,c(1,3))[,2]
+
+dats <- mets:::sim_GLRA(100,base1,drcumhaz,varz=1)
+datsA <- dats[[1]]
+dtable(datsA,~statusD)
+datsRA <- dats[[2]]
+dtable(datsRA,~statusD)
+
+```
+
+We get two data-sets, one with only administrative censoring datsA 
+and one with additional random censoring datsRA. 
+ 
+  - datsA: statusD has events (1) death (3) and administrative censorings at the  time censorA
+  - datsRA: statusD has events (1) death (3),  administrative censorings (7) and random censorings (0). The time 
+     of the administriative censoring is given by censorA
+
+First we deal only  with the administriative censoring. 
+
+```{r}
+   ## handling admin censoring with IPCW 
+    outRR  <- recreg(Event(start,stop,statusD)~Z1+Z2+cluster(id), datsA, cause = 1, 
+		       cens.code = c(7),death.code=3)
+    estimate(outRR)
+
+    ## Full Adm-censoring statusA, timeA
+    out0  <- recreg(Event(start,stop,statusD) ~ Z1 + Z2+cluster(id) , datsA, cause = 1, 
+		       cens.code = 9, death.code=3, adm.cens.time=datsA$censorA)
+    estimate(out0)
+```
+
+The additional random censoring can be handled by combining the two censoring times, or by handling the 
+administrative censoring (via risk-set adjustment) and random censoring (via IPCW) separately
+
+```{r}
+    ## std Right censoring  on combined censoring time 
+    outR  <- recreg(Event(start,stop,statusD)~Z1 + Z2+cluster(id) , datsRA, cause = 1, 
+		       cens.code = c(0,7),death.code=3)
+    estimate(outR)
+
+    ## Combined R-IPCW + Adm-censoring status, time
+    out1  <- recreg(Event(start,stop,statusD) ~ Z1 + Z2+cluster(id) , datsRA, cause = 1, 
+		       cens.code = 0, death.code=3, adm.cens.time=datsRA$censorA)
+    estimate(out1)
+
+    ## Combined R-IPCW + Adm-censoring status + censoring modelling time
+    out1c  <- recreg(Event(start,stop,statusD) ~ Z1 + Z2+cluster(id) , datsRA, cause = 1, 
+		     cens.code = 0, death.code=3, adm.cens.time=datsRA$censorA,cens.model=~strata(Z1,Z2))
+     estimate(out1c)
+```
+
+We have influence functions of all parameters and can thus also make predictions with confindence intervals
+
+ - this is based on going through a grid of time-points if se=1
+   - when se=0 the predictions are done for all jump-times 
+
+```{r}
+#| fig.alt: >
+#|   Ghosh-Lin predictions with confidence intervals.
+predR0 <- predict(outR,data.frame(Z1=0:1,Z2=0))
+plot(predR0,ylim=c(0,1.5))
+
+predR <- predict(outR,data.frame(Z1=0:1,Z2=0),se=1)
+plot(predR,se=1,add=TRUE)
+
+pred1c <- predict(out1c,data.frame(Z1=0:1,Z2=0),se=1)
+plot(pred1c,se=1,add=TRUE)
+```
+
+The censoring weights for the random censoring and the combined censoring
+
+```{r}
+#| fig.alt: >
+#|   Censoring weight estimates by strata.
+km07 <- km(Event(start,stop,statusD %in% c(0,7))~strata(Z1,Z2),datsRA)
+km0 <- km(Event(start,stop,statusD==0)~strata(Z1,Z2),datsRA)
+plot(km07,col=1)
+plot(km0,add=TRUE,col=2,lwd=2)
+```
+
+
+Two-stage modelling 
+====================
+
+We simulate data with a terminal event on Cox form and recurrent events
+satisfying the Ghosh-Lin model or having a rate on Cox form.
+
+ - type=3 is Ghosh-Lin model for recurrent events and Cox for terminal event.
+ - type=2 is Cox model for recurrent events among survivors and Cox for terminal event.
+ - simulations based on time-grid to make linear approximations of cumulative hazards
+
+Now we fit the two-stage model (the recreg must be called with twostage=TRUE)
+
+```{r}
+set.seed(100)
+dr <- CPH_HPN_CRBSI$terminal
+base1 <- CPH_HPN_CRBSI$crbsi 
+n <- 200
+X <- matrix(rbinom(n*2,1,0.5),n,2)
+colnames(X) <- paste("X",1:2,sep="")
+###
+r1 <- exp( X %*% c(0.3,-0.3))
+rd <- exp( X %*% c(0.3,-0.3))
+rc <- exp( X %*% c(0,0))
+fz <- NULL
+## type=3 is cox-cox and type=2 is Ghosh-Lin/Cox model 
+rr <- mets:::sim_GLcox(n,base1,dr,var.z=1,r1=r1,rd=rd,rc=rc,cens=1/5000,type=3) 
+dtable(rr,~statusD)
+rr <- cbind(rr,X[rr$id+1,])
+###
+out  <- phreg(Event(start,stop,statusD==1)~X1+X2+cluster(id),data=rr)
+outs <- phreg(Event(start,stop,statusD==3)~X1+X2+cluster(id),data=rr)
+## cox/cox
+tsout <- twostageREC(outs,out,data=rr)
+summary(tsout)
+###
+rr <- mets:::sim_GLcox(n,base1,dr,var.z=1,r1=r1,rd=rd,rc=rc,fz,cens=1/5000,type=3,share=0.5) 
+rr <- cbind(rr,X[rr$id+1,])
+###
+out  <- phreg(Event(start,stop,statusD==1)~X1+X2+cluster(id),data=rr)
+outs <- phreg(Event(start,stop,statusD==3)~X1+X2+cluster(id),data=rr)
+#
+tsout <- twostageREC(outs,out,data=rr,model="shared")
+summary(tsout)
+###
+rr <- mets:::sim_GLcox(n,base1,dr,var.z=1,r1=r1,rd=rd,rc=rc,fz,cens=1/5000,type=2) 
+rr <- cbind(rr,X[rr$id+1,])
+outs  <- phreg(Event(start,stop,statusD==3)~X1+X2+cluster(id),data=rr)
+outgl  <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),data=rr,twostage=TRUE,death.code=3)
+##
+## ghosh-lin/cox
+glout <- twostageREC(outs,outgl,data=rr,theta=1)
+summary(glout)
+###
+glout <- twostageREC(outs,outgl,data=rr,model="shared",theta=1,nu=0.9)
+summary(glout)
+glout$gradient
+```
+
+Standard errors are computed assuming that the parameters of `out` and `outs` are
+both known, and are therefore probably a little too small. A bootstrap could be used to
+obtain more reliable standard errors.
+
+
+Simulations with specific structure
+===================================
+
+The function `simGLcox` can simulate data where the recurrent process has a mean on Ghosh-Lin form. The key identity is that
+\begin{align*}
+E(N_1(t) | X) &  = \Lambda_0(t)  \exp(X^T \beta) = \int_0^t S(t|X,Z) dR(t|X,Z)
+\end{align*}
+where $Z$ is a possible frailty, so that
+\begin{align*}
+ R(t|X,Z) & = \frac{Z \Lambda_0(t)  \exp(X^T \beta) }{S(t|X,Z)}
+\end{align*}
+leads to a Ghosh-Lin model. The survival model can be specified to have Cox form among survivors via
+`model="twostage"`; otherwise `model="frailty"` uses a survival model with rate $Z \lambda_d(t) r_d$.
+The frailty $Z$ is gamma distributed with a variance that can be specified. Simulations are based on
+a piecewise linear approximation of the hazard functions for $S(t|X,Z)$ and $R(t|X,Z)$.
+
+
+```{r}
+n <- 100
+X <- matrix(rbinom(n*2,1,0.5),n,2)
+colnames(X) <- paste("X",1:2,sep="")
+###
+r1 <- exp( X %*% c(0.3,-0.3))
+rd <- exp( X %*% c(0.3,-0.3))
+rc <- exp( X %*% c(0,0))
+rr <- mets:::sim_GLcox(n,base1,dr,var.z=0,r1=r1,rd=rd,rc=rc,model="twostage",cens=3/5000) 
+rr <- cbind(rr,X[rr$id+1,])
+```
+
+We can also simulate from models where the terminal event is on Cox form and the rate among survivors is on Cox form. 
+
+ * $E(dN_1 | D>t, X) = \lambda_1(t) r_1$
+ * $E(dN_d | D>t, X) = \lambda_d(t) r_d$
+
+underlying these models we have a shared frailty model
+
+```{r}
+#| fig.alt: >
+#|   Cox rates for survivors vs true baselines.
+rr <- mets:::sim_GLcox(100,base1,dr,var.z=1,r1=r1,rd=rd,rc=rc,type=3,cens=3/5000) 
+rr <- cbind(rr,X[rr$id+1,])
+margsurv <- phreg(Surv(start,stop,statusD==3)~X1+X2+cluster(id),rr)
+recurrent <- phreg(Surv(start,stop,statusD==1)~X1+X2+cluster(id),rr)
+estimate(margsurv)
+estimate(recurrent)
+par(mfrow=c(1,2)); 
+plot(margsurv); lines(dr,col=3); 
+plot(recurrent); lines(base1,col=3)
+```
+
+We can also simulate data with underlying dependence from the two-stage model (`simGLcox`) or using
+`simRecurrent` random effects models, for Cox-Cox or Ghosh-Lin-Cox models.
+
+Here with marginals on Cox-Cox and Ghosh-Lin-Cox form, drawing covariates from data:
+
+```{r}
+simcoxcox <- sim_recurrent_ts(recurrent,margsurv,n=10,data=rr)
+
+recurrentGL <- recreg(Event(start,stop,statusD)~X1+X2+cluster(id),rr,death.code=3)
+simglcox <- sim_recurrent_ts(recurrentGL,margsurv,n=10,data=rr)
+```
+
+
+Other marginal properties
+=========================
+
+The mean is a useful summary measure, but it is also easy and informative to examine other
+simple summary measures such as the probability of exceeding $k$ events,
+
+ * $P(N_1^*(t) \ge k)$
+   * cumulative incidence of $T_{k} = \inf \{ t: N_1^*(t)=k \}$ with competing event $D$.
+
+This is equivalent to a cumulative incidence of $T_k$ occurring before $D$, denoted $\hat F_k(t)$.
+
+We note also that $N_1^*(t)^2$ can be written as
+\begin{align*}
+   \sum_{k=0}^K  \int_0^t I(D > s) I(N_1^*(s-)=k) f(k) dN_1^*(s)
+\end{align*}
+with $f(k)=(k+1)^2 - k^2$, such that its mean can be written as 
+\begin{align*}
+	\sum_{k=0}^K \int_0^t S(s) f(k) P(N_1^*(s-)= k  | D  \geq s) E( dN_1^*(s)  | N_1^*(s-)=k, D> s) 
+\end{align*}
+and estimated by
+\begin{align*}
+\tilde \mu_{1,2}(t) & = 
+	\sum_{k=0}^K \int_0^t \hat S(s) f(k) 
+	\frac{Y_{1\bullet}^k(s)}{Y_\bullet (s)} \frac{1}{Y_{1\bullet}^k(s)} d N_{1\bullet}^k(s)= \sum_{i=1}^n \int_0^t \hat S(s) f(N_{i1}(s-)) \frac{1}{Y_\bullet (s)} d N_{i1}(s),
+\end{align*}
+That is very similar to the "product-limit" estimator for $E( (N_1^*(t))^2 )$ 
+\begin{align}
+  \hat \mu_{1,2}(t) & =    \sum_{k=0}^K k^2 ( \hat F_{k}(t) - \hat F_{k+1}(t) ).
+\end{align}
+
+We use the estimator of the probability of exceeding $k$ events based on the fact that
+$I(N_1^*(t) \geq k)$ is  equivalent to 
+\begin{align*}
+	\int_0^t I(D > s) I(N_1^*(s-)=k-1) dN_1^*(s),
+\end{align*}
+suggesting that its mean can be computed as
+\begin{align*}
+\int_0^t S(s) P(N_1^*(s-)= k-1  | D  \geq s) E( dN_1^*(s)  | N_1^*(s-)=k-1, D> s) 
+\end{align*}
+and estimated by 
+\begin{align*}
+\tilde F_k(t) = \int_0^t \hat S(s)  \frac{Y_{1\bullet}^{k-1}(s)}{Y_\bullet (s)} 
+          	\frac{1}{Y_{1\bullet}^{k-1}(s)} d N_{1\bullet}^{k-1}(s).
+\end{align*}
+
+To compute these estimators we use the prob.exceed.recurrent function
+
+```{r}
+#| fig.alt: >
+#|   Probability of exceeding k events over time.
+rr <- sim_recurrentII(200,base1,base4,death.cumhaz=dr,cens=3/5000,dependence=4,var.z=1)
+rr <- transform(rr,statusD=status)
+rr <- dtransform(rr,statusD=3,death==1)
+rr <-  count_history(rr)
+dtable(rr,~statusD)
+
+oo <- prob_exceed_recurrent(Event(entry,time,statusD)~cluster(id),rr,cause=1,death.code=3)
+plot(oo,types=1:5)
+```
+
+We can also look at the mean and variance based on the estimators just described 
+
+```{r}
+#| fig.alt: >
+#|   Mean and variance of recurrent events process.
+par(mfrow=c(1,2))
+with(oo,plot(time,meanN,col=2,type="l"))
+with(oo,plot(time,varN,type="l"))
+```
+
+
+Multiple events
+================
+
+We now generate recurrent events data with two event types, starting with
+independent events.
+
+```{r}
+rr <- sim_recurrentII(200,base1,cumhaz2=base4,death.cumhaz=dr)
+rr <-  count_history(rr)
+dtable(rr,~death+status)
+```
+
+Based on this we can estimate also the joint distribution function, that is
+the probability that $(N_1(t) \geq k_1, N_2(t) \geq k_2)$
+
+```{r}
+# Bivariate probability of exceeding 
+## oo <- prob.exceedBiRecurrent(rr,1,2,exceed1=c(1,5),exceed2=c(1,2))
+## with(oo, matplot(time,pe1e2,type="s"))
+## nc <- ncol(oo$pe1e2)
+## legend("topleft",legend=colnames(oo$pe1e2),lty=1:nc,col=1:nc)
+```
+
+Looking at simulations with dependence
+=============================================
+
+Using normally distributed random effects we illustrate four settings. We set variance $0.5$ for all
+random effects and vary the correlation. We denote the correlation between the random effect associated with
+$N_1$ and $N_2$ as $\rho_{12}$, and the correlation between the random effects
+associated with $N_j$ and $D$ (the terminal event) as $\rho_{j3}$, organised in the vector $\rho=(\rho_{12},\rho_{13},\rho_{23})$.
+
+ * Scenario I: $\rho=(0,0.0,0.0)$ — independence among all effects.
+
+```{r, eval=FALSE}
+ data(CPH_HPN_CRBSI)
+ dr <- CPH_HPN_CRBSI$terminal
+ base1 <- CPH_HPN_CRBSI$crbsi 
+ base4 <- CPH_HPN_CRBSI$mechanical
+
+  par(mfrow=c(1,3))
+  var.z <- c(0.5,0.5,0.5)
+  # death related to  both causes in same way 
+  cor.mat <- corM <- rbind(c(1.0, 0.0, 0.0), c(0.0, 1.0, 0.0), c(0.0, 0.0, 1.0))
+  rr <- sim_recurrentII(200,base1,base4,death.cumhaz=dr,var.z=var.z,cor.mat=cor.mat,dependence=2)
+  rr <- count_history(rr,types=1:2)
+###  cor(attr(rr,"z"))
+###  coo <- covarianceRecurrent(rr,1,2,status="status",start="entry",stop="time")
+###  plot(coo,main ="Scenario I")
+```
+ * Scenario II: $\rho=(0,0.5,0.5)$ — independence among survivors but dependence on terminal event.
+
+```{r, eval=FALSE}
+  var.z <- c(0.5,0.5,0.5)
+  # death related to  both causes in same way 
+  cor.mat <- corM <- rbind(c(1.0, 0.0, 0.5), c(0.0, 1.0, 0.5), c(0.5, 0.5, 1.0))
+  rr <- sim_recurrentII(200,base1,base4,death.cumhaz=dr,var.z=var.z,cor.mat=cor.mat,dependence=2)
+  rr <- count_history(rr,types=1:2)
+###  coo <- covarianceRecurrent(rr,1,2,status="status",start="entry",stop="time")
+###  par(mfrow=c(1,3))
+###  plot(coo,main ="Scenario II")
+```
+
+ * Scenario III: $\rho=(0.5,0.5,0.5)$ — positive dependence among survivors and dependence on terminal event.
+
+```{r, eval=FALSE}
+  var.z <- c(0.5,0.5,0.5)
+  # positive dependence for N1 and N2 all related in same way
+  cor.mat <- corM <- rbind(c(1.0, 0.5, 0.5), c(0.5, 1.0, 0.5), c(0.5, 0.5, 1.0))
+  rr <- sim_recurrentII(200,base1,base4,death.cumhaz=dr,var.z=var.z,cor.mat=cor.mat,dependence=2)
+  rr <- count_history(rr,types=1:2)
+###  coo <- covarianceRecurrent(rr,1,2,status="status",start="entry",stop="time")
+###  par(mfrow=c(1,3))
+###  plot(coo,main="Scenario III")
+```
+
+ * Scenario IV: $\rho=(-0.4,0.5,0.5)$ — negative dependence among survivors and positive dependence on terminal event.
+
+```{r, eval=FALSE}
+  var.z <- c(0.5,0.5,0.5)
+  # negative dependence for N1 and N2 all related in same way
+  cor.mat <- corM <- rbind(c(1.0, -0.4, 0.5), c(-0.4, 1.0, 0.5), c(0.5, 0.5, 1.0))
+  rr <- sim_recurrentII(200,base1,base4,death.cumhaz=dr,var.z=var.z,cor.mat=cor.mat,dependence=2)
+  rr <- count_history(rr,types=1:2)
+###  coo <- covarianceRecurrent(rr,1,2,status="status",start="entry",stop="time")
+###  par(mfrow=c(1,3))
+###  plot(coo,main="Scenario IV")
+```
+
+
+SessionInfo
+============
+
+
+```{r}
+sessionInfo()
+```
