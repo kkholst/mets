@@ -115,7 +115,8 @@ Now we fit a simple Cox model
  plot(scox1,col=2); plot(cox1,add=TRUE,col=1)
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-4-1.png)
+![Cumulative hazard: simulated vs fitted Cox
+model.](figure/cooking-survival-data-unnamed-chunk-4-1.png)
 
 ``` r
 
@@ -139,7 +140,8 @@ Now we fit a simple Cox model
  plot(scox1,col=2); plot(cox10,add=TRUE,col=1)
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-4-2.png)
+![Cumulative hazard: simulated vs fitted Cox
+model.](figure/cooking-survival-data-unnamed-chunk-4-2.png)
 
 Multiple Cox models for cause-specific hazards can be combined. Below we
 draw the covariates manually; alternatively, `sim_phregs` draws
@@ -169,7 +171,8 @@ covariates directly from the data.
  plot(cox2); plot(scox2,add=TRUE,col=2)
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-5-1.png)
+![Cumulative hazard: competing risks Cox models, two
+causes.](figure/cooking-survival-data-unnamed-chunk-5-1.png)
 
 ``` r
 
@@ -202,7 +205,8 @@ We now consider a fully nonparametric model with stratified baselines.
  plot(cc1,add=TRUE,col=3)
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-6-1.png)
+![Cumulative hazard: stratified nonparametric
+model.](figure/cooking-survival-data-unnamed-chunk-6-1.png)
 
 We now fit cause-specific hazard models with three causes (treating
 censoring as one of them) and generate competing risks data with hazards
@@ -239,7 +243,8 @@ stratified baselines for some of the models:
  plot(cox2); plot(scox2,add=TRUE,col=2); 
 ```
 
-![](cooking-survival-data_files/figure-html/stratified-1.png)
+![Cumulative hazard: stratified competing risks
+models.](figure/cooking-survival-data-stratified-1.png)
 
 ``` r
 
@@ -265,7 +270,8 @@ stratified baselines for some of the models:
  plot(cox2); plot(scox2,add=TRUE); 
 ```
 
-![](cooking-survival-data_files/figure-html/stratified-2.png)
+![Cumulative hazard: stratified competing risks
+models.](figure/cooking-survival-data-stratified-2.png)
 
 One further example, again fully nonparametric:
 
@@ -300,7 +306,8 @@ One further example, again fully nonparametric:
  plot(scox3,col=2); plot(cox3,add=TRUE,col=1)
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-7-1.png)
+![Cumulative hazard: fully nonparametric competing
+risks.](figure/cooking-survival-data-unnamed-chunk-7-1.png)
 
 **Summary of simulation functions**
 
@@ -372,7 +379,8 @@ plot(cox1); plot(scox1, add = TRUE, col = 2)
 plot(cox2); plot(scox2, add = TRUE, col = 2)
 ```
 
-![](cooking-survival-data_files/figure-html/entry-stratified-1.png)
+![Cumulative hazard: delayed entry competing
+risks.](figure/cooking-survival-data-entry-stratified-1.png)
 
 ## Parametric hazard models
 
@@ -429,7 +437,8 @@ lines(tt, pr[, 1, 1], lty=2, lwd=2)
 lines(tt, pr[, 1, 2], lty = 1, lwd = 2)
 ```
 
-![](cooking-survival-data_files/figure-html/weibull1-1.png)
+![Cumulative hazard: Weibull vs Cox stratified
+model.](figure/cooking-survival-data-weibull1-1.png)
 
 To simulate data we can use the
 [`rweibullcox()`](http://kkholst.github.io/mets/reference/rweibullcox.md)
@@ -576,7 +585,8 @@ simulated data to validate the procedure.
  lines(base1,lwd=2)
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-9-1.png)
+![Multistate model: estimated vs true transition
+rates.](figure/cooking-survival-data-unnamed-chunk-9-1.png)
 
 ## Cumulative incidence
 
@@ -704,7 +714,8 @@ plot(ciff)
 lines(attr(dats,"Lam1"))
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-10-1.png)
+![Cumulative incidence: logistic and cloglog link
+models.](figure/cooking-survival-data-unnamed-chunk-10-1.png)
 
 We can also use the parameters based on fitted models
 
@@ -738,7 +749,8 @@ We can also use the parameters based on fitted models
  plot(cif2); plot(scif2,add=TRUE,col=2)
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-11-1.png)
+![Cumulative incidence: fitted model vs simulated
+data.](figure/cooking-survival-data-unnamed-chunk-11-1.png)
 
 ### CIF Delayed entry
 
@@ -788,7 +800,8 @@ F_j(s,X)))\] \exp(- X^T \beta) \end{align\*}
  plot(pcif1,add=TRUE)
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-12-1.png)
+![Cumulative incidence: single cause with delayed
+entry.](figure/cooking-survival-data-unnamed-chunk-12-1.png)
 
 Combining two causes drawn with restriction F_1+\tilde F_2 \leq 1, thus
 modifying \tilde F_2= F_2 (1-F_1(\tau)) where F_1 and F_2 are the two
@@ -806,7 +819,8 @@ input cumulative incidence models
  plot(pcif1,add=TRUE)
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-13-1.png)
+![Cumulative incidence: two causes with delayed
+entry.](figure/cooking-survival-data-unnamed-chunk-13-1.png)
 
 Here we again combine two causes, now using parametric baselines via
 `simul_cifs`. The baselines for F_1 and F_2 are returned as attributes;
@@ -841,7 +855,8 @@ F1base <- 1-exp(-baset)
 lines(timet,F1base,lwd=3)
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-14-1.png)
+![Cumulative incidence: parametric baselines with delayed
+entry.](figure/cooking-survival-data-unnamed-chunk-14-1.png)
 
 ## Recurrent events
 
@@ -906,7 +921,8 @@ library(mets)
  plot(dr,add=TRUE)
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-15-1.png)
+![Recurrent events: two-stage Cox
+model.](figure/cooking-survival-data-unnamed-chunk-15-1.png)
 
 Now with Ghosh-Lin and Cox marginals:
 
@@ -938,7 +954,8 @@ Now with Ghosh-Lin and Cox marginals:
  plot(dr,add=TRUE)
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-16-1.png)
+![Recurrent events: Ghosh-Lin and Cox
+model.](figure/cooking-survival-data-unnamed-chunk-16-1.png)
 
 We can also fit and simulate from stratified models:
 
@@ -974,7 +991,8 @@ plot(xr); plot(rxr,add=TRUE)
 plot(dr,add=TRUE,col=2); plot(rdr,add=TRUE,col=2)
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-17-1.png)
+![Recurrent events: stratified two-stage
+model.](figure/cooking-survival-data-unnamed-chunk-17-1.png)
 
 ``` r
 
@@ -1004,7 +1022,8 @@ plot(glr); plot(rxr,add=TRUE)
 plot(dr,add=TRUE,col=2); plot(rdr,add=TRUE,col=2)
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-17-2.png)
+![Recurrent events: stratified two-stage
+model.](figure/cooking-survival-data-unnamed-chunk-17-2.png)
 
 Frailty models (simulations based on the rates/intensities)
 
@@ -1021,7 +1040,8 @@ Frailty models (simulations based on the rates/intensities)
  mets:::showfitsim(causes=1,rr,dr,base1,base1,which=1:2)
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-18-1.png)
+![Recurrent events: frailty model
+simulations.](figure/cooking-survival-data-unnamed-chunk-18-1.png)
 
 ``` r
 
@@ -1036,7 +1056,8 @@ Frailty models (simulations based on the rates/intensities)
  mets:::showfitsim(causes=2,rr,dr,base1,base4,which=1:2)
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-18-2.png)
+![Recurrent events: frailty model
+simulations.](figure/cooking-survival-data-unnamed-chunk-18-2.png)
 
 ``` r
 
@@ -1054,7 +1075,8 @@ Frailty models (simulations based on the rates/intensities)
  mets:::showfitsimList(rr,cumhaz,drl) 
 ```
 
-![](cooking-survival-data_files/figure-html/unnamed-chunk-18-3.png)
+![Recurrent events: frailty model
+simulations.](figure/cooking-survival-data-unnamed-chunk-18-3.png)
 
 ## SessionInfo
 
@@ -1066,38 +1088,35 @@ sessionInfo()
 #> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
-#> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> BLAS:   /home/kkzh/.asdf/installs/r/4.6.0/lib/R/lib/libRblas.so 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
 #> 
 #> locale:
-#>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
-#>  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
-#>  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
-#> [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 #> 
-#> time zone: UTC
+#> time zone: Europe/Copenhagen
 #> tzcode source: system (glibc)
 #> 
 #> attached base packages:
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] mets_1.3.10
+#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.10   
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
-#>  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        
-#>  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            
-#> [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           
-#> [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        
-#> [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   
-#> [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       
-#> [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      
-#> [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        
-#> [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     
-#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     
-#> [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
-#> [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1
-#> [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         
-#> [43] cachem_1.1.0           desc_1.4.3
+#>  [4] xfun_0.57              otel_0.2.0             future.apply_1.20.2   
+#>  [7] listenv_0.10.1         lava_1.9.1             stats4_4.6.0          
+#> [10] grid_4.6.0             evaluate_1.0.5         yaml_2.3.12           
+#> [13] mvtnorm_1.3-7          numDeriv_2016.8-1.1    compiler_4.6.0        
+#> [16] codetools_0.2-20       Rcpp_1.1.1-1.1         ucminf_1.2.3          
+#> [19] future_1.70.0          lattice_0.22-9         digest_0.6.39         
+#> [22] parallelly_1.47.0      parallel_4.6.0         splines_4.6.0         
+#> [25] Matrix_1.7-5           tools_4.6.0            RcppArmadillo_15.2.6-1
+#> [28] globals_0.19.1
 ```

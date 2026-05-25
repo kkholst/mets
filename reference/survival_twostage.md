@@ -310,6 +310,7 @@ summary(fitco1)
 #> attr(,"class")
 #> [1] "summary.mets.twostage"
 
+ ## Reduce Ex.Timings
 ### Plackett model
 mph <- phreg(Surv(time,status)~treat+cluster(id),data=diabetes)
 fitp <- survival_twostage(mph,data=diabetes,theta=3.0,Nit=40,
@@ -417,6 +418,7 @@ summary(udp)
 #> 0 - 0.5  0.475 (0.025)  0.531 (0.031)
 #> 0.5 - 2  0.471 (0.033)  0.512 (0.020)
 #> 
+
 
  ## Reduce Ex.Timings
 ### Same model using the strata option, a bit slower

@@ -11,7 +11,7 @@ derivative wrt parameters for weighting.  See vignette for more examples."><meta
 
     <a class="navbar-brand me-2" href="../index.html">mets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.11</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,7 +36,7 @@ derivative wrt parameters for weighting.  See vignette for more examples."><meta
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a></li>
     <li><a class="dropdown-item" href="../articles/mediation-survival.html">Mediation Analysis for survival data</a></li>
-    <li><a class="dropdown-item" href="../articles/phreg_rct.html">Randomization for Cox Type rate models </a></li>
+    <li><a class="dropdown-item" href="../articles/phreg_rct.html">Randomization for Cox Type rate models</a></li>
     <li><a class="dropdown-item" href="../articles/quantitative-twin.html">Twin models</a></li>
     <li><a class="dropdown-item" href="../articles/recurrent-events.html">Recurrent events</a></li>
     <li><a class="dropdown-item" href="../articles/rmst-ate.html">Average treatment effect (ATE) for Restricted mean survival and years lost of Competing risks</a></li>
@@ -119,7 +119,8 @@ derivative wrt parameters for weighting.  See vignette for more examples.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">400</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span> <span class="co">## Reduce Ex.Timings</span></span></span>
+<span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">400</span></span></span>
 <span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="mets-simulation.html">kumarsimRCT</a></span><span class="op">(</span><span class="va">n</span>,rho1<span class="op">=</span><span class="fl">0.5</span>,rho2<span class="op">=</span><span class="fl">0.5</span>,rct<span class="op">=</span><span class="fl">2</span>,censpar<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>          beta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.67</span>, <span class="fl">0.59</span>, <span class="fl">0.55</span>, <span class="fl">0.25</span>, <span class="fl">0.98</span>, <span class="fl">0.18</span>, <span class="fl">0.45</span>, <span class="fl">0.31</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    treatmodel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.18</span>, <span class="fl">0.56</span>, <span class="fl">0.56</span>, <span class="fl">0.54</span><span class="op">)</span>,restrict<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
@@ -165,6 +166,7 @@ derivative wrt parameters for weighting.  See vignette for more examples.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co">## not run bootstrap (to save time)</span></span></span>
 <span class="r-in"><span><span class="co">## bll &lt;- BootmediatorSurv(aaMss,fit,data=dat,k.boot=500)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

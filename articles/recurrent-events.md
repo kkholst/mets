@@ -227,7 +227,8 @@ out <- recurrent_marginal(Event(entry,time,status)~cluster(id),data=rr,cause=1,d
 plot(out,se=TRUE,ylab="marginal mean",col=2)
 ```
 
-![](recurrent-events_files/figure-html/unnamed-chunk-4-1.png)
+![Death rate, event rate, and marginal
+mean.](figure/recurrent-events-unnamed-chunk-4-1.png)
 
 We can also extract the estimate in different time-points
 
@@ -258,7 +259,8 @@ out <- recurrent_marginal(Event(entry,time,status)~strata(strata)+cluster(id),
 plot(out,se=TRUE,ylab="marginal mean",col=1:2)
 ```
 
-![](recurrent-events_files/figure-html/unnamed-chunk-6-1.png)
+![Stratified death rate, event rate, and marginal
+mean.](figure/recurrent-events-unnamed-chunk-6-1.png)
 
 We can compare different marginal mean test (IPCW based) with a log-rank
 test
@@ -280,9 +282,6 @@ test_logrankRecurrent(out)
 
 dd <- test_marginalMean(Event(entry,time,status)~strata(strata)+cluster(id),
              data=rr,cause=1,death.code=2)
-#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
-#> |mean|/rms = 0.084). Using lava.options(check.ic = FALSE) disables the warning
-#> globally.
 dd
 #> coeffients:
 #>                              p-value
@@ -337,7 +336,8 @@ out <- recurrentMarginalPhreg(xr,xdr)
 plot(out,se=TRUE,ylab="marginal mean",col=1:2)
 ```
 
-![](recurrent-events_files/figure-html/unnamed-chunk-8-1.png)
+![Cox-adjusted death rate, event rate, and marginal
+mean.](figure/recurrent-events-unnamed-chunk-8-1.png)
 
 ``` r
 
@@ -364,7 +364,8 @@ dtable(rr,~status+death,level=2)
 mets:::showfitsimList(rr,list(base1,base1,base4),list(dr,base4))
 ```
 
-![](recurrent-events_files/figure-html/unnamed-chunk-9-1.png)
+![Simulated vs true rates for multiple recurrent event
+types.](figure/recurrent-events-unnamed-chunk-9-1.png)
 
 ## Improving efficiency
 
@@ -424,17 +425,17 @@ times <- 500*(1:10)
 recEFF14 <- recurrent_marginalAIPCW(Event(start,stop,statusD)~cluster(id),data=rr,times=times,cens.code=0,
 death.code=3,cause=1,augment.model=~Nt+I(Nt^2)+I(exp(-Nt))+ I( Nt*exp(-Nt)))
 with(recEFF14,cbind(times,muP,semuP,muPAt,semuPAt,semuPAt/semuP))
-#>       times       muP     semuP    muPAt   semuPAt          
-#>  [1,]   500 0.8744004 0.1059068 0.866619 0.1054673 0.9958501
-#>  [2,]  1000 1.2696069 0.1458220 1.264328 0.1444953 0.9909020
-#>  [3,]  1500 1.7921498 0.2291966 1.806393 0.2218549 0.9679676
-#>  [4,]  2000 2.1216192 0.3047378 2.143321 0.2888685 0.9479245
-#>  [5,]  2500 2.4775306 0.3934784 2.492184 0.3607254 0.9167605
-#>  [6,]  3000 2.7947412 0.5183678 2.696188 0.4264552 0.8226884
-#>  [7,]  3500 3.0289847 0.6033927 2.772467 0.4558819 0.7555311
-#>  [8,]  4000 3.3163659 0.7183096 2.871646 0.4752407 0.6616097
-#>  [9,]  4500 3.6229966 0.8415333 2.936246 0.4519136 0.5370121
-#> [10,]  5000 3.8810150 0.9255727 2.971692 0.3831632 0.4139742
+#>       times       muP     semuP     muPAt   semuPAt          
+#>  [1,]   500 0.8744004 0.1059068 0.8666135 0.1054672 0.9958484
+#>  [2,]  1000 1.2696069 0.1458220 1.2643398 0.1444958 0.9909053
+#>  [3,]  1500 1.7921498 0.2291966 1.8063914 0.2218548 0.9679670
+#>  [4,]  2000 2.1216192 0.3047378 2.1433122 0.2888682 0.9479237
+#>  [5,]  2500 2.4775306 0.3934784 2.4921659 0.3607250 0.9167593
+#>  [6,]  3000 2.7947412 0.5183678 2.6962370 0.4264556 0.8226892
+#>  [7,]  3500 3.0289847 0.6033927 2.7724842 0.4558824 0.7555319
+#>  [8,]  4000 3.3163659 0.7183096 2.8716708 0.4752409 0.6616101
+#>  [9,]  4500 3.6229966 0.8415333 2.9362144 0.4519118 0.5370100
+#> [10,]  5000 3.8810150 0.9255727 2.9717225 0.3831618 0.4139726
 
 plot(out,se=TRUE,ylab="marginal mean",col=2)
 k <- 1
@@ -450,7 +451,8 @@ for (t in times) {
 legend("bottomright",c("Eff-pred"),lty=1,col=c(1,3))
 ```
 
-![](recurrent-events_files/figure-html/unnamed-chunk-10-1.png)
+![Augmented marginal mean
+estimates.](figure/recurrent-events-unnamed-chunk-10-1.png)
 
 In the case where covariates might be important but we are still
 interested in the marginal mean we can also augment wrt these covariates
@@ -516,7 +518,7 @@ summary(out,times=times)
 
 One can also do regression modelling , using the model \begin{align\*}
 E(N_1(t) \| X) & = \Lambda_0(t) \exp(X^T \beta) \end{align\*} then
-Ghost-Lin suggested IPCW score equations that are implemented in the
+Ghosh-Lin suggested IPCW score equations that are implemented in the
 recreg function of mets.
 
 First we generate data that from a Ghosh-Lin model with regression
@@ -556,7 +558,8 @@ plot(outs,add=TRUE,col=2)
 lines(scalecumhaz(base1,1),col=3,lwd=2)
 ```
 
-![](recurrent-events_files/figure-html/unnamed-chunk-12-1.png)
+![Ghosh-Lin regression baseline
+estimates.](figure/recurrent-events-unnamed-chunk-12-1.png)
 
 We note that for the extended censoring model we gain a little
 efficiency and that the estimates are close to the true values.
@@ -629,7 +632,8 @@ plot(outC,col=2,add=TRUE)
 plot(outCW,col=3,add=TRUE)
 ```
 
-![](recurrent-events_files/figure-html/unnamed-chunk-15-1.png)
+![Composite outcome baseline
+estimates.](figure/recurrent-events-unnamed-chunk-15-1.png)
 
 Predictions and standard errors can be computed via the iid
 decompositions of the baseline and the regression coefficients. We
@@ -796,7 +800,8 @@ pred1c <- predict(out1c,data.frame(Z1=0:1,Z2=0),se=1)
 plot(pred1c,se=1,add=TRUE)
 ```
 
-![](recurrent-events_files/figure-html/unnamed-chunk-21-1.png)
+![Ghosh-Lin predictions with confidence
+intervals.](figure/recurrent-events-unnamed-chunk-21-1.png)
 
 The censoring weights for the random censoring and the combined
 censoring
@@ -809,7 +814,8 @@ plot(km07,col=1)
 plot(km0,add=TRUE,col=2,lwd=2)
 ```
 
-![](recurrent-events_files/figure-html/unnamed-chunk-22-1.png)
+![Censoring weight estimates by
+strata.](figure/recurrent-events-unnamed-chunk-22-1.png)
 
 ## Two-stage modelling
 
@@ -905,18 +911,6 @@ summary(glout)
 #> dependence1  1.04401 0.08988 0.86785 1.22017       0
 ###
 glout <- twostageREC(outs,outgl,data=rr,model="shared",theta=1,nu=0.9)
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
 summary(glout)
 #> Ghosh-Lin(recurrent)-Cox(terminal) mean model
 #> 
@@ -993,7 +987,8 @@ plot(margsurv); lines(dr,col=3);
 plot(recurrent); lines(base1,col=3)
 ```
 
-![](recurrent-events_files/figure-html/unnamed-chunk-25-1.png)
+![Cox rates for survivors vs true
+baselines.](figure/recurrent-events-unnamed-chunk-25-1.png)
 
 We can also simulate data with underlying dependence from the two-stage
 model (`simGLcox`) or using `simRecurrent` random effects models, for
@@ -1063,7 +1058,8 @@ oo <- prob_exceed_recurrent(Event(entry,time,statusD)~cluster(id),rr,cause=1,dea
 plot(oo,types=1:5)
 ```
 
-![](recurrent-events_files/figure-html/unnamed-chunk-27-1.png)
+![Probability of exceeding k events over
+time.](figure/recurrent-events-unnamed-chunk-27-1.png)
 
 We can also look at the mean and variance based on the estimators just
 described
@@ -1075,7 +1071,8 @@ with(oo,plot(time,meanN,col=2,type="l"))
 with(oo,plot(time,varN,type="l"))
 ```
 
-![](recurrent-events_files/figure-html/unnamed-chunk-28-1.png)
+![Mean and variance of recurrent events
+process.](figure/recurrent-events-unnamed-chunk-28-1.png)
 
 ## Multiple events
 
@@ -1190,38 +1187,37 @@ sessionInfo()
 #> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
-#> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> BLAS:   /home/kkzh/.asdf/installs/r/4.6.0/lib/R/lib/libRblas.so 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
 #> 
 #> locale:
-#>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
-#>  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
-#>  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
-#> [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 #> 
-#> time zone: UTC
+#> time zone: Europe/Copenhagen
 #> tzcode source: system (glibc)
 #> 
 #> attached base packages:
-#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+#> [1] splines   stats     graphics  grDevices utils     datasets  methods  
+#> [8] base     
 #> 
 #> other attached packages:
-#> [1] mets_1.3.10
+#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.10   
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
-#>  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        
-#>  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            
-#> [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           
-#> [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        
-#> [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   
-#> [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       
-#> [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      
-#> [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        
-#> [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     
-#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     
-#> [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
-#> [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1
-#> [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         
-#> [43] cachem_1.1.0           desc_1.4.3
+#>  [1] vctrs_0.7.3            cli_3.6.6              knitr_1.51            
+#>  [4] rlang_1.2.0            xfun_0.57              KernSmooth_2.23-26    
+#>  [7] otel_0.2.0             glue_1.8.1             future.apply_1.20.2   
+#> [10] listenv_0.10.1         lava_1.9.1             stats4_4.6.0          
+#> [13] grid_4.6.0             evaluate_1.0.5         lifecycle_1.0.5       
+#> [16] yaml_2.3.12            mvtnorm_1.3-7          numDeriv_2016.8-1.1   
+#> [19] compiler_4.6.0         codetools_0.2-20       Rcpp_1.1.1-1.1        
+#> [22] ucminf_1.2.3           future_1.70.0          lattice_0.22-9        
+#> [25] digest_0.6.39          pillar_1.11.1          parallelly_1.47.0     
+#> [28] parallel_4.6.0         Matrix_1.7-5           tools_4.6.0           
+#> [31] RcppArmadillo_15.2.6-1 globals_0.19.1
 ```

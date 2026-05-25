@@ -134,6 +134,7 @@ summary(out)
 #> 
 #> 
 
+ ## Reduce Ex.Timings
 ## Weighted GLM version (RMST)
 out2 <- logitIPCW(Event(time,cause!=0)~tcell+platelet+age, bmt,
             time=50, cens.model=~strata(platelet), model="exp", outcome="rmst")

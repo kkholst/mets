@@ -65,7 +65,7 @@ plot_twin(mz)
 ```
 
 ![Scatter plot of logarithmic BMI measurements in MZ
-twins](quantitative-twin_files/figure-html/scatter1-1.png)
+twins](figure/quantitative-twin-scatter1-1.png)
 
 Scatter plot of logarithmic BMI measurements in MZ twins
 
@@ -76,7 +76,7 @@ plot_twin(dz)
 ```
 
 ![Scatter plot of logarithmic BMI measurements in DZ
-twins](quantitative-twin_files/figure-html/scatter2-1.png)
+twins](figure/quantitative-twin-scatter2-1.png)
 
 Scatter plot of logarithmic BMI measurements in DZ twins
 
@@ -152,7 +152,7 @@ legend("bottomright", c("Male","Female"),
 ```
 
 ![Marginal association between BMI and Age for males and
-females.](quantitative-twin_files/figure-html/marg1-1.png)
+females.](figure/quantitative-twin-marg1-1.png)
 
 Marginal association between BMI and Age for males and females.
 
@@ -249,7 +249,7 @@ summary(ace0)
 #>                  Estimate Std. Error Z value Pr(>|z|)
 #> bmi            1.8599e+01 2.5576e-01  72.720   <2e-16
 #> sd(A)          2.7270e+00 4.2658e-02  63.927   <2e-16
-#> sd(C)          1.7129e-06 3.1064e-01   0.000        1
+#> sd(C)          1.7123e-06 3.1064e-01   0.000        1
 #> sd(E)          2.0276e+00 3.4787e-02  58.286   <2e-16
 #> bmi~age        1.1892e-01 5.6246e-03  21.142   <2e-16
 #> bmi~gendermale 1.3846e+00 8.8748e-02  15.601   <2e-16

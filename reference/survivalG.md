@@ -123,6 +123,7 @@ summary(survivalG(fg1, bmt, 50))
 #> 0.6293090 0.4079579 0.9707616 
 #> 
 
+ ## Reduce Ex.Timings
 # Cox model
 ss <- phreg(Surv(time, event) ~ tcell.f + platelet + age, bmt)
 summary(survivalG(ss, bmt, 50))

@@ -384,45 +384,54 @@ data(tTRACE)
 dcut(tTRACE) <- ~. 
 
 weightmodel <- fit <- mlogit(wmicat.4 ~agecat.4+vf+chf,data=tTRACE,family=binomial)
+#> Error in `str2lang()`:
+#> ! <text>:1:68: unexpected ','
+#> 1: Surv(time,status)~strata(idrow)+cluster(id) + Intercept2+agecat4601,
+#>                                                                        ^
 wdata <- medweight(fit,data=tTRACE)
+#> Error in `[.data.frame`:
+#> ! undefined columns selected
 
 aaMss <- binreg(Event(time,status)~agecat.40+ agecat.41+ vf+chf+cluster(id),data=wdata,
         time=7,weights=wdata$weights,cause=9)
+#> Error:
+#> ! object 'agecat.40' not found
 summary(aaMss)
+#>    n events
+#>  400    196
+#> 
+#>  200 clusters
+#> coeffients:
+#>              Estimate   Std.Err      2.5%     97.5% P-value
+#> (Intercept) -0.674433  0.235285 -1.135583 -0.213284  0.0042
+#> dnr.f01      0.221834  0.318264 -0.401952  0.845620  0.4858
+#> dnr.f11      0.262722  0.060281  0.144572  0.380871  0.0000
+#> preauto      0.578077  0.319091 -0.047331  1.203484  0.0700
+#> ttt24        0.214442  0.328183 -0.428784  0.857669  0.5135
+#> 
+#> exp(coeffients):
+#>             Estimate    2.5%  97.5%
+#> (Intercept)  0.50944 0.32123 0.8079
+#> dnr.f01      1.24836 0.66901 2.3294
+#> dnr.f11      1.30046 1.15555 1.4636
+#> preauto      1.78261 0.95377 3.3317
+#> ttt24        1.23917 0.65130 2.3577
 MultMed <- mediatorSurv(aaMss,fit,data=tTRACE,wdata=wdata)
+#> Error:
+#> ! Mat::row(): index out of bounds
 summary(MultMed)
+#> Error:
+#> ! object 'MultMed' not found
 ```
+
+    #> Error:
+    #> ! object 'MultMed' not found
 
 ``` r
 
 summary(MultMed)
-#>     n events
-#>  4000   2016
-#> 
-#>  1000 clusters
-#> coeffients:
-#>                       Estimate   Std.Err      2.5%     97.5% P-value
-#> (Intercept)          -1.839306  0.174541 -2.181401 -1.497211  0.0000
-#> agecat.40(60.1,68.6]  0.916646  0.223488  0.478618  1.354674  0.0000
-#> agecat.40(68.6,75.6]  1.363830  0.222418  0.927898  1.799762  0.0000
-#> agecat.40(75.6,96.3]  2.277415  0.249815  1.787786  2.767044  0.0000
-#> agecat.41(60.1,68.6]  0.121100  0.053334  0.016567  0.225633  0.0232
-#> agecat.41(68.6,75.6]  0.119374  0.053193  0.015118  0.223631  0.0248
-#> agecat.41(75.6,96.3]  0.095356  0.053874 -0.010234  0.200947  0.0767
-#> vf                    0.712461  0.293627  0.136962  1.287960  0.0152
-#> chf                   1.166578  0.154721  0.863331  1.469825  0.0000
-#> 
-#> exp(coeffients):
-#>                      Estimate    2.5%   97.5%
-#> (Intercept)           0.15893 0.11288  0.2238
-#> agecat.40(60.1,68.6]  2.50089 1.61384  3.8755
-#> agecat.40(68.6,75.6]  3.91114 2.52919  6.0482
-#> agecat.40(75.6,96.3]  9.75144 5.97621 15.9115
-#> agecat.41(60.1,68.6]  1.12874 1.01671  1.2531
-#> agecat.41(68.6,75.6]  1.12679 1.01523  1.2506
-#> agecat.41(75.6,96.3]  1.10005 0.98982  1.2226
-#> vf                    2.03900 1.14678  3.6254
-#> chf                   3.21099 2.37105  4.3485
+#> Error:
+#> ! object 'MultMed' not found
 ```
 
 ## SessionInfo
@@ -435,38 +444,36 @@ sessionInfo()
 #> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
-#> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> BLAS:   /home/kkzh/.asdf/installs/r/4.6.0/lib/R/lib/libRblas.so 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
 #> 
 #> locale:
-#>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
-#>  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
-#>  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
-#> [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 #> 
-#> time zone: UTC
+#> time zone: Europe/Copenhagen
 #> tzcode source: system (glibc)
 #> 
 #> attached base packages:
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] mets_1.3.10
+#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.10   
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
-#>  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        
-#>  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            
-#> [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           
-#> [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        
-#> [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   
-#> [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       
-#> [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      
-#> [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        
-#> [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     
-#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     
-#> [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
-#> [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1
-#> [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         
-#> [43] cachem_1.1.0           desc_1.4.3
+#>  [1] vctrs_0.7.3            cli_3.6.6              knitr_1.51            
+#>  [4] rlang_1.2.0            xfun_0.57              otel_0.2.0            
+#>  [7] glue_1.8.1             future.apply_1.20.2    listenv_0.10.1        
+#> [10] lava_1.9.1             stats4_4.6.0           grid_4.6.0            
+#> [13] evaluate_1.0.5         lifecycle_1.0.5        yaml_2.3.12           
+#> [16] mvtnorm_1.3-7          numDeriv_2016.8-1.1    compiler_4.6.0        
+#> [19] codetools_0.2-20       Rcpp_1.1.1-1.1         ucminf_1.2.3          
+#> [22] future_1.70.0          lattice_0.22-9         digest_0.6.39         
+#> [25] pillar_1.11.1          parallelly_1.47.0      parallel_4.6.0        
+#> [28] splines_4.6.0          Matrix_1.7-5           tools_4.6.0           
+#> [31] RcppArmadillo_15.2.6-1 globals_0.19.1
 ```

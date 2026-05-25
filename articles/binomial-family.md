@@ -688,16 +688,18 @@ sessionInfo()
 #> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
-#> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> BLAS:   /home/kkzh/.asdf/installs/r/4.6.0/lib/R/lib/libRblas.so 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
 #> 
 #> locale:
-#>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
-#>  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
-#>  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
-#> [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 #> 
-#> time zone: UTC
+#> time zone: Europe/Copenhagen
 #> tzcode source: system (glibc)
 #> 
 #> attached base packages:
@@ -707,18 +709,13 @@ sessionInfo()
 #> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.10   
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
-#>  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        
-#>  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            
-#> [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           
-#> [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        
-#> [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   
-#> [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       
-#> [22] compiler_4.6.0         codetools_0.2-20       fs_2.1.0              
-#> [25] htmlwidgets_1.6.4      Rcpp_1.1.1-1.1         future_1.70.0         
-#> [28] lattice_0.22-9         systemfonts_1.3.2      digest_0.6.39         
-#> [31] R6_2.6.1               parallelly_1.47.0      parallel_4.6.0        
-#> [34] splines_4.6.0          Matrix_1.7-5           bslib_0.11.0          
-#> [37] tools_4.6.0            RcppArmadillo_15.2.6-1 globals_0.19.1        
-#> [40] pkgdown_2.2.0          cachem_1.1.0           desc_1.4.3
+#>  [1] digest_0.6.39          numDeriv_2016.8-1.1    codetools_0.2-20      
+#>  [4] RcppArmadillo_15.2.6-1 Matrix_1.7-5           xfun_0.57             
+#>  [7] lattice_0.22-9         splines_4.6.0          lava_1.9.1            
+#> [10] knitr_1.51             parallel_4.6.0         mvtnorm_1.3-7         
+#> [13] cli_3.6.6              parallelly_1.47.0      grid_4.6.0            
+#> [16] future_1.70.0          compiler_4.6.0         globals_0.19.1        
+#> [19] tools_4.6.0            listenv_0.10.1         future.apply_1.20.2   
+#> [22] evaluate_1.0.5         Rcpp_1.1.1-1.1         otel_0.2.0            
+#> [25] rlang_1.2.0
 ```

@@ -395,11 +395,11 @@ likelihood ratio test.
 b1 <- bptwin(binstut~sex,data=twinstut,id="tvparnr",zyg="zyg",DZ="dz",type="ace")
 summary(b1)
 #> 
-#>              Estimate   Std.Err       Z p-value   
-#> (Intercept)  -4.20958   1.55369 -2.7094 0.00674 **
-#> sexmale       0.85990   0.36387  2.3632 0.01812 * 
-#> log(var(A))   1.17018   0.99695  1.1738 0.24049   
-#> log(var(C)) -23.53038       NaN     NaN     NaN   
+#>              Estimate   Std.Err        Z p-value    
+#> (Intercept)  -4.20958   1.55369  -2.7094 0.00674 ** 
+#> sexmale       0.85990   0.36387   2.3632 0.01812 *  
+#> log(var(A))   1.17018   0.99695   1.1738 0.24049    
+#> log(var(C)) -23.53038   1.87673 -12.5380 < 2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
@@ -687,39 +687,34 @@ sessionInfo()
 #> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
-#> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> BLAS:   /home/kkzh/.asdf/installs/r/4.6.0/lib/R/lib/libRblas.so 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
 #> 
 #> locale:
-#>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
-#>  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
-#>  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
-#> [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 #> 
-#> time zone: UTC
+#> time zone: Europe/Copenhagen
 #> tzcode source: system (glibc)
 #> 
 #> attached base packages:
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] mets_1.3.10
+#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.10   
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] Matrix_1.7-5           future.apply_1.20.2    jsonlite_2.0.0        
-#>  [4] ucminf_1.2.3           compiler_4.6.0         Rcpp_1.1.1-1.1        
-#>  [7] parallel_4.6.0         jquerylib_0.1.4        globals_0.19.1        
-#> [10] splines_4.6.0          systemfonts_1.3.2      textshaping_1.0.5     
-#> [13] yaml_2.3.12            fastmap_1.2.0          lattice_0.22-9        
-#> [16] R6_2.6.1               knitr_1.51             htmlwidgets_1.6.4     
-#> [19] future_1.70.0          desc_1.4.3             bslib_0.11.0          
-#> [22] rlang_1.2.0            cachem_1.1.0           xfun_0.57             
-#> [25] fs_2.1.0               sass_0.4.10            cli_3.6.6             
-#> [28] pkgdown_2.2.0          digest_0.6.39          grid_4.6.0            
-#> [31] mvtnorm_1.3-7          lifecycle_1.0.5        lava_1.9.1            
-#> [34] RcppArmadillo_15.2.6-1 timereg_2.0.7          evaluate_1.0.5        
-#> [37] numDeriv_2016.8-1.1    listenv_0.10.1         codetools_0.2-20      
-#> [40] ragg_1.5.2             survival_3.8-6         stats4_4.6.0          
-#> [43] parallelly_1.47.0      rmarkdown_2.31         tools_4.6.0           
-#> [46] htmltools_0.5.9
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
+#>  [4] xfun_0.57              otel_0.2.0             future.apply_1.20.2   
+#>  [7] listenv_0.10.1         lava_1.9.1             stats4_4.6.0          
+#> [10] grid_4.6.0             evaluate_1.0.5         mvtnorm_1.3-7         
+#> [13] numDeriv_2016.8-1.1    compiler_4.6.0         codetools_0.2-20      
+#> [16] Rcpp_1.1.1-1.1         ucminf_1.2.3           future_1.70.0         
+#> [19] lattice_0.22-9         digest_0.6.39          parallelly_1.47.0     
+#> [22] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
+#> [25] tools_4.6.0            RcppArmadillo_15.2.6-1 globals_0.19.1
 ```

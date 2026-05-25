@@ -70,7 +70,8 @@ First estimating the marginal hazards for each country.
  plot(margph)
 ```
 
-![](time-to-event-family-studies-arev_files/figure-html/survival-marginal-1.png)
+![Marginal cumulative hazard of cancer by
+country.](figure/time-to-event-family-studies-arev-survival-marginal-1.png)
 
 We see that the marginal of Denmark in particular is quite different.
 
@@ -320,7 +321,8 @@ prt <-  force.same.cens(prt,cause="status")
  plot(cif1,se=1)
 ```
 
-![](time-to-event-family-studies-arev_files/figure-html/concordance-1.png)
+![Cumulative incidence of cancer by
+country.](figure/time-to-event-family-studies-arev-concordance-1.png)
 
 ``` r
 
@@ -343,7 +345,8 @@ p11dz <- p11$model$"DZ"
  plot(p11dz,ylim=c(0,0.1));
 ```
 
-![](time-to-event-family-studies-arev_files/figure-html/unnamed-chunk-9-1.png)
+![Concordance probability for MZ and DZ
+twins.](figure/time-to-event-family-studies-arev-unnamed-chunk-8-1.png)
 
 Now we compare the concordance to the marginals to get a measure that
 takes the marginals into account when evaluating the strength of the
@@ -387,7 +390,8 @@ association.
  legend("topleft",c("casewise-MZ","casewise-DZ","marginal"),col=cols, lty=ltys, bg="white")
 ```
 
-![](time-to-event-family-studies-arev_files/figure-html/concordance2-1.png)
+![Concordance and casewise concordance for MZ and DZ
+twins.](figure/time-to-event-family-studies-arev-concordance2-1.png)
 
 ``` r
 
@@ -501,7 +505,6 @@ association.
 
 ``` r
 
-
  dd <- bicompriskData(Event(time,status)~country+strata(zyg)+id(id),data=prt,cause=c(2,2))
  conczyg <- cif(Event(time,status)~strata(zyg)+cluster(id),data=dd,cause=1)
 
@@ -516,7 +519,8 @@ association.
  with(data.frame(cdz$casewise),plotConfRegionSE(time,casewise.conc,se.casewise,col=1))
 ```
 
-![](time-to-event-family-studies-arev_files/figure-html/concordance3-1.png)
+![Concordance and casewise concordance by
+zygosity.](figure/time-to-event-family-studies-arev-concordance3-1.png)
 
 The standard errors above are slightly off since they only reflect the
 uncertainty from the concordance estimation. This can be improved by
@@ -570,11 +574,46 @@ cancer.
  dd <- bicompriskData(Event(time,status)~country+strata(zyg)+id(id),data=prt,cause=c(2,2))
  regconc <- cifreg(Event(time,status)~country*zyg,data=dd,prop=NULL)
  regconc
+#> Call:
+#> cifreg(formula = Event(time, status) ~ country * zyg, data = dd, 
+#>     propodds = NULL)
+#> 
+#>      n events
+#>  14222    106
+#> 
+#> coefficients:
+#>       countryFinland        countryNorway        countrySweden 
+#>             2.207372             2.316572             2.022366 
+#>                zygMZ countryFinland:zygMZ  countryNorway:zygMZ 
+#>             2.308718            -1.267368            -2.146122 
+#>  countrySweden:zygMZ 
+#>            -1.325599
  ### interaction test
- wald.test(regconc,coef.null=5:7)
+ estimate(regconc, contrast=list(5,6,7))
+#>                      Estimate Std.Err   2.5%   97.5% P-value
+#> countryFinland:zygMZ   -1.267  0.8706 -2.974  0.4390 0.14547
+#> countryNorway:zygMZ    -2.146  0.9435 -3.995 -0.2969 0.02293
+#> countrySweden:zygMZ    -1.326  0.8219 -2.937  0.2854 0.10680
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
+#>   [countryFinland:zygMZ] = 0
+#>   [countryNorway:zygMZ] = 0
+#>   [countrySweden:zygMZ] = 0 
+#>  
+#> chisq = 5.2661, df = 3, p-value = 0.1533
 
  regconc <- cifreg(Event(time,status)~country+zyg,data=dd,prop=NULL)
  regconc
+#> Call:
+#> cifreg(formula = Event(time, status) ~ country + zyg, data = dd, 
+#>     propodds = NULL)
+#> 
+#>      n events
+#>  14222    106
+#> 
+#> coefficients:
+#> countryFinland  countryNorway  countrySweden          zygMZ 
+#>      1.2924623      0.9333627      1.0743929      1.0105487
 
  ## logistic link 
  logitregconc <- cifreg(Event(time,status)~country+zyg,data=dd)
@@ -602,8 +641,6 @@ slr
 #> countryNorway    2.5619 1.1698 5.6111
 #> countrySweden    2.9592 1.5729 5.5676
 #> zygMZ            2.7825 1.8697 4.1408
-### library(Publish)
-### publish(round(slr$exp.coef[,-c(2,5)],2),latex=TRUE,digits=2)
 ```
 
 ## Competing risk using additive Gamma
@@ -712,7 +749,7 @@ summary(b0)
 #>                Estimate   Std.Err        Z   p-value    
 #> (Intercept)   -1.348188  0.026276 -51.3086 < 2.2e-16 ***
 #> atanh(rho) MZ  0.735992  0.087838   8.3789 < 2.2e-16 ***
-#> atanh(rho) DZ  0.353023  0.068234   5.1737 2.295e-07 ***
+#> atanh(rho) DZ  0.353022  0.068234   5.1737 2.295e-07 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
@@ -759,8 +796,8 @@ summary(b1)
 #> 
 #>             Estimate  Std.Err        Z p-value    
 #> (Intercept) -2.20664  0.16463 -13.4034  <2e-16 ***
-#> log(var(A))  0.43260  0.39149   1.1050  0.2691    
-#> log(var(C)) -1.98290  2.52343  -0.7858  0.4320    
+#> log(var(A))  0.43261  0.39149   1.1050  0.2691    
+#> log(var(C)) -1.98291  2.52347  -0.7858  0.4320    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
@@ -779,14 +816,14 @@ summary(b1)
 #> Concordance          0.03504  0.02779 0.04409
 #> Casewise Concordance 0.39458  0.31876 0.47584
 #> Marginal             0.08880  0.08086 0.09743
-#> Rel.Recur.Risk       4.44351  3.50521 5.38182
+#> Rel.Recur.Risk       4.44351  3.50520 5.38182
 #> log(OR)              2.34131  1.87105 2.81157
 #> DZ:
 #>                      Estimate 2.5%    97.5%  
 #> Concordance          0.01952  0.01449 0.02625
 #> Casewise Concordance 0.21983  0.16667 0.28415
 #> Marginal             0.08880  0.08086 0.09743
-#> Rel.Recur.Risk       2.47556  1.81096 3.14017
+#> Rel.Recur.Risk       2.47556  1.81095 3.14016
 #> log(OR)              1.23088  0.81020 1.65156
 #> 
 #>                          Estimate 2.5%    97.5%  
@@ -803,9 +840,9 @@ the IPCW weighted AIC measure
 ``` r
 
 AIC(b0, b1)
-#>    df AIC
-#> b0  3   6
-#> b1  3   6
+#>    df      AIC
+#> b0  3 17340.13
+#> b1  3 17340.13
 ```
 
 ACE model with marginal adjusted for country
@@ -826,7 +863,7 @@ summary(b2)
 #> countryFinland  0.18968  0.12518   1.5152    0.1297    
 #> countryNorway  -0.11611  0.16621  -0.6986    0.4848    
 #> log(var(A))     0.40388  0.40524   0.9966    0.3189    
-#> log(var(C))    -3.88761 17.56413  -0.2213    0.8248    
+#> log(var(C))    -3.88760 17.56390  -0.2213    0.8248    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
@@ -845,7 +882,7 @@ summary(b2)
 #> Concordance          0.04295  0.03307 0.05561
 #> Casewise Concordance 0.40128  0.32263 0.48535
 #> Marginal             0.10703  0.09453 0.12096
-#> Rel.Recur.Risk       3.74923  2.94156 4.55691
+#> Rel.Recur.Risk       3.74923  2.94155 4.55690
 #> log(OR)              2.15979  1.67935 2.64023
 #> DZ:
 #>                      Estimate 2.5%    97.5%  
@@ -880,22 +917,19 @@ plot(tt, concMZ[,1], type="s", lty=1, col=cols[1], xlab="Age", ylab="Concordance
 lava::confband(tt, concMZ[,2], concMZ[,3],polygon=TRUE, step=TRUE, col=lava::Col(cols[1], 0.1), border=NA)
 ```
 
-![](time-to-event-family-studies-arev_files/figure-html/unnamed-chunk-17-1.png)
+![Heritability and concordance over age from ACE
+model.](figure/time-to-event-family-studies-arev-unnamed-chunk-16-1.png)
 
 Bivariate probit model at time different time points
 
 ``` r
 
-system.time(a.mz <- biprobit.time(cancer~1, id="id", data=subset(prt0, zyg=="MZ"),
-                               cens.formula = Surv(time,status==0)~1, pairs.only=TRUE,
-                                breaks=tt))
-#>    user  system elapsed 
-#>   0.254   0.269   0.215
-system.time(a.dz <- biprobit.time(cancer~1, id="id", data=subset(prt0, zyg=="DZ"),
-                               cens.formula = Event(time,status==0)~1, pairs.only=TRUE,
-                               breaks=tt))
-#>    user  system elapsed 
-#>   0.357   0.284   0.331
+a.mz <- biprobit.time(cancer~1, id="id", data=subset(prt0, zyg=="MZ"),
+                      cens.formula = Surv(time,status==0)~1, pairs.only=TRUE,
+                      breaks=tt)
+a.dz <- biprobit.time(cancer~1, id="id", data=subset(prt0, zyg=="DZ"),
+                      cens.formula = Event(time,status==0)~1, pairs.only=TRUE,
+                      breaks=tt)
 
 #system.time(a.zyg <- biprobit.time(cancer~1, rho=~1+zyg, id="id", data=prt, 
 #                               cens.formula = Event(time,status==0)~1,
@@ -912,11 +946,11 @@ a.mz
 #>  6:Tetrachoric correlation
 #> 
 #>       Time 1:Concor... 2:Casewi... 3:Marginal 4:Rel.Re...    5:OR 6:Tetrac...
-#> [1,] 70.00      0.0049      0.2976     0.0166     17.9645 35.3860      0.6973
-#> [2,] 76.25      0.0125      0.3468     0.0362      9.5939 21.1447      0.6834
-#> [3,] 82.50      0.0247      0.3759     0.0656      5.7307 13.1452      0.6481
-#> [4,] 88.75      0.0308      0.3675     0.0839      4.3780  9.4430      0.5993
-#> [5,] 95.00      0.0409      0.4144     0.0988      4.1952 10.3179      0.6352
+#> [1,] 70.00      0.0049      0.2976     0.0166     17.9647 35.3869      0.6973
+#> [2,] 76.25      0.0125      0.3468     0.0362      9.5940 21.1451      0.6834
+#> [3,] 82.50      0.0247      0.3759     0.0656      5.7307 13.1453      0.6481
+#> [4,] 88.75      0.0308      0.3675     0.0839      4.3781  9.4430      0.5993
+#> [5,] 95.00      0.0409      0.4144     0.0988      4.1952 10.3180      0.6352
 a.dz
 #>                           
 #>  1:Concordance            
@@ -927,18 +961,19 @@ a.dz
 #>  6:Tetrachoric correlation
 #> 
 #>       Time 1:Concor... 2:Casewi... 3:Marginal 4:Rel.Re...   5:OR 6:Tetrac...
-#> [1,] 70.00      0.0007      0.0767     0.0088      8.6699 9.9965      0.3855
-#> [2,] 76.25      0.0037      0.1612     0.0228      7.0632 9.6179      0.4682
-#> [3,] 82.50      0.0074      0.1660     0.0445      3.7328 4.9289      0.3752
-#> [4,] 88.75      0.0136      0.2001     0.0680      2.9417 4.0347      0.3614
-#> [5,] 95.00      0.0174      0.2091     0.0831      2.5163 3.4242      0.3335
+#> [1,] 70.00      0.0007      0.0767     0.0088      8.6701 9.9968      0.3855
+#> [2,] 76.25      0.0037      0.1612     0.0228      7.0633 9.6181      0.4682
+#> [3,] 82.50      0.0074      0.1660     0.0445      3.7329 4.9289      0.3752
+#> [4,] 88.75      0.0136      0.2001     0.0680      2.9417 4.0348      0.3614
+#> [5,] 95.00      0.0174      0.2091     0.0831      2.5163 3.4243      0.3336
 
 plot(conczyg,se=TRUE,legend=FALSE,xlab="Age",ylab="Concordance", ylim=c(0,0.07))
 plot(a.mz, ylim=c(0,.07), col=cols[1], lty=ltys[1], legend=FALSE, add=TRUE)
 plot(a.dz, col=cols[2], lty=ltys[2], add=TRUE)
 ```
 
-![](time-to-event-family-studies-arev_files/figure-html/biprobittime1-1.png)
+![Concordance from bivariate probit model over
+time.](figure/time-to-event-family-studies-arev-biprobittime1-1.png)
 
 Bivariate probit model adjusting for country
 
@@ -947,9 +982,9 @@ Bivariate probit model adjusting for country
 a.mz_country <- biprobit.time(cancer~country, id="id", data=subset(prt0, zyg=="MZ"),
                                cens.formula = Surv(time,status==0)~country, pairs.only=TRUE,
                                 breaks=tt)
-system.time(a.dz_country <- biprobit.time(cancer~country, id="id", data=subset(prt0, zyg=="DZ"),
+a.dz_country <- biprobit.time(cancer~country, id="id", data=subset(prt0, zyg=="DZ"),
                                cens.formula = Event(time,status==0)~country, pairs.only=TRUE,
-                               breaks=tt))
+                               breaks=tt)
 
 s_mz_country <- summary(a.mz_country)
 s_dz_country <- summary(a.dz_country)
@@ -959,100 +994,100 @@ s_dz_country <- summary(a.dz_country)
 
 s_mz_country
 #> $Concordance
-#>    Time    Estimate        2.5%      97.5%
-#> 1 70.00 0.005921119 0.002986156 0.01170686
-#> 2 76.25 0.014322088 0.008753641 0.02334935
-#> 3 82.50 0.029210106 0.020110767 0.04224903
-#> 4 88.75 0.040377886 0.029107601 0.05576133
-#> 5 95.00 0.049707538 0.035563146 0.06907461
+#>    Time   Estimate        2.5%      97.5%
+#> 1 70.00 0.00592116 0.002986187 0.01170690
+#> 2 76.25 0.01432204 0.008753604 0.02334930
+#> 3 82.50 0.02921012 0.020110789 0.04224904
+#> 4 88.75 0.04037734 0.029107095 0.05576080
+#> 5 95.00 0.04970743 0.035562694 0.06907515
 #> 
 #> $`Casewise Concordance`
 #>    Time  Estimate      2.5%     97.5%
-#> 1 70.00 0.3061371 0.1804979 0.4691630
-#> 2 76.25 0.3502181 0.2491875 0.4667465
-#> 3 82.50 0.3867062 0.3017293 0.4791916
-#> 4 88.75 0.3906921 0.3129417 0.4744209
-#> 5 95.00 0.4190261 0.3369792 0.5058097
+#> 1 70.00 0.3061394 0.1804998 0.4691652
+#> 2 76.25 0.3502164 0.2491859 0.4667449
+#> 3 82.50 0.3867092 0.3017318 0.4791950
+#> 4 88.75 0.3906869 0.3129362 0.4744164
+#> 5 95.00 0.4190152 0.3369656 0.5058026
 #> 
 #> $Marginal
 #>    Time   Estimate       2.5%      97.5%
-#> 1 70.00 0.01934140 0.01265755 0.02944940
-#> 2 76.25 0.04089476 0.02990124 0.05569812
-#> 3 82.50 0.07553566 0.05950394 0.09544834
-#> 4 88.75 0.10334964 0.08432130 0.12608075
-#> 5 95.00 0.11862636 0.09701847 0.14427781
+#> 1 70.00 0.01934138 0.01265752 0.02944941
+#> 2 76.25 0.04089483 0.02990128 0.05569823
+#> 3 82.50 0.07553512 0.05950340 0.09544783
+#> 4 88.75 0.10334964 0.08432125 0.12608082
+#> 5 95.00 0.11862917 0.09702101 0.14428086
 #> 
 #> $Rel.Recur.Risk
 #>    Time  Estimate     2.5%     97.5%
-#> 1 70.00 15.828074 6.402374 25.253774
-#> 2 76.25  8.563886 5.232398 11.895375
-#> 3 82.50  5.119518 3.659925  6.579110
-#> 4 88.75  3.780295 2.838451  4.722138
-#> 5 95.00  3.532318 2.733224  4.331412
+#> 1 70.00 15.828206 6.402412 25.254000
+#> 2 76.25  8.563831 5.232353 11.895310
+#> 3 82.50  5.119594 3.659965  6.579223
+#> 4 88.75  3.780244 2.838404  4.722085
+#> 5 95.00  3.532143 2.733073  4.331213
 #> 
 #> $OR
 #>    Time  Estimate      2.5%    97.5%
-#> 1 70.00 31.799055 12.251068 82.53810
-#> 2 76.25 18.914711  9.701256 36.87835
-#> 3 82.50 11.952397  7.033118 20.31244
-#> 4 88.75  8.488885  5.238209 13.75683
-#> 5 95.00  8.502483  5.276008 13.70207
+#> 1 70.00 31.799536 12.251225 82.53954
+#> 2 76.25 18.914488  9.701134 36.87794
+#> 3 82.50 11.952708  7.033263 20.31308
+#> 4 88.75  8.488621  5.238032 13.75644
+#> 5 95.00  8.501683  5.275432 13.70099
 #> 
 #> $`Tetrachoric correlation`
 #>    Time  Estimate      2.5%     97.5%
-#> 1 70.00 0.6943823 0.4989166 0.8226225
-#> 2 76.25 0.6744434 0.5302710 0.7807066
-#> 3 82.50 0.6416812 0.5173782 0.7394660
-#> 4 88.75 0.5945675 0.4712828 0.6950631
-#> 5 95.00 0.6079229 0.4838930 0.7080114
+#> 1 70.00 0.6943849 0.4989198 0.8226244
+#> 2 76.25 0.6744412 0.5302683 0.7807050
+#> 3 82.50 0.6416861 0.5173829 0.7394707
+#> 4 88.75 0.5945601 0.4712735 0.6950575
+#> 5 95.00 0.6079029 0.4838645 0.7079982
 s_dz_country
 #> $Concordance
 #>    Time     Estimate         2.5%       97.5%
-#> 1 70.00 0.0009355048 0.0003014643 0.002899194
-#> 2 76.25 0.0053848911 0.0030067721 0.009625755
-#> 3 82.50 0.0090012330 0.0055138848 0.014661695
-#> 4 88.75 0.0172555605 0.0117010082 0.025379187
-#> 5 95.00 0.0221107866 0.0153703841 0.031711870
+#> 1 70.00 0.0009355085 0.0003014655 0.002899205
+#> 2 76.25 0.0053849065 0.0030067815 0.009625779
+#> 3 82.50 0.0090012641 0.0055139065 0.014661739
+#> 4 88.75 0.0172556341 0.0117010771 0.025379254
+#> 5 95.00 0.0221106772 0.0153703190 0.031711692
 #> 
 #> $`Casewise Concordance`
-#>    Time   Estimate      2.5%     97.5%
-#> 1 70.00 0.08242727 0.0282508 0.2172686
-#> 2 76.25 0.17830235 0.1097646 0.2763507
-#> 3 82.50 0.16491567 0.1103378 0.2392308
-#> 4 88.75 0.20763649 0.1517489 0.2773763
-#> 5 95.00 0.21840901 0.1627051 0.2866548
+#>    Time   Estimate       2.5%     97.5%
+#> 1 70.00 0.08242731 0.02825081 0.2172688
+#> 2 76.25 0.17830239 0.10976467 0.2763507
+#> 3 82.50 0.16491577 0.11033790 0.2392308
+#> 4 88.75 0.20763626 0.15174905 0.2773756
+#> 5 95.00 0.21841377 0.16270904 0.2866602
 #> 
 #> $Marginal
 #>    Time   Estimate        2.5%      97.5%
-#> 1 70.00 0.01134946 0.007572602 0.01697780
-#> 2 76.25 0.03020090 0.022824941 0.03986318
-#> 3 82.50 0.05458082 0.044179949 0.06725798
-#> 4 88.75 0.08310466 0.069910511 0.09852516
-#> 5 95.00 0.10123569 0.086502805 0.11815328
+#> 1 70.00 0.01134950 0.007572628 0.01697786
+#> 2 76.25 0.03020098 0.022824994 0.03986330
+#> 3 82.50 0.05458098 0.044180067 0.06725818
+#> 4 88.75 0.08310511 0.069910900 0.09852566
+#> 5 95.00 0.10123298 0.086500435 0.11815021
 #> 
 #> $Rel.Recur.Risk
 #>    Time Estimate       2.5%     97.5%
-#> 1 70.00 7.262662 -0.6527461 15.178071
-#> 2 76.25 5.903876  2.9616475  8.846104
-#> 3 82.50 3.021495  1.8476374  4.195352
-#> 4 88.75 2.498494  1.7411952  3.255792
-#> 5 95.00 2.157431  1.5524847  2.762377
+#> 1 70.00 7.262640 -0.6527463 15.178027
+#> 2 76.25 5.903861  2.9616380  8.846085
+#> 3 82.50 3.021488  1.8476330  4.195343
+#> 4 88.75 2.498478  1.7411885  3.255767
+#> 5 95.00 2.157536  1.5525687  2.762503
 #> 
 #> $OR
 #>    Time Estimate     2.5%     97.5%
-#> 1 70.00 8.438374 2.374773 29.984401
-#> 2 76.25 8.262989 4.176810 16.346681
-#> 3 82.50 3.898758 2.289207  6.639992
-#> 4 88.75 3.386745 2.150865  5.332756
-#> 5 95.00 2.894681 1.876189  4.466063
+#> 1 70.00 8.438348 2.374765 29.984323
+#> 2 76.25 8.262968 4.176798 16.346645
+#> 3 82.50 3.898749 2.289201  6.639977
+#> 4 88.75 3.386718 2.150855  5.332698
+#> 5 95.00 2.894875 1.876319  4.466352
 #> 
 #> $`Tetrachoric correlation`
 #>    Time  Estimate      2.5%     97.5%
-#> 1 70.00 0.3735045 0.1024582 0.5929219
-#> 2 76.25 0.4623453 0.2958921 0.6015477
-#> 3 82.50 0.3333246 0.1903659 0.4624401
-#> 4 88.75 0.3304659 0.1996083 0.4497427
-#> 5 95.00 0.3013345 0.1715485 0.4208396
+#> 1 70.00 0.3735042 0.1024577 0.5929218
+#> 2 76.25 0.4623450 0.2958916 0.6015474
+#> 3 82.50 0.3333242 0.1903655 0.4624397
+#> 4 88.75 0.3304641 0.1996073 0.4497404
+#> 5 95.00 0.3013521 0.1715672 0.4208554
 ```
 
 ``` r
@@ -1077,7 +1112,9 @@ legend("topleft", c("MZ tetrachoric correlation", "DZ tetrachoric correlation"),
        col=cols, lty=ltys, lwd=2)
 ```
 
-![](time-to-event-family-studies-arev_files/figure-html/unnamed-chunk-19-1.png)
+![Tetrachoric correlation, relative recurrence risk, and heritability
+over
+age.](figure/time-to-event-family-studies-arev-unnamed-chunk-18-1.png)
 
 ``` r
 
@@ -1089,7 +1126,9 @@ legend("topright", c("MZ relative recurrence risk", "DZ relative recurrence risk
        col=cols, lty=ltys, lwd=2)
 ```
 
-![](time-to-event-family-studies-arev_files/figure-html/unnamed-chunk-19-2.png)
+![Tetrachoric correlation, relative recurrence risk, and heritability
+over
+age.](figure/time-to-event-family-studies-arev-unnamed-chunk-18-2.png)
 
 ``` r
 
@@ -1098,7 +1137,9 @@ plot(a1, which=c(5,6), xlab="Age", ylab="Correlation", ylim=c(0,1), col=cols[1:2
      legend=c("MZ tetrachoric correlation", "DZ tetrachoric correlation"))
 ```
 
-![](time-to-event-family-studies-arev_files/figure-html/unnamed-chunk-19-3.png)
+![Tetrachoric correlation, relative recurrence risk, and heritability
+over
+age.](figure/time-to-event-family-studies-arev-unnamed-chunk-18-3.png)
 
 ``` r
 
@@ -1106,7 +1147,9 @@ plot(a1, which=c(5,6), xlab="Age", ylab="Correlation", ylim=c(0,1), col=cols[1:2
 plot(a1, which=c(1), xlab="Age", ylim=c(0,1), col="black", lty=1, ylab="Heritability", legend=NULL, alpha=.1)
 ```
 
-![](time-to-event-family-studies-arev_files/figure-html/unnamed-chunk-19-4.png)
+![Tetrachoric correlation, relative recurrence risk, and heritability
+over
+age.](figure/time-to-event-family-studies-arev-unnamed-chunk-18-4.png)
 
 ## SessionInfo
 
@@ -1118,39 +1161,37 @@ sessionInfo()
 #> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
-#> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> BLAS:   /home/kkzh/.asdf/installs/r/4.6.0/lib/R/lib/libRblas.so 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
 #> 
 #> locale:
-#>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
-#>  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
-#>  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
-#> [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 #> 
-#> time zone: UTC
+#> time zone: Europe/Copenhagen
 #> tzcode source: system (glibc)
 #> 
 #> attached base packages:
-#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+#> [1] splines   stats     graphics  grDevices utils     datasets  methods  
+#> [8] base     
 #> 
 #> other attached packages:
-#> [1] prodlim_2026.03.11 mets_1.3.10       
+#> [1] prodlim_2026.03.11 timereg_2.0.7      survival_3.8-6     mets_1.3.10       
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] Matrix_1.7-5           future.apply_1.20.2    jsonlite_2.0.0        
-#>  [4] compiler_4.6.0         Rcpp_1.1.1-1.1         parallel_4.6.0        
-#>  [7] jquerylib_0.1.4        globals_0.19.1         splines_4.6.0         
-#> [10] systemfonts_1.3.2      textshaping_1.0.5      yaml_2.3.12           
-#> [13] fastmap_1.2.0          lattice_0.22-9         R6_2.6.1              
-#> [16] knitr_1.51             htmlwidgets_1.6.4      future_1.70.0         
-#> [19] desc_1.4.3             bslib_0.11.0           rlang_1.2.0           
-#> [22] cachem_1.1.0           xfun_0.57              fs_2.1.0              
-#> [25] sass_0.4.10            cli_3.6.6              pkgdown_2.2.0         
-#> [28] digest_0.6.39          grid_4.6.0             mvtnorm_1.3-7         
-#> [31] lifecycle_1.0.5        lava_1.9.1             RcppArmadillo_15.2.6-1
-#> [34] timereg_2.0.7          evaluate_1.0.5         data.table_1.18.4     
-#> [37] numDeriv_2016.8-1.1    listenv_0.10.1         codetools_0.2-20      
-#> [40] ragg_1.5.2             stats4_4.6.0           survival_3.8-6        
-#> [43] parallelly_1.47.0      rmarkdown_2.31         tools_4.6.0           
-#> [46] htmltools_0.5.9
+#>  [1] vctrs_0.7.3            cli_3.6.6              knitr_1.51            
+#>  [4] rlang_1.2.0            xfun_0.57              KernSmooth_2.23-26    
+#>  [7] otel_0.2.0             data.table_1.18.4      glue_1.8.1            
+#> [10] future.apply_1.20.2    listenv_0.10.1         lava_1.9.1            
+#> [13] stats4_4.6.0           grid_4.6.0             evaluate_1.0.5        
+#> [16] lifecycle_1.0.5        yaml_2.3.12            mvtnorm_1.3-7         
+#> [19] numDeriv_2016.8-1.1    compiler_4.6.0         codetools_0.2-20      
+#> [22] Rcpp_1.1.1-1.1         ucminf_1.2.3           future_1.70.0         
+#> [25] lattice_0.22-9         digest_0.6.39          pillar_1.11.1         
+#> [28] parallelly_1.47.0      parallel_4.6.0         Matrix_1.7-5          
+#> [31] tools_4.6.0            RcppArmadillo_15.2.6-1 globals_0.19.1
 ```

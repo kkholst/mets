@@ -31,7 +31,7 @@
 - [Mediation Analysis for survival
   data](http://kkholst.github.io/mets/articles/mediation-survival.md):
 - [Randomization for Cox Type rate
-  models](http://kkholst.github.io/mets/articles/phreg_rct.md) :
+  models](http://kkholst.github.io/mets/articles/phreg_rct.md):
 - [Twin
   models](http://kkholst.github.io/mets/articles/quantitative-twin.md):
 - [Recurrent

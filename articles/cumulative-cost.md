@@ -47,6 +47,7 @@ Using the HF-action data, we simulate a severity score for each event.
 library(mets)
 data(hfactioncpx12)
 hf <- hfactioncpx12
+set.seed(1)
 hf$severity <- abs((5+rnorm(741)*2))[hf$id]
 
 ## marginal mean using formula  
@@ -55,19 +56,20 @@ outNZ <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(i
 plot(outNZ,se=TRUE)
 summary(outNZ,times=3) 
 #> [[1]]
-#>     new.time     mean        se  CI-2.5% CI-97.5% strata
-#> 682        3 10.24832 0.6186346 9.104797 11.53546      0
+#>     new.time    mean        se CI-2.5% CI-97.5% strata
+#> 682        3 10.3249 0.6044746  9.2056  11.5803      0
 #> 
 #> [[2]]
-#>     new.time     mean        se  CI-2.5% CI-97.5% strata
-#> 601        3 9.454503 0.6950555 8.185815 10.91982      1
+#>     new.time    mean        se  CI-2.5% CI-97.5% strata
+#> 601        3 9.33613 0.6429995 8.157232 10.68541      1
 
 outN <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,
                cause=1,death.code=2)
 plot(outN,se=TRUE,add=TRUE)
 ```
 
-![](cumulative-cost_files/figure-html/unnamed-chunk-2-1.png)
+![Marginal mean cumulative cost by
+treatment.](figure/cumulative-cost-unnamed-chunk-2-1.png)
 
 ``` r
 
@@ -97,16 +99,16 @@ summary(outNZ3)
 #>  741 clusters
 #> coeffients:
 #>            Estimate  Std.Err     2.5%    97.5% P-value
-#> treatment0 10.24832  0.61860  9.03588 11.46075       0
-#> treatment1  9.45450  0.69499  8.09234 10.81667       0
+#> treatment0 10.32490  0.60444  9.14022 11.50959       0
+#> treatment1  9.33613  0.64295  8.07597 10.59629       0
 head(iid(outNZ3))
-#>            [,1]        [,2]
-#> 1 -0.0051841554  0.00000000
-#> 2  0.0102241902  0.00000000
-#> 3  0.0000000000 -0.03026973
-#> 4 -0.0139508255  0.00000000
-#> 5 -0.0004765366  0.00000000
-#> 6 -0.0341093932  0.00000000
+#>            [,1]      [,2]
+#> 1 -0.0013037837 0.0000000
+#> 2  0.0089249278 0.0000000
+#> 3  0.0000000000 0.0211858
+#> 4 -0.0056613816 0.0000000
+#> 5 -0.0005288663 0.0000000
+#> 6 -0.0342554114 0.0000000
 
 outN3 <- recregIPCW(Event(entry,time,status)~-1+treatment+cluster(id),data=hf,cause=1,death.code=2,time=3,
          cens.model=~strata(treatment),model="lin")
@@ -143,11 +145,11 @@ summary(propNZ)
 #>  741 clusters
 #> coefficients:
 #>             Estimate      S.E.   dU^-1/2 P-value
-#> treatment1 -0.102856  0.090464  0.024319  0.2555
+#> treatment1 -0.101014  0.089005  0.024304  0.2564
 #> 
 #> exp(coefficients):
 #>            Estimate    2.5%  97.5%
-#> treatment1  0.90226 0.75566 1.0773
+#> treatment1  0.90392 0.75922 1.0762
 plot(propNZ,main="Baselines")
      
 GL <- recreg(Event(entry,time,status)~treatment+cluster(id),hf,cause=1,death.code=2)
@@ -167,9 +169,10 @@ summary(GL)
 plot(GL,add=TRUE,col=2)
 ```
 
-![](cumulative-cost_files/figure-html/unnamed-chunk-4-1.png) Those
-treated have 14% lower cumulative severity and 11% lower expected number
-of events.
+![Proportional cost model baseline
+estimates.](figure/cumulative-cost-unnamed-chunk-4-1.png) Those treated
+have 14% lower cumulative severity and 11% lower expected number of
+events.
 
 ## Exceed threshold
 
@@ -184,7 +187,8 @@ plot(ooNZ,strata=1)
 plot(ooNZ,strata=2,add=TRUE)
 ```
 
-![](cumulative-cost_files/figure-html/unnamed-chunk-5-1.png)
+![Probability of exceeding cumulative cost
+thresholds.](figure/cumulative-cost-unnamed-chunk-5-1.png)
 
 ``` r
 
@@ -193,76 +197,76 @@ summary(ooNZ,times=3)
 #> $`0`$prob
 #>            times           
 #>                3 2.99865085
-#> N<1            3 0.05046407
-#> exceed>=1      3 0.94953593
-#> exceed>=5      3 0.90305672
-#> exceed>=10     3 0.78544505
-#> exceed>=20     3 0.49877769
+#> N<1            3 0.06474819
+#> exceed>=1      3 0.93525181
+#> exceed>=5      3 0.90118229
+#> exceed>=10     3 0.74537955
+#> exceed>=20     3 0.49282394
 #> 
 #> $`0`$se
 #>            times           
 #>                3 2.99865085
-#> N<1            3 0.01999300
-#> exceed>=1      3 0.01999300
-#> exceed>=5      3 0.02693354
-#> exceed>=10     3 0.03918605
-#> exceed>=20     3 0.05133898
+#> N<1            3 0.02657120
+#> exceed>=1      3 0.02657120
+#> exceed>=5      3 0.03013468
+#> exceed>=10     3 0.04466101
+#> exceed>=20     3 0.05149605
 #> 
 #> $`0`$lower
-#>      times           
-#> [1,]     3 2.99865085
-#> [2,]     3 0.08885207
-#> [3,]     3 0.91114793
-#> [4,]     3 0.85178123
-#> [5,]     3 0.71227737
-#> [6,]     3 0.40765541
+#>      times          
+#> [1,]     3 2.9986509
+#> [2,]     3 0.1154033
+#> [3,]     3 0.8845967
+#> [4,]     3 0.8440133
+#> [5,]     3 0.6627899
+#> [6,]     3 0.4015580
 #> 
 #> $`0`$upper
 #>      times           
 #> [1,]     3 2.99865085
-#> [2,]     3 0.01045872
-#> [3,]     3 0.98954128
-#> [4,]     3 0.95741889
-#> [5,]     3 0.86612878
-#> [6,]     3 0.61026834
+#> [2,]     3 0.01119234
+#> [3,]     3 0.98880766
+#> [4,]     3 0.96222364
+#> [5,]     3 0.83826056
+#> [6,]     3 0.60483284
 #> 
 #> 
 #> $`1`
 #> $`1`$prob
 #>            times           
 #>                3 2.99865085
-#> N<1            3 0.01705929
-#> exceed>=1      3 0.98294071
-#> exceed>=5      3 0.96772447
-#> exceed>=10     3 0.74154673
-#> exceed>=20     3 0.51833754
+#> N<1            3 0.01770732
+#> exceed>=1      3 0.98229268
+#> exceed>=5      3 0.94934557
+#> exceed>=10     3 0.79560979
+#> exceed>=20     3 0.53319063
 #> 
 #> $`1`$se
-#>            times            
-#>                3 2.998650853
-#> N<1            3 0.008885007
-#> exceed>=1      3 0.008885007
-#> exceed>=5      3 0.012103895
-#> exceed>=10     3 0.043163511
-#> exceed>=20     3 0.055744489
+#>            times           
+#>                3 2.99865085
+#> N<1            3 0.01097663
+#> exceed>=1      3 0.01097663
+#> exceed>=5      3 0.01645312
+#> exceed>=10     3 0.03727391
+#> exceed>=20     3 0.05545584
 #> 
 #> $`1`$lower
 #>      times           
 #> [1,]     3 2.99865085
-#> [2,]     3 0.03432023
-#> [3,]     3 0.96567977
-#> [4,]     3 0.94428969
-#> [5,]     3 0.66159512
-#> [6,]     3 0.41982703
+#> [2,]     3 0.03898725
+#> [3,]     3 0.96101275
+#> [4,]     3 0.91763959
+#> [5,]     3 0.72580801
+#> [6,]     3 0.43486168
 #> 
 #> $`1`$upper
 #>      times          
 #> [1,]     3 2.9986509
 #> [2,]     3 0.0000000
 #> [3,]     3 1.0000000
-#> [4,]     3 0.9917408
-#> [5,]     3 0.8311602
-#> [6,]     3 0.6399631
+#> [4,]     3 0.9821470
+#> [5,]     3 0.8721245
+#> [6,]     3 0.6537533
 ```
 
 ## Cumulative time lost for recurrent events
@@ -307,38 +311,35 @@ sessionInfo()
 #> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
-#> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> BLAS:   /home/kkzh/.asdf/installs/r/4.6.0/lib/R/lib/libRblas.so 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
 #> 
 #> locale:
-#>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
-#>  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
-#>  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
-#> [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 #> 
-#> time zone: UTC
+#> time zone: Europe/Copenhagen
 #> tzcode source: system (glibc)
 #> 
 #> attached base packages:
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] mets_1.3.10
+#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.10   
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
-#>  [4] xfun_0.57              textshaping_1.0.5      jsonlite_2.0.0        
-#>  [7] listenv_0.10.1         future.apply_1.20.2    lava_1.9.1            
-#> [10] htmltools_0.5.9        ragg_1.5.2             sass_0.4.10           
-#> [13] rmarkdown_2.31         grid_4.6.0             evaluate_1.0.5        
-#> [16] jquerylib_0.1.4        fastmap_1.2.0          numDeriv_2016.8-1.1   
-#> [19] yaml_2.3.12            mvtnorm_1.3-7          lifecycle_1.0.5       
-#> [22] timereg_2.0.7          compiler_4.6.0         codetools_0.2-20      
-#> [25] fs_2.1.0               htmlwidgets_1.6.4      Rcpp_1.1.1-1.1        
-#> [28] future_1.70.0          lattice_0.22-9         systemfonts_1.3.2     
-#> [31] digest_0.6.39          R6_2.6.1               parallelly_1.47.0     
-#> [34] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
-#> [37] bslib_0.11.0           tools_4.6.0            RcppArmadillo_15.2.6-1
-#> [40] globals_0.19.1         survival_3.8-6         pkgdown_2.2.0         
-#> [43] cachem_1.1.0           desc_1.4.3
+#>  [4] xfun_0.57              otel_0.2.0             future.apply_1.20.2   
+#>  [7] listenv_0.10.1         lava_1.9.1             stats4_4.6.0          
+#> [10] grid_4.6.0             evaluate_1.0.5         yaml_2.3.12           
+#> [13] mvtnorm_1.3-7          numDeriv_2016.8-1.1    compiler_4.6.0        
+#> [16] codetools_0.2-20       Rcpp_1.1.1-1.1         ucminf_1.2.3          
+#> [19] future_1.70.0          lattice_0.22-9         digest_0.6.39         
+#> [22] parallelly_1.47.0      parallel_4.6.0         splines_4.6.0         
+#> [25] Matrix_1.7-5           tools_4.6.0            RcppArmadillo_15.2.6-1
+#> [28] globals_0.19.1
 ```
