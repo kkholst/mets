@@ -476,7 +476,8 @@ return(ic)
 ##' @param death A \code{"phreg"} object for the terminal event model. Required
 ##'   when \code{recurrent} is a \code{"phreg"} object; ignored otherwise.
 ##' @param weight Character string specifying the weight scheme: \code{"I"},
-##'   \code{"II"}, or \code{"III"}. Default is \code{"I"}.
+##'   \code{"II"}, or \code{"III"}. Default is \code{"I"}. For competing risks \code{"III"} 
+##'    gives Gray's test with robust standard errors.
 ##' @param km Logical. If \code{TRUE} (default), the Kaplan-Meier estimator is
 ##'   used for the survival probability \eqn{S(t)}; otherwise the Nelson-Aalen
 ##'   estimator is used.
@@ -525,7 +526,7 @@ return(ic)
 ##' @aliases logrankRecurrentBase
 ##' @export
 test_logrankRecurrent <- function(recurrent,death,
-              weight=c("I","II"),km=TRUE,start=0,stop=NULL,at.risk=5,cluster.id=NULL,...) { ## {{{ 
+              weight=c("I","II","III"),km=TRUE,start=0,stop=NULL,at.risk=5,cluster.id=NULL,...) { ## {{{ 
   if (inherits(recurrent,"phreg")) { # Fall-back to recurrentMarginalPhreg
     if (inherits(death, "phreg")) {
         return(logrankRecurrentBase(recurrent,death,

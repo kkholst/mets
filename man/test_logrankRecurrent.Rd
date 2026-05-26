@@ -8,7 +8,7 @@
 test_logrankRecurrent(
   recurrent,
   death,
-  weight = c("I", "II"),
+  weight = c("I", "II", "III"),
   km = TRUE,
   start = 0,
   stop = NULL,
@@ -26,7 +26,8 @@ recurrent event model (in which case \code{death} must also be supplied).}
 when \code{recurrent} is a \code{"phreg"} object; ignored otherwise.}
 
 \item{weight}{Character string specifying the weight scheme: \code{"I"},
-\code{"II"}, or \code{"III"}. Default is \code{"I"}.}
+\code{"II"}, or \code{"III"}. Default is \code{"I"}. For competing risks \code{"III"} 
+ gives Gray's test with robust standard errors.}
 
 \item{km}{Logical. If \code{TRUE} (default), the Kaplan-Meier estimator is
 used for the survival probability \eqn{S(t)}; otherwise the Nelson-Aalen
