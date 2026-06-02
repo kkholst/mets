@@ -1531,6 +1531,21 @@ out <-estimate(coef=coefs,IC=iidGDR*nrow(iidGDR),...)
 return(out)
 }
 
+##' @export
+IC.ATE  <- function(x,type=c("all","DR","G"),...)
+{  ## {{{ 
+if (type[1]=="all") {
+iidGDR <- cbind(x$riskG.iid,x$riskDR.iid)
+} else if (type[1]=="DR") {
+iidGDR <- x$riskDR.iid
+} else {
+iidGDR <- x$riskG.iid
+}
+out <- iidGDR*nrow(iidGDR)
+return(out)
+} ## }}} 
+
+
 
 ##' G-Estimator for Binomial Regression Model (Standardized Estimates)
 ##'
