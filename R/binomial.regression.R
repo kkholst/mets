@@ -435,10 +435,90 @@ if (length(dots)==0) {
   return(val)
 }# }}}
 
-##' @export
-IC.binreg  <- function(x,...) {# {{{
-  x$iid*NROW(x$iid)
-}# }}}
+
+#' Influence curve components for binomial regression ATE
+#'
+#' Extracts and scales influence function (IC) components from a fitted
+#' binomial regression ATE object or raw IC matrix. Depending on the object
+#' class and requested `type`, returns one or more components combined by
+#' column-binding.
+#'
+#' @param x An object of class \code{ATE}, or an object containing an
+#'   \code{iid} component.
+#' @param type Character vector specifying which influence curve components
+#'   to return. Possible values are:
+#'   \describe{
+#'     \item{coef}{Influence curve for regression coefficients}
+#'     \item{DR}{Doubly robust ATE influence curve}
+#'     \item{G}{G-computation ATE influence curve}
+#'   }
+#'   If \code{x} inherits from \code{ATE} and \code{type} is missing,
+#'   the default is \code{c("DR", "G")}.
+#' @param ... Currently unused.
+#'
+#' @return A numeric matrix obtained by column-binding the selected
+#' influence curve components. Each column corresponds to one element
+#' of \code{type}, with column names preserved.
+#'
+#' @details
+#' For objects of class \code{ATE}, the function extracts and rescales
+#' the stored influence curve components:
+#'
+#' \itemize{
+#'   \item \code{x$iid} for coefficient ICs
+#'   \item \code{x$riskDR.iid} for doubly robust ATE ICs
+#'   \item \code{x$riskG.iid} for G-computation ICs
+#' }
+#'
+#' Each component is multiplied by its sample size (\code{NROW(.)}).
+#'
+#' For non-\code{ATE} objects, the function returns
+#' \code{NROW(x$iid) * x$iid}.
+#'
+#' @examples
+#' \dontrun{
+#' # default ATE behavior (DR + G)
+#' IC.binreg(fit)
+#'
+#' # only DR component
+#' IC.binreg(fit, "DR")
+#'
+#' # multiple components
+#' IC.binreg(fit, c("coef", "DR"))
+#' }
+#'
+#' @export
+IC.binreg <- function(x, type = c("coef", "DR", "G"), ...) { ## {{{ 
+
+  # Default override for ATE objects
+  if (inherits(x, "ATE") && missing(type)) {
+    type <- c("DR", "G")
+  }
+
+  type <- match.arg(type, several.ok = TRUE)
+
+  if (!inherits(x, "ATE")) {
+    return(x$iid * NROW(x$iid))
+  }
+
+  comps <- list()
+
+  for (t in type) {
+
+    ic_t <- switch(t,
+      "coef" = NROW(x$iid) * x$iid,
+      "DR"   = NROW(x$riskDR.iid) * x$riskDR.iid,
+      "G"    = NROW(x$riskG.iid) * x$riskG.iid,
+      stop("Unknown type: ", t)
+    )
+
+    comps[[t]] <- ic_t
+  }
+
+  out <- do.call(cbind, comps)
+
+  return(out)
+}  ## }}} 
 
 ##' @export
 print.binreg  <- function(x,...) {# {{{
@@ -533,6 +613,7 @@ print.summary.binreg <- function(x,max.strata=5,...) { ## {{{
 } ## }}}
 
 ###}}} 
+
 
 ##' @export
 vcov.binreg <- function(object,...) {# {{{
@@ -1530,21 +1611,6 @@ names(coefs)  <- paste("G",names(x$riskG),sep="-")
 out <-estimate(coef=coefs,IC=iidGDR*nrow(iidGDR),...)
 return(out)
 }
-
-##' @export
-IC.ATE  <- function(x,type=c("all","DR","G"),...)
-{  ## {{{ 
-if (type[1]=="all") {
-iidGDR <- cbind(x$riskG.iid,x$riskDR.iid)
-} else if (type[1]=="DR") {
-iidGDR <- x$riskDR.iid
-} else {
-iidGDR <- x$riskG.iid
-}
-out <- iidGDR*nrow(iidGDR)
-return(out)
-} ## }}} 
-
 
 
 ##' G-Estimator for Binomial Regression Model (Standardized Estimates)
