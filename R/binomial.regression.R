@@ -1527,11 +1527,11 @@ for (a in nlevs) {
 	iidpala <- c(DaPsia[[k]] %*% t(iidalpha))
 	if (se)  iidGca <- MGCiidas[,k] else iidGca<-0 
         ###
-	iidriska <- (iidbasea+iidcifa+iidpala+iidGca)/nid
-        iidrisk <- cbind(iidrisk,iidriska)
+	iidriskDR <- (iidbasea+iidcifa+iidpala+iidGca)/nid
+        iidrisk <- cbind(iidrisk,iidriskDR)
 	iidriskG <- c(sumstrata(riskG[,k]-val$riskG[k],id,nid))
-	riskGa.iid <- c(iidriskG)/nid+c(DariskG[[k]] %*% t(val$iid))/nid
-        riskG.iid <- cbind(riskG.iid,riskGa.iid)
+	iidriskG <- c(iidriskG)/nid+c(DariskG[[k]] %*% t(val$iid))/nid
+        riskG.iid <- cbind(riskG.iid,iidriskG)
 	k <- k+1
 }
 # }}}
