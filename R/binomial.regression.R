@@ -1582,9 +1582,9 @@ val$se.difriskG <- diag(val$var.difriskG)^.5
 
 ###### DR-estimator, G add names to iid 
 if (!is.null(call.id)) {
-    val$riskDR.iid < nameme(iidrisk,name.id)
-    val$riskG.iid <- nameme(riskG.iid,name.id)
-    val$iid <-       nameme(val$iid,name.id)
+    val$riskDR.iid <- nameme(iidrisk,name.id)
+    val$riskG.iid  <- nameme(riskG.iid,name.id)
+    val$iid        <- nameme(val$iid,name.id)
 }
 ## }}}
 
