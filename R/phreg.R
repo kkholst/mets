@@ -25,6 +25,8 @@ construct_id <- function(id,nid,namesX=NULL,as.data=FALSE) { ## {{{
 	   ids <- id+1
 	   order.ids <- ids
 	   name.id <- ids
+	   ## Use rownames of design matrix as labels when id was not provided
+           name.id <- if (!is.null(namesX)) namesX else ids
    }
    ## orginal id coding into integers
    ## id from 0,1,...,nid-1
