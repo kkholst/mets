@@ -5,12 +5,12 @@
 ##' standard errors via influence functions that are returned as the IID argument. 
 ##' Propensity scores are fitted using either logistic regression (glm) or the multinomial model (mlogit) when more
 ##' than two categories for treatment. The treatment needs to be a factor and is identified on the rhs
-##' of the "treat.model". 
+##' of the "treat.model". Can handle right censored binreg type estimating equations with IPTW weights. 
 ##'
 ##' Also works with cluster argument. 
 ##'
 ##' @param formula for binreg 
-##' @param data data frame for estimation 
+##' @param data data-frame for estimation 
 ##' @param treat.model propensity score model (binary or multinomial) 
 ##' @param weights may be given, and then uses weights*w(A) as the weights
 ##' @param estpr to estimate propensity scores and get infuence function contribution to uncertainty
