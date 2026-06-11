@@ -416,7 +416,7 @@ if (length(dots)==0) {
   val$iid.naive <- val$iid
   val$naive.var <- NULL 
   if (se)  val$iid  <- val$iid+(MGCiid %*% val$ihessian)
-  if (!is.null(call.id)) val$iid <- nameme(val$iid,name.id)
+  if (!is.null(name.id)) val$iid <- nameme(val$iid,name.id)
   robvar <- crossprod(val$iid)
   val$var <-  val$robvar <- robvar
   val$se.robust <- diag(robvar)^.5
