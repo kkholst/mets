@@ -1,7 +1,7 @@
 
-##' IPTW GLM, Inverse Probabibilty of Treatment Weighted GLM  
+##' IPTW logistic regression, Inverse Probabibilty of Treatment Weighted binreg 
 ##'
-##' Fits GLM model with treatment weights \deqn{ w(A)= \sum_a I(A=a)/P(A=a|X) }, computes
+##' Fits logistic regression model with treatment weights \deqn{ w(A)= \sum_a I(A=a)/P(A=a|X) }, computes
 ##' standard errors via influence functions that are returned as the IID argument. 
 ##' Propensity scores are fitted using either logistic regression (glm) or the multinomial model (mlogit) when more
 ##' than two categories for treatment. The treatment needs to be a factor and is identified on the rhs
@@ -9,29 +9,62 @@
 ##'
 ##' Also works with cluster argument. 
 ##'
-##' @param formula for glm 
-##' @param data data frame for risk averaging
+##' @param formula for binreg 
+##' @param data data frame for estimation 
 ##' @param treat.model propensity score model (binary or multinomial) 
-##' @param family of glm (logistic regression)
-##' @param id cluster id for standard errors 
 ##' @param weights may be given, and then uses weights*w(A) as the weights
 ##' @param estpr to estimate propensity scores and get infuence function contribution to uncertainty
 ##' @param pi0 fixed simple weights 
-##' @param ...  arguments for glm call
+##' @param ...  arguments for  binreg call
 ##' @author Thomas Scheike
+##' @examples
+##'
+##' data(bmt)
+##' dfactor(bmt) <- platelet.f~platelet
+##' ## logistic modelling of cumulative incidence 
+##' gg <- binreg_IPTW(Event(time,cause)~platelet.f+age,bmt,
+##' 	       treat.model=platelet.f~age,time=30)
+##' summary(gg)
+##' head(iid(gg))
+##' 
+##' ## logistic modelling  
+##' gg <- binreg_IPTW(tcell~platelet.f+age,bmt,
+##' 	       treat.model=platelet.f~age,time=30)
+##' summary(gg)
 ##' @export
-glm_IPTW <- function(formula,data,treat.model=NULL,family=binomial(),id=NULL,weights=NULL,estpr=1,pi0=0.5,...) {# {{{
-  if (!is.null(id)) {
-          orig.id <- id
-	  ids <- sort(unique(id))
-	  nid <- length(ids)
-      if (is.numeric(id)) id <-  fast.approx(ids,id)-1 else  {
-      id <- as.integer(factor(id,labels=seq(nid)))-1
-     }
-  } else { orig.id <- NULL; nid <- nrow(data); id <- 0:(nid-1); ids <- NULL}
-  ### id from call coded as numeric 1 -> 
-  id <- id+1
-  nid <- length(unique(id))
+binreg_IPTW <- function(formula,data,treat.model=NULL,weights=NULL,estpr=1,pi0=0.5,...) {# {{{
+    cl <- match.call()# {{{
+    des <- proc_design(
+        formula,
+        data = data,
+        specials = c("offset", "weights", "cluster"),
+        intercept = TRUE
+    )
+    Y <- des$y
+    if (inherits(Y, c("Event", "Surv"))) {
+    }
+    X <- des$x
+    des.weights <- des$weights
+    des.offset  <- des$offset
+    id      <- des$cluster
+    if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
+
+  ### possible handling of id to code from 0:(antid-1)
+  call.id <- id 
+  conid <- construct_id(id,nrow(X),namesX=rownames(X))
+  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+  ## id before time-sorting later 
+  orig.id <- id
+
+  ## take offset and weight first from formula, but then from arguments
+  if (is.null(des.offset)) {
+	  if (is.null(offset)) offset <- rep(0,length(Y)) 
+  } else offset <- des.offset
+  if (is.null(des.weights)) {
+	  if (is.null(weights)) weights <- rep(1,length(Y)) 
+  } else weights <- des.weights
+# }}}
+
   data$id__  <-  id
 
 treats <- function(treatvar) {# {{{
@@ -93,35 +126,59 @@ if (estpr[1]==1) {
    ## assumes constant fixed prob over groups
    wPA <- ifelse(treats$ntreatvar==2,pi0[1],1-pi0[1])         
 }
-
 wPA <- c(1/fitt$pA)
 if (is.null(weights)) ww <- wPA else ww <- weights*wPA
 data$ww <- ww
 
 ## fit the weighted model and bring the derivatives to bring them along
-glmw <- suppressWarnings(glm(formula,data,weights=ww,family=family,...))
-glm.iid <- lava::iid(glmw,id=id)
-ihess <- attr(glm.iid,"bread")
+###glmw <- suppressWarnings(glm(formula,data,weights=ww,family=family,...))
+argss <- list(...)
+
+if (!inherits(Y, c("Event", "Surv"))) {
+   Yn <- as.numeric(Y)
+   data$event__  <- Yn
+   data$time__  <-  2
+   binreg.formula <-  update.formula(formula,Event(time__,event__)~.)
+   cens.code <- max(Y)+1
+   argss[["cens.code"]]  <- cens.code
+   argss[["time"]] <- 3
+   if (!"cause" %in% names(argss)) {
+        argss[["cause"]] <- max(Yn)  # largest value of Yn
+   } 
+} else {
+	binreg.formula <- formula
+        if (!"cens.code" %in% names(argss)) {
+           argss[["cens.code"]]  <- 0   # default value
+        } 
+}
+argss[["weights"]] <- ww
+argss[["data"]] <-  data
+argss[["formula"]] <- binreg.formula
+
+glmw <- do.call("binreg",argss)
+glm.iid <- iid(glmw)
+ihess <- glmw$ihessian
 
 check.derivative <- 0
 ### for checking derivative 
 if (check.derivative==1) {
-###fpar <- glm(treat.model,data,family=binomial)
-###mm <- as.matrix(model.matrix(treat.model,data))
-###cpar <- coef(fpar)
-###X <- model.matrix(formula,data)
-###formulaS <- Event(tt,status)~tcell+platelet+age.f
-###ff <- function(par) {
-###pa <- 	lava::expit(mm %*% par)
-###www <- 1/ifelse(data$tcell== 1, pa, 1 - pa)
-######print(summary(www))
-###
-###pp <- binreg(Event(tt,cause)~tcell+platelet+age.f,bmt,cause=1,time=5,cens.code=5,no.opt=TRUE,
-###	     weights=www, beta=coef(glmw))
-###gradient  <- pp$gradient
-###return(gradient)
-###}
+argsstest <- argss
+argsstest$no.opt <- TRUE
+argsstest$beta <- coef(glmw)
+fpar <- glm(treat.model,data,family=binomial)
+mm <- as.matrix(model.matrix(treat.model,data))
+cpar <- coef(fpar)
+X <- model.matrix(formula,data)
+ff <- function(par) {
+pa <- 	lava::expit(mm %*% par)
+www <- 1/ifelse(data$platelet== 1, pa,(1 - pa))
+argsstest$weights <- www
+pp <- do.call("binreg",argsstest)
+gradient  <- pp$gradient
+return(gradient)
+}
 ###print(ff(cpar))
+###library(numDeriv)
 ###gf <- jacobian(ff,cpar)
 ###print(gf)
 }
@@ -129,26 +186,27 @@ if (check.derivative==1) {
 ### iid after propensity model 
 ### computing  derivatives 
 if (estpr[1]==1) {
-X <- model.matrix(formula,data)
-res <- glmw$y -predict(glmw,data,type="response") 
+X <- glmw$design$x
+res <- glmw$Yipcw -predict(glmw,data,se=0) 
 XY <- X*res 
 ###XWY <- X*ww*res
 ###print( apply(XWY,2,sum))
 DUa  <-  t(fitt$DPai) %*% XY  
-###print(DUa)
 iidpal <- iidalpha0 %*% DUa ## /nid
 glmw$naive.var  <- crossprod(glm.iid)
 glm.iid <-   glm.iid + iidpal %*% ihess
-glmw$DUa <- DUa
+glmw$DUproppar <- DUa
 } 
 
+glmw$naive.iid <- glmw$iid
 glmw$iid <- glm.iid
 glmw$var  <-  crossprod(glm.iid)
+glmw$IPTW <- ww
 ## add some arguments to comply with summary.binreg
 glmw$n <- nrow(data)
 glmw$ncluster <- nid
-glmw$nevent <- sum(glmw$y)
-class(glmw) <- c("binreg","glm")
+glmw$nevent <- sum(glmw$Yipcw)
+class(glmw) <- c("binreg","IPTW")
 
 return(glmw)
 }# }}}
