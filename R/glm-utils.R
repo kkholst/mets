@@ -29,7 +29,7 @@
 ##' 
 ##' ## logistic modelling  
 ##' gg <- binreg_IPTW(tcell~platelet.f+age,bmt,
-##' 	       treat.model=platelet.f~age,time=30)
+##' 	       treat.model=platelet.f~age)
 ##' summary(gg)
 ##' @export
 binreg_IPTW <- function(formula,data,treat.model=NULL,weights=NULL,estpr=1,pi0=0.5,...) {# {{{

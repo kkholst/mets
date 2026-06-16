@@ -51,7 +51,7 @@ head(iid(gg))
 
 ## logistic modelling  
 gg <- binreg_IPTW(tcell~platelet.f+age,bmt,
-	       treat.model=platelet.f~age,time=30)
+	       treat.model=platelet.f~age)
 summary(gg)
 }
 \author{
