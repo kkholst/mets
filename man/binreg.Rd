@@ -114,6 +114,34 @@ Censoring model may depend on strata (cens.model=~strata(gX)).
 }
 }
 
+\section{Outcome definition}{
+
+The observed outcome \eqn{Y_i} constructed from \code{outcome} depends on whether
+competing risks are present. Competing risks are detected automatically: the data are
+considered to have competing risks when causes other than those specified in \code{cause}
+are observed (i.e. \code{any(!(Causes \%in\% cause))}, where \code{Causes} are all
+non-censoring event codes found in the data).
+
+\strong{No competing risks} (all observed events belong to \code{cause}):
+\itemize{
+  \item \code{"cif"}: \eqn{Y_i = I(T_i \leq t, \epsilon_i = 1)}. Cumulative incidence.
+  \item \code{"rmst"}: \eqn{Y_i = \min(T_i, t)}. Restricted mean survival time.
+  \item \code{"rmtl"}: \eqn{Y_i = t - \min(T_i, t)}. Restricted mean time lost.
+}
+
+\strong{Competing risks} (causes beyond \code{cause} are observed in the data):
+\itemize{
+  \item \code{"cif"}: \eqn{Y_i = I(T_i \leq t, \epsilon_i \in \code{cause})}. Cumulative
+    incidence for the cause(s) of interest.
+  \item \code{"rmst"} or \code{"rmtl"}: \eqn{Y_i = I(\epsilon_i \in \code{cause})(t - \min(T_i, t))}.
+    Cause-specific years lost, accumulated only for subjects who experience an event in \code{cause}.
+}
+
+The default link function (\code{model = "default"}) is \code{"logit"} for \code{"cif"} and
+\code{"exp"} for \code{"rmst"} and \code{"rmtl"}.
+If \code{Ydirect} is supplied, outcome construction is bypassed entirely.
+}
+
 \examples{
 data(bmt); bmt$time <- bmt$time+runif(408)*0.001
 # logistic regresion with IPCW binomial regression 

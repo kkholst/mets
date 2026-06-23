@@ -54,6 +54,32 @@
 ##' @param outcome Character string. Outcome type: \code{"cif"} (Cumulative Incidence Function), \code{"rmst"} (Restricted Mean Survival Time), or \code{"rmtl"} (Restricted Mean Time Lost).
 ##' @param model Character string. Link function: \code{"default"} (auto-selects based on outcome), \code{"logit"}, \code{"exp"}, or \code{"lin"} (identity).
 ##' @param Ydirect Optional numeric vector. If provided, this outcome is used instead of constructing one from \code{outcome}. Useful for custom IPCW adjustments.
+##'
+##' @section Outcome definition:
+##' The observed outcome \eqn{Y_i} constructed from \code{outcome} depends on whether
+##' competing risks are present. Competing risks are detected automatically: the data are
+##' considered to have competing risks when causes other than those specified in \code{cause}
+##' are observed (i.e. \code{any(!(Causes \%in\% cause))}, where \code{Causes} are all
+##' non-censoring event codes found in the data).
+##'
+##' \strong{No competing risks} (all observed events belong to \code{cause}):
+##' \itemize{
+##'   \item \code{"cif"}: \eqn{Y_i = I(T_i \leq t, \epsilon_i = 1)}. Cumulative incidence.
+##'   \item \code{"rmst"}: \eqn{Y_i = \min(T_i, t)}. Restricted mean survival time.
+##'   \item \code{"rmtl"}: \eqn{Y_i = t - \min(T_i, t)}. Restricted mean time lost.
+##' }
+##'
+##' \strong{Competing risks} (causes beyond \code{cause} are observed in the data):
+##' \itemize{
+##'   \item \code{"cif"}: \eqn{Y_i = I(T_i \leq t, \epsilon_i \in \code{cause})}. Cumulative
+##'     incidence for the cause(s) of interest.
+##'   \item \code{"rmst"} or \code{"rmtl"}: \eqn{Y_i = I(\epsilon_i \in \code{cause})(t - \min(T_i, t))}.
+##'     Cause-specific years lost, accumulated only for subjects who experience an event in \code{cause}.
+##' }
+##'
+##' The default link function (\code{model = "default"}) is \code{"logit"} for \code{"cif"} and
+##' \code{"exp"} for \code{"rmst"} and \code{"rmtl"}.
+##' If \code{Ydirect} is supplied, outcome construction is bypassed entirely.
 ##' @param ... Additional arguments passed to lower-level optimization functions.
 ##'
 ##' @return An object of class \code{"binreg"} containing coefficients, variance-covariance matrix, 
@@ -181,7 +207,7 @@ cl <- match.call()# {{{
   ucauses  <-  sort(unique(status))
   ccc <- which(ucauses %in% cens.code)
   if (length(ccc)==0) Causes <- ucauses else Causes <- ucauses[-ccc]
-  competing  <-  (length(Causes)>1) 
+  competing <- any(!(Causes %in% cause))
   data$id__ <- id
   data$exit <- exit
   data$statusC <- statusC 
@@ -209,16 +235,18 @@ cl <- match.call()# {{{
   X <-  as.matrix(X)
   X2  <- .Call("vecCPMat",X)$XX
 
- if (!is.null(Ydirect)) Y <-  Ydirect*obs/cens.weights else {
-     if (outcome[1]=="cif") Y <- c((status %in% cause)*(exit<=time)/cens.weights)
+ if (!is.null(Ydirect)) Y <-  Ydirect else {
+     if (outcome[1]=="cif") Y <- c((status %in% cause)*(exit<=time))
      else { if (!competing) {
 	     if (outcome[1]=="rmst")
-	     Y <-  c(pmin(exit,time)*obs)/cens.weights 
-             else Y <-  c((time-pmin(exit,time))*obs)/cens.weights 
-            } else Y <- c((status %in% cause)*(time-pmin(exit,time))*obs)/cens.weights
+	     Y <-  c(pmin(exit,time))
+             else Y <-  c((time-pmin(exit,time)))
+            } else Y <- c((status %in% cause)*(time-pmin(exit,time)))
      }
   }
-  Yipcw <- Y
+  Yresp <- c(Y)
+  Y <- Yipcw <- c(Y*obs/cens.weights)
+  IPCW <- c(obs/cens.weights)
 
  if (se & monotone) {## {{{ censoring adjustment of variance  and infinitissimal jacknife pseudo augmentation
     ### order of sorted times
@@ -427,6 +455,8 @@ if (length(dots)==0) {
   val$model <- model[1]
   val$outcome <- outcome[1]
   val$Yipcw <- Yipcw
+  val$Y     <- Yresp
+  val$IPCW   <- IPCW
   val$Causes <- Causes
   val$nevent <- nevent
   val$design <- des
