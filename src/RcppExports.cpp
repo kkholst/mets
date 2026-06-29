@@ -699,7 +699,9 @@ RcppExport SEXP FastPattern(SEXP, SEXP, SEXP);
 RcppExport SEXP headstrataR(SEXP, SEXP, SEXP);
 RcppExport SEXP indexstrataR(SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP Matdoubleindex(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+RcppExport SEXP McumsumstrataR(SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP ModelMatrixTestCox(SEXP, SEXP, SEXP, SEXP, SEXP);
+RcppExport SEXP MsumstrataR(SEXP, SEXP, SEXP);
 RcppExport SEXP pBhat(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP pmvn0(SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP PropTestCox(SEXP, SEXP, SEXP, SEXP);
@@ -779,7 +781,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"headstrataR",              (DL_FUNC) &headstrataR,               3},
     {"indexstrataR",             (DL_FUNC) &indexstrataR,              5},
     {"Matdoubleindex",           (DL_FUNC) &Matdoubleindex,            6},
+    {"McumsumstrataR",           (DL_FUNC) &McumsumstrataR,            4},
     {"ModelMatrixTestCox",       (DL_FUNC) &ModelMatrixTestCox,        5},
+    {"MsumstrataR",              (DL_FUNC) &MsumstrataR,               3},
     {"pBhat",                    (DL_FUNC) &pBhat,                     6},
     {"pmvn0",                    (DL_FUNC) &pmvn0,                     5},
     {"PropTestCox",              (DL_FUNC) &PropTestCox,               4},
