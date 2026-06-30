@@ -71,7 +71,7 @@ An object of class \code{"binreg"} (extending \code{"resmean"}) containing:
 \item{var}{Variance-covariance matrix.}
 \item{iid}{Influence functions.}
 \item{times}{Time points.}
-\item{Y}{Observed counts.}
+\item{Y}{Observed IPCW weighted counts (increment IPCW) \deqn{\int_0^t (1/G_c(s)) dN(s)}.}
 }
 \description{
 Computes the Inverse Probability of Censoring Weighted (IPCW) estimator for the mean number of recurrent events.

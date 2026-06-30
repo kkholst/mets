@@ -18,7 +18,7 @@
 ##' @param ...  arguments for  binreg call
 ##' @author Thomas Scheike
 ##' @examples
-##'
+##' 
 ##' data(bmt)
 ##' dfactor(bmt) <- platelet.f~platelet
 ##' ## logistic modelling of cumulative incidence 
@@ -29,7 +29,7 @@
 ##' 
 ##' ## logistic modelling  
 ##' gg <- binreg_IPTW(tcell~platelet.f+age,bmt,
-##' 	       treat.model=platelet.f~age,time=30)
+##' 	       treat.model=platelet.f~age)
 ##' summary(gg)
 ##' @export
 binreg_IPTW <- function(formula,data,treat.model=NULL,weights=NULL,estpr=1,pi0=0.5,...) {# {{{
@@ -187,7 +187,7 @@ return(gradient)
 ### computing  derivatives 
 if (estpr[1]==1) {
 X <- glmw$design$x
-res <- glmw$Yipcw -predict(glmw,data,se=0) 
+res <- c(glmw$Yipcw -predict(glmw,data,se=0))
 XY <- X*res 
 ###XWY <- X*ww*res
 ###print( apply(XWY,2,sum))

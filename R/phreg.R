@@ -3773,3 +3773,37 @@ return(res)
 
 
 ## }}}
+
+
+Mcumsumstrata <- function(A, strata, nstrata) {
+    if (!is.matrix(A))
+        stop("A must be a matrix")
+    if (nrow(A) != length(strata))
+        stop("nrow(A) must equal length(strata)")
+    if (min(strata) < 0 || max(strata) >= nstrata)
+        stop("strata values must be in 0:(nstrata-1)")
+    .Call("McumsumstrataR", A, strata, as.integer(nstrata), FALSE)$res
+}
+
+Mrevcumsumstrata <- function(A, strata, nstrata) {
+    if (!is.matrix(A))
+        stop("A must be a matrix")
+    if (nrow(A) != length(strata))
+        stop("nrow(A) must equal length(strata)")
+    if (min(strata) < 0 || max(strata) >= nstrata)
+        stop("strata values must be in 0:(nstrata-1)")
+    .Call("McumsumstrataR", A, strata, as.integer(nstrata), TRUE)$res
+}
+
+
+Msumstrata <- function(A, strata, nstrata) {
+    if (!is.matrix(A))
+        stop("A must be a matrix")
+    if (nrow(A) != length(strata))
+        stop("nrow(A) must equal length(strata)")
+    if (min(strata) < 0 || max(strata) >= nstrata)
+        stop("strata values must be in 0:(nstrata-1)")
+    .Call("MsumstrataR", A, strata, as.integer(nstrata))$res
+}
+
+

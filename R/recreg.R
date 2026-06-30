@@ -1101,7 +1101,7 @@ predictrecreg <- function(x,newdata,times=NULL,individual.time=FALSE,tminus=FALS
 ##' \item{var}{Variance-covariance matrix.}
 ##' \item{iid}{Influence functions.}
 ##' \item{times}{Time points.}
-##' \item{Y}{Observed counts.}
+##' \item{Y}{Observed IPCW weighted counts (increment IPCW) \deqn{\int_0^t (1/G_c(s)) dN(s)}.}
 ##'
 ##' @author Thomas Scheike
 ##' @seealso \code{\link{recreg}} 
@@ -1396,7 +1396,8 @@ recregIPCW <- function(formula,data=data,cause=1,cens.code=0,death.code=2,
 	val$formula <- formula
 	val$model <- model[1]
 	val$model.type <- model[1]
-	val$Y <- Ydata
+	val$Y     <- Ydata
+	val$Yipcw <- Ydata
 	val$X <- Xdata
 	val$id <- orig.id
 	val$call.id <- call.id

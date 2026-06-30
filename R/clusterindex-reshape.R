@@ -176,26 +176,52 @@ pairRisk <- function(start,stop,status,expo,clust,nsize=10,doublerisk=1)
     return(out)
 }# }}}
 
-##' @export
-mystrata <- function(ll,sort=TRUE) {# {{{
-	for (j in seq(1,length(ll))) 
-	if (!is.factor(ll[[j]])) ll[[j]] <- factor(ll[[j]])
+###
+###mystrata <- function(ll,sort=TRUE) {# {{{
+###	for (j in seq(1,length(ll))) 
+###	if (!is.factor(ll[[j]])) ll[[j]] <- factor(ll[[j]])
+###
+###	nll <- length(ll[[1]])
+###        ss <- rep(0,nll)
+###        nl <- unlist(lapply(ll,nlevels))
+###        poss <- c(exp(revcumsum(log(nl[-1]))))
+###	poss <- c(poss,1)
+###	for (j in seq(1,length(ll))) {
+###	     ss <- ss+as.numeric(ll[[j]])*poss[j]
+###	}
+###	uss <- unique(ss)
+###	nindex <- length(uss)
+###        sindex <- fast.approx(uss,ss)
+###        attr(sindex,"nlevel") <- nindex
+###        attr(sindex,"levels") <- nl 
+###	return(sindex)
+###} # }}}
+###
 
-	nll <- length(ll[[1]])
-        ss <- rep(0,nll)
-        nl <- unlist(lapply(ll,nlevels))
-        poss <- c(exp(revcumsum(log(nl[-1]))))
-	poss <- c(poss,1)
-	for (j in seq(1,length(ll))) {
-	     ss <- ss+as.numeric(ll[[j]])*poss[j]
-	}
-	uss <- unique(ss)
-	nindex <- length(uss)
-        sindex <- fast.approx(uss,ss)
-        attr(sindex,"nlevel") <- nindex
-        attr(sindex,"levels") <- nl 
-	return(sindex)
-} # }}}
+##' @export
+mystrata <- function(ll, sort = TRUE) { ## {{{ 
+  # Coerce to factor
+  ll <- lapply(ll, function(x) if (!is.factor(x)) factor(x) else x)
+  
+  nl <- sapply(ll, nlevels)
+  
+  # Mixed-radix weights: reverse cumulative product of trailing level counts
+  poss <- c(rev(cumprod(rev(nl[-1]))), 1L)
+  
+  # Integer codes (1-based from factor)
+  codes <- vapply(ll, as.integer, integer(length(ll[[1]])))
+  
+  # Matrix multiply: each row · poss
+  ss <- drop(codes %*% poss)
+  
+  # Re-index to 1:nindex
+  uss <- sort(unique(ss))
+  sindex <- match(ss, uss)          # fast, base R, no fast.approx needed
+  
+  attr(sindex, "nlevel") <- length(uss)
+  attr(sindex, "levels") <- nl
+  sindex
+} ## }}} 
 
 ##' @export
 mystrata2index <- function(ll,sort=TRUE) {# {{{

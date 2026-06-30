@@ -352,6 +352,23 @@ RcppExport SEXP cumsumstrataR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
 	return(rres);
 }/*}}}*/
 
+colvec  cumsumstrata(colvec a,IntegerVector strata,int nstrata) {/*{{{*/
+	unsigned n = a.n_rows;
+	colvec tmpsum(nstrata);
+	tmpsum.zeros(); tmpsum.zeros();
+	colvec res = a;
+
+	for (unsigned i=0; i<n; i++) {
+		int ss=strata(i);
+		if ((ss<nstrata) && (ss>=0))  {
+			tmpsum(ss) += a(i);
+			res(i) = tmpsum(ss);
+		}
+	}
+
+	return(res);
+}/*}}}*/
+
 RcppExport SEXP diffstrataR(SEXP ia,SEXP istrata, SEXP instrata) {/*{{{*/
 	colvec a = Rcpp::as<colvec>(ia);
 	IntegerVector intstrata(istrata);
@@ -414,23 +431,6 @@ RcppExport SEXP headstrataR(SEXP in, SEXP istrata, SEXP instrata) {/*{{{*/
 	rres["found"]=foundss;
 	rres["where"]=wheress;
 	return(rres);
-}/*}}}*/
-
-colvec  cumsumstrata(colvec a,IntegerVector strata,int nstrata) {/*{{{*/
-	unsigned n = a.n_rows;
-	colvec tmpsum(nstrata);
-	tmpsum.zeros(); tmpsum.zeros();
-	colvec res = a;
-
-	for (unsigned i=0; i<n; i++) {
-		int ss=strata(i);
-		if ((ss<nstrata) && (ss>=0))  {
-			tmpsum(ss) += a(i);
-			res(i) = tmpsum(ss);
-		}
-	}
-
-	return(res);
 }/*}}}*/
 
 colvec  cumsumstrataPO(colvec w,colvec S0,IntegerVector strata,int nstrata,double propodds,colvec exb) {/*{{{*/
@@ -2443,4 +2443,45 @@ RcppExport SEXP DLambetaDFGR(SEXP iweights,SEXP iS0,SEXP icause,SEXP iE,SEXP iXi
 	return(rres);
 }
 /*}}}*/
+
+
+
+
+RcppExport SEXP MsumstrataR(SEXP iA, SEXP istrata, SEXP instrata) {/*{{{*/
+    mat A = Rcpp::as<mat>(iA);
+    IntegerVector intstrata(istrata);
+    int nstrata = Rcpp::as<int>(instrata);
+    unsigned n = A.n_rows;
+    unsigned p = A.n_cols;
+    mat tmpsum(nstrata, p); tmpsum.zeros();
+    for (unsigned i = 0; i < n; i++) {
+        int ss = intstrata(i);
+        if ((ss < nstrata) && (ss >= 0))
+            tmpsum.row(ss) += A.row(i);
+    }
+    List rres;
+    rres["res"] = tmpsum;
+    return(rres);
+}/*}}}*/
+
+RcppExport SEXP McumsumstrataR(SEXP iA, SEXP istrata, SEXP instrata, SEXP ireverse) {/*{{{*/
+    mat A = Rcpp::as<mat>(iA);
+    IntegerVector intstrata(istrata);
+    int nstrata = Rcpp::as<int>(instrata);
+    bool reverse = Rcpp::as<bool>(ireverse);
+    unsigned n = A.n_rows;
+    unsigned p = A.n_cols;
+    mat tmpsum(nstrata, p); tmpsum.zeros();
+    mat res = A;
+    for (unsigned i = 0; i < n; i++) {
+        unsigned ii = reverse ? n - i - 1 : i;
+        int ss = intstrata(ii);
+        tmpsum.row(ss) += A.row(ii);
+        res.row(ii) = tmpsum.row(ss);
+    }
+    List rres;
+    rres["res"] = res;
+    return(rres);
+}/*}}}*/
+
 
