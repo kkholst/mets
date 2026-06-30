@@ -21,7 +21,7 @@ Depends:
 Imports:
     Rcpp,
     RcppArmadillo (>= 0.12.8.0),
-    lava (>= 1.9.1),
+    lava (>= 1.9.2),
     methods,
     mvtnorm,
     numDeriv,
