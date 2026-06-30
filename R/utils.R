@@ -1,10 +1,10 @@
 ###{{{ RoundMat
 
 RoundMat <- function(cc,digits = max(3, getOption("digits") - 2),na=TRUE,...) {
-    res <- format(round(cc,max(1,digits)),digits=digits)
-    if (na) return(res)
-    res[grep("NA",res)] <- ""
-    res
+  res <- format(round(cc,max(1,digits)),digits=digits)
+  if (na) return(res)
+  res[grep("NA",res)] <- ""
+  res
 }
 
 ###}}} RoundMat
