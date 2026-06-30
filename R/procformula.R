@@ -440,7 +440,7 @@ proc_design <- function(formula, data, ..., # nolint
     if (is.factor(y) || is.character(y)) {
       ylev <- levels[["response_"]]
       if (!is.null(ylev)) {
-        factor(y, levels = ylev)
+        y <- factor(y, levels = ylev)
       } else {
         ylev <- if (is.factor(y)) {
                   levels(y)
