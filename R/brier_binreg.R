@@ -1208,9 +1208,10 @@ brier_binreg <- function(formula, data, time,
   ## ------------------------------------------------------------------
   ## cv_iid_correctS -- block-sparse version (identical to brier_binregStrata)
   ## ------------------------------------------------------------------
-  cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
+
+cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
                                pred_vec, ipcw_wt_vec, outcome_vec,
-                               binreg_model) {
+                               binreg_model) { ## {{{ 
     nstrata <- outff_fit$nstrata
     p       <- length(outff_fit$coef) / nstrata
     n       <- length(pred_vec)
@@ -1224,12 +1225,12 @@ brier_binreg <- function(formula, data, time,
     } else {
       stop("Cannot determine stratum for newdata: needs 'fold' column.")
     }
-    Xs <- matrix(0.0, n, nstrata * p)
-    for (s in seq_len(nstrata)) {
-      idx  <- which(strata_idx == (s - 1L))
-      cols <- (s - 1L) * p + seq_len(p)
-      Xs[idx, cols] <- X[idx, , drop = FALSE]
-    }
+###    Xs <- matrix(0.0, n, nstrata * p)
+###    for (s in seq_len(nstrata)) {
+###      idx  <- which(strata_idx == (s - 1L))
+###      cols <- (s - 1L) * p + seq_len(p)
+###      Xs[idx, cols] <- X[idx, , drop = FALSE]
+###    }
     mu_prime <- switch(binreg_model,
       logit = pred_vec * (1 - pred_vec),
       exp   = pred_vec,
@@ -1237,9 +1238,17 @@ brier_binreg <- function(formula, data, time,
       stop("unrecognised binreg model '", binreg_model, "'")
     )
     resid       <- (outcome_vec - pred_vec) * ipcw_wt_vec
-    Dbrier_full <- -2 * colSums(Xs * mu_prime * resid) / n
+
+    Dbrier <- -2* Msumstrata(X * mu_prime * resid,strata_idx,nstrata)/n
+    Dbrier_full  <-  c(t(Dbrier))
+
+###   Dbrier_full <- -2 * colSums(Xs * mu_prime * resid) / n
+###   print(Dbrier_full)
+
     iid(brier_fit) + iid(outff_fit) %*% Dbrier_full
-  }
+  } ## }}} 
+
+
   ## ------------------------------------------------------------------
   ## resmeanIPCW wrapper / log-scale estimate helper
   ## ------------------------------------------------------------------
