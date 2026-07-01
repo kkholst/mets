@@ -130,7 +130,7 @@ if (is.null(beta)) beta <- rep(0,nlev-1)
 proptest0 <- recreg(formR,data,cause=cause,death.code=death.code.prop,
 		   cens.model=~strata(strata__),beta=beta,no.opt=TRUE)
 gradient <- matrix(proptest0$gradient,length(proptest0$gradient),1)
-iidbeta <-  IC(proptest0)
+iidbeta <-  suppressWarnings(IC(proptest0))
 n <- nrow(iidbeta)
 iidU0 <- iidbeta %*% proptest0$hessian
 score.test <- suppressWarnings(
