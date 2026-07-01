@@ -17,7 +17,7 @@
 ##' construct a weighted integral of the difference in marginal means.
 ##'
 ##' @param formula Formula with an \code{Event} object on the left-hand side and 
-##'   covariates (typically with \code{strata()} for group comparison) on the right. 
+##'   covariates (typically with \code{strata()} for group comparison) on the right.
 ##'   Can include \code{cluster(id)} for correlated data.
 ##' @param data Data frame containing all variables referenced in the formula.
 ##' @param cause Cause of interest (default 1).
@@ -133,7 +133,9 @@ gradient <- matrix(proptest0$gradient,length(proptest0$gradient),1)
 iidbeta <-  IC(proptest0)
 n <- nrow(iidbeta)
 iidU0 <- iidbeta %*% proptest0$hessian
-score.test <- summary(estimate(coef=gradient,IC=iidU0), null=0)
+score.test <- suppressWarnings(
+  summary(estimate(coef=gradient,IC=iidU0), null=0)
+)
 
 ### varU0 <- crossprod(iidU0)
 ### logrank.robust <- t(gradient) %*% solve(varU0) %*% gradient
@@ -189,8 +191,9 @@ if (nlev==2) {
 
 	pepe.mori <- recregIPCW(formR,data,cause=cause,death.code=death.code,
 	    times=time,marks=data$pmmark__,cens.model=~strata(strata__),model="lin")
-        pepe.mori <- estimate(pepe.mori)
-	pepe.mori <- summary(pepe.mori, contrast=lava::contr(2))
+	pepe.mori <- suppressWarnings(
+      summary(estimate(pepe.mori), contrast=lava::contr(2))
+    )
 } else {
 
 ###  formRC <- as.formula(paste("Event(entry__,exit__,status__)~factor(cstrata__)+cluster(id__)"))
@@ -247,7 +250,9 @@ p <- length(coef(RAUCl))
 RAUCet <- summary(estimate(RAUCe),contrast=as.list(2:p))
 RAUClt <- summary(RAUCl, contrast=as.list(2:p))
 
-proptest <- summary(estimate(proptest),null=0)
+proptest <- suppressWarnings(
+  summary(estimate(proptest),null=0)
+)
 
 out <- list(pepe.mori=pepe.mori,RatioAUC=RAUCet,difAUC=RAUClt,
 	    RAUCl=RAUCl,RAUCe=RAUCe,
