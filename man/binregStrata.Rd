@@ -2,7 +2,7 @@
 % Please edit documentation in R/brier_binreg.R
 \name{binregStrata}
 \alias{binregStrata}
-\title{Binomial Regression with Stratified Pseudo-Values and Censoring Adjustment}
+\title{Stratified Binomial Regression with cross-validation option}
 \usage{
 binregStrata(
   formula,

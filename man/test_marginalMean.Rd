@@ -18,7 +18,7 @@ test_marginalMean(
 }
 \arguments{
 \item{formula}{Formula with an \code{Event} object on the left-hand side and 
-covariates (typically with \code{strata()} for group comparison) on the right. 
+covariates (typically with \code{strata()} for group comparison) on the right.
 Can include \code{cluster(id)} for correlated data.}
 
 \item{data}{Data frame containing all variables referenced in the formula.}

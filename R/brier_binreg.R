@@ -1,5 +1,5 @@
 
-##' Binomial Regression with Stratified Pseudo-Values and Censoring Adjustment
+##' Stratified Binomial Regression with cross-validation option 
 ##'
 ##' Fits a stratified binomial regression model for the cumulative incidence
 ##' function (CIF), restricted mean survival time (RMST), or restricted mean
@@ -691,7 +691,7 @@ binregStrata <- function(formula, data, cause=1, time=NULL, beta=NULL,
   return(val)
 } # }}}
 
-## {{{  summary, predict, 
+## {{{  predict, 
 
 ## small helper: given flat coef vector, route predictions per stratum
 strata_lp <- function(object, Z, strata_new, offset_new) {
@@ -776,45 +776,6 @@ predict.binregStrata <- function(object, newdata = NULL, se = TRUE,
   attr(preds, "id") <- x$cluster
   preds
 } ## }}} 
-
-##' @export
-summary.binregStrata <- function(object, ...) {
-  ## per-stratum coefficient tables
-  p         <- length(object$coef) / object$nstrata
-  beta_list <- split(object$coef, rep(seq_len(object$nstrata), each = p))
-  nms       <- colnames(object$design$x)
-
-  cat("Stratified binreg fit",object$nstrata,"strata\n")
-  cat("n =", object$n, "  events =", object$nevent, "\n\n")
-
-  for (s in seq_len(object$nstrata)) {
-    cols  <- (s - 1) * p + seq_len(p)
-    b_s   <- object$coef[cols]
-    var_s <- object$var[cols, cols]
-    cc    <- estimate(coef = b_s, vcov = var_s)$coefmat
-    rownames(cc) <- nms
-    cat("Stratum", s, ":\n")
-    printCoefmat(cc, ...)
-    if (object$model[1] %in% c("exp", "logit")) {
-      cat("exp(coef):\n")
-      printCoefmat(
-        exp(estimate(coef = b_s, vcov = var_s)$coefmat[, c(1,3,4), drop=FALSE]),
-        ...
-      )
-    }
-    cat("\n")
-  }
-  invisible(object)
-}
-
-##' @export
-coef.binregStrata <- function(object, ...) object$coef
-
-##' @export
-vcov.binregStrata <- function(object, ...) object$var
-
-##' @export
-IC.binregStrata <- function(x, ...) x$iid * NROW(x$iid)
 
 ## }}} 
 
