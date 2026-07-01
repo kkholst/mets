@@ -1613,6 +1613,7 @@ summarize_brier_binregCV <- function(fit,
 ##' @param type Either \code{"cv"} (default) for cross-validated Brier scores
 ##'   only, or \code{"both"} to also include apparent (in-sample) scores.
 ##' @param ... Not currently used.
+##' @aliases print.binregCV
 ##' @export
 summary.binregCV <- function(object, transform = NULL,
                               conf.level = 0.95,
@@ -1622,6 +1623,16 @@ summary.binregCV <- function(object, transform = NULL,
                             conf.level = conf.level,
                             type       = match.arg(type))
 }
+
+##' @export
+print.binregCV <- function(x, transform = NULL, 
+                              conf.level = 0.95, type = c("cv", "both"), ...) { ## {{{ 
+  print(summarize_brier_binregCV(x,
+                            transform  = transform,
+                            conf.level = conf.level,
+                            type       = match.arg(type)))
+} ## }}} 
+
 
 ##' Summary method for binregCV_list objects
 ##'

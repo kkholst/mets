@@ -2,6 +2,7 @@
 % Please edit documentation in R/brier_binreg.R
 \name{summary.binregCV}
 \alias{summary.binregCV}
+\alias{print.binregCV}
 \title{Summary method for binregCV objects}
 \usage{
 \method{summary}{binregCV}(
