@@ -62,6 +62,7 @@
 ##'   regression coefficients are estimated using all observations \emph{not}
 ##'   in stratum \code{s} (a cross-validation-style fit), rather than the
 ##'   observations within stratum \code{s} (the default, \code{FALSE}).
+##' @param low.memory Logical. If \code{TRUE} only saves key quanties, coef, var, iid and some design structures.
 ##' @param ... Additional arguments, currently passed as optimizer
 ##'   \code{control} settings (e.g. \code{tol}, \code{stepsize}) to the
 ##'   Newton-Raphson routine.
@@ -123,7 +124,7 @@ binregStrata <- function(formula, data, cause=1, time=NULL, beta=NULL,
                           method="nr", augmentation=NULL,
                           outcome=c("cif","rmst","rmtl"),
                           model=c("default","logit","exp","lin"),
-                          Ydirect=NULL, strata=NULL, cv.fold=FALSE, ...)
+                          Ydirect=NULL, strata=NULL, cv.fold=FALSE, low.memory=FALSE,...)
 { # {{{
   monotone <- TRUE
   cl       <- match.call()
@@ -650,7 +651,6 @@ binregStrata <- function(formula, data, cause=1, time=NULL, beta=NULL,
   val$iid.naive <- val$iid
   val$naive.var <- NULL
   val$coef_list <- beta_opt
-  val$des       <- des
 
   ## ------------------------------------------------------------------
   ## Censoring IID adjustment, per stratum block
@@ -687,9 +687,26 @@ binregStrata <- function(formula, data, cause=1, time=NULL, beta=NULL,
   val$strata_call  <- des.strata
   val$cv.fold      <- cv.fold
 
+  if (low.memory) {
+	val$design$y <- NULL
+	val$design$data <- NULL
+	val$design$x <- NULL
+	val$design$strata <- NULL
+	val$strata_orig <- NULL
+	val$strata_call <- NULL
+	val$MGciid <- NULL
+	val$iid.naive <- NULL
+	val$iid.naive <- NULL
+	val$cens.strata <-  NULL
+	val$cens.weights <-  NULL
+	val$name.id  <-  NULL
+  }
+
   class(val) <- c("binregStrata","binreg")
   return(val)
 } # }}}
+
+
 
 ## {{{  predict, 
 
@@ -1302,7 +1319,7 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
     outfb      <- binregStrata(f0_strata, data = data, time = tt,
                                 strata     = strata_vec,
                                 cens.model = cens.model,
-                                cv.fold    = TRUE, ...)
+                                cv.fold    = TRUE, low.memory=TRUE,...)
     predbcv     <- predict_cvS(outfb, data)
     data$brier_ <- (outcome - predbcv)^2
     bbrierCV    <- do_resmean(data, data$brier_, tt)
@@ -1342,7 +1359,8 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
       outff    <- binregStrata(f_strata, data = data, time = tt,
                                 strata     = strata_vec,
                                 cens.model = cens.model,
-                                cv.fold    = TRUE, ...)
+                                cv.fold    = TRUE, low.memory=TRUE,...)
+###                                cv.fold    = TRUE, ...)
       pred        <- predict_cvS(outff, data)
       data$brier_ <- (outcome_m - pred)^2
       brierCV     <- do_resmean(data, data$brier_, tt)
