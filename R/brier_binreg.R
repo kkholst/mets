@@ -706,8 +706,6 @@ binregStrata <- function(formula, data, cause=1, time=NULL, beta=NULL,
   return(val)
 } # }}}
 
-
-
 ## {{{  predict, 
 
 ## small helper: given flat coef vector, route predictions per stratum
@@ -1265,6 +1263,16 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
     iid(brier_fit) + iid(outff_fit) %*% Dbrier_full
   } ## }}} 
 
+  eco <- function(bbrier) {
+    bbrier$design <- NULL
+    bbrier$cens.weights <- bbrier$cens.strata <- bbrier$MGciid <- bbrier$call.id
+    bbrier$name.id <- bbrier$iid.naive  <- bbrier$id <- NULL
+    bbrier$design$y <- NULL
+    bbrier$design$data <- NULL
+    bbrier$design$x <- NULL
+    bbrier$design$strata <- NULL
+    return(bbrier)
+  }
 
   ## ------------------------------------------------------------------
   ## resmeanIPCW wrapper / log-scale estimate helper
@@ -1312,6 +1320,7 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
     predb        <- predict(outb, data, se = FALSE)
     data$brier_  <- (outcome - predb)^2
     bbrier       <- do_resmean(data, data$brier_, tt)
+    bbrier <- eco(bbrier)
     bbrier_log   <- log_est(bbrier)
 
     ## ---------------- null model: CV ----------------
@@ -1323,9 +1332,11 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
     predbcv     <- predict_cvS(outfb, data)
     data$brier_ <- (outcome - predbcv)^2
     bbrierCV    <- do_resmean(data, data$brier_, tt)
+    bbrierCV    <- eco(bbrierCV)
     iid.bbrierCV <- cv_iid_correctS(bbrierCV, outfb, data,
                                      predbcv, ipcw_wt_b, outcome,
                                      binreg_model)
+    outfb$iid <- NULL
     bbrierCV_log <- log_est(bbrierCV, iid_corrected = iid.bbrierCV)
 
     null_res <- list(
@@ -1349,7 +1360,9 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
       ipcw_wt_m   <- as.numeric(out$IPCW)
       pred        <- predict(out, data, se = FALSE)
       data$brier_ <- (outcome_m - pred)^2
+      out         <- NULL
       brier       <- do_resmean(data, data$brier_, tt)
+      brier       <- eco(brier)
       brier_log   <- log_est(brier)
       dbrier      <- brier_log$coef - bbrier_log$coef
       se.dbrier   <- as.numeric(crossprod(brier_log$iid - bbrier_log$iid)^.5)
@@ -1360,13 +1373,13 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
                                 strata     = strata_vec,
                                 cens.model = cens.model,
                                 cv.fold    = TRUE, low.memory=TRUE,...)
-###                                cv.fold    = TRUE, ...)
       pred        <- predict_cvS(outff, data)
       data$brier_ <- (outcome_m - pred)^2
       brierCV     <- do_resmean(data, data$brier_, tt)
+      brierCV     <- eco(brierCV)
       iid.brierCV <- cv_iid_correctS(brierCV, outff, data,
-                                      pred, ipcw_wt_m, outcome_m,
-                                      binreg_model)
+                                      pred, ipcw_wt_m, outcome_m, binreg_model)
+      outff        <- NULL
       brierCV_log <- log_est(brierCV, iid_corrected = iid.brierCV)
       dbrierCV    <- brierCV_log$coef - bbrierCV_log$coef
       se.dbrierCV <- as.numeric(crossprod(brierCV_log$iid - bbrierCV_log$iid)^.5)
@@ -1387,7 +1400,11 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
     ## iid matrix: n x (1 + nmodels)
     iid_cols <- vector("list", nmodels + 1L)
     iid_cols[[1]] <- bbrierCV_log$iid
-    for (mi in seq_len(nmodels)) iid_cols[[mi + 1L]] <- model_res[[mi]]$iid$brierCV
+    bbrierCV_log$iid <- NULL
+    for (mi in seq_len(nmodels)) {
+	    iid_cols[[mi + 1L]] <- model_res[[mi]]$iid$brierCV
+	    model_res[[mi]]$iid$brierCV <- NULL
+    }
     iid_mat <- do.call(cbind, iid_cols)
     colnames(iid_mat) <- c("null", names(rhs))
 

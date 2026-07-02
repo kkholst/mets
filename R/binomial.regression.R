@@ -442,6 +442,9 @@ if (length(dots)==0) {
     MGCiid <- apply(MGt,2,sumstrata,xx$id,max(id)+1)
   }## }}}
 
+  ## do not need this, since have iid
+  val$Dlogl  <- NULL
+
   val$call <- cl
   val$MGciid <- MGCiid 
   val$call.id <- call.id
