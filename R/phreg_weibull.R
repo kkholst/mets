@@ -164,13 +164,13 @@ score_weibull <- function(p, entry, exit, status,
 ##' fit1 <- phreg_weibull(Event(entry, time, status == 9) ~ age,
 ##'              shape.formula = ~age, data = sTRACE)
 ##' tt <- seq(0,10, length.out=100)
-##' #pr1 <- predict(fit1, newdata = sTRACE[1, ], times = tt)
+##' pr1 <- predict(fit1, newdata = sTRACE[1, ], times = tt)
 ##' fit2 <- phreg(Event(time, status == 9) ~ age, data = sTRACE)
-##' #pr2 <- predict(fit2, newdata = sTRACE[1, ], se = FALSE)
-##' #if (interactive()) {
-##' #   plot(pr2$times, pr2$surv, type="s")
-##' #   lines(tt, pr1[,1,1], col="red", lwd=2)
-##' #}
+##' pr2 <- predict(fit2, newdata = sTRACE[1, ], se = FALSE)
+##' if (interactive()) {
+##'    plot(pr2$times, pr2$surv, type="s")
+##'    lines(tt, pr1[,1,1], col="red", lwd=2)
+##' }
 ##' @export
 ##' @return `phreg.par` object
 phreg_weibull <- function(formula,
