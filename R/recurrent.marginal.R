@@ -611,7 +611,7 @@ logrankRecurrentBase <- function(recurrent,death,weight=c("I","II","III"),km=TRU
       contr <- c(contr,diffi)
       contr.iid <- cbind(contr.iid,lrt$iid[,i]-apply(lrt$iid[,-i,drop=FALSE],1,sum))
    }
-   logrank <- estimate(coef=contr,IC=contr.iid*nrow(contr.iid))
+   logrank <- summary(estimate(coef=contr,IC=contr.iid*nrow(contr.iid)),null=0)
    p <- length(contr)
 
    return(logrank)
