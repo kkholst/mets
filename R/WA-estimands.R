@@ -160,7 +160,7 @@ cc <- c(ddN$coef,dd$coef)
 cciid <- cbind(ddN$iid,dd$iid)
 ratio.means  <- estimate(coef=cc,vcov=crossprod(cciid),f=f)
 ###			 f=function(p) (p[1:2]/p[3:4]))
-ratio.means.log <- estimate(coef=cc,vcov=crossprod(cciid),f=f,logg=1)
+ratio.means.log <- estimate(coef=cc,vcov=crossprod(cciid),f=function(p) log((p[1:2]/p[3:4])))
 RAW <- list(iid=cciid,coef=cc,time=time,rmst=dd,meanN=ddN,ratio.means=ratio.means,ratio.means.log=ratio.means.log)
 ## }}}
 
