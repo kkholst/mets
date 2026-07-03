@@ -148,9 +148,11 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
   XX <- c()
   nn <- c()
   namesX <- colnames(X); 
+  namesX <- gsub("^\\(Intercept\\)$", "Intercept", namesX)
+
   if (!fix.X) {
      for (i in nrefs) { XX <- cbind(XX,X*(strat==i)); 
-                      nn<-c(nn, paste(namesX,i,sep=".")) 
+                      nn<-c(nn, paste(namesX,i,sep="_")) 
      }  
      colnames(XX) <- nn; 
   } else {
@@ -165,12 +167,7 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
      colnames(XX) <- nn; 
   }
   rownames(XX) <- NULL
-
-  ###  namesXX <- paste("names",1:ncol(XX),sep="")
-  namesXXX <- gsub("\\)","", gsub("\\(","",nn))
-  namesXXX <- gsub("\\.","", gsub("\\.","",namesXXX))
-  namesXXX <- gsub("\\:","", gsub("\\:","",namesXXX))
-  colnames(XX) <- namesXXX
+  colnames(XX) <- nn
 
   datph = cbind(
       data.frame(
@@ -183,12 +180,9 @@ mlogit01 <- function(X,Y,id=NULL,strata=NULL,offset=NULL,weights=NULL,
 
   form <- "Surv(time,status)~strata(idrow)+cluster(id)"
   form <- paste(
-    form, "+",
-    paste(
-     colnames(XX),
-     collapse = "+")
+  form, "+",
+  paste(sprintf("`%s`", colnames(XX)), collapse = "+")
   )
-
 
   res <- phreg(as.formula(form), datph, weights = lweights, offset = loffset, ...)
   res$formula <- formula.call
