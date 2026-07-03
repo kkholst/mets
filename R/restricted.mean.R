@@ -256,8 +256,8 @@ coefDR <- c(rmtl$riskDR,rmtl1$riskDR)
 iidDR <- cbind(rmtl$riskDR.iid, rmtl1$riskDR.iid)
 covDR <- crossprod(iidDR)
 
-ratioG <- estimate(coef=coefG,vcov=covG,f=function(p) h(c(p[3:4]/p[1:2],p[1]*p[4]/(p[2]*p[3]),p[2]*p[3]/(p[1]*p[4]))),null=null)
-ratioDR <- estimate(coef=coefDR,vcov=covDR,f=function(p) h(c(p[3:4]/p[1:2],p[1]*p[4]/(p[2]*p[3]),p[2]*p[3]/(p[1]*p[4]))),null=null)
+ratioG <- summary(estimate(coef=coefG,vcov=covG,f=function(p) h(c(p[3:4]/p[1:2],p[1]*p[4]/(p[2]*p[3]),p[2]*p[3]/(p[1]*p[4])))),null=null)
+ratioDR <- summary(estimate(coef=coefDR,vcov=covDR,f=function(p) h(c(p[3:4]/p[1:2],p[1]*p[4]/(p[2]*p[3]),p[2]*p[3]/(p[1]*p[4])))),null=null)
 out <- list(ratioG=ratioG,ratioDR=ratioDR)
 return(out)
 

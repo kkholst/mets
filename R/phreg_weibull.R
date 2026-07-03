@@ -53,7 +53,7 @@ pred_weibull <- function(object, X, Z,
       if (individual.times) {
         newtime <- times[i]
       }
-      pr <- parameter(summary(
+      pr <- lava::parameter(summary(
         estimate(
           coef = par[i, ],
           vcov = var_arr[, , i], f = get(type[1])

@@ -226,8 +226,8 @@ if (nlev==2) {
 ###	contr.iid <- cbind(contr.iid,pmOut$iid[,2])
 ###   }
 ###   var.contr <- crossprod(contr.iid)
-###   ###  pepe.mori <- estimate(coef=contr,vcov=var.contr,null=0)
-###   pepe.mori <- estimate(coef=contr,IC=contr.iid*nrow(contr.iid),null=0)
+###   ###  pepe.mori <- summary(estimate(coef=contr,vcov=var.contr),null=0)
+###   pepe.mori <- summary(estimate(coef=contr,IC=contr.iid*nrow(contr.iid)),null=0)
 ###   p <- length(contr)
 ###   pepe.mori <- estimate(pepe.mori,lava::contr(1:p))
 	pepe.mori <- list()
