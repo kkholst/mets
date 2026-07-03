@@ -53,10 +53,11 @@ pred_weibull <- function(object, X, Z,
       if (individual.times) {
         newtime <- times[i]
       }
-      pr <- estimate(
-        coef = par[i, ],
-        vcov = var_arr[, , i], f = get(type[1]), ...
-        )$coefmat
+      pr <- parameter(summary(
+        estimate(
+          coef = par[i, ],
+          vcov = var_arr[, , i], f = get(type[1])
+        ), ...))
       if (individual.times) {
         est_arr[i, ] <- pr[1:4]
       } else {
