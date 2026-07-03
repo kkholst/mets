@@ -288,7 +288,7 @@ plot.recurrent <- function(x,ylab=NULL,test=TRUE,...) {# {{{
  baseplot(x,ylab=ylab,...)
  logrank <- attr(x,"logrank")
  if (!is.null(logrank) & test)
- legend("bottomright",paste("Logrank test, p=",round(logrank$compare$p.value,3)))
+ legend("bottomright",paste("Logrank test, p=",round(logrank$coefmat[,5],3)))
 }# }}}
 
 ##' @export
@@ -611,7 +611,7 @@ logrankRecurrentBase <- function(recurrent,death,weight=c("I","II","III"),km=TRU
       contr <- c(contr,diffi)
       contr.iid <- cbind(contr.iid,lrt$iid[,i]-apply(lrt$iid[,-i,drop=FALSE],1,sum))
    }
-   logrank <- estimate(coef=contr,IC=contr.iid*nrow(contr.iid),null=0)
+   logrank <- estimate(coef=contr,IC=contr.iid*nrow(contr.iid))
    p <- length(contr)
 
    return(logrank)

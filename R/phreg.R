@@ -3018,16 +3018,16 @@ if (same.data) {
 
 if (inherits(x,"cifreg") | inherits(x,"recreg")) {
 out <- estimate(coef=Grisk,vcov=vv,labels=paste("risk",Alevels,sep=""))
-ed <- estimate(coef=Grisk,vcov=vv,f=function(p) (p[-1])-(p[1]))
-rd <- estimate(coef=Grisk,vcov=vv,f=function(p) log(p[-1]/p[1]),null=0)
+ed <- summary(estimate(coef=Grisk,vcov=vv),f=function(p) (p[-1])-(p[1]))
+rd <- summary(estimate(coef=Grisk,vcov=vv),f=function(p) log(p[-1]/p[1]),null=0)
 out <- list(risk.iid=risk.iid,risk=out,difference=ed,ratio=rd,vcov=vv)
 } else if (inherits(x,"phreg"))  {
 out <- estimate(coef=1-Grisk,vcov=vv,labels=paste("risk",Alevels,sep=""))
 sout <- estimate(coef=Grisk,vcov=vv,labels=paste("risk",Alevels,sep=""))
-ed <- estimate(coef=Grisk,vcov=vv,f=function(p) (1-p[-1])-(1-p[1]))
-rd <- estimate(coef=Grisk,vcov=vv,f=function(p) log((1-p[-1])/(1-p[1])),null=0)
-srd <- estimate(coef=Grisk,vcov=vv,f=function(p) log(p[-1]/p[1]),null=0)
-ssd <- estimate(coef=Grisk,vcov=vv,f=function(p) p[-1]-p[1])
+ed <- summary(estimate(coef=Grisk,vcov=vv),f=function(p) (1-p[-1])-(1-p[1]))
+rd <- summary(estimate(coef=Grisk,vcov=vv),f=function(p) log((1-p[-1])/(1-p[1])),null=0)
+srd <- summary(estimate(coef=Grisk,vcov=vv),f=function(p) log(p[-1]/p[1]),null=0)
+ssd <- summary(estimate(coef=Grisk,vcov=vv),f=function(p) p[-1]-p[1])
 out <- list(risk.iid=risk.iid,survivalG=sout,risk=out,difference=ed,ratio=rd,
 	    survival.ratio=srd, survival.difference=ssd,vcov=vv)
 }
