@@ -26,6 +26,7 @@ binregStrata(
   Ydirect = NULL,
   strata = NULL,
   cv.fold = FALSE,
+  low.memory = FALSE,
   ...
 )
 }
@@ -102,6 +103,8 @@ not specified via \code{strata()} in the formula.}
 regression coefficients are estimated using all observations \emph{not}
 in stratum \code{s} (a cross-validation-style fit), rather than the
 observations within stratum \code{s} (the default, \code{FALSE}).}
+
+\item{low.memory}{Logical. If \code{TRUE} only saves key quanties, coef, var, iid and some design structures.}
 
 \item{...}{Additional arguments, currently passed as optimizer
 \code{control} settings (e.g. \code{tol}, \code{stepsize}) to the

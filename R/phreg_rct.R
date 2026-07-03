@@ -556,7 +556,7 @@ Gcj <- NULL
 
 ## Fitting all models with augmentation terms 
 if (fit0$p>0) {
-coefMarg <- estimate(coef = coef(fit0), vcov = fit0$var, level = level)$coefmat
+coefMarg <- summary(estimate(coef = coef(fit0), vcov = fit0$var), level = level)$coefmat
 var.names <- rownames(coefMarg)
 rownames(coefMarg) <- paste("Marginal",rownames(coefMarg),sep="-")
 coefs <- coefMarg
@@ -640,7 +640,7 @@ if (typeR!=typeC) {
    } else baselinecox <- cumhazR0 <- cumhaz <-  se.cumhaz <- se.R0cumhaz <- NULL  ## }}}
 
    if (fit0$p>0)  {
-     coeffitt <- estimate(coef=coef(fitts),vcov=var.beta,level=level)$coefmat
+     coeffitt <- summary(estimate(coef=coef(fitts),vcov=var.beta),level=level)$coefmat
      nnn <- paste(typeR,typeC,sep="_")
      iidn <- c(iidn,nnn)
      rownames(coeffitt) <- paste(nnn,var.names,sep=":")

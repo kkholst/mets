@@ -308,7 +308,7 @@ if (!design.only) {
 
 ##' @export
 summary.haplosurvd <- function(object,...) { ## {{{ 
-out <- lava::estimate(object,...)
+out <- lava::estimate(coef=object$coef,vcov=object$var,...)
 return(out)
 } ## }}} 
 
