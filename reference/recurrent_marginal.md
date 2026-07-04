@@ -150,6 +150,8 @@ out <- recurrent_marginal(Event(entry, time, status) ~ strata(treatment) + clust
 plot(out, se = TRUE, ylab = "Marginal mean", col = 1:2)
 
 attr(out, "logrank")
+#> Call: estimate.default(coef = contr, IC = contr.iid * nrow(contr.iid))
+#> ────────────────────────────────────────────────────────────
 #>    Estimate Std.Err   2.5% 97.5% P-value
 #> p1    37.98   27.04 -15.01 90.97  0.1601
 #> ────────────────────────────────────────────────────────────

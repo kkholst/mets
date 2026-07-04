@@ -21,6 +21,9 @@
   : Additive Random effects model for competing risks data for
   polygenetic modelling
 
+- [`IC(`*`<binreg>`*`)`](http://kkholst.github.io/mets/reference/IC.binreg.md)
+  : Influence curve components for binomial regression ATE
+
 - [`IC(`*`<phreg>`*`)`](http://kkholst.github.io/mets/reference/IC.phreg.md)
   : Influence Functions for phreg objects
 
@@ -66,8 +69,15 @@
 - [`binregRatio()`](http://kkholst.github.io/mets/reference/binregRatio.md)
   : Percentage of Years Lost Due to a Cause Regression
 
+- [`binregStrata()`](http://kkholst.github.io/mets/reference/binregStrata.md)
+  : Stratified Binomial Regression with cross-validation option
+
 - [`binregTSR()`](http://kkholst.github.io/mets/reference/binregTSR.md)
   : Two-Stage Randomization for Survival or Competing Risks Data
+
+- [`binreg_IPTW()`](http://kkholst.github.io/mets/reference/binreg_IPTW.md)
+  : IPTW logistic regression, Inverse Probabibilty of Treatment Weighted
+  binreg
 
 - [`biprobit()`](http://kkholst.github.io/mets/reference/biprobit.md) :
   Bivariate Probit model
@@ -80,6 +90,12 @@
 
 - [`bptwin()`](http://kkholst.github.io/mets/reference/bptwin.md) :
   Liability model for twin data
+
+- [`brier_binreg()`](http://kkholst.github.io/mets/reference/brier_binreg.md)
+  :
+
+  Cross-validated Brier score for competing risks, RMST and RMTL
+  regression using stratified leave-fold-out fits (`binregStrata`)
 
 - [`calgb8923`](http://kkholst.github.io/mets/reference/calgb8923.md) :
   CALGB 8923, twostage randomization SMART design
@@ -181,6 +197,9 @@
 - [`dtransform()`](http://kkholst.github.io/mets/reference/dtransform.md)
   : Transform that allows condition
 
+- [`estimate(`*`<binregCV>`*`)`](http://kkholst.github.io/mets/reference/estimate.binregCV.md)
+  : Joint estimate across CV models for a binregCV object
+
 - [`event_split()`](http://kkholst.github.io/mets/reference/event_split.md)
   : event_split (SurvSplit).
 
@@ -221,9 +240,6 @@
 - [`force.same.cens()`](http://kkholst.github.io/mets/reference/force.same.cens.md)
   [`force_same_cens()`](http://kkholst.github.io/mets/reference/force.same.cens.md)
   : Force Same Censoring Within Clusters
-
-- [`glm_IPTW()`](http://kkholst.github.io/mets/reference/glm_IPTW.md) :
-  IPTW GLM, Inverse Probabibilty of Treatment Weighted GLM
 
 - [`gof(`*`<phreg>`*`)`](http://kkholst.github.io/mets/reference/gof.phreg.md)
   : Goodness-of-Fit for Cox PH Regression (Proportionality)
@@ -345,6 +361,9 @@
 - [`print(`*`<casewise>`*`)`](http://kkholst.github.io/mets/reference/print.casewise.md)
   : prints Concordance test
 
+- [`print(`*`<summary_binregCV_multi>`*`)`](http://kkholst.github.io/mets/reference/print.summary_binregCV_multi.md)
+  : Print method for summary_binregCV_multi objects
+
 - [`prob_exceed_recurrent()`](http://kkholst.github.io/mets/reference/prob_exceed_recurrent.md)
   : Estimate the probability of exceeding k recurrent events by time t
 
@@ -433,6 +452,12 @@
   [`matdoubleindex()`](http://kkholst.github.io/mets/reference/strata-numeric.md)
   [`mdi()`](http://kkholst.github.io/mets/reference/strata-numeric.md) :
   Stratified Cumulative and Summary Operations
+
+- [`summary(`*`<binregCV>`*`)`](http://kkholst.github.io/mets/reference/summary.binregCV.md)
+  : Summary method for binregCV objects
+
+- [`summary(`*`<binregCV_list>`*`)`](http://kkholst.github.io/mets/reference/summary.binregCV_list.md)
+  : Summary method for binregCV_list objects
 
 - [`summary(`*`<cor>`*`)`](http://kkholst.github.io/mets/reference/summary.cor.md)
   : Summary for dependence models for competing risks

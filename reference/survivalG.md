@@ -102,8 +102,8 @@ bmt$id <- 1:408
 dfactor(bmt) <- tcell.f ~ tcell
 
 # Fine-Gray model
-fg1 <- cifreg(Event(time, cause) ~ tcell.f + platelet + age, bmt,
-              cause = 1, cox.prep = TRUE, propodds = NULL)
+fg1 <- cifregFG(Event(time, cause) ~ tcell.f + platelet + age, bmt,
+              cause = 1, cox.prep = TRUE)
 summary(survivalG(fg1, bmt, 50))
 #> G-estimator :
 #>       Estimate Std.Err   2.5%  97.5%   P-value

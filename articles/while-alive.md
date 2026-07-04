@@ -32,11 +32,6 @@ summary(dd)
 #>  
 #>                           Estimate Std.Err    2.5%    97.5% P-value
 #> [treatment0] - [treat.... -0.06517 0.02588 -0.1159 -0.01444  0.0118
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [treatment0] - [treatment1] = 0 
-#>  
-#> chisq = 6.3405, df = 1, p-value = 0.0118
 #> mean events, E(N(min(D,t))): 
 #>            Estimate Std.Err  2.5% 97.5%   P-value
 #> treatment0    1.572 0.09573 1.384 1.759 1.375e-60
@@ -44,11 +39,6 @@ summary(dd)
 #>  
 #>                           Estimate Std.Err    2.5%  97.5% P-value
 #> [treatment0] - [treat....   0.1185  0.1407 -0.1574 0.3943     0.4
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [treatment0] - [treatment1] = 0 
-#>  
-#> chisq = 0.7085, df = 1, p-value = 0.4
 #> _______________________________________________________ 
 #> Ratio of means E(N(min(D,t)))/E(min(D,t)) 
 #>    Estimate Std.Err   2.5%  97.5%   P-value
@@ -57,11 +47,6 @@ summary(dd)
 #>  
 #>             Estimate Std.Err     2.5%  97.5% P-value
 #> [p1] - [p2]  0.09022 0.07565 -0.05805 0.2385   0.233
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [p1] - [p2] = 0 
-#>  
-#> chisq = 1.4222, df = 1, p-value = 0.233
 #> _______________________________________________________ 
 #> Mean of Events per time-unit E(N(min(D,t))/min(D,t)) 
 #>        Estimate Std.Err   2.5%  97.5%   P-value
@@ -70,11 +55,6 @@ summary(dd)
 #>  
 #>                     Estimate Std.Err    2.5%  97.5% P-value
 #> [treat0] - [treat1]   0.3173  0.1381 0.04675 0.5879 0.02153
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [treat0] - [treat1] = 0 
-#>  
-#> chisq = 5.2837, df = 1, p-value = 0.02153
 
 dd <- WA_recurrent(Event(entry,time,status)~treatment+cluster(id),hfactioncpx12,time=2,
            death.code=2,trans=.333)
@@ -88,11 +68,6 @@ summary(dd,type="log")
 #>  
 #>                           Estimate Std.Err     2.5%     97.5% P-value
 #> [treatment0] - [treat.... -0.03446 0.01377 -0.06145 -0.007478 0.01231
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [treatment0] - [treatment1] = 0 
-#>  
-#> chisq = 6.2656, df = 1, p-value = 0.01231
 #> mean events, E(N(min(D,t))): 
 #>            Estimate Std.Err   2.5%  97.5%   P-value
 #> treatment0   0.4523 0.06090 0.3329 0.5716 1.119e-13
@@ -100,11 +75,6 @@ summary(dd,type="log")
 #>  
 #>                           Estimate Std.Err    2.5%  97.5% P-value
 #> [treatment0] - [treat....  0.07835 0.09352 -0.1049 0.2616  0.4022
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [treatment0] - [treatment1] = 0 
-#>  
-#> chisq = 0.7018, df = 1, p-value = 0.4022
 #> _______________________________________________________ 
 #> Ratio of means E(N(min(D,t)))/E(min(D,t)) 
 #>    Estimate Std.Err    2.5%    97.5%   P-value
@@ -113,11 +83,6 @@ summary(dd,type="log")
 #>  
 #>             Estimate Std.Err     2.5%  97.5% P-value
 #> [p1] - [p2]   0.1128 0.09511 -0.07361 0.2992  0.2356
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [p1] - [p2] = 0 
-#>  
-#> chisq = 1.4067, df = 1, p-value = 0.2356
 #> _______________________________________________________ 
 #> Mean of Events per time-unit E(N(min(D,t))/min(D,t)) 
 #>        Estimate Std.Err    2.5%   97.5%   P-value
@@ -126,11 +91,6 @@ summary(dd,type="log")
 #>  
 #>                     Estimate Std.Err     2.5%  97.5% P-value
 #> [treat0] - [treat1]   0.1548 0.07517 0.007459 0.3021 0.03948
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [treat0] - [treat1] = 0 
-#>  
-#> chisq = 4.2403, df = 1, p-value = 0.03948
 ```
 
 We see that the ratio of means is not very different between groups, but
@@ -230,7 +190,7 @@ sessionInfo()
 #>  [1] vctrs_0.7.3            cli_3.6.6              knitr_1.51            
 #>  [4] rlang_1.2.0            xfun_0.57              KernSmooth_2.23-26    
 #>  [7] otel_0.2.0             data.table_1.18.4      glue_1.8.1            
-#> [10] future.apply_1.20.2    listenv_0.10.1         lava_1.9.1            
+#> [10] future.apply_1.20.2    listenv_0.10.1         lava_1.9.2            
 #> [13] stats4_4.6.0           grid_4.6.0             evaluate_1.0.5        
 #> [16] lifecycle_1.0.5        yaml_2.3.12            mvtnorm_1.3-7         
 #> [19] numDeriv_2016.8-1.1    compiler_4.6.0         codetools_0.2-20      

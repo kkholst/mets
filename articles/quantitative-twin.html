@@ -21,7 +21,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.12</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -307,12 +307,7 @@ and DZ correlation:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">lu</span>,<span class="fu">lava</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/contr.html" class="external-link">contr</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">6</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                           Estimate Std.Err   2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; [atanh(rhoMZ)@1] - [a....   0.4816 0.04177 0.3997 0.5635 9.431e-31</span></span>
-<span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; Null Hypothesis: </span></span>
-<span><span class="co">#&gt;   [atanh(rhoMZ)@1] - [atanh(rhoDZ)@2] = 0 </span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; chisq = 132.9162, df = 1, p-value &lt; 2.2e-16</span></span></code></pre></div>
+<span><span class="co">#&gt; [atanh(rhoMZ)@1] - [a....   0.4816 0.04177 0.3997 0.5635 9.431e-31</span></span></code></pre></div>
 <p>We also consider the ACE model</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ace0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twinlm.html">twinlm</a></span><span class="op">(</span><span class="va">bmi</span> <span class="op">~</span> <span class="va">age</span><span class="op">+</span><span class="va">gender</span>, data<span class="op">=</span><span class="va">dd</span>, DZ<span class="op">=</span><span class="st">"DZ"</span>, zyg<span class="op">=</span><span class="st">"zyg"</span>, id<span class="op">=</span><span class="st">"tvparnr"</span>, type<span class="op">=</span><span class="st">"ace"</span><span class="op">)</span></span>

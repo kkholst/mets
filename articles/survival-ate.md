@@ -161,7 +161,10 @@ summary(sr1)
 #> treat:1-0  0.015087  0.089442 -0.160215  0.190389   0.866
 
 ## relative risk effect 
-estimate(coef=sr1$riskDR,vcov=sr1$var.riskDR,f=function(p) p[2]/p[1],null=1)
+summary(estimate(coef=sr1$riskDR,vcov=sr1$var.riskDR,f=function(p) p[2]/p[1]),null=1)
+#> Call: estimate.default(f = function(p) p[2]/p[1], coef = sr1$riskDR, 
+#>     vcov = sr1$var.riskDR)
+#> ────────────────────────────────────────────────────────────
 #>        Estimate Std.Err   2.5% 97.5% P-value
 #> treat1    1.024   0.144 0.7421 1.306  0.8664
 #> ────────────────────────────────────────────────────────────
@@ -289,7 +292,7 @@ sessionInfo()
 #>  [1] vctrs_0.7.3            cli_3.6.6              knitr_1.51            
 #>  [4] rlang_1.2.0            xfun_0.57              KernSmooth_2.23-26    
 #>  [7] otel_0.2.0             glue_1.8.1             future.apply_1.20.2   
-#> [10] listenv_0.10.1         lava_1.9.1             stats4_4.6.0          
+#> [10] listenv_0.10.1         lava_1.9.2             stats4_4.6.0          
 #> [13] grid_4.6.0             evaluate_1.0.5         lifecycle_1.0.5       
 #> [16] yaml_2.3.12            mvtnorm_1.3-7          numDeriv_2016.8-1.1   
 #> [19] compiler_4.6.0         codetools_0.2-20       Rcpp_1.1.1-1.1        

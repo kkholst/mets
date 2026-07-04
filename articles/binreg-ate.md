@@ -495,7 +495,7 @@ sessionInfo()
 #> loaded via a namespace (and not attached):
 #>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
 #>  [4] xfun_0.57              otel_0.2.0             future.apply_1.20.2   
-#>  [7] listenv_0.10.1         lava_1.9.1             stats4_4.6.0          
+#>  [7] listenv_0.10.1         lava_1.9.2             stats4_4.6.0          
 #> [10] grid_4.6.0             evaluate_1.0.5         mvtnorm_1.3-7         
 #> [13] numDeriv_2016.8-1.1    compiler_4.6.0         codetools_0.2-20      
 #> [16] Rcpp_1.1.1-1.1         ucminf_1.2.3           future_1.70.0         

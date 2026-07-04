@@ -131,7 +131,8 @@ An object of class `"binreg"` (extending `"resmean"`) containing:
 
 - Y:
 
-  Observed counts.
+  Observed IPCW weighted counts (increment IPCW) \$\$\int_0^t (1/G_c(s))
+  dN(s)\$\$.
 
 ## See also
 

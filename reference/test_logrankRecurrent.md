@@ -15,7 +15,7 @@ Lin (2000).
 test_logrankRecurrent(
   recurrent,
   death,
-  weight = c("I", "II"),
+  weight = c("I", "II", "III"),
   km = TRUE,
   start = 0,
   stop = NULL,
@@ -42,7 +42,8 @@ test_logrankRecurrent(
 - weight:
 
   Character string specifying the weight scheme: `"I"`, `"II"`, or
-  `"III"`. Default is `"I"`.
+  `"III"`. Default is `"I"`. For competing risks `"III"` gives Gray's
+  test with robust standard errors.
 
 - km:
 
@@ -142,8 +143,7 @@ xr <- phreg(Surv(entry, time, status == 1) ~ strata(treatment) + cluster(id), da
 dr <- phreg(Surv(entry, time, status == 2) ~ strata(treatment) + cluster(id), data = hf)
 out <- test_logrankRecurrent(xr, dr, stop = 5)
 summary(out)
-#> Call: estimate.default(f = FALSE, contrast = contrast, vcov = vcov(object), 
-#>     coef = p)
+#> Call: estimate.default(coef = contr, IC = contr.iid * nrow(contr.iid))
 #> ────────────────────────────────────────────────────────────
 #>    Estimate Std.Err   2.5% 97.5% P-value
 #> p1    37.98   27.04 -15.01 90.97  0.1601
@@ -157,6 +157,8 @@ summary(out)
 outN <- recurrent_marginal(Event(entry, time, status) ~ strata(treatment) + cluster(id),
                            data = hf, cause = 1, death.code = 2)
 test_logrankRecurrent(outN)
+#> Call: estimate.default(coef = contr, IC = contr.iid * nrow(contr.iid))
+#> ────────────────────────────────────────────────────────────
 #>    Estimate Std.Err   2.5% 97.5% P-value
 #> p1    37.98   27.04 -15.01 90.97  0.1601
 #> ────────────────────────────────────────────────────────────

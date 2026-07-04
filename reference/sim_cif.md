@@ -141,7 +141,6 @@ plot(scif,add=TRUE,col=2)
 ## Fine-Gray cloglog cumulative incidence regression model 
 cif <- cifregFG(Event(time,cause)~strata(tcell)+age,data=bmt,cause=1)
 estimate(cif)  
-#> Warning: IC does not have mean zero (max |mean|/rms = 6.1e-05). Using lava.options(check.ic = FALSE) disables the warning globally.
 #>     Estimate Std.Err   2.5%  97.5%   P-value
 #> age   0.3584 0.07883 0.2039 0.5129 5.471e-06
 plot(cif,col=1)

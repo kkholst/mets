@@ -33,6 +33,7 @@
 <url><loc>http://kkholst.github.io/mets/reference/Dbvn.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/Event.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/Grandom_cif.html</loc></url>
+<url><loc>http://kkholst.github.io/mets/reference/IC.binreg.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/IC.phreg.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/LinSpline.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/TRACE.html</loc></url>
@@ -46,11 +47,14 @@
 <url><loc>http://kkholst.github.io/mets/reference/binregCasewise.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/binregG.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/binregRatio.html</loc></url>
+<url><loc>http://kkholst.github.io/mets/reference/binregStrata.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/binregTSR.html</loc></url>
+<url><loc>http://kkholst.github.io/mets/reference/binreg_IPTW.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/biprobit.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/blocksample.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/bmt.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/bptwin.html</loc></url>
+<url><loc>http://kkholst.github.io/mets/reference/brier_binreg.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/calgb8923.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/casewise.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/casewise_bin.html</loc></url>
@@ -82,6 +86,7 @@
 <url><loc>http://kkholst.github.io/mets/reference/dspline.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/dtable.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/dtransform.html</loc></url>
+<url><loc>http://kkholst.github.io/mets/reference/estimate.binregCV.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/event_split.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/event_split2.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/eventpois.html</loc></url>
@@ -95,7 +100,6 @@
 <url><loc>http://kkholst.github.io/mets/reference/faster.reshape.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/folds.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/force.same.cens.html</loc></url>
-<url><loc>http://kkholst.github.io/mets/reference/glm_IPTW.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/gof.phreg.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/gofM_phreg.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/gofZ_phreg.html</loc></url>
@@ -137,6 +141,7 @@
 <url><loc>http://kkholst.github.io/mets/reference/predict.mlogit.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/predict.phreg.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/print.casewise.html</loc></url>
+<url><loc>http://kkholst.github.io/mets/reference/print.summary_binregCV_multi.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/prob_exceed_recurrent.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/prt.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/random_cif.html</loc></url>
@@ -165,6 +170,8 @@
 <url><loc>http://kkholst.github.io/mets/reference/sim_recurrentTS.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/sim_recurrent_ts.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/strata-numeric.html</loc></url>
+<url><loc>http://kkholst.github.io/mets/reference/summary.binregCV.html</loc></url>
+<url><loc>http://kkholst.github.io/mets/reference/summary.binregCV_list.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/summary.cor.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/summaryGLM.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/summaryTimeobject.html</loc></url>

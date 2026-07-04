@@ -21,7 +21,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.12</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,7 +81,7 @@
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2026-05-24</h4>
+            <h4 data-toc-skip class="date">2026-07-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/survival-ate.Rmd" class="external-link"><code>vignettes/survival-ate.Rmd</code></a></small>
       <div class="d-none name"><code>survival-ate.Rmd</code></div>
@@ -240,7 +240,10 @@ and is faster for large data: <code>binregG</code>.</p>
 <span><span class="co">#&gt; treat:1-0  0.015087  0.089442 -0.160215  0.190389   0.866</span></span>
 <span></span>
 <span><span class="co">## relative risk effect </span></span>
-<span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="va">sr1</span><span class="op">$</span><span class="va">riskDR</span>,vcov<span class="op">=</span><span class="va">sr1</span><span class="op">$</span><span class="va">var.riskDR</span>,f<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">/</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,null<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="va">sr1</span><span class="op">$</span><span class="va">riskDR</span>,vcov<span class="op">=</span><span class="va">sr1</span><span class="op">$</span><span class="va">var.riskDR</span>,f<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">/</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>,null<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Call: estimate.default(f = function(p) p[2]/p[1], coef = sr1$riskDR, </span></span>
+<span><span class="co">#&gt;     vcov = sr1$var.riskDR)</span></span>
+<span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;        Estimate Std.Err   2.5% 97.5% P-value</span></span>
 <span><span class="co">#&gt; treat1    1.024   0.144 0.7421 1.306  0.8664</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
@@ -363,7 +366,7 @@ and is faster for large data: <code>binregG</code>.</p>
 <span><span class="co">#&gt;  [1] vctrs_0.7.3            cli_3.6.6              knitr_1.51            </span></span>
 <span><span class="co">#&gt;  [4] rlang_1.2.0            xfun_0.57              KernSmooth_2.23-26    </span></span>
 <span><span class="co">#&gt;  [7] otel_0.2.0             glue_1.8.1             future.apply_1.20.2   </span></span>
-<span><span class="co">#&gt; [10] listenv_0.10.1         lava_1.9.1             stats4_4.6.0          </span></span>
+<span><span class="co">#&gt; [10] listenv_0.10.1         lava_1.9.2             stats4_4.6.0          </span></span>
 <span><span class="co">#&gt; [13] grid_4.6.0             evaluate_1.0.5         lifecycle_1.0.5       </span></span>
 <span><span class="co">#&gt; [16] yaml_2.3.12            mvtnorm_1.3-7          numDeriv_2016.8-1.1   </span></span>
 <span><span class="co">#&gt; [19] compiler_4.6.0         codetools_0.2-20       Rcpp_1.1.1-1.1        </span></span>

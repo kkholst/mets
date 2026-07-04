@@ -233,11 +233,6 @@ DZ correlation:
 estimate(lu,lava::contr(5:6,6))
 #>                           Estimate Std.Err   2.5%  97.5%   P-value
 #> [atanh(rhoMZ)@1] - [a....   0.4816 0.04177 0.3997 0.5635 9.431e-31
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [atanh(rhoMZ)@1] - [atanh(rhoDZ)@2] = 0 
-#>  
-#> chisq = 132.9162, df = 1, p-value < 2.2e-16
 ```
 
 We also consider the ACE model

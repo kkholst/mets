@@ -1,22 +1,30 @@
 # Changelog
 
-## mets 1.3.11
+## mets 1.3.12
 
 Development version
+
+## mets 1.3.11
+
+CRAN release: 2026-07-01
+
+- `IC` method for `binregATE`
+- documentation updated for log-rank test and Gray’s test.
+- compatability with `lava` version 1.9.2
 
 ## mets 1.3.10
 
 CRAN release: 2026-05-23
 
-- Changed the naming of some functions for RMTL and RMST `resmean.phreg`
+- changed the naming of some functions for RMTL and RMST `resmean.phreg`
   to `resmean_phreg` and `cif.yearslost` to `cif_yearslost`. Naming of
   functions have gone from `.` to `_`, for example `simul.cifs` have
   changed to `simul_cifs`. A few exceptions due to backward compability,
   and for the same reason some functions appear with names with both `.`
   and `_`.
-- Cumulative incidence simulation with delayed entry `simul_cifs`,
+- cumulative incidence simulation with delayed entry `simul_cifs`,
   `sim_cif`, `sim_cifs`  
-- Extension of `recreg` (Ghosh-Lin model) and `cifreg` (logit and
+- extension of `recreg` (Ghosh-Lin model) and `cifreg` (logit and
   Fine-Gray (cloglog) model) to deal with administrative censoring and
   additional random censoring.
 - `iid` and `IC` methods for `recurrentMarginal`

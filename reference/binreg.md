@@ -174,6 +174,37 @@ Censoring model may depend on strata (cens.model=~strata(gX)).
   incidence probability by direct binomial regression." *Biometrika*,
   95(1), 205–220.
 
+## Outcome definition
+
+The observed outcome \\Y_i\\ constructed from `outcome` depends on
+whether competing risks are present. Competing risks are detected
+automatically: the data are considered to have competing risks when
+causes other than those specified in `cause` are observed (i.e.
+`any(!(Causes %in% cause))`, where `Causes` are all non-censoring event
+codes found in the data).
+
+**No competing risks** (all observed events belong to `cause`):
+
+- `"cif"`: \\Y_i = I(T_i \leq t, \epsilon_i = 1)\\. Cumulative
+  incidence.
+
+- `"rmst"`: \\Y_i = \min(T_i, t)\\. Restricted mean survival time.
+
+- `"rmtl"`: \\Y_i = t - \min(T_i, t)\\. Restricted mean time lost.
+
+**Competing risks** (causes beyond `cause` are observed in the data):
+
+- `"cif"`: \\Y_i = I(T_i \leq t, \epsilon_i \in \code{cause})\\.
+  Cumulative incidence for the cause(s) of interest.
+
+- `"rmst"` or `"rmtl"`: \\Y_i = I(\epsilon_i \in \code{cause})(t -
+  \min(T_i, t))\\. Cause-specific years lost, accumulated only for
+  subjects who experience an event in `cause`.
+
+The default link function (`model = "default"`) is `"logit"` for `"cif"`
+and `"exp"` for `"rmst"` and `"rmtl"`. If `Ydirect` is supplied, outcome
+construction is bypassed entirely.
+
 ## Author
 
 Thomas Scheike
@@ -203,13 +234,13 @@ summary(out)
 #> 
 #> 
 head(iid(out))
-#>              [,1]       [,2]        [,3]
-#> [1,] -0.006946199 0.00400363 0.006176986
-#> [2,] -0.006946199 0.00400363 0.006176986
-#> [3,] -0.006946199 0.00400363 0.006176986
-#> [4,] -0.006946199 0.00400363 0.006176986
-#> [5,] -0.006946199 0.00400363 0.006176986
-#> [6,] -0.006946199 0.00400363 0.006176986
+#>           [,1]       [,2]        [,3]
+#> 1 -0.006946199 0.00400363 0.006176986
+#> 2 -0.006946199 0.00400363 0.006176986
+#> 3 -0.006946199 0.00400363 0.006176986
+#> 4 -0.006946199 0.00400363 0.006176986
+#> 5 -0.006946199 0.00400363 0.006176986
+#> 6 -0.006946199 0.00400363 0.006176986
 
 predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
 #>        pred         se     lower     upper

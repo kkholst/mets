@@ -149,7 +149,6 @@ fg=cifregFG(Event(time,cause)~tcell,data=bmt,cause=1)
 ## computing tests for difference  for CIF
 pmt <- test_marginalMean(Event(time,cause)~strata(tcell)+cluster(id),data=bmt,cause=1,
        death.code=1:2,death.code.prop=2,cens.code=0,time=40)
-#> Warning: IC does not have mean zero (max |mean|/rms = 0.11). Using lava.options(check.ic = FALSE) disables the warning globally.
 summary(pmt) 
 #> coeffients:
 #>                            p-value
@@ -161,22 +160,30 @@ summary(pmt)
 #> 
  
 pmt$pepe.mori
-#>                         Estimate Std.Err   2.5%  97.5% P-value
-#> factor(strata__)tcell=1   -6.409   2.762 -11.82 -0.996 0.02031
+#> Call: estimate.default(x = pepe.mori)
+#> ────────────────────────────────────────────────────────────
+#>                         Estimate Std.Err   2.5%  97.5%   P-value
+#> (Intercept)               17.322   1.122  15.12 19.521 9.215e-54
+#> factor(strata__)tcell=1   -6.409   2.762 -11.82 -0.996 2.031e-02
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [factor(strata__)tcell=1] = 0 
 #>  
 #> chisq = 5.385, df = 1, p-value = 0.02031
 pmt$RatioAUC
-#>             Estimate Std.Err    2.5%     97.5% P-value
-#> (Intercept)   -0.484  0.2463 -0.9667 -0.001352 0.04936
+#> Call: estimate.default(x = RAUCe)
+#> ────────────────────────────────────────────────────────────
+#>               Estimate Std.Err    2.5%     97.5% P-value
+#> (Intercept)      2.690 0.06545  2.5616  2.818194 0.00000
+#> (Intercept).1   -0.484 0.24627 -0.9667 -0.001352 0.04936
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [(Intercept)] = 0 
 #>  
 #> chisq = 3.863, df = 1, p-value = 0.04936
 pmt$prop.test
+#> Call: estimate.default(x = b)
+#> ────────────────────────────────────────────────────────────
 #>                         Estimate Std.Err   2.5%      97.5% P-value
 #> factor(strata__)tcell=1  -0.5157  0.2631 -1.031 -5.483e-05 0.04998
 #> ────────────────────────────────────────────────────────────
@@ -186,6 +193,8 @@ pmt$prop.test
 #> chisq = 3.8423, df = 1, p-value = 0.04998
 ## score test equialent to Gray's test but variance estimated differently 
 pmt$score.test
+#> Call: estimate.default(x = NULL, coef = ..1, IC = ..2)
+#> ────────────────────────────────────────────────────────────
 #>    Estimate Std.Err   2.5%   97.5% P-value
 #> p1   -8.633   3.957 -16.39 -0.8764 0.02915
 #> ────────────────────────────────────────────────────────────
@@ -197,7 +206,6 @@ pmt$score.test
 ### age-groups  
 pmt <- test_marginalMean(Event(time,cause)~strata(age.f)+cluster(id),data=bmt,cause=1,
        death.code=1:2,death.code.prop=2,cens.code=0)
-#> Warning: IC does not have mean zero (max |mean|/rms = 0.097). Using lava.options(check.ic = FALSE) disables the warning globally.
 summary(pmt) 
 #> coeffients:
 #>                            p-value
@@ -218,7 +226,6 @@ data(hfactioncpx12)
 hf <- hfactioncpx12
 pmt <- test_marginalMean(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,
        cause=1,death.code=2,cens.code=0)
-#> Warning: IC does not have mean zero (max |mean|/rms = 0.051). Using lava.options(check.ic = FALSE) disables the warning globally.
 summary(pmt) 
 #> coeffients:
 #>                            p-value

@@ -132,9 +132,4 @@ e1 <- estimate(rm1)
 estimate(e1, rbind(c(1, -1, 0, 0)))
 #>                           Estimate Std.Err   2.5%  97.5%  P-value
 #> [tcell=0, platelet=0]....   -6.723   2.069 -10.78 -2.668 0.001156
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [tcell=0, platelet=0] - [tcell=0, platelet=1] = 0 
-#>  
-#> chisq = 10.5593, df = 1, p-value = 0.001156
 ```

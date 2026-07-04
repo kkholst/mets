@@ -170,11 +170,6 @@ summary(dd)
 #>  
 #>                           Estimate Std.Err    2.5%    97.5% P-value
 #> [treatment0] - [treat.... -0.06517 0.02588 -0.1159 -0.01444  0.0118
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [treatment0] - [treatment1] = 0 
-#>  
-#> chisq = 6.3405, df = 1, p-value = 0.0118
 #> mean events, E(N(min(D,t))): 
 #>            Estimate Std.Err  2.5% 97.5%   P-value
 #> treatment0    1.572 0.09573 1.384 1.759 1.375e-60
@@ -182,11 +177,6 @@ summary(dd)
 #>  
 #>                           Estimate Std.Err    2.5%  97.5% P-value
 #> [treatment0] - [treat....   0.1185  0.1407 -0.1574 0.3943     0.4
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [treatment0] - [treatment1] = 0 
-#>  
-#> chisq = 0.7085, df = 1, p-value = 0.4
 #> _______________________________________________________ 
 #> Ratio of means E(N(min(D,t)))/E(min(D,t)) 
 #>    Estimate Std.Err   2.5%  97.5%   P-value
@@ -195,11 +185,6 @@ summary(dd)
 #>  
 #>             Estimate Std.Err     2.5%  97.5% P-value
 #> [p1] - [p2]  0.09022 0.07565 -0.05805 0.2385   0.233
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [p1] - [p2] = 0 
-#>  
-#> chisq = 1.4222, df = 1, p-value = 0.233
 #> _______________________________________________________ 
 #> Mean of Events per time-unit E(N(min(D,t))/min(D,t)) 
 #>        Estimate Std.Err   2.5%  97.5%   P-value
@@ -208,9 +193,4 @@ summary(dd)
 #>  
 #>                     Estimate Std.Err    2.5%  97.5% P-value
 #> [treat0] - [treat1]   0.3173  0.1381 0.04675 0.5879 0.02153
-#> ────────────────────────────────────────────────────────────
-#> Null Hypothesis: 
-#>   [treat0] - [treat1] = 0 
-#>  
-#> chisq = 5.2837, df = 1, p-value = 0.02153
 ```

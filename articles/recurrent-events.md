@@ -268,6 +268,9 @@ test
 ``` r
 
 test_logrankRecurrent(out)
+#> Call: estimate.default(coef = contr, IC = contr.iid * nrow(contr.iid), 
+#>     null = 0)
+#> ────────────────────────────────────────────────────────────
 #>    Estimate Std.Err   2.5%  97.5% P-value
 #> p1   10.368   14.44 -17.93 38.661 0.47264
 #> p2  -22.069   12.43 -46.43  2.288 0.07575
@@ -283,21 +286,11 @@ test_logrankRecurrent(out)
 dd <- test_marginalMean(Event(entry,time,status)~strata(strata)+cluster(id),
              data=rr,cause=1,death.code=2)
 dd
-#> coeffients:
-#>                              p-value
-#> time                       5079.7045
-#> Pepe-Mori                         NA
-#> Ratio-AUC                     0.2147
-#> Proportionality               0.3865
-#> Proportionality-score-test    0.3920
+#> Error in `dimnames(x) <- dn`:
+#> ! length of 'dimnames' [1] not equal to array extent
 summary(dd)
-#> coeffients:
-#>                              p-value
-#> time                       5079.7045
-#> Pepe-Mori                         NA
-#> Ratio-AUC                     0.2147
-#> Proportionality               0.3865
-#> Proportionality-score-test    0.3920
+#> Error in `dimnames(x) <- dn`:
+#> ! length of 'dimnames' [1] not equal to array extent
 dd$RAUCl
 #>    n events
 #>  400   1184
@@ -1212,7 +1205,7 @@ sessionInfo()
 #>  [1] vctrs_0.7.3            cli_3.6.6              knitr_1.51            
 #>  [4] rlang_1.2.0            xfun_0.57              KernSmooth_2.23-26    
 #>  [7] otel_0.2.0             glue_1.8.1             future.apply_1.20.2   
-#> [10] listenv_0.10.1         lava_1.9.1             stats4_4.6.0          
+#> [10] listenv_0.10.1         lava_1.9.2             stats4_4.6.0          
 #> [13] grid_4.6.0             evaluate_1.0.5         lifecycle_1.0.5       
 #> [16] yaml_2.3.12            mvtnorm_1.3-7          numDeriv_2016.8-1.1   
 #> [19] compiler_4.6.0         codetools_0.2-20       Rcpp_1.1.1-1.1        

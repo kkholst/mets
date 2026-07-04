@@ -167,9 +167,9 @@ fitco4 <- survival_twostage(margph,data=prt,theta=1,clusters=prt$id,var.link=0,t
 #> attr(,"class")
 #> [1] "summary.mets.twostage"
  round(estimate(coef=fitco4$coef,vcov=fitco4$var.theta)$coefmat[,c(1,3:4)],2)
-#>               Estimate 2.5% 97.5%
-#> factor(zyg)DZ     1.32 0.56  2.08
-#> factor(zyg)MZ     5.42 3.54  7.31
+#>    Estimate 2.5% 97.5%
+#> p1     1.32 0.56  2.08
+#> p2     5.42 3.54  7.31
 
  ## mz kendalls tau
  kendall_ClaytonOakes_twin_ace(fitco4$theta[2],0,K=1000)$mz.kendall
@@ -589,11 +589,17 @@ cancer.
 #>  countrySweden:zygMZ 
 #>            -1.325599
  ### interaction test
- estimate(regconc, contrast=list(5,6,7))
-#>                      Estimate Std.Err   2.5%   97.5% P-value
-#> countryFinland:zygMZ   -1.267  0.8706 -2.974  0.4390 0.14547
-#> countryNorway:zygMZ    -2.146  0.9435 -3.995 -0.2969 0.02293
-#> countrySweden:zygMZ    -1.326  0.8219 -2.937  0.2854 0.10680
+ summary(estimate(regconc), contrast=list(5,6,7))
+#> Call: estimate.default(x = b)
+#> ────────────────────────────────────────────────────────────
+#>                      Estimate Std.Err    2.5%   97.5%  P-value
+#> countryFinland          2.207  0.7628  0.7123  3.7024 0.003807
+#> countryNorway           2.317  0.7899  0.7684  3.8648 0.003361
+#> countrySweden           2.022  0.7397  0.5725  3.4722 0.006258
+#> zygMZ                   2.309  0.7740  0.7918  3.8257 0.002855
+#> countryFinland:zygMZ   -1.267  0.8706 -2.9737  0.4390 0.145467
+#> countryNorway:zygMZ    -2.146  0.9435 -3.9953 -0.2969 0.022926
+#> countrySweden:zygMZ    -1.326  0.8219 -2.9366  0.2854 0.106797
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
 #>   [countryFinland:zygMZ] = 0
@@ -1186,7 +1192,7 @@ sessionInfo()
 #>  [1] vctrs_0.7.3            cli_3.6.6              knitr_1.51            
 #>  [4] rlang_1.2.0            xfun_0.57              KernSmooth_2.23-26    
 #>  [7] otel_0.2.0             data.table_1.18.4      glue_1.8.1            
-#> [10] future.apply_1.20.2    listenv_0.10.1         lava_1.9.1            
+#> [10] future.apply_1.20.2    listenv_0.10.1         lava_1.9.2            
 #> [13] stats4_4.6.0           grid_4.6.0             evaluate_1.0.5        
 #> [16] lifecycle_1.0.5        yaml_2.3.12            mvtnorm_1.3-7         
 #> [19] numDeriv_2016.8-1.1    compiler_4.6.0         codetools_0.2-20      

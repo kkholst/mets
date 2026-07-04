@@ -711,7 +711,7 @@ sessionInfo()
 #> loaded via a namespace (and not attached):
 #>  [1] digest_0.6.39          numDeriv_2016.8-1.1    codetools_0.2-20      
 #>  [4] RcppArmadillo_15.2.6-1 Matrix_1.7-5           xfun_0.57             
-#>  [7] lattice_0.22-9         splines_4.6.0          lava_1.9.1            
+#>  [7] lattice_0.22-9         splines_4.6.0          lava_1.9.2            
 #> [10] knitr_1.51             parallel_4.6.0         mvtnorm_1.3-7         
 #> [13] cli_3.6.6              parallelly_1.47.0      grid_4.6.0            
 #> [16] future_1.70.0          compiler_4.6.0         globals_0.19.1        

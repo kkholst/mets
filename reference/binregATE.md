@@ -265,7 +265,7 @@ summary(brs)
 #> 
 #> 
 head(brs$riskDR.iid)
-#>          iidriska      iidriska
+#>         iidriskDR     iidriskDR
 #> [1,] -0.001158914 -3.544289e-05
 #> [2,] -0.001200978  7.591687e-05
 #> [3,] -0.001326400  3.360021e-04
@@ -273,7 +273,7 @@ head(brs$riskDR.iid)
 #> [5,] -0.001140662 -9.113840e-05
 #> [6,] -0.001398172  4.595460e-04
 head(brs$riskG.iid)
-#>        riskGa.iid    riskGa.iid
+#>          iidriskG      iidriskG
 #> [1,] -0.001190622 -0.0001527653
 #> [2,] -0.001242318  0.0001090009
 #> [3,] -0.001355147  0.0006917410
@@ -320,7 +320,7 @@ summary(brsi)
 #> 
 #> 
 head(brs$riskDR.iid)
-#>          iidriska      iidriska
+#>         iidriskDR     iidriskDR
 #> [1,] -0.001158914 -3.544289e-05
 #> [2,] -0.001200978  7.591687e-05
 #> [3,] -0.001326400  3.360021e-04
@@ -328,7 +328,7 @@ head(brs$riskDR.iid)
 #> [5,] -0.001140662 -9.113840e-05
 #> [6,] -0.001398172  4.595460e-04
 head(brs$riskG.iid)
-#>        riskGa.iid    riskGa.iid
+#>          iidriskG      iidriskG
 #> [1,] -0.001190622 -0.0001527653
 #> [2,] -0.001242318  0.0001090009
 #> [3,] -0.001355147  0.0006917410
