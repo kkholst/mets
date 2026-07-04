@@ -1,3 +1,7 @@
+# mets 1.3.12
+
+Development version
+
 # mets 1.3.11
   - `IC` method for `binregATE`
   - documentation updated for log-rank test and Gray's test.
