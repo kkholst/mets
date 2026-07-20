@@ -283,6 +283,24 @@ head(IC(out))
  predict(out,data.frame(tcell=c(0,1),platelet=c(1,1)),se=TRUE)
 ```
 
+## Examples: Brier-score for Binomial Regression
+
+```{r binregbrier}
+ bmt$id <- seq_len(nrow(bmt))
+
+ ## --- competing risks CIF/Survival (default) ---
+ fit <- brier_binreg(
+   Event(time, cause) ~ tcell + platelet + age + cluster(id),
+   data = bmt, time = 50,
+   rhs = list(small = ~age, full = ~tcell + platelet + age)
+ )
+ summary(fit)                        ## log scale
+ summary(fit, transform = exp)       ## Brier scale
+```
+
+Consequently, we can also compute Brier-score for RMST and RMTL regression for survival and competing risks data using the
+outcome model specification for the binreg function (see examples). 
+
 ## Examples: Competing risks regression, Fine-Gray/Logistic link
 
 We can fit the Fine-Gray model and the logit-link competing risks model 
