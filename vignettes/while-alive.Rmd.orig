@@ -59,6 +59,7 @@ We can also fit a regression model for the mean of the subject-specific events p
 exponential link.
 
 ```{r while-alive-reg}
+set.seed(10)
 hfactioncpx12$age <- rnorm(741)[hfactioncpx12$id]
 hfactioncpx12$sex <- rbinom(741,1,0.5)[hfactioncpx12$id]
 

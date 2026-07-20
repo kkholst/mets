@@ -6,6 +6,7 @@ Development version
   - `IC` method for `binregATE`
   - documentation updated for log-rank test and Gray's test.
   - compatability with `lava` version 1.9.2
+  - brier score for binreg objects `brier_binreg`
 
 # mets 1.3.10
   - changed the naming of some functions for RMTL and RMST `resmean.phreg` to
