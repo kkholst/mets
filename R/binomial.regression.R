@@ -841,13 +841,13 @@ if (length(dots)==0) {
 #'	  treat.model=tcell.f~platelet+age)
 #
 #' # default ATE behavior (DR + G)
-#' IC(fit)
+#' head(IC(fit))
 #'
 #' # only DR component
-#' IC(fit, "DR")
+#' head(IC(fit, "DR"))
 #'
 #' # multiple components
-#' IC(fit, c("coef", "DR"))
+#' head(IC(fit, c("coef", "DR")))
 #' }
 #'
 #' @export
