@@ -233,7 +233,7 @@ time horizons
 ```{r}
  out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
  
- rm1 <- resmean.phreg(out1, times=c(50))
+ rm1 <- resmean_phreg(out1, times=c(50))
  summary(rm1)
  par(mfrow=c(1, 2))
  plot(rm1,se=1)
@@ -245,7 +245,7 @@ based on the integrated Aalen-Johansen estimators for the different strata
 
 ```{r yearslostcause}
  ## years.lost decomposed into causes
- drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=50)
+ drm1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=50)
  par(mfrow=c(1,2)); plot(drm1,cause=1,se=1); title(main="Cause 1"); plot(drm1,cause=2,se=1); title(main="Cause 2")
  summary(drm1)
 ```
@@ -441,7 +441,7 @@ estimates via IPCW adjustment and then we can do regression
  head(iid(out))
  ## same as 
  out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
- rm1 <- resmean.phreg(out1,times=30)
+ rm1 <- resmean_phreg(out1,times=30)
  summary(rm1)
  
  ## competing risks years-lost for cause 1  
@@ -449,7 +449,7 @@ estimates via IPCW adjustment and then we can do regression
                        cens.model=~strata(platelet,tcell),model="lin")
  estimate(out1)
  ## same as 
- drm1 <- cif.yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30)
+ drm1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30)
  summary(drm1)
 ```
 
