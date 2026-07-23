@@ -115,7 +115,7 @@ lava::confband(pp2$x,pp2[,2],pp2[,3],center=pp2[,1])
                        cens.formula=Surv(time,status==0)~1,
                        breaks=seq(75,100,by=3),fix.censweights=TRUE)
 
-    a <- biprobit.time2(cancer~1+zyg, rho=~1+zyg, id="id", data=prt0, eqmarg=TRUE,
+    a <- mets:::biprobit.time2(cancer~1+zyg, rho=~1+zyg, id="id", data=prt0, eqmarg=TRUE,
                        cens.formula=Surv(time,status==0)~zyg,
                        breaks=100)
 
