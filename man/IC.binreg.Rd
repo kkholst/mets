@@ -50,14 +50,19 @@ For non-\code{ATE} objects, the function returns
 }
 \examples{
 \dontrun{
+data(bmt)
+dfactor(bmt)  <-  ~.
+
+fit  <- binregATE(Event(time,cause)~tcell.f+platelet+age,bmt,time=50,cause=1,
+  treat.model=tcell.f~platelet+age)
 # default ATE behavior (DR + G)
-IC.binreg(fit)
+IC(fit)
 
 # only DR component
-IC.binreg(fit, "DR")
+IC(fit, "DR")
 
 # multiple components
-IC.binreg(fit, c("coef", "DR"))
+IC(fit, c("coef", "DR"))
 }
 
 }

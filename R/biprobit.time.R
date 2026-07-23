@@ -135,6 +135,7 @@ biprobit.time <- function(formula,data,id,...,
     return(res)
 } ## }}}
 
+##' @export
 biprobit.time2 <- function(formula,data,id,...,
                           breaks=Inf,pairs.only=TRUE,
                           cens.formula,cens.model="aalen",weights="w") {

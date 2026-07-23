@@ -179,6 +179,7 @@ with the (k) underlying \eqn{\theta} parameters
 here using theta.des to specify these low-dimension association. Default is a diagonal matrix.
 }
 \examples{
+library(mets)  ## do not delete this line 
 data(twinstut)
 twinstut0 <- subset(twinstut, tvparnr<4000)
 twinstut <- twinstut0
