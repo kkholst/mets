@@ -356,6 +356,8 @@ proc_design <- function(formula, data, ..., # nolint
   if ("subset" %in% names(dots)) {
     stop("subset is not an allowed specials argument for `proc_design`")
   }
+  environment(formula)$cluster <- mets::cluster
+  environment(formula)$strata <- mets::strata
   formulaenv <- environment(formula)
   tt <- terms(formula, data = data, specials = specials)
   term.labels <- attr(tt, "term.labels") # predictors
