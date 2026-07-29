@@ -1,13 +1,11 @@
 # mets 1.3.12
-
-Development version
+  - brier score for binreg objects `brier_binreg`
 
 # mets 1.3.11
   - `IC` method for `binregATE`
   - documentation updated for log-rank test and Gray's test.
   - compatability with `lava` version 1.9.2
-  - brier score for binreg objects `brier_binreg`
-
+  
 # mets 1.3.10
   - changed the naming of some functions for RMTL and RMST `resmean.phreg` to
     `resmean_phreg` and  `cif.yearslost` to `cif_yearslost`. Naming of functions have 
