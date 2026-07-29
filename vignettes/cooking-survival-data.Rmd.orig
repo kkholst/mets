@@ -182,6 +182,7 @@ We now consider a fully nonparametric model with stratified baselines.
  coxs <-   phreg(Surv(time,status==9)~strata(diabetes,chf),data=sTRACE)
  strata <- sample(0:3,nsim,replace=TRUE)
  simb <- sim_phreg(coxs,nsim,data=NULL,strata=strata)
+ simb$strata  <- strata
 
  cc <-   phreg(Surv(time,status)~strata(strata),data=simb)
  plot(coxs,col=1); plot(cc,add=TRUE,col=2)
