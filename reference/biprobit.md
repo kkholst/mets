@@ -141,14 +141,14 @@ a <- biprobit(y~1+x,rho=~1+x,data=dd,id="id")
 summary(a, mean.contrast=c(1,.5), cor.contrast=c(1,.5))
 #> 
 #>                 Estimate    Std.Err       Z p-value    
-#> (Intercept)    0.0035356  0.0198806  0.1778 0.85885    
-#> x             -0.0755638  0.0333240 -2.2676 0.02336 *  
-#> r:(Intercept)  0.0091359  0.0382962  0.2386 0.81145    
-#> r:x            1.0296248  0.0726052 14.1811 < 2e-16 ***
+#> (Intercept)    0.0023736  0.0194373  0.1221 0.90281    
+#> x              0.0636528  0.0329078  1.9343 0.05308 .  
+#> r:(Intercept) -0.0501846  0.0380966 -1.3173 0.18774    
+#> r:x            0.9554287  0.0707912 13.4964 < 2e-16 ***
 #> ---
 #> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 #> 
-#> logLik: -2650.936  mean(score^2): 3.114e-05 
+#> logLik: -2661.203  mean(score^2): 1.331e-07 
 #>     n pairs 
 #>  4000  2000 
 #> 
@@ -157,13 +157,13 @@ summary(a, mean.contrast=c(1,.5), cor.contrast=c(1,.5))
 #>  Mean          [(Intercept)] + 0.5[x] 
 #> 
 #>                         Estimate 2.5%    97.5%  
-#> Rel.Recur.Risk          1.33713  1.26918 1.40508
-#> OR                      3.75680  2.91262 4.84565
-#> Tetrachoric correlation 0.48074  0.39827 0.55550
+#> Rel.Recur.Risk          1.25015  1.19168 1.30862
+#> OR                      2.95317  2.31574 3.76606
+#> Tetrachoric correlation 0.40325  0.31895 0.48123
 #>                                                 
-#> Concordance             0.31627  0.28970 0.34409
-#> Casewise Concordance    0.65030  0.61607 0.68305
-#> Marginal                0.48634  0.46289 0.50985
+#> Concordance             0.32982  0.30350 0.35726
+#> Casewise Concordance    0.64213  0.60960 0.67339
+#> Marginal                0.51364  0.49097 0.53626
 with(predict(a,data.frame(x=seq(-1,1,by=.1))), plot(p00~x,type="l"))
 
 
@@ -192,7 +192,7 @@ if (FALSE) { # \dontrun{
                        cens.formula=Surv(time,status==0)~1,
                        breaks=seq(75,100,by=3),fix.censweights=TRUE)
 
-    a <- biprobit.time2(cancer~1+zyg, rho=~1+zyg, id="id", data=prt0, eqmarg=TRUE,
+    a <- mets:::biprobit.time2(cancer~1+zyg, rho=~1+zyg, id="id", data=prt0, eqmarg=TRUE,
                        cens.formula=Surv(time,status==0)~zyg,
                        breaks=100)
 

@@ -1,5 +1,5 @@
 pandoc: 3.8.3
-pkgdown: 2.2.0
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   basic-dutils: basic-dutils.html
@@ -24,7 +24,7 @@ articles:
   time-to-event-family-studies-arev: time-to-event-family-studies-arev.html
   twostage-survival: twostage-survival.html
   while-alive: while-alive.html
-last_built: 2026-07-04T08:36Z
+last_built: 2026-07-29T20:58Z
 urls:
   reference: http://kkholst.github.io/mets/reference
   article: http://kkholst.github.io/mets/articles

@@ -221,16 +221,27 @@ summary(Gbr1)
 #> risk1   0.2671 0.06185 0.1459 0.3883 1.571e-05
 #> 
 #> Average Treatment effect: difference (G-estimator) :
-#>    Estimate Std.Err    2.5%   97.5% P-value
-#> pa  -0.1506 0.06758 -0.2831 -0.0182  0.0258
+#> Call: estimate.default(coef = Gest$Gest, vcov = vv)
+#> ────────────────────────────────────────────────────────────
+#>      Estimate Std.Err   2.5%  97.5%   P-value
+#> pa     0.4177 0.02703 0.3648 0.4707 6.988e-54
+#> pa.1   0.2671 0.06185 0.1459 0.3883 1.571e-05
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
+#>   [pa] = 0
+#>   [pa] = 0 
+#>  
+#> chisq = 257.9401, df = 2, p-value < 2.2e-16
 #> 
 #> Average Treatment effect: ratio (G-estimator) :
 #> log-ratio: 
-#>      Estimate   Std.Err       2.5%      97.5%    P-value
-#> pa -0.4472628 0.2406332 -0.9188953 0.02436964 0.06307095
+#>     Estimate    Std.Err      2.5%     97.5%      P-value
+#> pa 0.4177459 0.02702993 0.3647682 0.4707236 6.987948e-54
+#> pa 0.2670966 0.06184921 0.1458744 0.3883188 1.570838e-05
 #> ratio: 
-#>  Estimate      2.5%     97.5% 
-#> 0.6393758 0.3989595 1.0246690
+#>    Estimate     2.5%    97.5%
+#> pa 1.518535 1.440180 1.601152
+#> pa 1.306167 1.157051 1.474500
 
 ## contrasting average age to 1+2-sd age, Avalues
 Gbr2 <- binregG(br1,bmt,varname="age",Avalues=c(0,1,2))
@@ -242,19 +253,31 @@ summary(Gbr2)
 #> risk2   0.5997 0.05531 0.4913 0.7081 2.136e-27
 #> 
 #> Average Treatment effect: difference (G-estimator) :
-#>      Estimate Std.Err    2.5%  97.5%   P-value
-#> pa     0.1033 0.02605 0.05222 0.1543 7.345e-05
-#> pa.1   0.2066 0.04996 0.10863 0.3045 3.564e-05
+#> Call: estimate.default(coef = Gest$Gest, vcov = vv)
+#> ────────────────────────────────────────────────────────────
+#>      Estimate Std.Err   2.5%  97.5%   P-value
+#> pa     0.3932 0.02537 0.3434 0.4429 3.738e-54
+#> pa.1   0.4964 0.03655 0.4248 0.5681 5.044e-42
+#> pa.2   0.5997 0.05531 0.4913 0.7081 2.136e-27
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
+#>   [pa] = 0
+#>   [pa] = 0
+#>   [pa] = 0 
+#>  
+#> chisq = 252.683, df = 3, p-value < 2.2e-16
 #> 
 #> Average Treatment effect: ratio (G-estimator) :
 #> log-ratio: 
 #>     Estimate    Std.Err      2.5%     97.5%      P-value
-#> pa 0.2332376 0.05402806 0.1273445 0.3391307 1.581845e-05
-#> pa 0.4222406 0.08691473 0.2518908 0.5925903 1.185167e-06
+#> pa 0.3931626 0.02537319 0.3434321 0.4428932 3.738061e-54
+#> pa 0.4964392 0.03654828 0.4248059 0.5680725 5.044045e-42
+#> pa 0.5997207 0.05530589 0.4913231 0.7081182 2.136422e-27
 #> ratio: 
 #>    Estimate     2.5%    97.5%
-#> pa 1.262681 1.135808 1.403727
-#> pa 1.525375 1.286456 1.808667
+#> pa 1.481659 1.409778 1.557206
+#> pa 1.642861 1.529294 1.764862
+#> pa 1.821610 1.634477 2.030167
 ```
 
 ## SessionInfo
@@ -286,18 +309,17 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.10   
+#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.12   
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] vctrs_0.7.3            cli_3.6.6              knitr_1.51            
-#>  [4] rlang_1.2.0            xfun_0.57              KernSmooth_2.23-26    
-#>  [7] otel_0.2.0             glue_1.8.1             future.apply_1.20.2   
-#> [10] listenv_0.10.1         lava_1.9.2             stats4_4.6.0          
-#> [13] grid_4.6.0             evaluate_1.0.5         lifecycle_1.0.5       
-#> [16] yaml_2.3.12            mvtnorm_1.3-7          numDeriv_2016.8-1.1   
-#> [19] compiler_4.6.0         codetools_0.2-20       Rcpp_1.1.1-1.1        
-#> [22] ucminf_1.2.3           future_1.70.0          lattice_0.22-9        
-#> [25] digest_0.6.39          pillar_1.11.1          parallelly_1.47.0     
-#> [28] parallel_4.6.0         Matrix_1.7-5           tools_4.6.0           
-#> [31] RcppArmadillo_15.2.6-1 globals_0.19.1
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
+#>  [4] xfun_0.57              KernSmooth_2.23-26     otel_0.2.0            
+#>  [7] future.apply_1.20.2    listenv_0.10.1         lava_1.9.2.1          
+#> [10] stats4_4.6.0           grid_4.6.0             evaluate_1.0.5        
+#> [13] yaml_2.3.12            mvtnorm_1.3-7          numDeriv_2016.8-1.1   
+#> [16] compiler_4.6.0         codetools_0.2-20       Rcpp_1.1.1-1.1        
+#> [19] ucminf_1.2.3           future_1.70.0          lattice_0.22-9        
+#> [22] digest_0.6.39          parallelly_1.47.0      parallel_4.6.0        
+#> [25] Matrix_1.7-5           tools_4.6.0            RcppArmadillo_15.2.6-1
+#> [28] globals_0.19.1
 ```

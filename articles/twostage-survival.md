@@ -1395,18 +1395,17 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#> [1] prodlim_2026.03.11 timereg_2.0.7      survival_3.8-6     mets_1.3.10       
+#> [1] prodlim_2026.03.11 timereg_2.0.7      survival_3.8-6     mets_1.3.12       
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] vctrs_0.7.3            cli_3.6.6              knitr_1.51            
-#>  [4] rlang_1.2.0            xfun_0.57              KernSmooth_2.23-26    
-#>  [7] otel_0.2.0             data.table_1.18.4      glue_1.8.1            
-#> [10] future.apply_1.20.2    listenv_0.10.1         lava_1.9.2            
-#> [13] stats4_4.6.0           grid_4.6.0             evaluate_1.0.5        
-#> [16] lifecycle_1.0.5        yaml_2.3.12            mvtnorm_1.3-7         
-#> [19] numDeriv_2016.8-1.1    compiler_4.6.0         codetools_0.2-20      
-#> [22] Rcpp_1.1.1-1.1         ucminf_1.2.3           future_1.70.0         
-#> [25] lattice_0.22-9         digest_0.6.39          pillar_1.11.1         
-#> [28] parallelly_1.47.0      parallel_4.6.0         Matrix_1.7-5          
-#> [31] tools_4.6.0            RcppArmadillo_15.2.6-1 globals_0.19.1
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
+#>  [4] xfun_0.57              KernSmooth_2.23-26     otel_0.2.0            
+#>  [7] data.table_1.18.4      future.apply_1.20.2    listenv_0.10.1        
+#> [10] lava_1.9.2.1           stats4_4.6.0           grid_4.6.0            
+#> [13] evaluate_1.0.5         yaml_2.3.12            mvtnorm_1.3-7         
+#> [16] numDeriv_2016.8-1.1    compiler_4.6.0         codetools_0.2-20      
+#> [19] Rcpp_1.1.1-1.1         ucminf_1.2.3           future_1.70.0         
+#> [22] lattice_0.22-9         digest_0.6.39          parallelly_1.47.0     
+#> [25] parallel_4.6.0         Matrix_1.7-5           tools_4.6.0           
+#> [28] RcppArmadillo_15.2.6-1 globals_0.19.1
 ```

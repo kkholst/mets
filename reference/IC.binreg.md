@@ -67,13 +67,18 @@ For non-`ATE` objects, the function returns `NROW(x$iid) * x$iid`.
 
 ``` r
 if (FALSE) { # \dontrun{
+data(bmt)
+dfactor(bmt)  <-  ~.
+
+fit  <- binregATE(Event(time,cause)~tcell.f+platelet+age,bmt,time=50,cause=1,
+  treat.model=tcell.f~platelet+age)
 # default ATE behavior (DR + G)
-IC.binreg(fit)
+head(IC(fit))
 
 # only DR component
-IC.binreg(fit, "DR")
+head(IC(fit, "DR"))
 
 # multiple components
-IC.binreg(fit, c("coef", "DR"))
+head(IC(fit, c("coef", "DR")))
 } # }
 ```

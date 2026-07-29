@@ -260,6 +260,8 @@ Thomas Scheike
 ## Examples
 
 ``` r
+library(mets)  ## do not delete this line 
+set.seed(123)  ## do not delete this line 
 data(twinstut)
 twinstut0 <- subset(twinstut, tvparnr<4000)
 twinstut <- twinstut0
@@ -357,20 +359,20 @@ margbin
 #> 
 #> Coefficients:
 #> (Intercept)            x  
-#>      0.5001       0.2206  
+#>      0.5809       0.3290  
 #> 
 #> Degrees of Freedom: 3999 Total (i.e. Null);  3998 Residual
-#> Null Deviance:       5193 
-#> Residual Deviance: 5182  AIC: 5186
+#> Null Deviance:       5036 
+#> Residual Deviance: 5012  AIC: 5016
 
 head(data)
 #>   ybin x   type cluster
-#> 1    1 0 mother       1
-#> 2    0 0 father       1
-#> 3    1 0  child       1
-#> 4    1 1  child       1
-#> 5    0 1 mother       2
-#> 6    0 1 father       2
+#> 1    1 1 mother       1
+#> 2    0 1 father       1
+#> 3    0 0  child       1
+#> 4    0 1  child       1
+#> 5    1 1 mother       2
+#> 6    1 1 father       2
 data$number <- c(1,2,3,4)
 data$child <- 1*(data$number==3)
 
@@ -405,23 +407,23 @@ summary(bints)
 #> Variance of Gamma distributed random effects 
 #> $estimates
 #>                theta        se
-#> dependence1 1.477113 0.4185208
-#> dependence2 1.104406 0.1564451
+#> dependence1 2.043902 0.5026929
+#> dependence2 1.188935 0.1912571
 #> 
 #> $type
 #> [1] "clayton.oakes"
 #> 
 #> $h
 #>             Estimate Std.Err   2.5%  97.5%   P-value
-#> dependence1   0.5722 0.08722 0.4012 0.7431 5.364e-11
-#> dependence2   0.4278 0.08722 0.2569 0.5988 9.337e-07
+#> dependence1   0.6322 0.07722 0.4809 0.7836 2.667e-16
+#> dependence2   0.3678 0.07722 0.2164 0.5191 1.911e-06
 #> 
 #> $vare
 #> NULL
 #> 
 #> $vartot
 #>    Estimate Std.Err  2.5% 97.5%   P-value
-#> p1    2.582  0.3953 1.807 3.356 6.533e-11
+#> p1    3.233  0.4808 2.291 4.175 1.764e-11
 #> 
 #> attr(,"class")
 #> [1] "summary.mets.twostage"
@@ -453,38 +455,38 @@ summary(bintwin)
 #> Variance of Gamma distributed random effects 
 #> $estimates
 #>                 theta        se
-#> dependence1 0.8423038 0.6254036
-#> dependence2 1.5659818 0.4357446
+#> dependence1 1.4016833 0.6360482
+#> dependence2 0.8947093 0.4486687
 #> 
 #> $type
 #> [1] "clayton.oakes"
 #> 
 #> $h
 #>             Estimate Std.Err     2.5%  97.5%  P-value
-#> dependence1   0.3498  0.2223 -0.08598 0.7855 0.115669
-#> dependence2   0.6502  0.2223  0.21451 1.0860 0.003446
+#> dependence1   0.6104  0.2177  0.18368 1.0371 0.005052
+#> dependence2   0.3896  0.2177 -0.03709 0.8163 0.073516
 #> 
 #> $vare
 #> NULL
 #> 
 #> $vartot
-#>    Estimate Std.Err 2.5% 97.5%   P-value
-#> p1    2.408  0.3871 1.65 3.167 4.944e-10
+#>    Estimate Std.Err  2.5% 97.5%   P-value
+#> p1    2.296  0.3584 1.594 2.999 1.482e-10
 #> 
 #> attr(,"class")
 #> [1] "summary.mets.twostage"
 concordanceTwinACE(bintwin)
 #> $MZ
 #>                      Estimate Std.Err   2.5%  97.5%    P-value
-#> concordance            0.5131 0.01834 0.4771 0.5490 3.838e-172
-#> casewise concordance   0.8090 0.01586 0.7779 0.8401  0.000e+00
-#> marginal               0.6342 0.01691 0.6011 0.6674 6.370e-308
+#> concordance            0.4934 0.01818 0.4578 0.5291 3.370e-162
+#> casewise concordance   0.7998 0.01617 0.7681 0.8315  0.000e+00
+#> marginal               0.6169 0.01691 0.5838 0.6501 1.608e-291
 #> 
 #> $DZ
 #>                      Estimate Std.Err   2.5%  97.5%    P-value
-#> concordance            0.4917 0.01935 0.4538 0.5296 1.884e-142
-#> casewise concordance   0.7753 0.01742 0.7412 0.8094  0.000e+00
-#> marginal               0.6342 0.01691 0.6011 0.6674 6.370e-308
+#> concordance            0.4558 0.01945 0.4177 0.4940 1.897e-121
+#> casewise concordance   0.7389 0.01881 0.7020 0.7758  0.000e+00
+#> marginal               0.6169 0.01691 0.5838 0.6501 1.608e-291
 #> 
 
 ```

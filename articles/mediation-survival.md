@@ -384,54 +384,99 @@ data(tTRACE)
 dcut(tTRACE) <- ~. 
 
 weightmodel <- fit <- mlogit(wmicat.4 ~agecat.4+vf+chf,data=tTRACE,family=binomial)
-#> Error in `str2lang()`:
-#> ! <text>:1:68: unexpected ','
-#> 1: Surv(time,status)~strata(idrow)+cluster(id) + Intercept2+agecat4601,
-#>                                                                        ^
 wdata <- medweight(fit,data=tTRACE)
-#> Error in `[.data.frame`:
-#> ! undefined columns selected
 
 aaMss <- binreg(Event(time,status)~agecat.40+ agecat.41+ vf+chf+cluster(id),data=wdata,
         time=7,weights=wdata$weights,cause=9)
-#> Error:
-#> ! object 'agecat.40' not found
 summary(aaMss)
-#>    n events
-#>  400    196
+#>     n events
+#>  4000   2016
 #> 
-#>  200 clusters
+#>  1000 clusters
 #> coeffients:
-#>              Estimate   Std.Err      2.5%     97.5% P-value
-#> (Intercept) -0.674433  0.235285 -1.135583 -0.213284  0.0042
-#> dnr.f01      0.221834  0.318264 -0.401952  0.845620  0.4858
-#> dnr.f11      0.262722  0.060281  0.144572  0.380871  0.0000
-#> preauto      0.578077  0.319091 -0.047331  1.203484  0.0700
-#> ttt24        0.214442  0.328183 -0.428784  0.857669  0.5135
+#>                       Estimate   Std.Err      2.5%     97.5% P-value
+#> (Intercept)          -1.839306  0.174322 -2.180971 -1.497641  0.0000
+#> agecat.40(60.1,68.6]  0.916646  0.215115  0.495028  1.338265  0.0000
+#> agecat.40(68.6,75.6]  1.363830  0.216822  0.938866  1.788794  0.0000
+#> agecat.40(75.6,96.3]  2.277415  0.244246  1.798701  2.756129  0.0000
+#> agecat.41(60.1,68.6]  0.121100  0.020575  0.080773  0.161428  0.0000
+#> agecat.41(68.6,75.6]  0.119374  0.017705  0.084672  0.154077  0.0000
+#> agecat.41(75.6,96.3]  0.095356  0.015031  0.065896  0.124816  0.0000
+#> vf                    0.712461  0.294700  0.134859  1.290062  0.0156
+#> chf                   1.166578  0.154086  0.864575  1.468581  0.0000
 #> 
 #> exp(coeffients):
-#>             Estimate    2.5%  97.5%
-#> (Intercept)  0.50944 0.32123 0.8079
-#> dnr.f01      1.24836 0.66901 2.3294
-#> dnr.f11      1.30046 1.15555 1.4636
-#> preauto      1.78261 0.95377 3.3317
-#> ttt24        1.23917 0.65130 2.3577
+#>                      Estimate    2.5%   97.5%
+#> (Intercept)           0.15893 0.11293  0.2237
+#> agecat.40(60.1,68.6]  2.50089 1.64054  3.8124
+#> agecat.40(68.6,75.6]  3.91114 2.55708  5.9822
+#> agecat.40(75.6,96.3]  9.75144 6.04180 15.7388
+#> agecat.41(60.1,68.6]  1.12874 1.08412  1.1752
+#> agecat.41(68.6,75.6]  1.12679 1.08836  1.1666
+#> agecat.41(75.6,96.3]  1.10005 1.06812  1.1329
+#> vf                    2.03900 1.14438  3.6330
+#> chf                   3.21099 2.37400  4.3431
 MultMed <- mediatorSurv(aaMss,fit,data=tTRACE,wdata=wdata)
-#> Error:
-#> ! Mat::row(): index out of bounds
 summary(MultMed)
-#> Error:
-#> ! object 'MultMed' not found
+#>     n events
+#>  4000   2016
+#> 
+#>  1000 clusters
+#> coeffients:
+#>                       Estimate   Std.Err      2.5%     97.5% P-value
+#> (Intercept)          -1.839306  0.174541 -2.181400 -1.497212  0.0000
+#> agecat.40(60.1,68.6]  0.916646  0.223488  0.478618  1.354674  0.0000
+#> agecat.40(68.6,75.6]  1.363830  0.222418  0.927898  1.799762  0.0000
+#> agecat.40(75.6,96.3]  2.277415  0.249815  1.787786  2.767044  0.0000
+#> agecat.41(60.1,68.6]  0.121100  0.053334  0.016567  0.225633  0.0232
+#> agecat.41(68.6,75.6]  0.119374  0.053193  0.015118  0.223631  0.0248
+#> agecat.41(75.6,96.3]  0.095356  0.053874 -0.010234  0.200947  0.0767
+#> vf                    0.712461  0.293627  0.136962  1.287960  0.0152
+#> chf                   1.166578  0.154721  0.863331  1.469825  0.0000
+#> 
+#> exp(coeffients):
+#>                      Estimate    2.5%   97.5%
+#> (Intercept)           0.15893 0.11288  0.2238
+#> agecat.40(60.1,68.6]  2.50089 1.61384  3.8755
+#> agecat.40(68.6,75.6]  3.91114 2.52919  6.0482
+#> agecat.40(75.6,96.3]  9.75144 5.97621 15.9115
+#> agecat.41(60.1,68.6]  1.12874 1.01671  1.2531
+#> agecat.41(68.6,75.6]  1.12679 1.01523  1.2506
+#> agecat.41(75.6,96.3]  1.10005 0.98982  1.2226
+#> vf                    2.03900 1.14678  3.6254
+#> chf                   3.21099 2.37105  4.3485
 ```
-
-    #> Error:
-    #> ! object 'MultMed' not found
 
 ``` r
 
 summary(MultMed)
-#> Error:
-#> ! object 'MultMed' not found
+#>     n events
+#>  4000   2016
+#> 
+#>  1000 clusters
+#> coeffients:
+#>                       Estimate   Std.Err      2.5%     97.5% P-value
+#> (Intercept)          -1.839306  0.174541 -2.181400 -1.497212  0.0000
+#> agecat.40(60.1,68.6]  0.916646  0.223488  0.478618  1.354674  0.0000
+#> agecat.40(68.6,75.6]  1.363830  0.222418  0.927898  1.799762  0.0000
+#> agecat.40(75.6,96.3]  2.277415  0.249815  1.787786  2.767044  0.0000
+#> agecat.41(60.1,68.6]  0.121100  0.053334  0.016567  0.225633  0.0232
+#> agecat.41(68.6,75.6]  0.119374  0.053193  0.015118  0.223631  0.0248
+#> agecat.41(75.6,96.3]  0.095356  0.053874 -0.010234  0.200947  0.0767
+#> vf                    0.712461  0.293627  0.136962  1.287960  0.0152
+#> chf                   1.166578  0.154721  0.863331  1.469825  0.0000
+#> 
+#> exp(coeffients):
+#>                      Estimate    2.5%   97.5%
+#> (Intercept)           0.15893 0.11288  0.2238
+#> agecat.40(60.1,68.6]  2.50089 1.61384  3.8755
+#> agecat.40(68.6,75.6]  3.91114 2.52919  6.0482
+#> agecat.40(75.6,96.3]  9.75144 5.97621 15.9115
+#> agecat.41(60.1,68.6]  1.12874 1.01671  1.2531
+#> agecat.41(68.6,75.6]  1.12679 1.01523  1.2506
+#> agecat.41(75.6,96.3]  1.10005 0.98982  1.2226
+#> vf                    2.03900 1.14678  3.6254
+#> chf                   3.21099 2.37105  4.3485
 ```
 
 ## SessionInfo
@@ -462,18 +507,17 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.10   
+#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.12   
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] vctrs_0.7.3            cli_3.6.6              knitr_1.51            
-#>  [4] rlang_1.2.0            xfun_0.57              otel_0.2.0            
-#>  [7] glue_1.8.1             future.apply_1.20.2    listenv_0.10.1        
-#> [10] lava_1.9.2             stats4_4.6.0           grid_4.6.0            
-#> [13] evaluate_1.0.5         lifecycle_1.0.5        yaml_2.3.12           
-#> [16] mvtnorm_1.3-7          numDeriv_2016.8-1.1    compiler_4.6.0        
-#> [19] codetools_0.2-20       Rcpp_1.1.1-1.1         ucminf_1.2.3          
-#> [22] future_1.70.0          lattice_0.22-9         digest_0.6.39         
-#> [25] pillar_1.11.1          parallelly_1.47.0      parallel_4.6.0        
-#> [28] splines_4.6.0          Matrix_1.7-5           tools_4.6.0           
-#> [31] RcppArmadillo_15.2.6-1 globals_0.19.1
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
+#>  [4] xfun_0.57              otel_0.2.0             future.apply_1.20.2   
+#>  [7] listenv_0.10.1         lava_1.9.2.1           stats4_4.6.0          
+#> [10] grid_4.6.0             evaluate_1.0.5         yaml_2.3.12           
+#> [13] mvtnorm_1.3-7          numDeriv_2016.8-1.1    compiler_4.6.0        
+#> [16] codetools_0.2-20       Rcpp_1.1.1-1.1         ucminf_1.2.3          
+#> [19] future_1.70.0          lattice_0.22-9         digest_0.6.39         
+#> [22] parallelly_1.47.0      parallel_4.6.0         splines_4.6.0         
+#> [25] Matrix_1.7-5           tools_4.6.0            RcppArmadillo_15.2.6-1
+#> [28] globals_0.19.1
 ```

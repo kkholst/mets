@@ -2,7 +2,7 @@
 
 ## mets 1.3.12
 
-Development version
+- brier score for binreg objects `brier_binreg`
 
 ## mets 1.3.11
 

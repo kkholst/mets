@@ -81,7 +81,7 @@
                         <h4 data-toc-skip class="author">Klaus Holst
 &amp; Thomas Scheike</h4>
             
-            <h4 data-toc-skip class="date">2026-07-03</h4>
+            <h4 data-toc-skip class="date">2026-07-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kkholst/mets/blob/main/vignettes/cooking-survival-data.Rmd" class="external-link"><code>vignettes/cooking-survival-data.Rmd</code></a></small>
       <div class="d-none name"><code>cooking-survival-data.Rmd</code></div>
@@ -272,6 +272,7 @@ baselines.</p>
 <span> <span class="va">coxs</span> <span class="op">&lt;-</span>   <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">==</span><span class="fl">9</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">diabetes</span>,<span class="va">chf</span><span class="op">)</span>,data<span class="op">=</span><span class="va">sTRACE</span><span class="op">)</span></span>
 <span> <span class="va">strata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">3</span>,<span class="va">nsim</span>,replace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span> <span class="va">simb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_phreg.html">sim_phreg</a></span><span class="op">(</span><span class="va">coxs</span>,<span class="va">nsim</span>,data<span class="op">=</span><span class="cn">NULL</span>,strata<span class="op">=</span><span class="va">strata</span><span class="op">)</span></span>
+<span> <span class="va">simb</span><span class="op">$</span><span class="va">strata</span>  <span class="op">&lt;-</span> <span class="va">strata</span></span>
 <span></span>
 <span> <span class="va">cc</span> <span class="op">&lt;-</span>   <span class="fu"><a href="../reference/phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>,<span class="va">status</span><span class="op">)</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">strata</span><span class="op">)</span>,data<span class="op">=</span><span class="va">simb</span><span class="op">)</span></span>
 <span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">coxs</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cc</span>,add<span class="op">=</span><span class="cn">TRUE</span>,col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
@@ -1132,12 +1133,12 @@ recovery of the parameters.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] timereg_2.0.7  survival_3.8-6 mets_1.3.10   </span></span>
+<span><span class="co">#&gt; [1] timereg_2.0.7  survival_3.8-6 mets_1.3.12   </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           </span></span>
 <span><span class="co">#&gt;  [4] xfun_0.57              otel_0.2.0             future.apply_1.20.2   </span></span>
-<span><span class="co">#&gt;  [7] listenv_0.10.1         lava_1.9.2             stats4_4.6.0          </span></span>
+<span><span class="co">#&gt;  [7] listenv_0.10.1         lava_1.9.2.1           stats4_4.6.0          </span></span>
 <span><span class="co">#&gt; [10] grid_4.6.0             evaluate_1.0.5         yaml_2.3.12           </span></span>
 <span><span class="co">#&gt; [13] mvtnorm_1.3-7          numDeriv_2016.8-1.1    compiler_4.6.0        </span></span>
 <span><span class="co">#&gt; [16] codetools_0.2-20       Rcpp_1.1.1-1.1         ucminf_1.2.3          </span></span>
@@ -1157,7 +1158,7 @@ recovery of the parameters.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>
