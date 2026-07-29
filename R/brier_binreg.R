@@ -159,28 +159,41 @@ binregStrata <- function(formula, data, cause=1, time=NULL, beta=NULL,
   name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
   orig.id <- id
 
-  if (is.null(des.offset))  offset  <- rep(0, length(exit)) else offset  <- des.offset
-  if (is.null(des.weights)) weights <- rep(1, length(exit)) else weights <- des.weights
+  ## ------------------------------------------------------------------
+  ## Weights / offset  (explicit arg > formula-embedded special > default)
+  ## ------------------------------------------------------------------
+  if (!is.null(offset)) {
+    offset <- offset
+  } else if (!is.null(des.offset)) {
+    offset <- des.offset
+  } else {
+    offset <- rep(0, length(exit))
+  }
+
+  if (!is.null(weights)) {
+    weights <- weights
+  } else if (!is.null(des.weights)) {
+    weights <- des.weights
+  } else {
+    weights <- rep(1, length(exit))
+  }
 
   ## ------------------------------------------------------------------
-  ## Strata
+  ## Strata  (explicit arg > formula-embedded special > default)
   ## ------------------------------------------------------------------
   des.strata <- des$strata
-  if (is.null(des.strata)) {
-    if (is.null(strata)) {
-      strata  <- rep(0, nrow(X)); nstrata <- 1
-    } else {
-      if (!is.numeric(strata)) stop("strata must be numeric\n")
-      ustrata <- sort(unique(strata)); nstrata <- length(ustrata)
-      strata  <- fast.approx(ustrata, strata) - 1
-    }
-  } else {
+  if (!is.null(strata)) {
+    if (!is.numeric(strata)) stop("strata must be numeric\n")
+    ustrata <- sort(unique(strata)); nstrata <- length(ustrata)
+    strata  <- fast.approx(ustrata, strata) - 1
+  } else if (!is.null(des.strata)) {
     strata  <- des.strata
     ustrata <- sort(unique(strata)); nstrata <- length(ustrata)
     strata  <- fast.approx(ustrata, strata) - 1
+  } else {
+    strata  <- rep(0, nrow(X)); nstrata <- 1
   }
 
-  if (is.null(time)) stop("Must give time for logistic modelling\n")
 
   ## ------------------------------------------------------------------
   ## Event / censoring indicators
