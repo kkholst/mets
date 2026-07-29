@@ -1,7 +1,7 @@
 ---
 title: "While Alive estimands for Recurrent Events"
 author: Klaus Holst & Thomas Scheike
-date: "2026-07-03"
+date: "2026-07-29"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes
@@ -99,12 +99,12 @@ summary(dd,type="log")
 #> [treatment0] - [treat....  0.07835 0.09352 -0.1049 0.2616  0.4022
 #> _______________________________________________________ 
 #> Ratio of means E(N(min(D,t)))/E(min(D,t)) 
-#>    Estimate Std.Err    2.5%    97.5%   P-value
-#> p1  -0.1676 0.06224 -0.2896 -0.04563 7.081e-03
-#> p2  -0.2804 0.07192 -0.4214 -0.13947 9.651e-05
+#>            Estimate Std.Err    2.5%    97.5%   P-value
+#> treatment0  -0.1676 0.06224 -0.2896 -0.04563 7.081e-03
+#> treatment1  -0.2804 0.07192 -0.4214 -0.13947 9.651e-05
 #>  
-#>             Estimate Std.Err     2.5%  97.5% P-value
-#> [p1] - [p2]   0.1128 0.09511 -0.07361 0.2992  0.2356
+#>                           Estimate Std.Err     2.5%  97.5% P-value
+#> [treatment0] - [treat....   0.1128 0.09511 -0.07361 0.2992  0.2356
 #> _______________________________________________________ 
 #> Mean of Events per time-unit E(N(min(D,t))/min(D,t)) 
 #>        Estimate Std.Err    2.5%   97.5%   P-value
@@ -123,6 +123,7 @@ exponential link.
 
 
 ``` r
+set.seed(10)
 hfactioncpx12$age <- rnorm(741)[hfactioncpx12$id]
 hfactioncpx12$sex <- rbinom(741,1,0.5)[hfactioncpx12$id]
 
@@ -133,18 +134,18 @@ summary(dd)
 #> 
 #>  741 clusters
 #> coeffients:
-#>               Estimate    Std.Err       2.5%      97.5% P-value
-#> (Intercept)  0.0059349  0.1018293 -0.1936468  0.2055166  0.9535
-#> treatment1  -0.3475423  0.1399946 -0.6219268 -0.0731578  0.0130
-#> age          0.0447745  0.0619333 -0.0766125  0.1661615  0.4697
-#> sex          0.1252971  0.1557374 -0.1799426  0.4305367  0.4211
+#>                Estimate     Std.Err        2.5%       97.5% P-value
+#> (Intercept) -1.6366e-02  1.1187e-01 -2.3564e-01  2.0290e-01  0.8837
+#> treatment1  -3.5688e-01  1.4242e-01 -6.3602e-01 -7.7743e-02  0.0122
+#> age         -1.0527e-01  5.3727e-02 -2.1058e-01  2.9638e-05  0.0501
+#> sex          1.5723e-01  1.4784e-01 -1.3253e-01  4.4700e-01  0.2876
 #> 
 #> exp(coeffients):
 #>             Estimate    2.5%  97.5%
-#> (Intercept)  1.00595 0.82395 1.2282
-#> treatment1   0.70642 0.53691 0.9295
-#> age          1.04579 0.92625 1.1808
-#> sex          1.13349 0.83532 1.5381
+#> (Intercept)  0.98377 0.79007 1.2250
+#> treatment1   0.69986 0.52940 0.9252
+#> age          0.90008 0.81012 1.0000
+#> sex          1.17027 0.87587 1.5636
 ```
 
 Composite outcomes involving death and marks
@@ -206,20 +207,19 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#> [1] prodlim_2026.03.11 timereg_2.0.7      survival_3.8-6     mets_1.3.10       
+#> [1] prodlim_2026.03.11 timereg_2.0.7      survival_3.8-6     mets_1.3.12       
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] vctrs_0.7.3            cli_3.6.6              knitr_1.51            
-#>  [4] rlang_1.2.0            xfun_0.57              KernSmooth_2.23-26    
-#>  [7] otel_0.2.0             data.table_1.18.4      glue_1.8.1            
-#> [10] future.apply_1.20.2    listenv_0.10.1         lava_1.9.2            
-#> [13] stats4_4.6.0           grid_4.6.0             evaluate_1.0.5        
-#> [16] lifecycle_1.0.5        yaml_2.3.12            mvtnorm_1.3-7         
-#> [19] numDeriv_2016.8-1.1    compiler_4.6.0         codetools_0.2-20      
-#> [22] Rcpp_1.1.1-1.1         ucminf_1.2.3           future_1.70.0         
-#> [25] lattice_0.22-9         digest_0.6.39          pillar_1.11.1         
-#> [28] parallelly_1.47.0      parallel_4.6.0         Matrix_1.7-5          
-#> [31] tools_4.6.0            RcppArmadillo_15.2.6-1 globals_0.19.1
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
+#>  [4] xfun_0.57              KernSmooth_2.23-26     otel_0.2.0            
+#>  [7] data.table_1.18.4      future.apply_1.20.2    listenv_0.10.1        
+#> [10] lava_1.9.2.1           stats4_4.6.0           grid_4.6.0            
+#> [13] evaluate_1.0.5         yaml_2.3.12            mvtnorm_1.3-7         
+#> [16] numDeriv_2016.8-1.1    compiler_4.6.0         codetools_0.2-20      
+#> [19] Rcpp_1.1.1-1.1         ucminf_1.2.3           future_1.70.0         
+#> [22] lattice_0.22-9         digest_0.6.39          parallelly_1.47.0     
+#> [25] parallel_4.6.0         Matrix_1.7-5           tools_4.6.0           
+#> [28] RcppArmadillo_15.2.6-1 globals_0.19.1
 ```
 
 

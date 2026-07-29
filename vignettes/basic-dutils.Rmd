@@ -1,7 +1,7 @@
 ---
 title: "dUtility data-frame manipulations"
 author: Klaus Holst & Thomas Scheike
-date: "2026-07-03"
+date: "2026-07-29"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes 
@@ -889,13 +889,13 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] mets_1.3.10
+#> [1] mets_1.3.12
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] digest_0.6.39          numDeriv_2016.8-1.1    codetools_0.2-20      
 #>  [4] RcppArmadillo_15.2.6-1 Matrix_1.7-5           xfun_0.57             
 #>  [7] lattice_0.22-9         timereg_2.0.7          splines_4.6.0         
-#> [10] lava_1.9.2             knitr_1.51             parallel_4.6.0        
+#> [10] lava_1.9.2.1           knitr_1.51             parallel_4.6.0        
 #> [13] mvtnorm_1.3-7          cli_3.6.6              parallelly_1.47.0     
 #> [16] grid_4.6.0             future_1.70.0          compiler_4.6.0        
 #> [19] globals_0.19.1         tools_4.6.0            listenv_0.10.1        
