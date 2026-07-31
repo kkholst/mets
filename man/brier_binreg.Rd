@@ -8,7 +8,7 @@ using stratified leave-fold-out fits (\code{binreg} \code{binregStrata})}
 brier_binreg(
   formula,
   data,
-  time,
+  time = NULL,
   fold = 5,
   rhs = NULL,
   rhs0 = ~+1,
