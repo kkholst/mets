@@ -124,7 +124,7 @@ binregStrata <- function(formula, data, cause=1, time=NULL, beta=NULL,
                           method="nr", augmentation=NULL,
                           outcome=c("cif","rmst","rmtl"),
                           model=c("default","logit","exp","lin"),
-                          Ydirect=NULL, strata=NULL, cv.fold=FALSE, low.memory=FALSE,...)
+                          Ydirect=NULL, strata=NULL,cv.fold=FALSE,low.memory=TRUE,...)
 { # {{{
   monotone <- TRUE
   cl       <- match.call()
@@ -137,46 +137,29 @@ binregStrata <- function(formula, data, cause=1, time=NULL, beta=NULL,
     specials = c("offset","weights","cluster","strata"),
     intercept = TRUE
   )
+
   Y <- des$y
-  if (!inherits(Y, c("Event","Surv")))
-    stop("Expected a 'Surv' or 'Event'-object")
+  X <- des$x
 
-  if (ncol(Y) == 2) {
-    exit  <- Y[,1]; entry <- rep(0, nrow(Y)); status <- Y[,2]
-  } else {
-    entry <- Y[,1]; exit  <- Y[,2];           status <- Y[,3]
-  }
-
-  X           <- des$x
   des.weights <- des$weights
   des.offset  <- des$offset
-  id          <- des$cluster
+  id      <- des$cluster
+  if (ncol(X)==0) X <- matrix(nrow=0,ncol=0)
 
-  if (ncol(X) == 0) X <- matrix(nrow=0, ncol=0)
-
-  call.id <- id
-  conid   <- construct_id(id, nrow(X), namesX = rownames(X))
+  ### possible handling of id to code from 0:(antid-1)
+  call.id <- id 
+  conid <- construct_id(id,nrow(X),namesX=rownames(X))
   name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+  ## id before time-sorting later 
   orig.id <- id
 
-  ## ------------------------------------------------------------------
-  ## Weights / offset  (explicit arg > formula-embedded special > default)
-  ## ------------------------------------------------------------------
-  if (!is.null(offset)) {
-    offset <- offset
-  } else if (!is.null(des.offset)) {
-    offset <- des.offset
-  } else {
-    offset <- rep(0, length(exit))
-  }
-
-  if (!is.null(weights)) {
-    weights <- weights
-  } else if (!is.null(des.weights)) {
-    weights <- des.weights
-  } else {
-    weights <- rep(1, length(exit))
-  }
+  ## take offset and weight first from formula, but then from arguments
+  if (is.null(des.offset)) {
+	  if (is.null(offset)) offset <- rep(0,nrow(X)) 
+  } else offset <- des.offset
+  if (is.null(des.weights)) {
+	  if (is.null(weights)) weights <- rep(1,nrow(X)) 
+  } else weights <- des.weights
 
   ## ------------------------------------------------------------------
   ## Strata  (explicit arg > formula-embedded special > default)
@@ -196,46 +179,91 @@ binregStrata <- function(formula, data, cause=1, time=NULL, beta=NULL,
 
 
   ## ------------------------------------------------------------------
-  ## Event / censoring indicators
-  ## ------------------------------------------------------------------
-  statusC  <- 1*(status %in% cens.code)
-  statusE  <- (status %in% cause) & (exit <= time)
-  if (sum(statusE) == 0) warning("No events of type 1 before time\n")
-
-  kmt     <- kaplan.meier
-  ucauses <- sort(unique(status))
-  ccc     <- which(ucauses %in% cens.code)
-  Causes  <- if (length(ccc) == 0) ucauses else ucauses[-ccc]
-  competing <- any(!(Causes %in% cause))
-
-  data$id__    <- id
-  data$exit    <- exit
-  data$statusC <- statusC
-
-  cens.strata <- cens.nstrata <- NULL
-  nevent      <- sum((status %in% cause) * (exit <= time))
-  obs         <- (exit <= time & statusC == 0) | (exit >= time)
-
-  ## ------------------------------------------------------------------
-  ## Censoring weights
-  ## ------------------------------------------------------------------
-  if (is.null(cens.weights)) { # {{{
-    formC    <- update.formula(cens.model, Surv(exit,statusC) ~ . + cluster(id__))
-    resC     <- phreg(formC, data)
-    if (resC$p > 0) kmt <- FALSE
-    exittime <- pmin(exit, time)
-    cens.weights <- suppressWarnings(
-      predict(resC, data, times = exittime, individual.time = TRUE,
-              se = FALSE, km = kmt, tminus = TRUE)$surv)
-    cens.strata  <- resC$strata[order(resC$ord)]
-    cens.nstrata <- resC$nstrata
-  } else {
-    se <- FALSE; resC <- formC <- NULL
-  } # }}}
-
-  ## ------------------------------------------------------------------
   ## Response
   ## ------------------------------------------------------------------
+    if (inherits(Y, c("Event", "Surv"))) { ## {{{  Event time outcome 
+	    if (ncol(Y) == 2) {
+		exit <- Y[, 1]
+		entry <- rep(0, nrow(Y))
+		status <- Y[, 2]
+	    } else {
+		entry <- Y[, 1]
+		exit <- Y[, 2]
+		status <- Y[, 3]
+	    }
+
+	  if (is.null(time)) stop("Must give time for logistic modelling \n"); 
+	  statusC <- 1*(status %in% cens.code) 
+	  sumC  <- sum(statusC)
+	  statusE <- (status %in% cause) & (exit<= time) 
+	  if (sum(statusE)==0) warning("No events of type 1 before time \n"); 
+	  kmt <- kaplan.meier
+
+	  ucauses  <-  sort(unique(status))
+	  ccc <- which(ucauses %in% cens.code)
+	  if (length(ccc)==0) Causes <- ucauses else Causes <- ucauses[-ccc]
+	  competing <- any(!(Causes %in% cause))
+	  data$id__ <- id
+	  data$exit <- exit
+	  data$statusC <- statusC 
+	  cens.strata <- cens.nstrata <- NULL 
+
+	 nevent <- sum((status %in% cause)*(exit<=time))
+	 ## if event before time or alive, then uncensored, equality for both censored and events  
+	 obs <- (exit<=time & (statusC==0)) | (exit>=time)
+
+	  if (is.null(cens.weights) & sumC > 0 )  { ## {{{
+	      formC <- update.formula(cens.model,Surv(exit,statusC)~ . +cluster(id__))
+	      resC <- phreg(formC,data)
+	      if (resC$p>0) kmt <- FALSE
+	      exittime <- pmin(exit,time)
+	      cens.weights <- suppressWarnings(predict(resC,data,times=exittime,individual.time=TRUE,se=FALSE,km=kmt,tminus=TRUE)$surv)
+	      ## strata from original data 
+	      cens.strata <- resC$strata[order(resC$ord)]
+	      cens.nstrata <- resC$nstrata
+	  } else { se <- FALSE; resC <- formC <- NULL}  ## }}} 
+	 if (is.null(cens.weights)) cens.weights <- rep(1,nrow(X))
+
+	 ### setting up survival/competing risks outcomes 
+	 if (!is.null(Ydirect)) Y <-  Ydirect else {
+	     if (outcome[1]=="cif") Y <- c((status %in% cause)*(exit<=time))
+	     else { if (!competing) {
+		     if (outcome[1]=="rmst")
+		     Y <-  c(pmin(exit,time))
+		     else Y <-  c((time-pmin(exit,time)))
+		    } else Y <- c((status %in% cause)*(time-pmin(exit,time)))
+	     }
+	  }
+
+	 ## default links
+	 if (model[1]=="default") {
+		 if (outcome[1]=="cif") model <- "logit"
+		 if (outcome[1]=="rmst") model <- "exp"
+		 if (outcome[1]=="rmtl") model <- "exp"
+		 if (outcome[1]=="years-lost") model <- "exp"
+	 }
+
+    }  else { ### numeric outcome or factor coded as numeric 
+	    if (!(is.numeric(Y) | is.factor(Y))) stop("must be Event object, numeric, or a factor\n"); 
+	    if (is.factor(Y)) Y <- as.numeric(Y)-1
+	    cens.weights <- rep(1,nrow(X))
+	    obs  <- 1
+	    se  <- FALSE
+	    cens.code <- Causes <- cause <- time  <- 0
+	    nevent <- nrow(X)
+	    formC  <- NULL
+	    cens.strata <- cens.nstrata <- NULL
+
+	    ## Ydirect rules over Y 
+	    if (is.null(Ydirect)) Ydirect  <- Y
+
+	 ## default links
+	 if (model[1]=="default") {
+		 model <- "lin"
+	 }
+    } ## }}} 
+
+
   expit <- function(z) 1 / (1 + exp(-z))
   p     <- ncol(X)
 
@@ -247,20 +275,6 @@ binregStrata <- function(formula, data, cause=1, time=NULL, beta=NULL,
   X  <- as.matrix(X)
   X2 <- .Call("vecCPMat", X)$XX
 
-  if (!is.null(Ydirect)) {
-    Y <- Ydirect
-  } else {
-    if (outcome[1] == "cif") {
-      Y <- c((status %in% cause) * (exit <= time))
-    } else {
-      if (!competing) {
-        if (outcome[1] == "rmst") Y <- c(pmin(exit, time))
-        else                      Y <- c(time - pmin(exit, time))
-      } else {
-        Y <- c((status %in% cause) * (time - pmin(exit, time)))
-      }
-    }
-  }
   Yresp <- c(Y)
   Y     <- Yipcw <- c(Y * obs / cens.weights)
   IPCW  <- c(obs / cens.weights)
@@ -271,7 +285,7 @@ binregStrata <- function(formula, data, cause=1, time=NULL, beta=NULL,
   ## standard: block s populated with stratum-s rows
   ## ------------------------------------------------------------------
   MGCiid <- 0
-  if (se & monotone) { # {{{
+  if (se) { # {{{
     ord     <- resC$ord
     X       <- X[ord,  , drop = FALSE]
     X2      <- X2[ord, , drop = FALSE]
@@ -592,16 +606,112 @@ binregStrata <- function(formula, data, cause=1, time=NULL, beta=NULL,
   } # }}}
 
   ## ------------------------------------------------------------------
+  ## fast_lin_fit(): closed-form path for model=="lin". No per-stratum
+  ## subsetting of X/X2/Y/weights -- one grouped pass gives every
+  ## stratum's own-sums; cv.fold complements are total - own; iid
+  ## residuals for all strata computed via one n x nstrata matmul.
+  ## ------------------------------------------------------------------
+  fast_lin_fit <- function() { ## {{{ 
+    np  <- ncol(X)
+    wX2 <- c(weights) * X2
+    wXY <- c(weights) * X * c(Y)
+
+    own_XtWX <- Msumstrata(wX2, strata, nstrata)
+    own_XtWY <- Msumstrata(wXY, strata, nstrata)
+    tot_XtWX <- colSums(wX2)
+    tot_XtWY <- colSums(wXY)
+
+    if (!is.matrix(own_XtWX)) own_XtWX <- matrix(own_XtWX, 1, length(own_XtWX))
+    if (!is.matrix(own_XtWY)) own_XtWY <- matrix(own_XtWY, 1, np)
+
+    sym <- function(v) matrix(.Call("XXMatFULL", matrix(v, nrow=1), np,
+                                     PACKAGE="mets")$XXf, np, np)
+
+    hessian <- ihess <- beta_opt <- vector("list", nstrata)
+    for (s in seq_len(nstrata)) {
+      vecXtWX <- if (cv.fold) tot_XtWX - own_XtWX[s, ] else own_XtWX[s, ]
+      XtWY    <- if (cv.fold) tot_XtWY - own_XtWY[s, ] else own_XtWY[s, ]
+      XtWY    <- XtWY + augmentation[s, ]
+      H       <- sym(vecXtWX)
+      iH      <- pinv(H)
+      hessian[[s]]  <- H
+      ihess[[s]]    <- iH
+      beta_opt[[s]] <- as.vector(iH %*% XtWY)
+    }
+
+    ## residuals for ALL strata betas computed at once: n x nstrata
+    BetaMat <- do.call(cbind, beta_opt)
+    LP      <- X %*% BetaMat
+    R       <- c(Y) - LP
+
+    mid <- max(id)
+    iid_list <- vector("list", nstrata)
+    for (s in seq_len(nstrata)) {
+      mask <- if (cv.fold) (strata != (s - 1)) else (strata == (s - 1))
+      Dl_s <- weights * X * (R[, s] * mask)
+      raw  <- Dl_s %*% ihess[[s]]
+      iid_list[[s]] <- Msumstrata(raw, id, mid + 1)
+    }
+    beta.iid <- do.call(cbind, iid_list)
+    robvar   <- crossprod(beta.iid)
+
+    list(par = beta_opt, coef = unlist(beta_opt),
+         ploglik  = lapply(seq_len(nstrata), function(s) 0),
+         gradient = lapply(beta_opt, function(b) rep(0, length(b))),
+         hessian = hessian, ihessian = ihess,
+         id = id, Dlogl = NULL,
+         iid = beta.iid, robvar = robvar, var = robvar,
+         se.robust = diag(robvar)^.5)
+  } ## }}} 
+
+  ## ------------------------------------------------------------------
+  ## Optimise
+  ## ------------------------------------------------------------------
+###  dots    <- list(...)
+###  control <- if (length(dots) == 0) {
+###    if (model[1] == "exp") list(tol=1e-10, stepsize=0.5) else NULL
+###  } else dots[[1]]
+###
+###  if (!is.matrix(beta)) beta <- matrix(beta, nstrata, p, byrow = TRUE)
+###  beta <- split(beta, seq_len(nrow(beta)))
+###
+###  NR_list <- function() {
+###    Map(function(s) {
+###      lava::NR(start   = beta[[s + 1]],
+###                obj     = make_stratum_obj(s, beta),
+###                control = control)
+###    }, seq_len(nstrata) - 1L)
+###  }
+###
+###  beta_opt <- beta   # fallback
+###
+###  if (p > 0) {
+###    if (!no.opt) {
+###      if (tolower(method) == "nr") {
+###        tim      <- NR_list()
+###        beta_opt <- lapply(tim, function(r) r$par)
+###        cc       <- unlist(beta_opt)
+###        val      <- c(list(coef = cc), obj(beta_opt, all = TRUE))
+###        val$gradient <- lapply(tim, function(r) r$gradient)
+###      } else {
+###        stop("only NR of lava\n")
+###      }
+###    } else {
+###      val <- c(list(coef = unlist(beta)), obj(beta, all = TRUE))
+###    }
+###  } else {
+###    val <- obj(as.list(rep(0, nstrata)), all = TRUE)
+###  }
+
+## ------------------------------------------------------------------
   ## Optimise
   ## ------------------------------------------------------------------
   dots    <- list(...)
   control <- if (length(dots) == 0) {
-    if (model[1] == "exp") list(tol=1e-10, stepsize=0.5) else NULL
+    if (model == "exp") list(tol=1e-10, stepsize=0.5) else NULL
   } else dots[[1]]
-
   if (!is.matrix(beta)) beta <- matrix(beta, nstrata, p, byrow = TRUE)
   beta <- split(beta, seq_len(nrow(beta)))
-
   NR_list <- function() {
     Map(function(s) {
       lava::NR(start   = beta[[s + 1]],
@@ -609,12 +719,13 @@ binregStrata <- function(formula, data, cause=1, time=NULL, beta=NULL,
                 control = control)
     }, seq_len(nstrata) - 1L)
   }
-
   beta_opt <- beta   # fallback
-
   if (p > 0) {
     if (!no.opt) {
-      if (tolower(method) == "nr") {
+      if (model == "lin") {
+        val      <- fast_lin_fit()
+        beta_opt <- val$par
+      } else if (tolower(method) == "nr") {
         tim      <- NR_list()
         beta_opt <- lapply(tim, function(r) r$par)
         cc       <- unlist(beta_opt)
@@ -624,11 +735,22 @@ binregStrata <- function(formula, data, cause=1, time=NULL, beta=NULL,
         stop("only NR of lava\n")
       }
     } else {
-      val <- c(list(coef = unlist(beta)), obj(beta, all = TRUE))
+      if (model == "lin") {
+        val <- fast_lin_fit()   # still uses supplied beta? no -- no.opt means
+                                 # skip optimisation; keep supplied beta instead:
+        val$par  <- beta
+        val$coef <- unlist(beta)
+        beta_opt <- beta
+      } else {
+        val <- c(list(coef = unlist(beta)), obj(beta, all = TRUE))
+      }
     }
   } else {
-    val <- obj(as.list(rep(0, nstrata)), all = TRUE)
+    val <- if (model == "lin") fast_lin_fit() else obj(as.list(rep(0, nstrata)), all = TRUE)
   }
+
+
+
 
   ## ------------------------------------------------------------------
   ## Coefficient naming
@@ -652,7 +774,7 @@ binregStrata <- function(formula, data, cause=1, time=NULL, beta=NULL,
     time          = time,          formula      = formula,
     formC         = formC,         cens.weights = cens.weights,
     cens.strata   = cens.strata,   cens.nstrata = cens.nstrata,
-    n             = length(exit),  nevent       = nevent,
+    n             = nrow(X),  nevent       = nevent,
     ncluster      = nid
   ))
   val$call      <- cl
@@ -718,6 +840,610 @@ binregStrata <- function(formula, data, cause=1, time=NULL, beta=NULL,
   class(val) <- c("binregStrata","binreg")
   return(val)
 } # }}}
+
+
+###binregStrata <- function(formula, data, cause=1, time=NULL, beta=NULL,
+###                          type=c("II","I"),
+###                          offset=NULL, weights=NULL, cens.weights=NULL,
+###                          cens.model=~+1, se=TRUE,
+###                          kaplan.meier=TRUE, cens.code=0, no.opt=FALSE,
+###                          method="nr", augmentation=NULL,
+###                          outcome=c("cif","rmst","rmtl"),
+###                          model=c("default","logit","exp","lin"),
+###                          Ydirect=NULL, strata=NULL, cv.fold=FALSE, low.memory=FALSE,...)
+###{ # {{{
+###  monotone <- TRUE
+###  cl       <- match.call()
+###
+###  ## ------------------------------------------------------------------
+###  ## Design
+###  ## ------------------------------------------------------------------
+###  des <- proc_design(
+###    formula, data = data,
+###    specials = c("offset","weights","cluster","strata"),
+###    intercept = TRUE
+###  )
+###  Y <- des$y
+###  if (!inherits(Y, c("Event","Surv")))
+###    stop("Expected a 'Surv' or 'Event'-object")
+###
+###  if (ncol(Y) == 2) {
+###    exit  <- Y[,1]; entry <- rep(0, nrow(Y)); status <- Y[,2]
+###  } else {
+###    entry <- Y[,1]; exit  <- Y[,2];           status <- Y[,3]
+###  }
+###
+###  X           <- des$x
+###  des.weights <- des$weights
+###  des.offset  <- des$offset
+###  id          <- des$cluster
+###
+###  if (ncol(X) == 0) X <- matrix(nrow=0, ncol=0)
+###
+###  call.id <- id
+###  conid   <- construct_id(id, nrow(X), namesX = rownames(X))
+###  name.id <- conid$name.id; id <- conid$id; nid <- conid$nid
+###  orig.id <- id
+###
+###  ## ------------------------------------------------------------------
+###  ## Weights / offset  (explicit arg > formula-embedded special > default)
+###  ## ------------------------------------------------------------------
+###  if (!is.null(offset)) {
+###    offset <- offset
+###  } else if (!is.null(des.offset)) {
+###    offset <- des.offset
+###  } else {
+###    offset <- rep(0, length(exit))
+###  }
+###
+###  if (!is.null(weights)) {
+###    weights <- weights
+###  } else if (!is.null(des.weights)) {
+###    weights <- des.weights
+###  } else {
+###    weights <- rep(1, length(exit))
+###  }
+###
+###  ## ------------------------------------------------------------------
+###  ## Strata  (explicit arg > formula-embedded special > default)
+###  ## ------------------------------------------------------------------
+###  des.strata <- des$strata
+###  if (!is.null(strata)) {
+###    if (!is.numeric(strata)) stop("strata must be numeric\n")
+###    ustrata <- sort(unique(strata)); nstrata <- length(ustrata)
+###    strata  <- fast.approx(ustrata, strata) - 1
+###  } else if (!is.null(des.strata)) {
+###    strata  <- des.strata
+###    ustrata <- sort(unique(strata)); nstrata <- length(ustrata)
+###    strata  <- fast.approx(ustrata, strata) - 1
+###  } else {
+###    strata  <- rep(0, nrow(X)); nstrata <- 1
+###  }
+###
+###
+###  ## ------------------------------------------------------------------
+###  ## Event / censoring indicators
+###  ## ------------------------------------------------------------------
+###  statusC  <- 1*(status %in% cens.code)
+###  statusE  <- (status %in% cause) & (exit <= time)
+###  if (sum(statusE) == 0) warning("No events of type 1 before time\n")
+###
+###  kmt     <- kaplan.meier
+###  ucauses <- sort(unique(status))
+###  ccc     <- which(ucauses %in% cens.code)
+###  Causes  <- if (length(ccc) == 0) ucauses else ucauses[-ccc]
+###  competing <- any(!(Causes %in% cause))
+###
+###  data$id__    <- id
+###  data$exit    <- exit
+###  data$statusC <- statusC
+###
+###  cens.strata <- cens.nstrata <- NULL
+###  nevent      <- sum((status %in% cause) * (exit <= time))
+###  obs         <- (exit <= time & statusC == 0) | (exit >= time)
+###
+###  ## ------------------------------------------------------------------
+###  ## Censoring weights
+###  ## ------------------------------------------------------------------
+###  if (is.null(cens.weights)) { # {{{
+###    formC    <- update.formula(cens.model, Surv(exit,statusC) ~ . + cluster(id__))
+###    resC     <- phreg(formC, data)
+###    if (resC$p > 0) kmt <- FALSE
+###    exittime <- pmin(exit, time)
+###    cens.weights <- suppressWarnings(
+###      predict(resC, data, times = exittime, individual.time = TRUE,
+###              se = FALSE, km = kmt, tminus = TRUE)$surv)
+###    cens.strata  <- resC$strata[order(resC$ord)]
+###    cens.nstrata <- resC$nstrata
+###  } else {
+###    se <- FALSE; resC <- formC <- NULL
+###  } # }}}
+###
+###  ## ------------------------------------------------------------------
+###  ## Response
+###  ## ------------------------------------------------------------------
+###  expit <- function(z) 1 / (1 + exp(-z))
+###  p     <- ncol(X)
+###
+###  if (is.null(beta))         beta         <- rep(0, p)
+###  if (is.null(augmentation)) augmentation <- matrix(0, nstrata, p)
+###  if (!is.matrix(augmentation))
+###    augmentation <- matrix(augmentation, nstrata, p, byrow = TRUE)
+###
+###  X  <- as.matrix(X)
+###  X2 <- .Call("vecCPMat", X)$XX
+###
+###  if (!is.null(Ydirect)) {
+###    Y <- Ydirect
+###  } else {
+###    if (outcome[1] == "cif") {
+###      Y <- c((status %in% cause) * (exit <= time))
+###    } else {
+###      if (!competing) {
+###        if (outcome[1] == "rmst") Y <- c(pmin(exit, time))
+###        else                      Y <- c(time - pmin(exit, time))
+###      } else {
+###        Y <- c((status %in% cause) * (time - pmin(exit, time)))
+###      }
+###    }
+###  }
+###  Yresp <- c(Y)
+###  Y     <- Yipcw <- c(Y * obs / cens.weights)
+###  IPCW  <- c(obs / cens.weights)
+###
+###  ## ------------------------------------------------------------------
+###  ## MGCiid: censoring IID influence
+###  ## cv.fold: block s populated with complement rows (strata != s)
+###  ## standard: block s populated with stratum-s rows
+###  ## ------------------------------------------------------------------
+###  MGCiid <- 0
+###  if (se & monotone) { # {{{
+###    ord     <- resC$ord
+###    X       <- X[ord,  , drop = FALSE]
+###    X2      <- X2[ord, , drop = FALSE]
+###    status  <- status[ord]
+###    exit    <- exit[ord]
+###    weights <- weights[ord]
+###    offset  <- offset[ord]
+###    Y       <- Y[ord]
+###    strata  <- strata[ord]
+###
+###    xx   <- resC$cox.prep
+###    S0i2 <- S0i <- rep(0, length(xx$strata))
+###    S0i[xx$jumps  + 1] <- 1 / resC$S0
+###    S0i2[xx$jumps + 1] <- 1 / resC$S0^2
+###    btime <- 1*(exit < time)
+###    mid   <- max(id)
+###
+###    ## Block-expanded design: n x (nstrata*p)
+###    ## cv.fold: block s gets complement rows; standard: block s gets stratum-s rows
+###    Xs <- matrix(0, nrow(X), nstrata * p)
+###    for (s in 0:(nstrata - 1)) {
+###      idx  <- if (cv.fold) which(strata != s) else which(strata == s)
+###      cols <- s * p + seq_len(p)
+###      Xs[idx, cols] <- X[idx, ]
+###    }
+###
+###    h           <- Mrevcumsumstrata(Xs * Y, xx$strata, xx$nstrata)
+###    IhdLam0     <- Mcumsumstrata(h * S0i2 * btime, xx$strata, xx$nstrata)
+###    U           <- matrix(0, nrow(xx$X), ncol(Xs))
+###    U[xx$jumps + 1,] <- (resC$jumptimes < time) *
+###                         h[xx$jumps + 1,] / c(resC$S0)
+###    MGt    <- (U - IhdLam0) * c(xx$weights)
+###    MGCiid <- Msumstrata(MGt, xx$id, mid + 1)
+###
+###    if (type[1] == "II") { # {{{
+###      hYt      <- revcumsumstrata(Y,   xx$strata, xx$nstrata)
+###      IhdLam0  <- cumsumstrata(hYt * S0i2 * btime, xx$strata, xx$nstrata)
+###      U2       <- rep(0, length(xx$strata))
+###      U2[xx$jumps + 1] <- (resC$jumptimes < time) *
+###                           hYt[xx$jumps + 1] / c(resC$S0)
+###      MGt2    <- Xs * c(U2 - IhdLam0) * c(xx$weights)
+###      MGtiid  <- Msumstrata(MGt2, xx$id, mid + 1)
+###      augmentation <- colSums(MGtiid) + augmentation
+###      augmentation <- matrix(augmentation, nstrata, p, byrow = TRUE)
+###
+###      EXt          <- Mrevcumsumstrata(Xs, xx$strata, xx$nstrata)
+###      IEXhYtdLam0  <- Mcumsumstrata(EXt * c(hYt) * S0i * S0i2 * btime,
+###                                     xx$strata, xx$nstrata)
+###      U3 <- matrix(0, nrow(xx$X), ncol(Xs))
+###      U3[xx$jumps + 1,] <- (resC$jumptimes < time) *
+###                            hYt[xx$jumps + 1] *
+###                            EXt[xx$jumps + 1,] / c(resC$S0)^2
+###      MGt3    <- (U3 - IEXhYtdLam0) * c(xx$weights)
+###      MGCiid2 <- Msumstrata(MGt3, xx$id, mid + 1)
+###      MGCiid  <- MGCiid + (MGtiid - MGCiid2)
+###    } # }}}
+###
+###    id <- xx$id
+###  } else {
+###    MGCiid <- 0
+###  } # }}}
+###
+###  ## ------------------------------------------------------------------
+###  ## Model default
+###  ## ------------------------------------------------------------------
+###  if (model[1] == "default") {
+###    if (outcome[1] == "cif")        model <- "logit"
+###    if (outcome[1] == "rmst")       model <- "exp"
+###    if (outcome[1] == "rmtl")       model <- "exp"
+###    if (outcome[1] == "years-lost") model <- "exp"
+###  }
+###
+###  ## ------------------------------------------------------------------
+###  ## obj(): full objective (used for final all=TRUE call and NR)
+###  ## ------------------------------------------------------------------
+###  obj <- function(pp, all = FALSE) { # {{{
+###    np <- length(pp[[1]])
+###
+###    ## ----------------------------------------------------------------
+###    ## cv.fold path: for stratum s, beta_s estimated on complement rows
+###    ## ----------------------------------------------------------------
+###    if (cv.fold) {
+###      ploglik_list  <- vector("list", nstrata)
+###      gradient_list <- vector("list", nstrata)
+###      D2log_list    <- vector("list", nstrata)
+###
+###      for (s in 0:(nstrata - 1)) {
+###        idx_c <- which(strata != s)          # complement indices
+###        X_c   <- X[idx_c,  , drop=FALSE]
+###        X2_c  <- X2[idx_c, , drop=FALSE]
+###        Y_c   <- Y[idx_c]
+###        w_c   <- weights[idx_c]
+###        off_c <- offset[idx_c]
+###        aug_s <- augmentation[s + 1, ]
+###        lp_c  <- as.vector(X_c %*% pp[[s + 1]]) + off_c
+###
+###        if (model[1] == "exp") {
+###          pr_c  <- exp(lp_c)
+###          if (monotone) {
+###            Dl_c  <- w_c * X_c * c(Y_c - pr_c)
+###            D2l_c <- c(w_c * pr_c) * X2_c
+###          } else {
+###            Dl_c  <- w_c * X_c * c((Y_c - pr_c) * pr_c)
+###            D2l_c <- c(w_c * pr_c^2) * X2_c
+###          }
+###          pl_c <- 0
+###        } else if (model[1] == "lin") {
+###          pr_c  <- lp_c
+###          Dl_c  <- w_c * X_c * c(Y_c - pr_c)
+###          D2l_c <- c(w_c) * X2_c
+###          pl_c  <- sum(w_c * (Y_c - pr_c)^2)
+###        } else if (model[1] == "logit") {
+###          pr_c <- expit(lp_c)
+###          if (monotone) {
+###            Dl_c  <- w_c * X_c * c(Y_c - pr_c)
+###            D2l_c <- c(w_c * pr_c / (1 + exp(lp_c))) * X2_c
+###          } else {
+###            varp  <- pr_c / (1 + exp(lp_c))
+###            Dl_c  <- w_c * X_c * c((Y_c - pr_c) * varp)
+###            D2l_c <- c(w_c * varp^2) * X2_c
+###          }
+###          pl_c <- 0
+###        } else stop("link must be logit, exp, or lin\n")
+###
+###        ploglik_list[[s + 1]]  <- pl_c
+###        gradient_list[[s + 1]] <- -(colSums(Dl_c) + aug_s)
+###        D2log_list[[s + 1]]    <- colSums(D2l_c)
+###      }
+###
+###      sym <- function(x)
+###        matrix(.Call("XXMatFULL", matrix(x, nrow=1), np,
+###                     PACKAGE="mets")$XXf, np, np)
+###      hessian <- lapply(D2log_list, sym)
+###
+###      if (all) {
+###        ihess <- lapply(hessian, pinv)
+###
+###        ## Per-stratum IID: recompute Dl_c at optimal pp[[s]] separately
+###        ## for each stratum so blocks are independent and correctly sized.
+###        ## Obs i in stratum r contributes to beta_s for all s != r;
+###        ## Msumstrata fills zeros for stratum-s obs (they don't contribute).
+###        beta.iid <- do.call(cbind, lapply(seq_len(nstrata), function(s) {
+###          idx_c <- which(strata != (s - 1))
+###          X_c   <- X[idx_c,  , drop=FALSE]
+###          Y_c   <- Y[idx_c]
+###          w_c   <- weights[idx_c]
+###          off_c <- offset[idx_c]
+###          id_c  <- id[idx_c]
+###          lp_c  <- as.vector(X_c %*% pp[[s]]) + off_c
+###
+###          Dl_c <- switch(model[1],
+###            exp = {
+###              pr_c <- exp(lp_c)
+###              if (monotone) w_c * X_c * c(Y_c - pr_c)
+###              else          w_c * X_c * c((Y_c - pr_c) * pr_c)
+###            },
+###            lin = w_c * X_c * c(Y_c - lp_c),
+###            logit = {
+###              pr_c <- expit(lp_c)
+###              if (monotone) w_c * X_c * c(Y_c - pr_c)
+###              else {
+###                varp <- pr_c / (1 + exp(lp_c))
+###                w_c * X_c * c((Y_c - pr_c) * varp)
+###              }
+###            },
+###            stop("unknown model\n")
+###          )
+###
+###          raw <- Dl_c %*% ihess[[s]]
+###          Msumstrata(raw, id_c, max(id) + 1)
+###        }))
+###
+###        robvar <- crossprod(beta.iid)
+###        return(list(
+###          par      = pp,             coef      = unlist(pp),
+###          ploglik  = ploglik_list,   gradient  = gradient_list,
+###          hessian  = hessian,        ihessian  = ihess,
+###          id       = id,             Dlogl     = NULL,
+###          iid      = beta.iid,       robvar    = robvar,
+###          var      = robvar,         se.robust = diag(robvar)^.5
+###        ))
+###      }
+###
+###      return(structure(ploglik_list,
+###                       gradient = gradient_list,
+###                       hessian  = hessian))
+###    }
+###
+#### ----------------------------------------------------------------
+#### Standard non-CV
+#### ----------------------------------------------------------------
+###    loffset <- eta <- numeric(length(Y))
+###    for (s in 0:(nstrata - 1)) {
+###      idx          <- strata == s
+###      eta[idx]     <- as.vector(X[idx, , drop=FALSE] %*% pp[[s + 1]])
+###      loffset[idx] <- offset[idx]
+###    }
+###    lp <- eta + loffset
+###
+###    if (model[1] == "exp") {
+###      pr     <- exp(lp)
+###      if (monotone) {
+###        Dlogl  <- weights * X * c(Y - pr)
+###        D2logl <- c(weights * pr) * X2
+###      } else {
+###        Dlogl  <- weights * X * c((Y - pr) * pr)
+###        D2logl <- c(weights * pr^2) * X2
+###      }
+###    } else if (model[1] == "lin") {
+###      pr     <- lp
+###      Dlogl  <- weights * X * c(Y - pr)
+###      D2logl <- c(weights) * X2
+###    } else if (model[1] == "logit") {
+###      pr <- expit(lp)
+###      if (monotone) {
+###        Dlogl  <- weights * X * c(Y - pr)
+###        D2logl <- c(weights * pr / (1 + exp(lp))) * X2
+###      } else {
+###        varp   <- pr / (1 + exp(lp))
+###        Dlogl  <- weights * X * c((Y - pr) * varp)
+###        D2logl <- c(weights * varp^2) * X2
+###      }
+###    } else stop("link functions must be logit, exp, lin\n")
+###
+###    ploglik  <- sumstrata(weights * (Y - pr)^2, strata, nstrata)
+###    ploglik  <- matrix(ploglik, nstrata, 1)
+###    if (model[1] != "lin") ploglik <- 0 * ploglik
+###    D2log    <- Msumstrata(D2logl,  strata, nstrata)
+###    gradient <- Msumstrata(Dlogl,   strata, nstrata) + augmentation
+###    if (!is.matrix(D2log))    D2log    <- matrix(D2log,    1, length(D2log))
+###    if (!is.matrix(gradient)) gradient <- matrix(gradient, 1, np)
+###
+###    gradient <- split(-gradient, seq_len(nrow(gradient)))
+###    ploglik  <- split(-ploglik,  seq_len(nrow(ploglik)))
+###    D2log    <- split(D2log,     seq_len(nrow(D2log)))
+###
+###    sym <- function(x)
+###      matrix(.Call("XXMatFULL", matrix(x, nrow=1), np,
+###                   PACKAGE="mets")$XXf, np, np)
+###    hessian <- lapply(D2log, sym)
+###
+###    if (all) {
+###      ihess    <- lapply(hessian, pinv)
+###      iid_list <- lapply(seq_len(nstrata), function(s) {
+###        idx  <- strata == (s - 1)
+###        id_s <- id[idx]
+###        Dl_s <- Dlogl[idx, , drop=FALSE]
+###        raw  <- Dl_s %*% ihess[[s]]
+###        Msumstrata(raw, id_s, max(id) + 1)
+###      })
+###      beta.iid <- do.call(cbind, iid_list)
+###      robvar   <- crossprod(beta.iid)
+###      return(list(
+###        par      = pp,           coef      = unlist(pp),
+###        ploglik  = ploglik,      gradient  = gradient,
+###        hessian  = hessian,      ihessian  = ihess,
+###        id       = id,           Dlogl     = Dlogl,
+###        iid      = beta.iid,     robvar    = robvar,
+###        var      = robvar,       se.robust = diag(robvar)^.5
+###      ))
+###    }
+###    structure(ploglik, gradient = gradient, hessian = hessian)
+###  } # }}}
+###
+###  ## ------------------------------------------------------------------
+###  ## make_stratum_obj: per-stratum closure for NR
+###  ## cv.fold: use complement rows; standard: use stratum rows
+###  ## ------------------------------------------------------------------
+###  make_stratum_obj <- function(s, pp) { # {{{
+###    idx       <- if (cv.fold) strata != s else strata == s
+###    X_s       <- X[idx,  , drop=FALSE]
+###    X_s2      <- X2[idx, , drop=FALSE]
+###    Y_s       <- Y[idx]
+###    weights_s <- weights[idx]
+###    offset_s  <- offset[idx]
+###    aug_s     <- augmentation[s + 1, ]
+###
+###    sym <- function(x, np)
+###      matrix(.Call("XXMatFULL", matrix(x, nrow=1), np,
+###                   PACKAGE="mets")$XXf, np, np)
+###
+###    function(theta) {
+###      lp <- as.vector(X_s %*% theta) + offset_s
+###      if (model[1] == "exp") {
+###        pr <- exp(lp)
+###        if (monotone) {
+###          Dlogl  <- weights_s * X_s * c(Y_s - pr)
+###          D2logl <- c(weights_s * pr) * X_s2
+###        } else {
+###          Dlogl  <- weights_s * X_s * c((Y_s - pr) * pr)
+###          D2logl <- c(weights_s * pr^2) * X_s2
+###        }
+###        ploglik <- 0
+###      } else if (model[1] == "lin") {
+###        pr      <- lp
+###        Dlogl   <- weights_s * X_s * c(Y_s - pr)
+###        D2logl  <- c(weights_s) * X_s2
+###        ploglik <- sum(weights_s * (Y_s - pr)^2)
+###      } else if (model[1] == "logit") {
+###        pr <- expit(lp)
+###        if (monotone) {
+###          Dlogl  <- weights_s * X_s * c(Y_s - pr)
+###          D2logl <- c(weights_s * pr / (1 + exp(lp))) * X_s2
+###        } else {
+###          varp   <- pr / (1 + exp(lp))
+###          Dlogl  <- weights_s * X_s * c((Y_s - pr) * varp)
+###          D2logl <- c(weights_s * varp^2) * X_s2
+###        }
+###        ploglik <- 0
+###      } else stop("link functions must be logit, exp, lin\n")
+###
+###      np   <- length(theta)
+###      grad <- -(colSums(Dlogl) + aug_s)
+###      D2   <- colSums(D2logl)
+###      hess <- sym(D2, np)
+###      structure(-ploglik, gradient = grad, hessian = hess)
+###    }
+###  } # }}}
+###
+###  ## ------------------------------------------------------------------
+###  ## Optimise
+###  ## ------------------------------------------------------------------
+###  dots    <- list(...)
+###  control <- if (length(dots) == 0) {
+###    if (model[1] == "exp") list(tol=1e-10, stepsize=0.5) else NULL
+###  } else dots[[1]]
+###
+###  if (!is.matrix(beta)) beta <- matrix(beta, nstrata, p, byrow = TRUE)
+###  beta <- split(beta, seq_len(nrow(beta)))
+###
+###  NR_list <- function() {
+###    Map(function(s) {
+###      lava::NR(start   = beta[[s + 1]],
+###                obj     = make_stratum_obj(s, beta),
+###                control = control)
+###    }, seq_len(nstrata) - 1L)
+###  }
+###
+###  beta_opt <- beta   # fallback
+###
+###  if (p > 0) {
+###    if (!no.opt) {
+###      if (tolower(method) == "nr") {
+###        tim      <- NR_list()
+###        beta_opt <- lapply(tim, function(r) r$par)
+###        cc       <- unlist(beta_opt)
+###        val      <- c(list(coef = cc), obj(beta_opt, all = TRUE))
+###        val$gradient <- lapply(tim, function(r) r$gradient)
+###      } else {
+###        stop("only NR of lava\n")
+###      }
+###    } else {
+###      val <- c(list(coef = unlist(beta)), obj(beta, all = TRUE))
+###    }
+###  } else {
+###    val <- obj(as.list(rep(0, nstrata)), all = TRUE)
+###  }
+###
+###  ## ------------------------------------------------------------------
+###  ## Coefficient naming
+###  ## ------------------------------------------------------------------
+###  if (nstrata == 1 && length(val$coef) == length(colnames(X))) {
+###    names(val$coef) <- colnames(X)
+###  } else {
+###    cnames <- paste(
+###      rep(paste0("s", 1:nstrata), each = ncol(X)),
+###      rep(colnames(X), times = nstrata),
+###      sep = "."
+###    )
+###    names(val$coef)   <- cnames
+###    colnames(val$iid) <- cnames
+###  }
+###
+###  ## ------------------------------------------------------------------
+###  ## Assemble output
+###  ## ------------------------------------------------------------------
+###  val <- c(val, list(
+###    time          = time,          formula      = formula,
+###    formC         = formC,         cens.weights = cens.weights,
+###    cens.strata   = cens.strata,   cens.nstrata = cens.nstrata,
+###    n             = length(exit),  nevent       = nevent,
+###    ncluster      = nid
+###  ))
+###  val$call      <- cl
+###  val$MGciid    <- MGCiid
+###  val$call.id   <- call.id
+###  val$id        <- orig.id
+###  val$name.id   <- name.id
+###  val$nid       <- nid
+###  val$iid.naive <- val$iid
+###  val$naive.var <- NULL
+###  val$coef_list <- beta_opt
+###
+###  ## ------------------------------------------------------------------
+###  ## Censoring IID adjustment, per stratum block
+###  ## iid[, cols_s] += MGCiid[, cols_s] %*% H_s^{-1}
+###  ## For cv.fold, MGCiid[, cols_s] already encodes complement rows via Xs,
+###  ## and ihessian[[s]] is from the complement fit
+###  ## ------------------------------------------------------------------
+###  if (se) {
+###    val$iid <- do.call(cbind, lapply(seq_len(nstrata), function(s) {
+###      cols <- (s - 1) * p + seq_len(p)
+###      val$iid[, cols] + MGCiid[, cols] %*% val$ihessian[[s]]
+###    }))
+###  }
+###
+###  if (!is.null(name.id)) val$iid <- nameme(val$iid, name.id)
+###  robvar        <- crossprod(val$iid)
+###  val$var       <- val$robvar <- robvar
+###  val$se.robust <- diag(robvar)^.5
+###  val$se.coef   <- diag(val$var)^.5
+###
+###  val$cause        <- cause
+###  val$cens.code    <- cens.code
+###  val$augmentation <- augmentation
+###  val$model        <- model[1]
+###  val$outcome      <- outcome[1]
+###  val$Yipcw        <- Yipcw
+###  val$Y            <- Yresp
+###  val$IPCW         <- IPCW
+###  val$Causes       <- Causes
+###  val$nevent       <- nevent
+###  val$design       <- des
+###  val$nstrata      <- nstrata
+###  val$strata_orig  <- strata
+###  val$strata_call  <- des.strata
+###  val$cv.fold      <- cv.fold
+###
+###  if (low.memory) {
+###	val$design$y <- NULL
+###	val$design$data <- NULL
+###	val$design$x <- NULL
+###	val$design$strata <- NULL
+###	val$strata_orig <- NULL
+###	val$strata_call <- NULL
+###	val$MGciid <- NULL
+###	val$iid.naive <- NULL
+###	val$iid.naive <- NULL
+###	val$cens.strata <-  NULL
+###	val$cens.weights <-  NULL
+###	val$name.id  <-  NULL
+###  }
+###
+###  class(val) <- c("binregStrata","binreg")
+###  return(val)
+###} # }}}
 
 ## {{{  predict, 
 
@@ -943,7 +1669,7 @@ IC.binregStrata <- function(x, ...) x$iid * NROW(x$iid)
 
 
 ##' Cross-validated Brier score for competing risks, RMST and RMTL regression
-##' using stratified leave-fold-out fits (\code{binregStrata})
+##' using stratified leave-fold-out fits (\code{binreg} \code{binregStrata})
 ##'
 ##' Fits candidate models via \code{\link[mets]{binregStrata}} with
 ##' \code{cv.fold = TRUE} and evaluates each using apparent (in-sample) and

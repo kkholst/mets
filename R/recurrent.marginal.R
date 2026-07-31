@@ -559,7 +559,7 @@ logrankRecurrentBase <- function(recurrent,death,weight=c("I","II","III"),km=TRU
   S0i2 <- S0i <- rep(0,length(xx$strata))
   S0i[xx$jumps+1] <-  1/Yrr[xx$jumps+1]
 
-  Sta <- cumsumstratasum(log(1-S0i),xx$strata,xx$nstrata)
+  Sta <- cumsumstratasum(log(1-S0i),xx$strata,xx$nstrata,type="eachstrata")
   St <- c(exp(Sta$lagsum))
   kmss <- exp(Sta$alllagsum)
   Yss <- .Call("_mets_riskstrataR",xx$sign,xx$strata,xx$nstrata)$risk
@@ -572,7 +572,7 @@ logrankRecurrentBase <- function(recurrent,death,weight=c("I","II","III"),km=TRU
      xx <- xr$cox.prep
      S0ri <- rep(0,length(xx$strata))
      S0ri[xx$jumps+1] <-  1/Yrr[xx$jumps+1]
-     cifsm <- cumsumstratasum(St*S0ri,xx$strata,xx$nstrata)
+     cifsm <- cumsumstratasum(St*S0ri,xx$strata,xx$nstrata,type="eachstrata")
      F1c <-  1-cifsm$alllagsum 
      Rss <-  F1c*Yss/kmss
      Rss[Yss==0] <- 0 

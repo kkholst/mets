@@ -26,7 +26,7 @@ binregStrata(
   Ydirect = NULL,
   strata = NULL,
   cv.fold = FALSE,
-  low.memory = FALSE,
+  low.memory = TRUE,
   ...
 )
 }

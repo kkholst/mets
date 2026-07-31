@@ -3,7 +3,7 @@
 \name{brier_binreg}
 \alias{brier_binreg}
 \title{Cross-validated Brier score for competing risks, RMST and RMTL regression
-using stratified leave-fold-out fits (\code{binregStrata})}
+using stratified leave-fold-out fits (\code{binreg} \code{binregStrata})}
 \usage{
 brier_binreg(
   formula,
