@@ -1885,8 +1885,9 @@ IC.binregStrata <- function(x, ...) x$iid * NROW(x$iid)
 ##' summary(fit_reg, transform = exp)
 ##'
 ##' ## --- no IPCW adjustment  binomial-regression  ---------------
+##' bmt$binY  <- as.numeric(bmt$time>30)
 ##' fit_bin <- brier_binreg(
-##'   I(time>30) ~ tcell + platelet + age + cluster(id),
+##'   binY ~ tcell + platelet + age + cluster(id),
 ##'   data = bmt, model="logit",
 ##'   rhs    = list(small = ~age, full = ~tcell + platelet + age)
 ##' )
