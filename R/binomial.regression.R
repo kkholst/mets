@@ -259,7 +259,7 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
 	    cens.strata <- cens.nstrata <- NULL
 
 	    ## Ydirect rules over Y 
-	    if (is.null(Ydirect)) Ydirect  <- Y
+	    if (!is.null(Ydirect)) Y <- Ydirect
 
 	 ## default links
 	 if (model[1]=="default") {
