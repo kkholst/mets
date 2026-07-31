@@ -180,6 +180,7 @@ compute contrasts after \code{estimate(fit, f = exp)}.
 
 \examples{
 \dontrun{
+set.seed(123)
 library(mets)
 data(bmt)
 bmt$id <- seq_len(nrow(bmt))

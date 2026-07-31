@@ -1824,6 +1824,7 @@ IC.binregStrata <- function(x, ...) x$iid * NROW(x$iid)
 ##'
 ##' @examples
 ##' \dontrun{
+##' set.seed(123)
 ##' library(mets)
 ##' data(bmt)
 ##' bmt$id <- seq_len(nrow(bmt))
@@ -2038,11 +2039,10 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
               brier.args))
   }
 
-  do_resmean <- function(dat, brier_vec,tt) {
-    dat$brier__ <- brier_vec
-    do.call(lm, c(list(brier__ ~ 1, data = dat)))
-  }
-
+###  do_resmean <- function(dat, brier_vec,tt) {
+###    dat$brier__ <- brier_vec
+###    do.call(lm, c(list(brier__ ~ 1, data = dat)))
+###  }
 
   log_est <- function(fit, iid_corrected = NULL) {
     if (!is.null(iid_corrected)) {
@@ -2090,7 +2090,7 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
                                 strata     = strata_vec,
                                 cens.model = cens.model,
                                 cv.fold    = TRUE, low.memory=TRUE,...)
-    predbcv     <- predict_cvS(outfb, data)
+    predbcv     <- predict(outfb, data,se=0)
     data$brier_ <- (outcome - predbcv)^2
     bbrierCV    <- do_resmean(data, data$brier_, tt)
     bbrierCV    <- eco(bbrierCV)
@@ -2134,7 +2134,7 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
                                 strata     = strata_vec,
                                 cens.model = cens.model,
                                 cv.fold    = TRUE, low.memory=TRUE,...)
-      pred        <- predict_cvS(outff, data)
+      pred        <- predict(outff, data,se=0)
       data$brier_ <- (outcome_m - pred)^2
       brierCV     <- do_resmean(data, data$brier_, tt)
       brierCV     <- eco(brierCV)
