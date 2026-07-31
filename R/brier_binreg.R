@@ -1824,7 +1824,6 @@ IC.binregStrata <- function(x, ...) x$iid * NROW(x$iid)
 ##'
 ##' @examples
 ##' \dontrun{
-##' set.seed(123)
 ##' library(mets)
 ##' data(bmt)
 ##' bmt$id <- seq_len(nrow(bmt))
@@ -1966,9 +1965,6 @@ brier_binreg <- function(formula, data, time=NULL,
     rhs_str <- if (length(labs) == 0) "1" else paste(labs, collapse = " + ")
     as.formula(paste(lhs_str, "~", rhs_str,
                      "+ strata(fold) + cluster(", id, ")"))
-  }
-  predict_cvS <- function(fit, newdata, se = FALSE) {
-    as.numeric(predict(fit, newdata, se = se))
   }
 
   ## ------------------------------------------------------------------
@@ -3303,9 +3299,6 @@ build_strata_formula <- function(f) {
   data$fold <- 0L
   for (k in seq_len(fold)) data$fold[dd[[k]]] <- k
   strata_vec <- data$fold - 1L
-  predict_cvS <- function(fit, newdata, se = FALSE) {
-    as.numeric(predict(fit, newdata, se = se))
-  }
   ## ------------------------------------------------------------------
   ## cv_iid_correctS -- lin-only: mu_prime == 1, no IPCW weighting
   ## ------------------------------------------------------------------
@@ -3382,7 +3375,7 @@ build_strata_formula <- function(f) {
   outfb     <- lmStrata(f0_strata, data = data,
                         strata     = strata_vec,
                      cv.fold = TRUE, low.memory = TRUE)
-  predbcv     <- predict_cvS(outfb, data,se=0)
+  predbcv     <- predict(outfb, data,se=0)
   data$brier_ <- (y - predbcv)^2
   bbrierCV    <- do_resmean(data, data$brier_)
   bbrierCV    <- eco(bbrierCV)
@@ -3417,7 +3410,7 @@ build_strata_formula <- function(f) {
     outff    <- lmStrata(f_strata, data = data,
                             strata     = strata_vec,
                           cv.fold = TRUE, low.memory = TRUE)
-    pred        <- predict_cvS(outff, data)
+    pred        <- predict(outff, data,se=0)
     data$brier_ <- (y - pred)^2
     brierCV     <- do_resmean(data, data$brier_)
     brierCV     <- eco(brierCV)
