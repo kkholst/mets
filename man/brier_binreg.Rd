@@ -231,6 +231,24 @@ fit_rmtl <- brier_binreg(
   outcome = "rmtl"
 )
 summary(fit_rmtl, transform = exp)
+
+## --- no IPCW adjustment, regression ---------
+fit_reg <- brier_binreg(
+  time ~ tcell + platelet + age + cluster(id),
+  data = bmt, 
+  rhs    = list(small = ~age, full = ~tcell + platelet + age)
+)
+summary(fit_reg, transform = exp)
+
+## --- no IPCW adjustment  binomial-regression  ---------------
+fit_bin <- brier_binreg(
+  I(time>30) ~ tcell + platelet + age + cluster(id),
+  data = bmt, model="logit",
+  rhs    = list(small = ~age, full = ~tcell + platelet + age)
+)
+summary(fit_bin, transform = exp)
+
+
 }
 }
 \seealso{

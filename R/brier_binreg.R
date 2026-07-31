@@ -1875,6 +1875,24 @@ IC.binregStrata <- function(x, ...) x$iid * NROW(x$iid)
 ##'   outcome = "rmtl"
 ##' )
 ##' summary(fit_rmtl, transform = exp)
+##'
+##' ## --- no IPCW adjustment, regression ---------
+##' fit_reg <- brier_binreg(
+##'   time ~ tcell + platelet + age + cluster(id),
+##'   data = bmt, 
+##'   rhs    = list(small = ~age, full = ~tcell + platelet + age)
+##' )
+##' summary(fit_reg, transform = exp)
+##'
+##' ## --- no IPCW adjustment  binomial-regression  ---------------
+##' fit_bin <- brier_binreg(
+##'   I(time>30) ~ tcell + platelet + age + cluster(id),
+##'   data = bmt, model="logit",
+##'   rhs    = list(small = ~age, full = ~tcell + platelet + age)
+##' )
+##' summary(fit_bin, transform = exp)
+##'
+##'
 ##' }
 ##' @export
 brier_binreg <- function(formula, data, time=NULL,
@@ -1915,7 +1933,8 @@ brier_binreg <- function(formula, data, time=NULL,
 
   if ((length(lhs_call)>1) & is.null(time)) stop("must give time for binreg object with Event object responses\n"); 
   ## time not needed for continuous responses 
-  if (length(lhs_call)==1 &  is.null(time)) time  <- 0
+  noIPCW <- 0
+  if (length(lhs_call)==1 &  is.null(time)) { time  <- 0; noIPCW <- 1}
 ###  time_var   <- as.character(lhs_call[[2]])
 ###  status_var <- as.character(lhs_call[[3]])
 
@@ -2035,10 +2054,10 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
               brier.args))
   }
 
-###  do_resmean <- function(dat, brier_vec,tt) {
-###    dat$brier__ <- brier_vec
-###    do.call(lm, c(list(brier__ ~ 1, data = dat)))
-###  }
+  do_mean <- function(dat, brier_vec,tt) {
+    dat$brier__ <- brier_vec
+    do.call(lm, c(list(brier__ ~ 1, data = dat)))
+  }
 
   log_est <- function(fit, iid_corrected = NULL) {
     if (!is.null(iid_corrected)) {
@@ -2074,7 +2093,7 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
     ipcw_wt_b    <- as.numeric(outb$IPCW)
     predb        <- predict(outb, data, se = FALSE)
     data$brier_  <- (outcome - predb)^2
-    bbrier       <- do_resmean(data, data$brier_, tt)
+    if (noIPCW==0) bbrier       <- do_resmean(data, data$brier_, tt) else bbrier       <- do_mean(data, data$brier_, tt)
     bbrier <- eco(bbrier)
     e <- estimate(bbrier, f = log)
     bbrier_log   <- log_est(bbrier)
@@ -2088,7 +2107,9 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
                                 cv.fold    = TRUE, low.memory=TRUE,...)
     predbcv     <- predict(outfb, data,se=0)
     data$brier_ <- (outcome - predbcv)^2
+    if (noIPCW==0) 
     bbrierCV    <- do_resmean(data, data$brier_, tt)
+    else bbrierCV    <- do_mean(data, data$brier_, tt)
     bbrierCV    <- eco(bbrierCV)
     iid.bbrierCV <- cv_iid_correctS(bbrierCV, outfb, data,
                                      predbcv, ipcw_wt_b, outcome,
@@ -2118,7 +2139,7 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
       pred        <- predict(out, data, se = FALSE)
       data$brier_ <- (outcome_m - pred)^2
       out         <- NULL
-      brier       <- do_resmean(data, data$brier_, tt)
+      if (noIPCW==0) brier       <- do_resmean(data, data$brier_, tt) else brier   <- do_mean(data, data$brier_, tt)
       brier       <- eco(brier)
       brier_log   <- log_est(brier)
       dbrier      <- brier_log$coef - bbrier_log$coef
@@ -2132,7 +2153,9 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
                                 cv.fold    = TRUE, low.memory=TRUE,...)
       pred        <- predict(outff, data,se=0)
       data$brier_ <- (outcome_m - pred)^2
+      if (noIPCW==0) 
       brierCV     <- do_resmean(data, data$brier_, tt)
+      else brierCV     <- do_mean(data, data$brier_, tt)
       brierCV     <- eco(brierCV)
       iid.brierCV <- cv_iid_correctS(brierCV, outff, data,
                                       pred, ipcw_wt_m, outcome_m, binreg_model)
