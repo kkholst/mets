@@ -36,6 +36,9 @@
 ##'
 ##' @param formula A formula object specifying the outcome and covariates. 
 ##'   The outcome must be an \code{Event} object (\code{Event(time, cause)}).
+##' Outcome can also be a numeric or a factor
+##' that is then  used as \code{as.numeric(factor)-1} to do regression or 
+##' logistic regression. 
 ##' @param data A data frame containing the variables in the formula.
 ##' @param cause Numeric vector or scalar indicating the cause of interest for the competing risks.
 ##' @param time Numeric scalar indicating the time point of interest for the cumulative incidence.

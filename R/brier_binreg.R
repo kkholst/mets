@@ -10,10 +10,11 @@
 ##' computed via an iid decomposition that accounts for the estimation of the
 ##' censoring distribution.
 ##'
-##' @param formula A formula with a \code{\link[survival]{Surv}} or
-##'   \code{Event} object on the left-hand side, and covariates, optional
+##' @param formula A formula with a survival outcome, \code{\link[survival]{Surv}} or
+##'   \code{Event} object, on the left-hand side optional
 ##'   \code{cluster()}, \code{strata()}, \code{offset()}, and \code{weights()}
-##'   terms on the right-hand side.
+##'   terms on the right-hand side. Left-hand side response can also be a numeric or a factor
+##'  that is then  used as \code{as.numeric(factor)-1} for example to do logistic regression. 
 ##' @param data A \code{data.frame} containing the variables in \code{formula}.
 ##' @param cause Value(s) of the status variable that identify the event of
 ##'   interest (cause 1 by default).

@@ -31,7 +31,10 @@ binreg(
 }
 \arguments{
 \item{formula}{A formula object specifying the outcome and covariates. 
-The outcome must be an \code{Event} object (\code{Event(time, cause)}).}
+  The outcome must be an \code{Event} object (\code{Event(time, cause)}).
+Outcome can also be a numeric or a factor
+that is then  used as \code{as.numeric(factor)-1} to do regression or 
+logistic regression.}
 
 \item{data}{A data frame containing the variables in the formula.}
 

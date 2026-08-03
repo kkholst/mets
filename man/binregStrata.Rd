@@ -31,10 +31,11 @@ binregStrata(
 )
 }
 \arguments{
-\item{formula}{A formula with a \code{\link[survival]{Surv}} or
-\code{Event} object on the left-hand side, and covariates, optional
-\code{cluster()}, \code{strata()}, \code{offset()}, and \code{weights()}
-terms on the right-hand side.}
+\item{formula}{A formula with a survival outcome, \code{\link[survival]{Surv}} or
+ \code{Event} object, on the left-hand side optional
+ \code{cluster()}, \code{strata()}, \code{offset()}, and \code{weights()}
+ terms on the right-hand side. Left-hand side response can also be a numeric or a factor
+that is then  used as \code{as.numeric(factor)-1} for example to do logistic regression.}
 
 \item{data}{A \code{data.frame} containing the variables in \code{formula}.}
 
