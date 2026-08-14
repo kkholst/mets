@@ -12,7 +12,7 @@ test_logrankRecurrent(
   km = TRUE,
   start = 0,
   stop = NULL,
-  at.risk = 5,
+  at.risk = 0,
   cluster.id = NULL,
   ...
 )
@@ -39,7 +39,7 @@ estimator is used.}
 observed jump time.}
 
 \item{at.risk}{Minimum combined risk-set size below which the weight is set
-to zero. Default is \code{5}.}
+to zero. Default is \code{0}.}
 
 \item{cluster.id}{Optional vector of cluster identifiers for aggregating
 influence functions across clusters before forming the test statistic.}

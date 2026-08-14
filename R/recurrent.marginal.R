@@ -485,7 +485,7 @@ return(ic)
 ##' @param stop Right truncation time for the integration. Defaults to the last
 ##'   observed jump time.
 ##' @param at.risk Minimum combined risk-set size below which the weight is set
-##'   to zero. Default is \code{5}.
+##'   to zero. Default is \code{0}.
 ##' @param cluster.id Optional vector of cluster identifiers for aggregating
 ##'   influence functions across clusters before forming the test statistic.
 ##' @param ... Currently unused.
@@ -526,24 +526,24 @@ return(ic)
 ##' @aliases logrankRecurrentBase
 ##' @export
 test_logrankRecurrent <- function(recurrent,death,
-              weight=c("I","II","III"),km=TRUE,start=0,stop=NULL,at.risk=5,cluster.id=NULL,...) { ## {{{ 
+              weight=c("I","II","III"),km=TRUE,start=0,stop=NULL,at.risk=0,cluster.id=NULL,...) { ## {{{ 
   if (inherits(recurrent,"phreg")) { # Fall-back to recurrentMarginalPhreg
     if (inherits(death, "phreg")) {
         return(logrankRecurrentBase(recurrent,death,
 		weight=weight[1],km=km,start=start,stop=stop,at.risk=at.risk,
-		cluster.id=cluster.id))
+		cluster.id=cluster.id,...))
      } 
      return(NULL)
   } else if (inherits(recurrent,"recurrent")) { # Fall-back to recurrentMarginalPhreg
         return(logrankRecurrentBase(attr(recurrent,"recurrent"),attr(recurrent,"death"),
-		weight=weight[1],km=km,start=start,stop=stop,at.risk=at.risk,cluster.id=cluster.id))
+		weight=weight[1],km=km,start=start,stop=stop,at.risk=at.risk,cluster.id=cluster.id,...))
  } else stop("input either output from recurrentMarginal or two phreg's\n")
 
 } ## }}}
 
 ##' @export
 logrankRecurrentBase <- function(recurrent,death,weight=c("I","II","III"),km=TRUE,
-       start=0,stop=NULL,at.risk=0,cluster.id=NULL) { ## {{{ 
+       start=0,stop=NULL,at.risk=0,cluster.id=NULL,Kt=NULL,score.iid=FALSE) { ## {{{ 
   xr <- recurrent
   dr <- death 
   if (is.null(stop)) stop <- max(xr$jumptimes)
@@ -599,6 +599,10 @@ logrankRecurrentBase <- function(recurrent,death,weight=c("I","II","III"),km=TRU
       }
      ## adjust weight to get Grays test with [1-F_1(s-)]^-1
      if (weight[1]=="III") wt <- wt*F1ci
+     if (!is.null(Kt)) {
+	     if (is.function(Kt)) wt <- wt*Kt(xx$time)
+	     if (is.vector(Kt)) if (length(Kt)==length(xx$time)) wt  <- wt*Kt
+     }
 
       lrt <- iidRecurrent(xr,dr,wt=wt)
       diff(lrt$mut)
@@ -613,6 +617,7 @@ logrankRecurrentBase <- function(recurrent,death,weight=c("I","II","III"),km=TRU
    }
    logrank <- summary(estimate(coef=contr,IC=contr.iid*nrow(contr.iid)),null=0)
    p <- length(contr)
+   if (score.iid) attr(logrank,"score.iid") <- lrt
 
    return(logrank)
 } ## }}} 
