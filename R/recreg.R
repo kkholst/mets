@@ -153,7 +153,9 @@ cl <- match.call()
 recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,weights=NULL,
 		      strata.name=NULL,beta,stderr=1,method="NR",no.opt=FALSE,propodds=NULL,zero.remove=1,
 		      case.weights=NULL,cause=1,death.code=2,cens.code=0,Gc=NULL,cens.model=~+1,augmentation=NULL,
-		      cox.prep=TRUE,wcomp=NULL,augment.model=NULL,adm.cens.time=NULL,ftime.augment=NULL,twostage=FALSE,...) { ## {{{
+		      cox.prep=TRUE,wcomp=NULL,augment.model=NULL,adm.cens.time=NULL,ftime.augment=NULL,twostage=FALSE,
+		      timedir.score=FALSE,
+		      ...) { ## {{{
 	p <- ncol(X)  # setting up weights, strata, beta and so forth before the action starts
 	if (missing(beta)) beta <- rep(0,p)
 	if (p==0) X <- cbind(rep(0,length(exit)))
@@ -399,6 +401,7 @@ recregN01 <- function(data,X,entry,exit,status,id=NULL,strata=NULL,offset=NULL,w
 
 		U  <- apply(Ut,2,sum)
 		DUt <- caseweightsJ*weightsJ*DUt
+		if (timedir.score) DUt <- caseweightsJ*DUt
 		DU <- -apply(DUt,2,sum)
 		np <- length(pp)
 		if (ncol(DUt)!=p*p) {
