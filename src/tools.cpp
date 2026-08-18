@@ -3,10 +3,71 @@
 
 #include "tools.h"
 #include <vector>
+#include <Rcpp.h>
+#include <algorithm>
+#include <vector>
+
 
 using namespace std;
 using namespace arma;
 using namespace Rcpp;
+
+
+// Splits each (start[i], time[i]] interval at every cut value that falls
+// strictly inside it. cutmat is n x m: row i, column j gives the j-th
+// candidate cut value for row i (constant down a column for "global" cuts,
+// or varying per row when cuts come from data columns).
+//
+// [[Rcpp::export]]
+DataFrame event_split_cpp(NumericVector start, NumericVector time,
+                           NumericVector status, NumericMatrix cutmat,
+                           double cens_code = 0) {
+    int n = start.size();
+    int m = cutmat.ncol();
+
+    std::vector<double> out_start, out_time, out_status;
+    std::vector<int> out_row;
+    out_start.reserve(n);
+    out_time.reserve(n);
+    out_status.reserve(n);
+    out_row.reserve(n);
+
+    std::vector<double> rowcuts;
+    rowcuts.reserve(m);
+
+    for (int i = 0; i < n; i++) {
+        rowcuts.clear();
+        for (int j = 0; j < m; j++) {
+            double c = cutmat(i, j);
+            if (!NumericVector::is_na(c) && c > start[i] && c < time[i]) {
+                rowcuts.push_back(c);
+            }
+        }
+        std::sort(rowcuts.begin(), rowcuts.end());
+        rowcuts.erase(std::unique(rowcuts.begin(), rowcuts.end()), rowcuts.end());
+
+        double prev = start[i];
+        for (size_t j = 0; j < rowcuts.size(); j++) {
+            out_start.push_back(prev);
+            out_time.push_back(rowcuts[j]);
+            out_status.push_back(cens_code);
+            out_row.push_back(i + 1);   // 1-based, for R indexing
+            prev = rowcuts[j];
+        }
+        // final segment keeps the real event/censoring status
+        out_start.push_back(prev);
+        out_time.push_back(time[i]);
+        out_status.push_back(status[i]);
+        out_row.push_back(i + 1);
+    }
+
+    return DataFrame::create(
+        Named("row")    = out_row,
+        Named("start")  = out_start,
+        Named("time")   = out_time,
+        Named("status") = out_status
+    );
+}
 
 
 SEXP FastLong2(SEXP idata, SEXP inclust,

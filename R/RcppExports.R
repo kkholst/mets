@@ -45,6 +45,10 @@ cumsumstratasumR <- function(ia, istrata, instrata, iallstrata) {
     .Call(`_mets_rmvn`, n, mu, rho)
 }
 
+event_split_cpp <- function(start, time, status, cutmat, cens_code = 0) {
+    .Call(`_mets_event_split_cpp`, start, time, status, cutmat, cens_code)
+}
+
 .logl_weibull <- function(par, entry, exit, status, X, Z) {
     .Call(`_mets_logl_weibull`, par, entry, exit, status, X, Z)
 }

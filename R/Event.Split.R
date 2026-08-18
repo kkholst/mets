@@ -1,119 +1,234 @@
-##' event_split (SurvSplit).
-##' 
-##' Constructs start stop formulation of event time data after a variable in
-##' the data.set. Similar to SurvSplit of the survival package but can also
-##' split after random time given in data frame.
-##' 
-##' 
-##' @param data data to be split
-##' @param time time variable.
-##' @param status status variable.
-##' @param cuts cuts variable or numeric cut (only one value)
-##' @param name.id name of id variable.
-##' @param name.start name of start variable in data, start can also be numeric "0"
-##' @param cens.code code for the censoring.
-##' @param order.id order data after id and start.
-##' @param time.group make variable "before"."cut" that keeps track of wether start,stop is before (1) or after cut (0).
-##' @author Thomas Scheike
-##' @keywords survival
+##' Split event-history records at one or more cut points (SurvSplit) 
+##'
+##' Splits each row's \code{(start, time]} interval at every cut point that
+##' falls strictly inside it, replicating covariates onto the new rows and
+##' setting the status of every intermediate (non-final) segment to
+##' \code{cens.code}. Can also use a subject specific cut-point (event-based) 
+##' when a variable name is given as the cuts.
+##'
+##' \code{cuts} can be:
+##' \itemize{
+##'   \item a single number: one global cut point applied to every row.
+##'   \item a numeric vector: several global cut points, all applied in one
+##'         call (equivalent to, but faster than, calling
+##'         \code{event_splitC} once per cut point).
+##'   \item a single column name (character): a per-row cut point, read from
+##'         that column of \code{data} (so different rows can be cut at
+##'         different times).
+##'   \item a character vector of column names: several per-row cut points at
+##'         once, one set of values per named column.
+##' }
+##' \code{NA} in a per-row cut column simply means "no cut" for that row/column
+##' combination.
+##'
+##' @param data a data.frame with (at least) the time, status, and optionally
+##'   start columns.
+##' @param cuts cut point(s); see Details.
+##' @param time name of the time (interval end) column.
+##' @param status name of the status/event column.
+##' @param name.id name of the subject-id column; created (as \code{1:n}) if
+##'   not already present.
+##' @param name.start name of the interval-start column. If numeric (e.g.
+##'   \code{0}), that constant is used as the start time for every row and
+##'   materialised into a new column called \code{start.<value>}.
+##' @param cens.code status value assigned to every intermediate split
+##'   segment (i.e. every segment except the last one for a given original
+##'   row).
+##' @param order.id if \code{TRUE}, sort the result by id then start time.
+##' @param time.group if \code{TRUE}, add one \code{before.<cut>} 0/1
+##'   indicator column per cut point/column, flagging whether the segment's
+##'   start is before that particular cut.
+##' @param group.var if not \code{NULL}, the name of a single integer column
+##'   to add giving which time-axis bin the segment falls in: bin 1 is
+##'   \code{[0, c1)}, bin 2 is \code{[c1, c2)}, ..., using every distinct cut
+##'   value seen in \code{cuts} (sorted). Only meaningful when the data has
+##'   actually been split at those same cut points.
+##'
+##' @return A data.frame with one row per split segment.
+##'
 ##' @examples
-##' 
-##' set.seed(1)
-##' d <- data.frame(event=round(5*runif(5),2),start=1:5,time=2*1:5,
-##' 		status=rbinom(5,1,0.5),x=1:5)
-##' d
-##' 
-##' d0 <- event_split(d,cuts="event",name.start=0)
-##' d0
-##' 
-##' dd <- event_split(d,cuts="event")
-##' dd
-##' ddd <- event_split(dd,cuts=3.5)
-##' ddd
-##' event_split(ddd,cuts=5.5)
-##' 
-##' ### successive cutting for many values 
-##' dd <- d
-##' for  (cuts in seq(2,3,by=0.3)) dd <- event_split(dd,cuts=cuts)
-##' dd
-##' 
-##' ###########################################################################
-##' ### same but for situation with multiple events along the time-axis
-##' ###########################################################################
-##' d <- data.frame(event1=1:5+runif(5)*0.5,start=1:5,time=2*1:5,
-##' 		status=rbinom(5,1,0.5),x=1:5,start0=0)
-##' d$event2 <- d$event1+0.2
-##' d$event2[4:5] <- NA 
-##' d
-##' 
-##' d0 <- event_split(d,cuts="event1",name.start="start",time="time",status="status")
-##' d0
-##' ###
-##' d00 <- event_split(d0,cuts="event2",name.start="start",time="time",status="status")
-##' d00
-##' 
+##' d <- data.frame(event = round(5 * runif(5), 2),
+##'                  start = 1:5, time = 2 * (1:5),
+##'                  status = rbinom(5, 1, 0.5), x = 1:5)
+##'
+##' ## 1. single global cut point
+##' event_split(d, cuts = 3.5)
+##'
+##' ## 2. several global cut points in one call
+##' event_split(d, cuts = c(2, 4, 7))
+##'
+##' ## 3. per-row cut point taken from an existing column, with an
+##' ##    explicit constant start time (start.0 is created automatically)
+##' event_split(d, cuts = "event", name.start = 0)
+##'
+##' ## 4. several per-row cut points from multiple columns at once
+##' d2 <- d
+##' d2$cutA <- d2$event
+##' d2$cutB <- d2$event + 1
+##' event_split(d2, cuts = c("cutA", "cutB"), name.start = 0)
+##' event_split(d2, cuts = c("cutA", "cutB"), name.start = "start")
+##'
+##' ## 5. group.var: a single time-axis bin label instead of several
+##' ##    before/after indicators
+##' event_split(d, cuts = c(2, 4, 7), group.var = "group")
+##'
 ##' @export
-event_split <- function(data,
-		time="time",status="status",cuts="cuts",name.id="id",
-		name.start="start", cens.code=0,order.id=TRUE, time.group=FALSE)
+event_split <- function(data, cuts,
+                         time="time", status="status",
+                         name.id="id", name.start="start",
+                         cens.code=0, order.id=TRUE, time.group=FALSE,
+                         group.var=NULL)
 { ## {{{
     n <- nrow(data)
-    new.time <- data[,time]
-    new.status <- data[,status]
+    new.time   <- data[[time]]
+    new.status <- data[[status]]
 
-    if (is.numeric(cuts)) {
-        cutname <- paste("cut",cuts,sep=".")
-        data[,cutname] <- cuts
-    } else cutname <- cuts
-    new.cuts <- data[,cutname]
+    ## --- resolve `cuts` into an n x m matrix of candidate cut values ---
+    ## (built in-memory only; nothing is added to `data` here)
+    if (is.character(cuts)) {
+        ## cuts is (are) existing column name(s): value can differ per row
+        missing.cols <- setdiff(cuts, names(data))
+        if (length(missing.cols))
+            stop("cuts refers to column(s) not in data: ",
+                 paste(missing.cols, collapse=", "))
+        cutnames <- cuts
+        cutmat <- as.matrix(data[, cutnames, drop=FALSE])
+    } else if (is.numeric(cuts)) {
+        ## cuts is one or more fixed values, same for every row: no need to
+        ## store these as columns, just broadcast them into the matrix
+        cutnames <- paste("cut", cuts, sep=".")
+        cutmat <- matrix(rep(cuts, each=n), nrow=n, ncol=length(cuts))
+    } else {
+        stop("cuts must be numeric, or a character vector of column names")
+    }
+    storage.mode(cutmat) <- "double"
 
     if (is.numeric(name.start)) {
-	    start0 <- name.start
-	    name.start <- paste("start",name.start,sep=".")
-            data[,name.start] <- start0
-    }  
-
-
-    if ((name.start %in% names(data))) {
-      new.start <- data[,name.start]
-    } else new.start <- rep(0,n)
-
-    if (any(new.start>= new.time)) cat("any(new.start>= new.time) is TRUE\n")
-
-    if ((name.id %in% names(data))) idl <- data[,name.id] else {
-	    idl <- 1:n
-	    data[,name.id] <- idl 
+        ## name.start is a constant value (e.g. 0), not a column name:
+        ## materialize it as a real column, same as the original event_split
+        start0 <- name.start
+        name.start <- paste("start", name.start, sep=".")
+        data[[name.start]] <- start0
     }
 
-    ## only split if cut not already among times
-    splits <- which(new.cuts<new.time & new.start<new.cuts)
-
-    if (length(splits)) {
-	    rows  <- c(1:n,splits)
-	    new.time <-   c(new.time,new.time[splits])
-	    new.start <-  c(new.start,new.cuts[splits])
-	    new.status <- c(new.status,new.status[splits])
-	    new.ccc <-    c(new.cuts,new.cuts[splits])
-	    idl <- c(idl,idl[splits])
-	    new.time[splits] <- new.cuts[splits]
-	    new.status[splits] <- cens.code
-	    data <- data[rows,]
-	    data[,time] <- new.time
-	    data[,status] <- new.status
-	    data[,name.start] <- new.start
-	    data[,name.id] <- idl
+    if (name.start %in% names(data)) {
+        new.start <- data[[name.start]]
+    } else {
+        new.start <- rep(0, n)
+        data[[name.start]] <- new.start
     }
+    if (any(new.start >= new.time)) cat("any(new.start>= new.time) is TRUE\n")
+
+    if (name.id %in% names(data)) {
+        idl <- data[[name.id]]
+    } else {
+        idl <- seq_len(n)
+        data[[name.id]] <- idl
+    }
+
+    ## --- do the splitting in C++ ---
+    res <- event_split_cpp(new.start, new.time, new.status, cutmat, cens.code)
+    res <- as.data.frame(res)
+
+    ## re-attach every other column (covariates, id, the cut column(s), ...)
+    out <- data[res$row, , drop=FALSE]
+    out[[time]]       <- res$time
+    out[[status]]     <- res$status
+    out[[name.start]] <- res$start
+    rownames(out) <- NULL
 
     if (time.group) {
-      group.time <- paste("before",cutname,sep=".")
-      data[,group.time] <- 1*(data[,name.start]<data[,cutname]) ## sc(rep(1,n),rep(0,length(splits)))
-    } 
+        if (is.character(cuts)) {
+            for (cn in cutnames) {
+                out[[paste("before", cn, sep=".")]] <- 1 * (out[[name.start]] < out[[cn]])
+            }
+        } else {
+            for (j in seq_along(cuts)) {
+                out[[paste("before", cutnames[j], sep=".")]] <- 1 * (out[[name.start]] < cuts[j])
+            }
+        }
+    }
 
-    if (order.id) data <- data[order(idl,new.start),] 
-    rownames(data) <- NULL
+    if (!is.null(group.var)) {
+        ## label each split segment with which time-axis bin it falls in:
+        ## bin 1 = [0, c1), bin 2 = [c1, c2), ..., bin m+1 = [cm, Inf)
+        ## uses every distinct cut value that was ever in play, whether the
+        ## cuts came from fixed numbers or from (possibly per-row) columns
+        sorted.cuts <- sort(unique(as.vector(cutmat)))
+        sorted.cuts <- sorted.cuts[!is.na(sorted.cuts)]
+        out[[group.var]] <- findInterval(out[[name.start]], sorted.cuts) + 1L
+    }
 
-    return(data)
-}  ## }}}
+    if (order.id) {
+        out <- out[order(out[[name.id]], out[[name.start]]), ]
+        rownames(out) <- NULL
+    }
+    out
+} ## }}}
+
+
+###event_split <- function(data,
+###		time="time",status="status",cuts="cuts",name.id="id",
+###		name.start="start", cens.code=0,order.id=TRUE, time.group=FALSE)
+###{ ## {{{
+###    n <- nrow(data)
+###    new.time <- data[,time]
+###    new.status <- data[,status]
+###
+###    if (is.numeric(cuts)) {
+###        cutname <- paste("cut",cuts,sep=".")
+###        data[,cutname] <- cuts
+###    } else cutname <- cuts
+###    new.cuts <- data[,cutname]
+###
+###    if (is.numeric(name.start)) {
+###	    start0 <- name.start
+###	    name.start <- paste("start",name.start,sep=".")
+###            data[,name.start] <- start0
+###    }  
+###
+###
+###    if ((name.start %in% names(data))) {
+###      new.start <- data[,name.start]
+###    } else new.start <- rep(0,n)
+###
+###    if (any(new.start>= new.time)) cat("any(new.start>= new.time) is TRUE\n")
+###
+###    if ((name.id %in% names(data))) idl <- data[,name.id] else {
+###	    idl <- 1:n
+###	    data[,name.id] <- idl 
+###    }
+###
+###    ## only split if cut not already among times
+###    splits <- which(new.cuts<new.time & new.start<new.cuts)
+###
+###    if (length(splits)) {
+###	    rows  <- c(1:n,splits)
+###	    new.time <-   c(new.time,new.time[splits])
+###	    new.start <-  c(new.start,new.cuts[splits])
+###	    new.status <- c(new.status,new.status[splits])
+###	    new.ccc <-    c(new.cuts,new.cuts[splits])
+###	    idl <- c(idl,idl[splits])
+###	    new.time[splits] <- new.cuts[splits]
+###	    new.status[splits] <- cens.code
+###	    data <- data[rows,]
+###	    data[,time] <- new.time
+###	    data[,status] <- new.status
+###	    data[,name.start] <- new.start
+###	    data[,name.id] <- idl
+###    }
+###
+###    if (time.group) {
+###      group.time <- paste("before",cutname,sep=".")
+###      data[,group.time] <- 1*(data[,name.start]<data[,cutname]) ## sc(rep(1,n),rep(0,length(splits)))
+###    } 
+###
+###    if (order.id) data <- data[order(idl,new.start),] 
+###    rownames(data) <- NULL
+###
+###    return(data)
+###}  ## }}}
+
 
 ##' Event split with two time-scales, time and gaptime 
 ##'

@@ -256,6 +256,27 @@ namespace mets {
         return Rcpp::as<arma::mat >(rcpp_result_gen);
     }
 
+    inline DataFrame event_split_cpp(NumericVector start, NumericVector time, NumericVector status, NumericMatrix cutmat, double cens_code = 0) {
+        typedef SEXP(*Ptr_event_split_cpp)(SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr_event_split_cpp p_event_split_cpp = NULL;
+        if (p_event_split_cpp == NULL) {
+            validateSignature("DataFrame(*event_split_cpp)(NumericVector,NumericVector,NumericVector,NumericMatrix,double)");
+            p_event_split_cpp = (Ptr_event_split_cpp)R_GetCCallable("mets", "_mets_event_split_cpp");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_event_split_cpp(Shield<SEXP>(Rcpp::wrap(start)), Shield<SEXP>(Rcpp::wrap(time)), Shield<SEXP>(Rcpp::wrap(status)), Shield<SEXP>(Rcpp::wrap(cutmat)), Shield<SEXP>(Rcpp::wrap(cens_code)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<DataFrame >(rcpp_result_gen);
+    }
+
     inline double _logl_weibull(const arma::vec& par, const arma::vec& entry, const arma::vec& exit, const arma::vec& status, const arma::mat& X, const arma::mat& Z) {
         typedef SEXP(*Ptr__logl_weibull)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr__logl_weibull p__logl_weibull = NULL;
