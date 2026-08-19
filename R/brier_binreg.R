@@ -1898,14 +1898,14 @@ IC.binregStrata <- function(x, ...) x$iid * NROW(x$iid)
 ##' }
 ##' @export
 brier_binreg <- function(formula, data, time=NULL,
-                                     fold             = 5,
-                                     rhs              = NULL,
-                                     rhs0             = ~+1,
-                                     cens.model       = ~+1,
-                                     brier.cens.model = ~+1,
-                                     brier.args       = list(),
-                                     cv.split.index   = NULL,
-                                     ...) { ## {{{
+                          fold             = 5,
+                          rhs              = NULL,
+                          rhs0             = ~+1,
+                          cens.model       = ~+1,
+                          brier.cens.model = ~+1,
+                          brier.args       = list(),
+                          cv.split.index   = NULL,
+                          ...) { ## {{{
   ## ------------------------------------------------------------------
   ## Small helpers (identical to brier_binregStrata)
   ## ------------------------------------------------------------------
@@ -1923,7 +1923,6 @@ brier_binreg <- function(formula, data, time=NULL,
     cl_var <- attr(tt, "variables")[[cl_idx + 1L]]
     update(f, paste("~ . -", deparse(cl_var)))
   }
-
   ## ------------------------------------------------------------------
   ## Parse top-level formula
   ## ------------------------------------------------------------------
@@ -1932,14 +1931,10 @@ brier_binreg <- function(formula, data, time=NULL,
   if (length(lhs_call) == 4L)
     stop("brier_binregStrata_loop does not support delayed entry (left-truncation).\n",
          "  Found: ", deparse(lhs_call))
-
-  if ((length(lhs_call)>1) & is.null(time)) stop("must give time for binreg object with Event object responses\n"); 
-  ## time not needed for continuous responses 
+  if ((length(lhs_call)>1) & is.null(time)) stop("must give time for binreg object with Event object responses\n")
+  ## time not needed for continuous responses
   noIPCW <- 0
   if (length(lhs_call)==1 &  is.null(time)) { time  <- 0; noIPCW <- 1}
-###  time_var   <- as.character(lhs_call[[2]])
-###  status_var <- as.character(lhs_call[[3]])
-
   id         <- extract_cluster_id(formula)
   if (is.null(id)) {
     id         <- "id__"
@@ -1947,13 +1942,11 @@ brier_binreg <- function(formula, data, time=NULL,
     formula    <- update(formula, paste("~ . + cluster(id__)"))
   }
   base_resmean <- as.formula(paste(lhs_str, "~ +1 + cluster(", id, ")"))
-
   ## ------------------------------------------------------------------
   ## Parse rhs list
   ## ------------------------------------------------------------------
   formula_rhs_clean <- drop_cluster(
     reformulate(attr(terms(formula), "term.labels"), intercept = FALSE))
-
   if (is.null(rhs))        rhs <- list(model1 = formula_rhs_clean)
   if (!is.list(rhs))       rhs <- list(model1 = rhs)
   if (is.null(names(rhs)) || any(names(rhs) == ""))
@@ -1961,13 +1954,18 @@ brier_binreg <- function(formula, data, time=NULL,
   rhs  <- lapply(rhs,  drop_cluster)
   rhs0 <- drop_cluster(rhs0)
 
+  ## ------------------------------------------------------------------
+  ## build_full / build_strata_formula -- FIX: preserve "-1" (no intercept)
+  ## ------------------------------------------------------------------
   build_full <- function(f) {
-    labs    <- attr(terms(f), "term.labels")
+    tt      <- terms(f)
+    labs    <- attr(tt, "term.labels")
+    has_int <- attr(tt, "intercept") == 1
     rhs_str <- if (length(labs) == 0) "1" else paste(labs, collapse = " + ")
+    if (!has_int) rhs_str <- paste(rhs_str, "- 1")
     as.formula(paste(lhs_str, "~", rhs_str, "+ cluster(", id, ")"))
   }
   if (!id %in% names(data)) stop("id variable '", id, "' not found in data")
-
   ## ------------------------------------------------------------------
   ## CV fold index -- computed once, reused for all time points
   ## ------------------------------------------------------------------
@@ -1982,19 +1980,20 @@ brier_binreg <- function(formula, data, time=NULL,
   for (k in seq_len(fold)) data$fold[dd[[k]]] <- k
   strata_vec <- data$fold - 1L
   build_strata_formula <- function(f) {
-    labs    <- attr(terms(f), "term.labels")
+    tt      <- terms(f)
+    labs    <- attr(tt, "term.labels")
+    has_int <- attr(tt, "intercept") == 1
     rhs_str <- if (length(labs) == 0) "1" else paste(labs, collapse = " + ")
+    if (!has_int) rhs_str <- paste(rhs_str, "- 1")
     as.formula(paste(lhs_str, "~", rhs_str,
                      "+ strata(fold) + cluster(", id, ")"))
   }
-
   ## ------------------------------------------------------------------
   ## cv_iid_correctS -- block-sparse version (identical to brier_binregStrata)
   ## ------------------------------------------------------------------
-
-cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
+  cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
                                pred_vec, ipcw_wt_vec, outcome_vec,
-                               binreg_model) { ## {{{ 
+                               binreg_model) { ## {{{
     nstrata <- outff_fit$nstrata
     p       <- length(outff_fit$coef) / nstrata
     n       <- length(pred_vec)
@@ -2008,12 +2007,6 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
     } else {
       stop("Cannot determine stratum for newdata: needs 'fold' column.")
     }
-###    Xs <- matrix(0.0, n, nstrata * p)
-###    for (s in seq_len(nstrata)) {
-###      idx  <- which(strata_idx == (s - 1L))
-###      cols <- (s - 1L) * p + seq_len(p)
-###      Xs[idx, cols] <- X[idx, , drop = FALSE]
-###    }
     mu_prime <- switch(binreg_model,
       logit = pred_vec * (1 - pred_vec),
       exp   = pred_vec,
@@ -2021,27 +2014,20 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
       stop("unrecognised binreg model '", binreg_model, "'")
     )
     resid       <- (outcome_vec - pred_vec) * ipcw_wt_vec
-
     Dbrier <- -2* Msumstrata(X * mu_prime * resid,strata_idx,nstrata)/n
     Dbrier_full  <-  c(t(Dbrier))
-
-###   Dbrier_full <- -2 * colSums(Xs * mu_prime * resid) / n
-###   print(Dbrier_full)
-
     iid(brier_fit) + iid(outff_fit) %*% Dbrier_full
-  } ## }}} 
-
-  eco <- function(bbrier) { ## {{{ 
+  } ## }}}
+  eco <- function(bbrier) { ## {{{
     bbrier$design <- NULL
-    bbrier$cens.weights <- bbrier$cens.strata <- bbrier$MGciid <- bbrier$call.id
+    bbrier$cens.weights <- bbrier$cens.strata <- bbrier$MGciid <- bbrier$call.id <- NULL
     bbrier$name.id <- bbrier$iid.naive  <- bbrier$id <- NULL
     bbrier$design$y <- NULL
     bbrier$design$data <- NULL
     bbrier$design$x <- NULL
     bbrier$design$strata <- NULL
     return(bbrier)
-  } ## }}} 
-
+  } ## }}}
   ## ------------------------------------------------------------------
   ## resmeanIPCW wrapper / log-scale estimate helper
   ## ------------------------------------------------------------------
@@ -2050,17 +2036,15 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
     do.call(binregStrata,
             c(list(base_resmean, dat, time = tt,
                    Ydirect    = Ydirect,
-		   outcome="rmst",
+                   outcome="rmst",
                    cens.model = brier.cens.model,
                    model = "lin"),
               brier.args))
   }
-
   do_mean <- function(dat, brier_vec,tt) {
     dat$brier__ <- brier_vec
     do.call(lm, c(list(brier__ ~ 1, data = dat)))
   }
-
   log_est <- function(fit, iid_corrected = NULL) {
     if (!is.null(iid_corrected)) {
       nn <- nrow(iid_corrected)
@@ -2075,7 +2059,6 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
          se   = as.numeric(diag(vcov(e))^.5),
          iid  = iid(e))
   }
-
   ## ------------------------------------------------------------------
   ## Explicit nested for-loops: outer over time, inner over rhs models
   ## ------------------------------------------------------------------
@@ -2084,10 +2067,8 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
   nmodels  <- length(rhs)
   results  <- vector("list", ntime)
   names(results) <- as.character(time)
-
   for (ti in seq_len(ntime)) {
     tt <- time[ti]
-
     ## ---------------- null model: apparent ----------------
     outb         <- binregStrata(build_full(rhs0), data, time = tt,...)
     binreg_model <- outb$model
@@ -2095,21 +2076,18 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
     ipcw_wt_b    <- as.numeric(outb$IPCW)
     predb        <- predict(outb, data, se = FALSE)
     data$brier_  <- (outcome - predb)^2
-    if (noIPCW==0) bbrier       <- do_resmean(data, data$brier_, tt) else bbrier       <- do_mean(data, data$brier_, tt)
+    if (noIPCW==0) bbrier       <- do_resmean(data, data$brier_, tt) else bbrier <- do_mean(data, data$brier_, tt)
     bbrier <- eco(bbrier)
-    e <- estimate(bbrier, f = log)
     bbrier_log   <- log_est(bbrier)
-
     ## ---------------- null model: CV ----------------
     f0_strata  <- build_strata_formula(rhs0)
-
     outfb      <- binregStrata(f0_strata, data = data, time = tt,
                                 strata     = strata_vec,
                                 cens.model = cens.model,
                                 cv.fold    = TRUE, low.memory=TRUE,...)
     predbcv     <- predict(outfb, data,se=0)
     data$brier_ <- (outcome - predbcv)^2
-    if (noIPCW==0) 
+    if (noIPCW==0)
     bbrierCV    <- do_resmean(data, data$brier_, tt)
     else bbrierCV    <- do_mean(data, data$brier_, tt)
     bbrierCV    <- eco(bbrierCV)
@@ -2118,7 +2096,6 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
                                      binreg_model)
     outfb$iid <- NULL
     bbrierCV_log <- log_est(bbrierCV, iid_corrected = iid.bbrierCV)
-
     null_res <- list(
       coef = c(bbrier   = bbrier_log$coef,
                bbrierCV = bbrierCV_log$coef),
@@ -2126,14 +2103,11 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
                bbrierCV = bbrierCV_log$se),
       iid  = list(bbrierCV = bbrierCV_log$iid)
     )
-
     ## ---------------- candidate models: explicit for-loop ----------------
     model_res        <- vector("list", nmodels)
     names(model_res) <- names(rhs)
-
     for (mi in seq_len(nmodels)) {
       f <- rhs[[mi]]
-
       ## apparent
       out         <- binregStrata(build_full(f), data, time = tt, ...)
       outcome_m   <- as.numeric(out$Y)
@@ -2141,12 +2115,11 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
       pred        <- predict(out, data, se = FALSE)
       data$brier_ <- (outcome_m - pred)^2
       out         <- NULL
-      if (noIPCW==0) brier       <- do_resmean(data, data$brier_, tt) else brier   <- do_mean(data, data$brier_, tt)
+      if (noIPCW==0) brier       <- do_resmean(data, data$brier_, tt) else brier <- do_mean(data, data$brier_, tt)
       brier       <- eco(brier)
       brier_log   <- log_est(brier)
       dbrier      <- brier_log$coef - bbrier_log$coef
       se.dbrier   <- as.numeric(crossprod(brier_log$iid - bbrier_log$iid)^.5)
-
       ## CV
       f_strata <- build_strata_formula(f)
       outff    <- binregStrata(f_strata, data = data, time = tt,
@@ -2155,7 +2128,7 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
                                 cv.fold    = TRUE, low.memory=TRUE,...)
       pred        <- predict(outff, data,se=0)
       data$brier_ <- (outcome_m - pred)^2
-      if (noIPCW==0) 
+      if (noIPCW==0)
       brierCV     <- do_resmean(data, data$brier_, tt)
       else brierCV     <- do_mean(data, data$brier_, tt)
       brierCV     <- eco(brierCV)
@@ -2165,7 +2138,6 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
       brierCV_log <- log_est(brierCV, iid_corrected = iid.brierCV)
       dbrierCV    <- brierCV_log$coef - bbrierCV_log$coef
       se.dbrierCV <- as.numeric(crossprod(brierCV_log$iid - bbrierCV_log$iid)^.5)
-
       model_res[[mi]] <- list(
         coef  = c(brier     = brier_log$coef,
                   brierCV   = brierCV_log$coef),
@@ -2178,18 +2150,16 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
         iid   = list(brierCV = brierCV_log$iid)
       )
     } ## end inner for over models
-
     ## iid matrix: n x (1 + nmodels)
     iid_cols <- vector("list", nmodels + 1L)
     iid_cols[[1]] <- bbrierCV_log$iid
     bbrierCV_log$iid <- NULL
     for (mi in seq_len(nmodels)) {
-	    iid_cols[[mi + 1L]] <- model_res[[mi]]$iid$brierCV
-	    model_res[[mi]]$iid$brierCV <- NULL
+            iid_cols[[mi + 1L]] <- model_res[[mi]]$iid$brierCV
+            model_res[[mi]]$iid$brierCV <- NULL
     }
     iid_mat <- do.call(cbind, iid_cols)
     colnames(iid_mat) <- c("null", names(rhs))
-
     results[[ti]] <- structure(
       list(null             = null_res,
            models           = model_res,
@@ -2205,7 +2175,6 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
       class = "binregCV"
     )
   } ## end outer for over time
-
   ## ------------------------------------------------------------------
   ## Dispatch: single or multiple time points
   ## ------------------------------------------------------------------
@@ -2221,7 +2190,334 @@ cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
     class(res) <- "binregCV_list"
     res
   }
-} ## }}}
+} ## }}} 
+
+
+###brier_binreg <- function(formula, data, time=NULL,
+###                                     fold             = 5,
+###                                     rhs              = NULL,
+###                                     rhs0             = ~+1,
+###                                     cens.model       = ~+1,
+###                                     brier.cens.model = ~+1,
+###                                     brier.args       = list(),
+###                                     cv.split.index   = NULL,
+###                                     ...) { ## {{{
+###  ## ------------------------------------------------------------------
+###  ## Small helpers (identical to brier_binregStrata)
+###  ## ------------------------------------------------------------------
+###  extract_cluster_id <- function(f) {
+###    tt     <- terms(f, specials = "cluster")
+###    cl_idx <- attr(tt, "specials")$cluster
+###    if (is.null(cl_idx)) return(NULL)
+###    cl_term <- attr(tt, "variables")[[cl_idx + 1L]]
+###    as.character(cl_term[[2]])
+###  }
+###  drop_cluster <- function(f) {
+###    tt     <- terms(f, specials = "cluster")
+###    cl_idx <- attr(tt, "specials")$cluster
+###    if (is.null(cl_idx)) return(f)
+###    cl_var <- attr(tt, "variables")[[cl_idx + 1L]]
+###    update(f, paste("~ . -", deparse(cl_var)))
+###  }
+###
+###  ## ------------------------------------------------------------------
+###  ## Parse top-level formula
+###  ## ------------------------------------------------------------------
+###  lhs_str  <- deparse(formula[[2]])
+###  lhs_call <- formula[[2]]
+###  if (length(lhs_call) == 4L)
+###    stop("brier_binregStrata_loop does not support delayed entry (left-truncation).\n",
+###         "  Found: ", deparse(lhs_call))
+###
+###  if ((length(lhs_call)>1) & is.null(time)) stop("must give time for binreg object with Event object responses\n"); 
+###  ## time not needed for continuous responses 
+###  noIPCW <- 0
+###  if (length(lhs_call)==1 &  is.null(time)) { time  <- 0; noIPCW <- 1}
+######  time_var   <- as.character(lhs_call[[2]])
+######  status_var <- as.character(lhs_call[[3]])
+###
+###  id         <- extract_cluster_id(formula)
+###  if (is.null(id)) {
+###    id         <- "id__"
+###    data[[id]] <- seq_len(nrow(data))
+###    formula    <- update(formula, paste("~ . + cluster(id__)"))
+###  }
+###  base_resmean <- as.formula(paste(lhs_str, "~ +1 + cluster(", id, ")"))
+###
+###  ## ------------------------------------------------------------------
+###  ## Parse rhs list
+###  ## ------------------------------------------------------------------
+###  formula_rhs_clean <- drop_cluster(
+###    reformulate(attr(terms(formula), "term.labels"), intercept = FALSE))
+###
+###  if (is.null(rhs))        rhs <- list(model1 = formula_rhs_clean)
+###  if (!is.list(rhs))       rhs <- list(model1 = rhs)
+###  if (is.null(names(rhs)) || any(names(rhs) == ""))
+###    names(rhs) <- paste0("model", seq_along(rhs))
+###  rhs  <- lapply(rhs,  drop_cluster)
+###  rhs0 <- drop_cluster(rhs0)
+###
+###  build_full <- function(f) {
+###    labs    <- attr(terms(f), "term.labels")
+###    rhs_str <- if (length(labs) == 0) "1" else paste(labs, collapse = " + ")
+###    as.formula(paste(lhs_str, "~", rhs_str, "+ cluster(", id, ")"))
+###  }
+###  if (!id %in% names(data)) stop("id variable '", id, "' not found in data")
+###
+###  ## ------------------------------------------------------------------
+###  ## CV fold index -- computed once, reused for all time points
+###  ## ------------------------------------------------------------------
+###  as_fold_list <- function(x) {
+###    if (is.list(x))                      return(x)
+###    if (is.numeric(x) || is.integer(x)) return(split(seq_along(x), x))
+###    stop("Unsupported cv.split.index format")
+###  }
+###  n  <- nrow(data)
+###  dd <- if (is.null(cv.split.index)) folds(n, fold) else as_fold_list(cv.split.index)
+###  data$fold <- 0L
+###  for (k in seq_len(fold)) data$fold[dd[[k]]] <- k
+###  strata_vec <- data$fold - 1L
+###  build_strata_formula <- function(f) {
+###    labs    <- attr(terms(f), "term.labels")
+###    rhs_str <- if (length(labs) == 0) "1" else paste(labs, collapse = " + ")
+###    as.formula(paste(lhs_str, "~", rhs_str,
+###                     "+ strata(fold) + cluster(", id, ")"))
+###  }
+###
+###  ## ------------------------------------------------------------------
+###  ## cv_iid_correctS -- block-sparse version (identical to brier_binregStrata)
+###  ## ------------------------------------------------------------------
+###
+###cv_iid_correctS <- function(brier_fit, outff_fit, newdata,
+###                               pred_vec, ipcw_wt_vec, outcome_vec,
+###                               binreg_model) { ## {{{ 
+###    nstrata <- outff_fit$nstrata
+###    p       <- length(outff_fit$coef) / nstrata
+###    n       <- length(pred_vec)
+###    des        <- update_design(outff_fit$design, data = newdata,
+###                                       response = FALSE)
+###    X          <- des$x
+###    strata_idx <- if (!is.null(des$strata)) {
+###      as.integer(des$strata) - 1L
+###    } else if ("fold" %in% names(newdata)) {
+###      as.integer(newdata$fold) - 1L
+###    } else {
+###      stop("Cannot determine stratum for newdata: needs 'fold' column.")
+###    }
+######    Xs <- matrix(0.0, n, nstrata * p)
+######    for (s in seq_len(nstrata)) {
+######      idx  <- which(strata_idx == (s - 1L))
+######      cols <- (s - 1L) * p + seq_len(p)
+######      Xs[idx, cols] <- X[idx, , drop = FALSE]
+######    }
+###    mu_prime <- switch(binreg_model,
+###      logit = pred_vec * (1 - pred_vec),
+###      exp   = pred_vec,
+###      lin   = rep(1.0, n),
+###      stop("unrecognised binreg model '", binreg_model, "'")
+###    )
+###    resid       <- (outcome_vec - pred_vec) * ipcw_wt_vec
+###
+###    Dbrier <- -2* Msumstrata(X * mu_prime * resid,strata_idx,nstrata)/n
+###    Dbrier_full  <-  c(t(Dbrier))
+###
+######   Dbrier_full <- -2 * colSums(Xs * mu_prime * resid) / n
+######   print(Dbrier_full)
+###
+###    iid(brier_fit) + iid(outff_fit) %*% Dbrier_full
+###  } ## }}} 
+###
+###  eco <- function(bbrier) { ## {{{ 
+###    bbrier$design <- NULL
+###    bbrier$cens.weights <- bbrier$cens.strata <- bbrier$MGciid <- bbrier$call.id
+###    bbrier$name.id <- bbrier$iid.naive  <- bbrier$id <- NULL
+###    bbrier$design$y <- NULL
+###    bbrier$design$data <- NULL
+###    bbrier$design$x <- NULL
+###    bbrier$design$strata <- NULL
+###    return(bbrier)
+###  } ## }}} 
+###
+###  ## ------------------------------------------------------------------
+###  ## resmeanIPCW wrapper / log-scale estimate helper
+###  ## ------------------------------------------------------------------
+###  n  <- nrow(data)
+###  do_resmean <- function(dat, Ydirect, tt) {
+###    do.call(binregStrata,
+###            c(list(base_resmean, dat, time = tt,
+###                   Ydirect    = Ydirect,
+###		   outcome="rmst",
+###                   cens.model = brier.cens.model,
+###                   model = "lin"),
+###              brier.args))
+###  }
+###
+###  do_mean <- function(dat, brier_vec,tt) {
+###    dat$brier__ <- brier_vec
+###    do.call(lm, c(list(brier__ ~ 1, data = dat)))
+###  }
+###
+###  log_est <- function(fit, iid_corrected = NULL) {
+###    if (!is.null(iid_corrected)) {
+###      nn <- nrow(iid_corrected)
+###      e <- lava::estimate(NULL,
+###                          coef = fit$coef,
+###                          IC   = iid_corrected * nn,
+###                          f    = log)
+###    } else {
+###      e <- estimate(fit, f = log)
+###    }
+###    list(coef = as.numeric(e$coef),
+###         se   = as.numeric(diag(vcov(e))^.5),
+###         iid  = iid(e))
+###  }
+###
+###  ## ------------------------------------------------------------------
+###  ## Explicit nested for-loops: outer over time, inner over rhs models
+###  ## ------------------------------------------------------------------
+###  cl       <- match.call()
+###  ntime    <- length(time)
+###  nmodels  <- length(rhs)
+###  results  <- vector("list", ntime)
+###  names(results) <- as.character(time)
+###
+###  for (ti in seq_len(ntime)) {
+###    tt <- time[ti]
+###
+###    ## ---------------- null model: apparent ----------------
+###    outb         <- binregStrata(build_full(rhs0), data, time = tt,...)
+###    binreg_model <- outb$model
+###    outcome      <- as.numeric(outb$Y)
+###    ipcw_wt_b    <- as.numeric(outb$IPCW)
+###    predb        <- predict(outb, data, se = FALSE)
+###    data$brier_  <- (outcome - predb)^2
+###    if (noIPCW==0) bbrier       <- do_resmean(data, data$brier_, tt) else bbrier       <- do_mean(data, data$brier_, tt)
+###    bbrier <- eco(bbrier)
+###    e <- estimate(bbrier, f = log)
+###    bbrier_log   <- log_est(bbrier)
+###
+###    ## ---------------- null model: CV ----------------
+###    f0_strata  <- build_strata_formula(rhs0)
+###
+###    outfb      <- binregStrata(f0_strata, data = data, time = tt,
+###                                strata     = strata_vec,
+###                                cens.model = cens.model,
+###                                cv.fold    = TRUE, low.memory=TRUE,...)
+###    predbcv     <- predict(outfb, data,se=0)
+###    data$brier_ <- (outcome - predbcv)^2
+###    if (noIPCW==0) 
+###    bbrierCV    <- do_resmean(data, data$brier_, tt)
+###    else bbrierCV    <- do_mean(data, data$brier_, tt)
+###    bbrierCV    <- eco(bbrierCV)
+###    iid.bbrierCV <- cv_iid_correctS(bbrierCV, outfb, data,
+###                                     predbcv, ipcw_wt_b, outcome,
+###                                     binreg_model)
+###    outfb$iid <- NULL
+###    bbrierCV_log <- log_est(bbrierCV, iid_corrected = iid.bbrierCV)
+###
+###    null_res <- list(
+###      coef = c(bbrier   = bbrier_log$coef,
+###               bbrierCV = bbrierCV_log$coef),
+###      se   = c(bbrier   = bbrier_log$se,
+###               bbrierCV = bbrierCV_log$se),
+###      iid  = list(bbrierCV = bbrierCV_log$iid)
+###    )
+###
+###    ## ---------------- candidate models: explicit for-loop ----------------
+###    model_res        <- vector("list", nmodels)
+###    names(model_res) <- names(rhs)
+###
+###    for (mi in seq_len(nmodels)) {
+###      f <- rhs[[mi]]
+###
+###      ## apparent
+###      out         <- binregStrata(build_full(f), data, time = tt, ...)
+###      outcome_m   <- as.numeric(out$Y)
+###      ipcw_wt_m   <- as.numeric(out$IPCW)
+###      pred        <- predict(out, data, se = FALSE)
+###      data$brier_ <- (outcome_m - pred)^2
+###      out         <- NULL
+###      if (noIPCW==0) brier       <- do_resmean(data, data$brier_, tt) else brier   <- do_mean(data, data$brier_, tt)
+###      brier       <- eco(brier)
+###      brier_log   <- log_est(brier)
+###      dbrier      <- brier_log$coef - bbrier_log$coef
+###      se.dbrier   <- as.numeric(crossprod(brier_log$iid - bbrier_log$iid)^.5)
+###
+###      ## CV
+###      f_strata <- build_strata_formula(f)
+###      outff    <- binregStrata(f_strata, data = data, time = tt,
+###                                strata     = strata_vec,
+###                                cens.model = cens.model,
+###                                cv.fold    = TRUE, low.memory=TRUE,...)
+###      pred        <- predict(outff, data,se=0)
+###      data$brier_ <- (outcome_m - pred)^2
+###      if (noIPCW==0) 
+###      brierCV     <- do_resmean(data, data$brier_, tt)
+###      else brierCV     <- do_mean(data, data$brier_, tt)
+###      brierCV     <- eco(brierCV)
+###      iid.brierCV <- cv_iid_correctS(brierCV, outff, data,
+###                                      pred, ipcw_wt_m, outcome_m, binreg_model)
+###      outff        <- NULL
+###      brierCV_log <- log_est(brierCV, iid_corrected = iid.brierCV)
+###      dbrierCV    <- brierCV_log$coef - bbrierCV_log$coef
+###      se.dbrierCV <- as.numeric(crossprod(brierCV_log$iid - bbrierCV_log$iid)^.5)
+###
+###      model_res[[mi]] <- list(
+###        coef  = c(brier     = brier_log$coef,
+###                  brierCV   = brierCV_log$coef),
+###        se    = c(brier     = brier_log$se,
+###                  brierCV   = brierCV_log$se),
+###        dcoef = c(dbrier    = dbrier,
+###                  dbrierCV  = dbrierCV),
+###        sed   = c(se.dbrier   = se.dbrier,
+###                  se.dbrierCV = se.dbrierCV),
+###        iid   = list(brierCV = brierCV_log$iid)
+###      )
+###    } ## end inner for over models
+###
+###    ## iid matrix: n x (1 + nmodels)
+###    iid_cols <- vector("list", nmodels + 1L)
+###    iid_cols[[1]] <- bbrierCV_log$iid
+###    bbrierCV_log$iid <- NULL
+###    for (mi in seq_len(nmodels)) {
+###	    iid_cols[[mi + 1L]] <- model_res[[mi]]$iid$brierCV
+###	    model_res[[mi]]$iid$brierCV <- NULL
+###    }
+###    iid_mat <- do.call(cbind, iid_cols)
+###    colnames(iid_mat) <- c("null", names(rhs))
+###
+###    results[[ti]] <- structure(
+###      list(null             = null_res,
+###           models           = model_res,
+###           iid_mat          = iid_mat,
+###           cv.split.index   = dd,
+###           time             = tt,
+###           fold             = fold,
+###           rhs              = rhs,
+###           rhs0             = rhs0,
+###           model            = binreg_model,
+###           cens.model       = cens.model,
+###           brier.cens.model = brier.cens.model),
+###      class = "binregCV"
+###    )
+###  } ## end outer for over time
+###
+###  ## ------------------------------------------------------------------
+###  ## Dispatch: single or multiple time points
+###  ## ------------------------------------------------------------------
+###  if (ntime == 1L) {
+###    out      <- results[[1]]
+###    out$call <- cl
+###    out
+###  } else {
+###    res        <- results
+###    res$call   <- cl
+###    res$rhs    <- rhs
+###    res$rhs0   <- rhs0
+###    class(res) <- "binregCV_list"
+###    res
+###  }
+###} ## }}}
 
 
 ## {{{  infrastructure for brier_binreg
