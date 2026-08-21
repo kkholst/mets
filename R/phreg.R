@@ -3479,7 +3479,7 @@ cif <- function(formula,data=data,cause=1,cens.code=0,death.code=NULL,...)
   ##  cifo$no.opt <- TRUE
 
   ### to use basehazplot.phreg
-  class(cifo) <- c("cif","phreg")
+###  class(cifo) <- c("cif","phreg")
   attr(cifo,"cause") <- cause
   attr(cifo,"cens.code") <- cens.code
   attr(cifo,"death.code") <- death.code

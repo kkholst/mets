@@ -1,0 +1,240 @@
+---
+title: "Influence functions in METS"
+author: Klaus Holst & Thomas Scheike
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{Influence functions in METS}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mets)
+```
+
+Influence functions are available from many models in the mets package. We here illustrate some of these models and how to get the 
+influence functions. 
+
+Examples 
+==========
+
+
+```{r}
+ data(bmt)
+ bmt$time <- bmt$time+runif(408)*.001
+ bmt$id <- sample(200,408,replace=TRUE)
+ dfactor(bmt) <- cause1f~cause
+ drelevel(bmt,ref=3) <- cause3f~cause
+ dlevels(bmt)
+### sum(duplicated(bmt$time[bmt$cause %in% c(1,2)]))
+### sum(duplicated(bmt$time[bmt$cause %in% c(0,1,2)]))
+
+ data(hfactioncpx12)
+ hf <- hfactioncpx12
+ head(hf)
+ hf <- tie_breaker(hf,status="status",cause=1:2)
+ hf$x <- as.numeric(hf$treatment)
+ hf$z <- rnorm(741)[hf$id]
+ dd <- data.frame(treatment=levels(hf$treatment),id=1)
+ sum(duplicated(hf$time[hf$status %in% c(1,2)]))
+ sum(duplicated(hf$time[hf$status %in% c(0,1,2)]))
+
+ ## also break ties for censorings
+ hf <- tie_breaker(hf,status="status",cause=0:2,cens.code=9)
+ sum(duplicated(hf$time[hf$status %in% c(0,1,2)]))
+
+Cox-phreg 
+
+```{r}
+ ph1 <- phreg(Event(time,cause==1)~tcell+platelet+age+cluster(id),bmt)
+ summary(ph1)
+ head(iid(ph1))
+ head(iid(ph1,time=50,all=TRUE))
+ head(iid(ph1,time=50))
+ ###
+ e1 <- estimate(ph1,time=50,all=TRUE)
+ head(iid(e1))
+
+ ph1 <- phreg(Event(time,cause==1)~strata(tcell)+platelet+age+cluster(id),bmt)
+ summary(ph1)
+ head(iid(ph1))
+ head(iid(ph1,time=50,all=TRUE))
+ head(iid(ph1,time=50))
+ ###
+ e1 <- estimate(ph1,time=50,all=TRUE)
+ head(iid(e1))
+```
+
+Fine-Gray 
+
+```{r}
+ ph1 <- cifregFG(Event(time,cause)~tcell+platelet+age+cluster(id),bmt)
+ summary(ph1)
+ head(iid(ph1))
+ head(iid(ph1,time=50,all=TRUE))
+ head(iid(ph1,time=50))
+ ###
+ e1 <- estimate(ph1,time=50,all=TRUE)
+ head(iid(e1))
+
+ ph1 <- cifregFG(Event(time,cause==1)~strata(tcell)+platelet+age+cluster(id),bmt)
+ summary(ph1)
+ head(iid(ph1))
+ head(iid(ph1,time=50,all=TRUE))
+ head(iid(ph1,time=50))
+ ###
+ e1 <- estimate(ph1,time=50,all=TRUE)
+ head(iid(e1))
+```
+
+Ghosh-Lin
+
+```{r}
+ gl <- recreg(Event(entry,time,status)~treatment+z+cluster(id),data=hf,cause=1,death.code=2)
+ summary(gl)
+ head(iid(gl))
+ head(iid(gl,time=50,all=TRUE))
+ head(iid(gl,time=50))
+ ###
+ e1 <- estimate(gl,time=50,all=TRUE)
+ head(iid(e1))
+
+ gls <- recreg(Event(entry,time,status)~strata(treatment)+z+cluster(id),data=hf,cause=1,death.code=2)
+ summary(gls)
+ head(iid(gls))
+ head(iid(gls,time=50,all=TRUE))
+ head(iid(gls,time=50))
+ ###
+ e1 <- estimate(gls,time=50,all=TRUE)
+ head(iid(e1))
+
+ gls <- recreg(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,cause=1,death.code=2)
+ summary(gls)
+ head(iid(gls))
+ head(iid(gls,time=50,all=TRUE))
+ head(iid(gls,time=50))
+ ###
+ e1 <- estimate(gls,time=50,all=TRUE)
+ head(iid(e1))
+ e1
+
+ ############# Marginal mean recurrent/cif
+ ms <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+
+			  cluster(id),data=hf,cause=1,death.code=2)
+ head(iid(ms,time=50))
+ ###
+ e1 <- estimate(ms,time=50,all=TRUE)
+ head(iid(e1))
+ e1
+
+ ms <- recurrent_marginal(Event(time,cause)~strata(tcell)+
+			  cluster(id),data=bmt,cause=1,death.code=1:2)
+ plot(ms)
+ head(iid(ms,time=50))
+ ###
+ e1 <- estimate(ms,time=50,all=TRUE)
+ head(iid(e1))
+ e1
+ summary(ms,time=50)
+```
+ 
+ Cumulative incidence 
+
+```{r}
+ cif1 <- cif(Event(time,cause)~strata(tcell)+cluster(id),data=bmt,cause=1)
+ class(cif1)
+ plot(cif1,se=1,ylim=c(0,1))
+ summary(cif1,time=50)
+ head(iid(cif1,time=50))
+ ###
+ e1 <- estimate(cif1,time=50,all=TRUE)
+ head(iid(e1))
+ e1
+ ###
+ plot(ms,add=TRUE,se=1)
+
+ cif1 <- cif(Event(time,cause)~strata(tcell),data=bmt,cause=1)
+ summary(cif1,time=50)
+
+ library(prodlim)
+ cif1 <- prodlim(Hist(time,cause)~tcell,data=bmt)
+ ## MG-standard errors 
+ summary(cif1,time=50,cause=1)
+```
+
+ binreg 
+
+```{r}
+
+ out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
+ summary(out)
+ head(iid(out))
+ ###
+ e1 <- estimate(out)
+ e1
+
+############# binregATE
+
+ dfactor(bmt) <- tcellf~tcell
+ out <- binregATE(Event(time,cause)~tcellf+platelet+age,bmt,time=50,
+                         treat.model=tcellf~platelet+age)
+ summary(out)
+ head(iid(out))
+ ###
+ e1 <- estimate(out)
+ e1
+```
+
+mlogit/cumoddsreg/ordreg
+
+```{r}
+ mreg <- mlogit(cause1~tcell+platelet+age+cluster(id),bmt)
+ summary(mreg)
+ head(iid(mreg))
+ dim(iid(mreg))
+
+ head(predict(mreg,bmt))
+ head(predict(mreg,bmt,response=FALSE))
+
+ mmreg <- cumoddsreg(cause~tcell+platelet+age+cluster(id),bmt)
+ summary(mmreg)
+ estimate(mmreg)
+ head(iid(mmreg))
+ dim(iid(mmreg))
+ mmreg$ploglik
+
+ library(lava)
+ or <- ordreg(cause ~ tcell+platelet+age,bmt,family=binomial(logit)) 
+ head(iid(or))
+ e1 <- estimate(or,id=bmt$id)
+ head(iid(e1))
+ e1
+
+ mmreg <- cumoddsreg(cause1f~tcell+platelet+age,bmt)
+ head(iid(mmreg))
+ e1 <- estimate(mmreg)
+ e1
+ head(iid(e1))
+
+ mmreg <- cumoddsreg(cause1f~tcell+platelet+age+cluster(id),bmt)
+ e1 <- estimate(mmreg)
+ e1
+ head(iid(e1))
+
+```
+
+
+SessionInfo
+============
+
+```{r}
+sessionInfo()
+```
+

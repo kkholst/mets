@@ -509,81 +509,93 @@ import(mvtnorm)
 import(splines)
 import(stats)
 importFrom(RcppArmadillo,armadillo_set_number_of_omp_threads)
-importFrom(grDevices,dev.interactive)
-importFrom(grDevices,dev.list)
-importFrom(grDevices,devAskNewPage)
-importFrom(graphics,abline)
-importFrom(graphics,axis)
-importFrom(graphics,barplot)
-importFrom(graphics,layout)
-importFrom(graphics,legend)
-importFrom(graphics,lines)
-importFrom(graphics,matlines)
-importFrom(graphics,matplot)
-importFrom(graphics,mosaicplot)
-importFrom(graphics,mtext)
-importFrom(graphics,par)
-importFrom(graphics,plot)
-importFrom(graphics,points)
-importFrom(graphics,polygon)
-importFrom(graphics,title)
-importFrom(lava,"%++%")
-importFrom(lava,"%ni%")
-importFrom(lava,"addvar<-")
-importFrom(lava,"constrain<-")
-importFrom(lava,"covariance<-")
-importFrom(lava,"distribution<-")
-importFrom(lava,"intercept<-")
-importFrom(lava,"kill<-")
-importFrom(lava,"latent<-")
-importFrom(lava,"parameter<-")
-importFrom(lava,"regression<-")
-importFrom(lava,Col)
-importFrom(lava,Expand)
-importFrom(lava,IC)
-importFrom(lava,Inverse)
-importFrom(lava,Model)
-importFrom(lava,blockdiag)
-importFrom(lava,bootstrap)
-importFrom(lava,cancel)
-importFrom(lava,compare)
-importFrom(lava,confband)
-importFrom(lava,constraints)
-importFrom(lava,covariance)
-importFrom(lava,coxWeibull.lvm)
-importFrom(lava,devcoords)
-importFrom(lava,endogenous)
-importFrom(lava,estimate)
-importFrom(lava,eventTime)
-importFrom(lava,expit)
-importFrom(lava,getoutcome)
-importFrom(lava,gof)
-importFrom(lava,iid)
-importFrom(lava,information)
-importFrom(lava,latent)
-importFrom(lava,lava.options)
-importFrom(lava,logit)
-importFrom(lava,lvm)
-importFrom(lava,multigroup)
-importFrom(lava,parameter)
-importFrom(lava,pars)
-importFrom(lava,regression)
-importFrom(lava,revdiag)
-importFrom(lava,score)
-importFrom(lava,trim)
-importFrom(lava,twostage)
+importFrom(grDevices,
+  dev.interactive,
+  dev.list,
+  devAskNewPage
+)
+importFrom(graphics,
+  abline,
+  axis,
+  barplot,
+  layout,
+  legend,
+  lines,
+  matlines,
+  matplot,
+  mosaicplot,
+  mtext,
+  par,
+  plot,
+  points,
+  polygon,
+  title
+)
+importFrom(lava,
+  "%++%",
+  "%ni%",
+  "addvar<-",
+  "constrain<-",
+  "covariance<-",
+  "distribution<-",
+  "intercept<-",
+  "kill<-",
+  "latent<-",
+  "parameter<-",
+  "regression<-",
+  Col,
+  Expand,
+  IC,
+  Inverse,
+  Model,
+  blockdiag,
+  bootstrap,
+  cancel,
+  compare,
+  confband,
+  constraints,
+  covariance,
+  coxWeibull.lvm,
+  devcoords,
+  endogenous,
+  estimate,
+  eventTime,
+  expit,
+  getoutcome,
+  gof,
+  iid,
+  information,
+  latent,
+  lava.options,
+  logit,
+  lvm,
+  multigroup,
+  parameter,
+  pars,
+  regression,
+  revdiag,
+  score,
+  trim,
+  twostage
+)
 importFrom(methods,hasArg)
-importFrom(survival,Surv)
-importFrom(survival,cluster)
-importFrom(survival,concordance)
-importFrom(survival,finegray)
-importFrom(survival,is.Surv)
-importFrom(survival,strata)
-importFrom(timereg,predict.two.stage)
-importFrom(timereg,two.stage)
-importFrom(utils,capture.output)
-importFrom(utils,getS3method)
-importFrom(utils,glob2rx)
-importFrom(utils,head)
-importFrom(utils,tail)
+importFrom(survival,
+  Surv,
+  cluster,
+  concordance,
+  finegray,
+  is.Surv,
+  strata
+)
+importFrom(timereg,
+  predict.two.stage,
+  two.stage
+)
+importFrom(utils,
+  capture.output,
+  getS3method,
+  glob2rx,
+  head,
+  tail
+)
 useDynLib(mets, .registration=TRUE)
