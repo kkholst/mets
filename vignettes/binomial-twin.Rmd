@@ -1,7 +1,7 @@
 ---
 title: "Analysis of bivariate binomial data: Twin analysis"
 author: Klaus Holst & Thomas Scheike
-date: "2026-07-29"
+date: "2026-08-22"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes
@@ -449,12 +449,14 @@ Polygenic modelling
 ``` r
 b1 <- bptwin(binstut~sex,data=twinstut,id="tvparnr",zyg="zyg",DZ="dz",type="ace")
 summary(b1)
+#> Warning in sqrt(diag(vcovACDE)): NaNs produced
+#> Warning in sqrt(diag(vcovACDE)): NaNs produced
 #> 
-#>              Estimate   Std.Err        Z p-value    
-#> (Intercept)  -4.20958   1.55369  -2.7094 0.00674 ** 
-#> sexmale       0.85990   0.36387   2.3632 0.01812 *  
-#> log(var(A))   1.17018   0.99695   1.1738 0.24049    
-#> log(var(C)) -23.53038   1.87673 -12.5380 < 2e-16 ***
+#>              Estimate   Std.Err       Z p-value    
+#> (Intercept)  -4.20958   1.55369 -2.7094 0.00674 ** 
+#> sexmale       0.85990   0.36387  2.3632 0.01812 *  
+#> log(var(A))   1.17018   0.99695  1.1738 0.24049    
+#> log(var(C)) -23.53038   2.85820 -8.2326 < 2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
@@ -463,7 +465,7 @@ summary(b1)
 #> 
 #>                    Estimate 2.5%     97.5%   
 #> A                   0.76318  0.41002  1.11633
-#> C                   0.00000  0.00000  0.00000
+#> C                   0.00000      NaN      NaN
 #> E                   0.23682 -0.11633  0.58998
 #> MZ Tetrachoric Cor  0.76318  0.15672  0.95170
 #> DZ Tetrachoric Cor  0.38159  0.19280  0.54313
@@ -504,9 +506,9 @@ summary(b0)
 #>  583/1192    212/354             
 #> 
 #>                    Estimate 2.5%     97.5%   
-#> A                   0.76318  0.41002  1.11633
-#> E                   0.23682 -0.11633  0.58998
-#> MZ Tetrachoric Cor  0.76318  0.15672  0.95170
+#> A                   0.76318  0.41002  1.11634
+#> E                   0.23682 -0.11634  0.58998
+#> MZ Tetrachoric Cor  0.76318  0.15671  0.95170
 #> DZ Tetrachoric Cor  0.38159  0.19280  0.54313
 #> 
 #> MZ:
@@ -514,18 +516,18 @@ summary(b0)
 #> Concordance           0.00768  0.00201  0.02893
 #> Casewise Concordance  0.37943  0.09711  0.77658
 #> Marginal              0.02025  0.01241  0.03289
-#> Rel.Recur.Risk       18.73517 -0.13386 37.60419
+#> Rel.Recur.Risk       18.73517 -0.13387 37.60421
 #> log(OR)               3.85127  1.58182  6.12072
 #> DZ:
 #>                      Estimate 2.5%    97.5%  
 #> Concordance          0.00230  0.00077 0.00688
 #> Casewise Concordance 0.11369  0.05266 0.22841
 #> Marginal             0.02025  0.01241 0.03289
-#> Rel.Recur.Risk       5.61371  2.19257 9.03484
+#> Rel.Recur.Risk       5.61371  2.19257 9.03485
 #> log(OR)              1.92764  1.16374 2.69154
 #> 
 #>                          Estimate 2.5%    97.5%  
-#> Broad-sense heritability 0.76318  0.41002 1.11633
+#> Broad-sense heritability 0.76318  0.41002 1.11634
 ```
 
 Additive gamma random effects 
@@ -746,39 +748,34 @@ SessionInfo
 
 ``` r
 sessionInfo()
-#> R version 4.6.0 (2026-04-24)
-#> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.4 LTS
+#> R version 4.6.1 (2026-06-24)
+#> Platform: aarch64-apple-darwin25.5.0
+#> Running under: macOS Tahoe 26.5.2
 #> 
 #> Matrix products: default
-#> BLAS:   /home/kkzh/.asdf/installs/r/4.6.0/lib/R/lib/libRblas.so 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
+#> BLAS:   /Users/klaus/.asdf/installs/r/4.6.1/lib/R/lib/libRblas.dylib 
+#> LAPACK: /Users/klaus/.asdf/installs/r/4.6.1/lib/R/lib/libRlapack.dylib;  LAPACK version 3.12.1
 #> 
 #> locale:
-#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
-#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+#> [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 #> 
 #> time zone: Europe/Copenhagen
-#> tzcode source: system (glibc)
+#> tzcode source: internal
 #> 
 #> attached base packages:
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.12   
+#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.13   
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
-#>  [4] xfun_0.57              otel_0.2.0             future.apply_1.20.2   
-#>  [7] listenv_0.10.1         lava_1.9.2.1           stats4_4.6.0          
-#> [10] grid_4.6.0             evaluate_1.0.5         mvtnorm_1.3-7         
-#> [13] numDeriv_2016.8-1.1    compiler_4.6.0         codetools_0.2-20      
-#> [16] Rcpp_1.1.1-1.1         ucminf_1.2.3           future_1.70.0         
-#> [19] lattice_0.22-9         digest_0.6.39          parallelly_1.47.0     
-#> [22] parallel_4.6.0         splines_4.6.0          Matrix_1.7-5          
-#> [25] tools_4.6.0            RcppArmadillo_15.2.6-1 globals_0.19.1
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.3.0           
+#>  [4] xfun_0.60              otel_0.2.0             future.apply_1.20.2   
+#>  [7] listenv_1.0.0          lava_1.9.3             stats4_4.6.1          
+#> [10] grid_4.6.1             evaluate_1.0.5         mvtnorm_1.4-2         
+#> [13] numDeriv_2016.8-1.1    compiler_4.6.1         codetools_0.2-20      
+#> [16] Rcpp_1.1.2             ucminf_1.2.3           future_1.70.0         
+#> [19] lattice_0.22-9         digest_0.6.39          parallelly_1.48.0     
+#> [22] parallel_4.6.1         splines_4.6.1          Matrix_1.7-5          
+#> [25] tools_4.6.1            RcppArmadillo_15.4.0-1 globals_0.19.1
 ```
