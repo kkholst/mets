@@ -1,7 +1,7 @@
 ---
 title: "dUtility data-frame manipulations"
 author: Klaus Holst & Thomas Scheike
-date: "2026-07-29"
+date: "2026-08-22"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes 
@@ -131,8 +131,8 @@ and finally after quartiles of days (via the dcut function)
 dmean(melanoma,thick+I(log(thick))~I(dcut(days)))
 #>         I(dcut(days))    thick I(log(thick))
 #> 1       [10,1.52e+03] 482.1731      5.799525
-#> 2    (1.52e+03,2e+03] 208.5490      4.987652
-#> 3    (2e+03,3.04e+03] 223.2941      4.974759
+#> 2 (1.52e+03,2.00e+03] 208.5490      4.987652
+#> 3 (2.00e+03,3.04e+03] 223.2941      4.974759
 #> 4 (3.04e+03,5.56e+03] 250.1961      5.120129
 ```
 
@@ -481,7 +481,7 @@ dtable(melanoma,~status+sex+ulc+dcut(days)+I(days>300),level=1)
 #> 115  90 
 #> 
 #> dcut(days)
-#>       [10,1.52e+03]    (1.52e+03,2e+03]    (2e+03,3.04e+03] (3.04e+03,5.56e+03] 
+#>       [10,1.52e+03] (1.52e+03,2.00e+03] (2.00e+03,3.04e+03] (3.04e+03,5.56e+03] 
 #>                  52                  51                  51                  51 
 #> 
 #> I(days > 300)
@@ -654,7 +654,7 @@ dlevels(mela)
 #> [1] "[10,97]"        "(97,194]"       "(194,356]"      "(356,1.74e+03]"
 #> -----------------------------------------
 #> dayscat4 #levels=:4 
-#> [1] "[10,1.52e+03]"       "(1.52e+03,2e+03]"    "(2e+03,3.04e+03]"   
+#> [1] "[10,1.52e+03]"       "(1.52e+03,2.00e+03]" "(2.00e+03,3.04e+03]"
 #> [4] "(3.04e+03,5.56e+03]"
 #> -----------------------------------------
 ```
@@ -670,7 +670,7 @@ dlevels(melanoma)
 #> [1] "[10,97]"        "(97,194]"       "(194,356]"      "(356,1.74e+03]"
 #> -----------------------------------------
 #> dayscat4 #levels=:4 
-#> [1] "[10,1.52e+03]"       "(1.52e+03,2e+03]"    "(2e+03,3.04e+03]"   
+#> [1] "[10,1.52e+03]"       "(1.52e+03,2.00e+03]" "(2.00e+03,3.04e+03]"
 #> [4] "(3.04e+03,5.56e+03]"
 #> -----------------------------------------
 ```
@@ -866,39 +866,34 @@ SessionInfo
 
 ``` r
 sessionInfo()
-#> R version 4.6.0 (2026-04-24)
-#> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.4 LTS
+#> R version 4.6.1 (2026-06-24)
+#> Platform: aarch64-apple-darwin25.5.0
+#> Running under: macOS Tahoe 26.5.2
 #> 
 #> Matrix products: default
-#> BLAS:   /home/kkzh/.asdf/installs/r/4.6.0/lib/R/lib/libRblas.so 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
+#> BLAS:   /Users/klaus/.asdf/installs/r/4.6.1/lib/R/lib/libRblas.dylib 
+#> LAPACK: /Users/klaus/.asdf/installs/r/4.6.1/lib/R/lib/libRlapack.dylib;  LAPACK version 3.12.1
 #> 
 #> locale:
-#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
-#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+#> [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 #> 
 #> time zone: Europe/Copenhagen
-#> tzcode source: system (glibc)
+#> tzcode source: internal
 #> 
 #> attached base packages:
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] mets_1.3.12
+#> [1] mets_1.3.13
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] digest_0.6.39          numDeriv_2016.8-1.1    codetools_0.2-20      
-#>  [4] RcppArmadillo_15.2.6-1 Matrix_1.7-5           xfun_0.57             
-#>  [7] lattice_0.22-9         timereg_2.0.7          splines_4.6.0         
-#> [10] lava_1.9.2.1           knitr_1.51             parallel_4.6.0        
-#> [13] mvtnorm_1.3-7          cli_3.6.6              parallelly_1.47.0     
-#> [16] grid_4.6.0             future_1.70.0          compiler_4.6.0        
-#> [19] globals_0.19.1         tools_4.6.0            listenv_0.10.1        
+#>  [4] RcppArmadillo_15.4.0-1 Matrix_1.7-5           xfun_0.60             
+#>  [7] lattice_0.22-9         timereg_2.0.7          splines_4.6.1         
+#> [10] lava_1.9.3             knitr_1.51             parallel_4.6.1        
+#> [13] mvtnorm_1.4-2          cli_3.6.6              parallelly_1.48.0     
+#> [16] grid_4.6.1             future_1.70.0          compiler_4.6.1        
+#> [19] globals_0.19.1         tools_4.6.1            listenv_1.0.0         
 #> [22] future.apply_1.20.2    evaluate_1.0.5         survival_3.8-6        
-#> [25] Rcpp_1.1.1-1.1         otel_0.2.0             rlang_1.2.0
+#> [25] Rcpp_1.1.2             otel_0.2.0             rlang_1.3.0
 ```
