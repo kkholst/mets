@@ -19,9 +19,10 @@ cif_yearslost(formula, data = data, cens.code = 0, times = NULL, ...)
 }
 \value{
 An object of class \code{"resmean_phreg"} containing:
-\item{cumhaz}{Matrix of cumulative hazards (years lost).}
-\item{se.cumhaz}{Standard errors.}
-\item{intF1times}{Years lost at specified times.}
+\item{cumhaz}{Matrix of years lost (all event times, used by \code{plot}), one column per cause.}
+\item{se.cumhaz}{Standard errors (all event times).}
+\item{yearslost_times}{Years lost per cause at the specified \code{times}, one row per strata/time (\code{NULL} if \code{times=NULL}).}
+\item{estimate}{If \code{times} is given: a named list, one element per cause, each a \code{lava} \code{"estimate"} object (or, if \code{length(times)>1}, a list of such objects, one per time). Causes are estimated separately as their covariance is not available. \code{NULL} if \code{times=NULL}.}
 \item{causes}{Vector of cause codes.}
 }
 \description{
@@ -37,20 +38,47 @@ The RMTL for a specific time-point can also be computed using the \code{rmstIPCW
 data(bmt)
 bmt$time <- bmt$time + runif(408) * 0.001
 
-## Years lost decomposed into causes
+## No times given: full years-lost curve at all event times, one table per cause
+drm1 <- cif_yearslost(Event(time, cause) ~ strata(tcell, platelet), data = bmt)
+drm1                    ## short description; use summary() for the full curves
+plot(drm1, se=1)
+
+## Years lost decomposed into causes, at specific times
 drm1 <- cif_yearslost(Event(time, cause) ~ strata(tcell, platelet), data = bmt, times = c(40, 50))
 par(mfrow = c(1, 2))
 plot(drm1, cause = 1, se = 1)
 plot(drm1, cause = 2, se = 1)
-summary(drm1)
-estimate(drm1, cause = 1)
-estimate(drm1, cause = 2)
+summary(drm1)          ## both causes
+summary(drm1, cause=1) ## just cause 1
 
-## Comparing populations
+## Causes are stored (and estimated) separately: one "resmean_estimate" list per cause
+e1 <- estimate(drm1, cause = 1)
+e1
+e2 <- estimate(drm1, cause = 2)
+e2
+
+## Apply a contrast to every time at once, for one cause
+summary(e1, rbind(c(1, -1, 0, 0)))
+
+## Restrict to a single time first ...
+summary(drm1, cause = 1, time = 50)
+## ... optionally with a contrast for that time only
+summary(drm1, cause = 1, time = 50, rbind(c(1, -1, 0, 0)))
+estimate(drm1, cause = 1, time = 50, rbind(c(1, -1, 0, 0)))
+
+## All pairwise differences between the 4 strata, for one time or for all times
+de1 <- estimate(e1, lava:::pairwise_diff(4))
+de1
+summary(drm1, cause = 1, time = 50, lava:::pairwise_diff(4))
+
+## Comparing populations (single time -> a plain estimate object per cause)
 drm1 <- cif_yearslost(Event(time, cause) ~ strata(tcell, platelet), data = bmt, times = 40)
-summary(drm1, contrast = list(1:4))
-e1 <- estimate(drm1)
+summary(drm1, cause = 1, contrast = rbind(c(1, -1, 0, 0)))
+e1 <- estimate(drm1, cause = 1)
 estimate(e1, rbind(c(1, -1, 0, 0)))
+de1 <- estimate(e1, lava:::pairwise_diff(4))
+de1
+summary(drm1, cause = 1, contrast = lava:::pairwise_diff(4))
 }
 \author{
 Thomas Scheike

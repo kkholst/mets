@@ -1883,10 +1883,10 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' @param ... Additional arguments passed to lower-level functions.
 ##'
 ##' @return An object of class \code{"resmean_phreg"} containing:
-##' \item{rmst}{Matrix of restricted mean survival times.}
-##' \item{se.rmst}{Standard errors for RMST.}
-##' \item{intkmtimes}{Restricted mean at specified times.}
-##' \item{years.lost}{Years lost (if applicable).}
+##' \item{rmst}{Matrix of restricted mean survival times (all event times, used by \code{plot}).}
+##' \item{se.rmst}{Standard errors for RMST (all event times).}
+##' \item{rmst_times}{Restricted mean (and years lost) at the specified \code{times}, one row per strata/time (\code{NULL} if \code{times=NULL}).}
+##' \item{estimate}{If \code{times} is given: a \code{lava} \code{"estimate"} object (or, if \code{length(times)>1}, a list of such objects, one per time) with the across-strata estimate and covariance at each time. \code{NULL} if \code{times=NULL}.}
 ##'
 ##' @author Thomas Scheike
 ##' @examples
@@ -1894,17 +1894,42 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' bmt$time <- bmt$time + runif(408) * 0.001
 ##' out1 <- phreg(Surv(time, cause != 0) ~ strata(tcell, platelet), data = bmt)
 ##'
+##' ## No times given: the full rmst curve at all event times (what plot() shows)
+##' rm1 <- resmean_phreg(out1)
+##' rm1                     ## short description; use summary() for the full curve
+##' head(summary(rm1))
+##'
+##' ## Several times: one lava 'estimate' object per time, stored on the object
 ##' rm1 <- resmean_phreg(out1, times = 10 * (1:6))
 ##' summary(rm1)
-##' e1 <- estimate(rm1)
+##' e1 <- estimate(rm1)     ## == rm1$estimate: a "resmean_estimate" list, one per time
+##' e1
+##'
+##' ## Apply a contrast to every time at once (comparing the 4 strata)
+##' summary(e1, rbind(c(1, -1, 0, 0)))
+##'
+##' ## Restrict to a single time first ...
+##' summary(rm1, time = 50)
+##' ## ... optionally with a contrast for that time only
+##' summary(rm1, time = 50, rbind(c(1, -1, 0, 0)))
+##' estimate(rm1, time = 50, rbind(c(1, -1, 0, 0)))
+##'
+##' ## All pairwise differences between the 4 strata, for one time or for all times
+##' de1 <- estimate(e1, lava:::pairwise_diff(4))
+##' de1
+##' summary(rm1, time = 50, lava:::pairwise_diff(4))
+##'
 ##' par(mfrow = c(1, 2))
 ##' plot(rm1, se = 1)
 ##' plot(rm1, years.lost = TRUE, se = 1)
 ##'
-##' ## Comparing populations
+##' ## Comparing populations (single time -> a plain estimate object)
 ##' rm1 <- resmean_phreg(out1, times = 40)
 ##' e1 <- estimate(rm1)
 ##' estimate(e1, rbind(c(1, -1, 0, 0)))
+##' de1 <- estimate(e1, lava:::pairwise_diff(4))
+##' de1
+##' summary(rm1, lava:::pairwise_diff(4))
 ##' @aliases rmst_phreg resmean_phreg
 ##' @export
 resmean_phreg <- function(x,times=NULL,covs=NULL,...)
@@ -1981,20 +2006,31 @@ resmean_phreg <- function(x,times=NULL,covs=NULL,...)
 
   ### make output at specified times
   if (!is.null(times)) {
-    intkmtimes <- meanm[newtimes,,drop=FALSE]
-    se.intkmtimes <- se.resmean[newtimes]
+    rmst_times <- meanm[newtimes,,drop=FALSE]
+    se.rmst_times <- se.resmean[newtimes]
     skmtimes <- mm[newtimes,2]
-    years.lost <- intkmtimes[,1]-intkmtimes[,2]
-    intkmtimes <- cbind(skmtimes,intkmtimes,se.intkmtimes,years.lost)
-    colnames(intkmtimes) <- c("strata","times","rmean","se.rmean","years.lost")
-    rownames(intkmtimes) <- rep(x$strata.level,length(times));
-    intkmtimes=data.frame(intkmtimes)
-###    logintkmtimes=cbind(intkmtimes[,1:2],log(intkmtimes[,3]),se.intkmtimes/intkmtimes[,3])
-###    colnames(logintkmtimes) <- c("strata","times","log-rmean","log-se.rmean")
-     coef <- intkmtimes[,3];
-     var  <- diag(intkmtimes[,4]^2)
+    years.lost <- rmst_times[,1]-rmst_times[,2]
+    rmst_times <- cbind(skmtimes,rmst_times,se.rmst_times,years.lost)
+    colnames(rmst_times) <- c("strata","times","rmean","se.rmean","years.lost")
+    rownames(rmst_times) <- rep(x$strata.level,length(times));
+    rmst_times <- data.frame(rmst_times)
+
+    ## Build one lava 'estimate' object per requested time (across strata); strata are
+    ## assumed independent so the covariance is diagonal. If only one time is requested
+    ## a single estimate object is stored, otherwise a named list (one per time).
+    est_list <- vector("list",length(times))
+    for (k in seq_along(times)) {
+      wtime <- rmst_times[,"times"]==times[k]
+      coefk <- rmst_times[wtime,"rmean"]
+      if (length(coefk)==length(x$strata.level)) names(coefk) <- x$strata.level
+      vcovk <- diag(rmst_times[wtime,"se.rmean"]^2,nrow=length(coefk))
+      if (nrow(vcovk)==length(x$strata.level)) rownames(vcovk) <- colnames(vcovk) <- x$strata.level
+      est_list[[k]] <- lava::estimate(coef=coefk,vcov=vcovk)
+    }
+    names(est_list) <- paste0("time",times)
+    estimate_out <- if (length(times)==1) est_list[[1]] else structure(est_list,class=c("resmean_estimate","list"))
   } else {
-	  coef <- var <- intkmtimes <- se.intkmtimes <- NULL
+	  rmst_times <- estimate_out <- NULL
   }
 
   rmst <- cbind(meanm[,1],vecAllStrata(meanm[,2],strata.jumps,nstrata))
@@ -2004,90 +2040,126 @@ resmean_phreg <- function(x,times=NULL,covs=NULL,...)
        time=time,strata=strata.jumps,nstrata=nstrata,
        jumps=1:length(km),strata.name=x$strata.name,
        strata.level=x$strata.level,
-       intkmtimes=intkmtimes, rmst=rmst,se.rmst=se.rmst, coef=coef,var=var)
+       rmst_times=rmst_times, rmst=rmst,se.rmst=se.rmst,
+       estimate=estimate_out)
 class(out) <- c("resmean_phreg")
 return(out)
 }# }}}
 
+##' Extract the stored lava 'estimate' object(s) from a resmean_phreg/cif_yearslost fit
+##'
+##' If \code{times} was given when the object was created, \code{resmean_phreg}/
+##' \code{cif_yearslost} already built and stored the relevant \code{lava}
+##' \code{"estimate"} object(s) (across strata, one per requested time). This function
+##' simply returns those stored objects -- it does not recompute anything. For
+##' \code{cif_yearslost} objects (which have a \code{causes} component), the causes are
+##' not jointly estimated (no covariance across causes is available), so \code{cause}
+##' selects which cause's estimate object(s) to return. If several \code{times} were
+##' requested, \code{time} can be used to pull out the single (plain, class
+##' \code{"estimate"}) object for one time.
+##'
+##' When more than one time (or, for \code{cif_yearslost}, more than one cause) is
+##' present, the returned list of \code{"estimate"} objects carries an extra class,
+##' \code{"resmean_estimate"}, so that \code{print()} shows each element the same way
+##' an individual \code{"estimate"} object would, and \code{summary(x,contrast=...)}
+##' applies the contrast to every element separately (rather than to the list as a
+##' whole) -- see \code{\link{summary.resmean_estimate}}.
+##'
+##' @param x Object of class \code{"resmean_phreg"} (as returned by \code{resmean_phreg} or \code{cif_yearslost}).
+##' @param contrast Optional contrast (matrix or function), applied via \code{lava::estimate}. Applied to every element if the result is a list of estimate objects.
+##' @param cause Only relevant for \code{cif_yearslost} objects: which cause's estimate object to return.
+##' @param time Optional: if several \code{times} were requested in the original call, pick out a single one (returned as a plain \code{"estimate"} object rather than a list).
+##' @param ... Passed on to \code{lava::estimate}.
 ##' @export
-vcov.resmean_phreg <- function(object,cause=1,...)
+estimate.resmean_phreg <- function(x,contrast=NULL,cause=1,time=NULL,...)
 {# {{{
-  if (is.null(object$intkmtimes)) stop("Only for the times given in the call 'times' \n");
-  if (is.na(match("rmean",names(object$intkmtimes)))) name <- paste("se.intF_",cause,sep="") else name <- "se.rmean"
-  if (!(name %in% colnames(object$intkmtimes))) stop( paste("Cause not consistent with names, looks for ",name,"\n"))
+  if (is.null(x$estimate)) stop("Only available when 'times' was given in the call\n");
 
-  rest <- object$intkmtimes[,name]
-  inttimes <- object$intkmtimes[,2]
-  times <- unique(object$intkmtimes[,2])
-
-  if (length(times)==1)   {
-   res <- rest 
-   out <- diag(res^2, nrow=length(res))
-   if (length(res) == length(object$strata.level)) rownames(out) <- colnames(out) <- object$strata.level
-  } else {
-	  out <- list()
-	  k <- 1
-          for (tt in times)  {
-		  res <- rest[tt==inttimes]
-                  if (length(res) == length(object$strata.level)) names(res) <- object$strata.level
-                 res <- diag(res^2, nrow=length(res))
-                 if (nrow(res) == length(object$strata.level)) rownames(res) <- colnames(res) <- object$strata.level
-		  out[[k]] <- res
-		  k <- k+1
-           }
+  est <- x$estimate
+  if (!is.null(x$causes)) { ## cif_yearslost: causes stored separately, pick the requested one
+    key <- paste0("cause",cause)
+    if (is.null(est[[key]]))
+	    stop(paste0("cause=",cause," not among the fitted causes (",paste(x$causes,collapse=","),")\n"))
+    est <- est[[key]]
   }
 
-  return(out)
+  if (!is.null(time) && !inherits(est,"estimate")) {
+    key <- paste0("time",time)
+    if (is.null(est[[key]])) stop(paste0("time=",time," not among the times given in the call\n"))
+    est <- est[[key]]
+  }
+
+  if (!is.null(contrast)) {
+    if (inherits(est,"estimate")) {
+      est <- estimate(est,f=contrast,...)
+    } else {
+      nn <- names(est)
+      est <- lapply(unclass(est),estimate,f=contrast,...)
+      names(est) <- nn
+      class(est) <- c("resmean_estimate","list")
+    }
+  }
+
+  return(est)
+}# }}}
+
+##' Print/summary for a list of estimate objects (resmean_phreg/cif_yearslost)
+##'
+##' A \code{"resmean_estimate"} object is simply a named list of \code{lava}
+##' \code{"estimate"} objects (one per time, or one per cause, or nested one per cause
+##' per time), as returned by \code{estimate.resmean_phreg}/\code{summary.resmean_phreg}
+##' when more than one such object is present. \code{print} shows each element the
+##' same way a single \code{"estimate"} object would (no extra "Length Class Mode"
+##' summary table). \code{summary(...,contrast=)} applies the contrast to every
+##' element separately (recursing into any nested \code{"resmean_estimate"} elements)
+##' and shows the usual \code{summary.estimate} table (with its null-hypothesis test)
+##' for each; with no \code{contrast}, it just returns the object unchanged.
+##'
+##' @param x,object A \code{"resmean_estimate"} object.
+##' @param contrast Optional contrast (matrix or function), applied via \code{lava::estimate} to every element.
+##' @param ... Passed to \code{print}/\code{summary} of each element.
+##' @export
+print.resmean_estimate <- function(x,...)
+{# {{{
+  xx <- unclass(x)
+  for (nm in names(xx)) {
+    cat(nm,"\n")
+    print(xx[[nm]],...)
+  }
+  invisible(x)
 }# }}}
 
 ##' @export
-coef.resmean_phreg <- function(object,cause=1,...) 
+summary.resmean_estimate <- function(object,contrast=NULL,...)
 {# {{{
-  if (is.null(object$intkmtimes)) stop("Only for the times given in the call 'times' \n");
-  if (is.na(match("rmean",names(object$intkmtimes)))) name <- paste("intF_",cause,sep="") else name <- "rmean"
-  if (!(name %in% colnames(object$intkmtimes))) stop( paste("Cause not consistent with names, looks for ",name,"\n"))
-  rest <- object$intkmtimes[,name]
-  inttimes <- object$intkmtimes[,2]
-  times <- unique(object$intkmtimes[,2])
-
-  if (length(times)==1)   {
-   res <- rest 
-   if (length(res) == length(object$strata.level)) names(res) <- object$strata.level
-   out <- res
-  } else {
-	  out <- list()
-	  k <- 1
-          for (tt in times)  {
-		  res <- rest[tt==inttimes]
-                  if (length(res) == length(object$strata.level)) names(res) <- object$strata.level
-		  out[[k]] <- res
-		  k <- k+1
-           }
-  }
-
-  return(out)
+  xx <- unclass(object)
+  out <- lapply(xx,function(o) {
+    if (inherits(o,"resmean_estimate")) return(summary(o,contrast=contrast,...))
+    if (inherits(o,"estimate")) {
+      if (!is.null(contrast)) return(summary(estimate(o,f=contrast),...))
+      return(o)
+    }
+    o
+  })
+  names(out) <- names(xx)
+  class(out) <- c("resmean_estimate","list")
+  out
 }# }}}
 
 ##' @export
-estimate.resmean_phreg <- function(x,cause=1,...)
+coef.resmean_phreg <- function(object,cause=1,time=NULL,...)
 {# {{{
-  if (is.null(x$intkmtimes)) stop("Only for the times given in the call 'times' \n");
+  est <- estimate(object,cause=cause,time=time)
+  if (inherits(est,"estimate")) return(coef(est))
+  lapply(unclass(est),coef)
+}# }}}
 
-  if (is.na(match("rmean",names(x$intkmtimes)))) name <- paste("se.intF_",cause,sep="") else name <- "se.rmean"
-
-  coeft <- coef(x,cause=cause,...)
-  vcovt <- vcov(x,cause=cause,...)
-  times <- unique(x$intkmtimes[,2])
-  if (length(times)==1)  
-   out <- estimate(coef=coeft,vcov=vcovt,...)
-  else {
-	  out <- list()
-          for (k in seq_along(times)) {
-	  out[[k]] <- estimate(coef=coeft[[k]],vcov=vcovt[[k]],...)
-	  }
-  }
-
-  return(out)
+##' @export
+vcov.resmean_phreg <- function(object,cause=1,time=NULL,...)
+{# {{{
+  est <- estimate(object,cause=cause,time=time)
+  if (inherits(est,"estimate")) return(vcov(est))
+  lapply(unclass(est),vcov)
 }# }}}
 
 
@@ -2115,9 +2187,10 @@ return(out)
 ##' @param ... Additional arguments passed to \code{phreg}.
 ##'
 ##' @return An object of class \code{"resmean_phreg"} containing:
-##' \item{cumhaz}{Matrix of cumulative hazards (years lost).}
-##' \item{se.cumhaz}{Standard errors.}
-##' \item{intF1times}{Years lost at specified times.}
+##' \item{cumhaz}{Matrix of years lost (all event times, used by \code{plot}), one column per cause.}
+##' \item{se.cumhaz}{Standard errors (all event times).}
+##' \item{yearslost_times}{Years lost per cause at the specified \code{times}, one row per strata/time (\code{NULL} if \code{times=NULL}).}
+##' \item{estimate}{If \code{times} is given: a named list, one element per cause, each a \code{lava} \code{"estimate"} object (or, if \code{length(times)>1}, a list of such objects, one per time). Causes are estimated separately as their covariance is not available. \code{NULL} if \code{times=NULL}.}
 ##' \item{causes}{Vector of cause codes.}
 ##'
 ##' @author Thomas Scheike
@@ -2125,20 +2198,47 @@ return(out)
 ##' data(bmt)
 ##' bmt$time <- bmt$time + runif(408) * 0.001
 ##'
-##' ## Years lost decomposed into causes
+##' ## No times given: full years-lost curve at all event times, one table per cause
+##' drm1 <- cif_yearslost(Event(time, cause) ~ strata(tcell, platelet), data = bmt)
+##' drm1                    ## short description; use summary() for the full curves
+##' plot(drm1, se=1)
+##'
+##' ## Years lost decomposed into causes, at specific times
 ##' drm1 <- cif_yearslost(Event(time, cause) ~ strata(tcell, platelet), data = bmt, times = c(40, 50))
 ##' par(mfrow = c(1, 2))
 ##' plot(drm1, cause = 1, se = 1)
 ##' plot(drm1, cause = 2, se = 1)
-##' summary(drm1)
-##' estimate(drm1, cause = 1)
-##' estimate(drm1, cause = 2)
+##' summary(drm1)          ## both causes
+##' summary(drm1, cause=1) ## just cause 1
 ##'
-##' ## Comparing populations
+##' ## Causes are stored (and estimated) separately: one "resmean_estimate" list per cause
+##' e1 <- estimate(drm1, cause = 1)
+##' e1
+##' e2 <- estimate(drm1, cause = 2)
+##' e2
+##'
+##' ## Apply a contrast to every time at once, for one cause
+##' summary(e1, rbind(c(1, -1, 0, 0)))
+##'
+##' ## Restrict to a single time first ...
+##' summary(drm1, cause = 1, time = 50)
+##' ## ... optionally with a contrast for that time only
+##' summary(drm1, cause = 1, time = 50, rbind(c(1, -1, 0, 0)))
+##' estimate(drm1, cause = 1, time = 50, rbind(c(1, -1, 0, 0)))
+##'
+##' ## All pairwise differences between the 4 strata, for one time or for all times
+##' de1 <- estimate(e1, lava:::pairwise_diff(4))
+##' de1
+##' summary(drm1, cause = 1, time = 50, lava:::pairwise_diff(4))
+##'
+##' ## Comparing populations (single time -> a plain estimate object per cause)
 ##' drm1 <- cif_yearslost(Event(time, cause) ~ strata(tcell, platelet), data = bmt, times = 40)
-##' summary(drm1, contrast = list(1:4))
-##' e1 <- estimate(drm1)
+##' summary(drm1, cause = 1, contrast = rbind(c(1, -1, 0, 0)))
+##' e1 <- estimate(drm1, cause = 1)
 ##' estimate(e1, rbind(c(1, -1, 0, 0)))
+##' de1 <- estimate(e1, lava:::pairwise_diff(4))
+##' de1
+##' summary(drm1, cause = 1, contrast = lava:::pairwise_diff(4))
 ##' @export
 cif_yearslost <- function(formula,data=data,cens.code=0,times=NULL,...)
 {# {{{
@@ -2319,25 +2419,36 @@ cif_yearslost <- function(formula,data=data,cens.code=0,times=NULL,...)
   if (!is.null(times)) {
     intF1times <- years.lostF1[newtimes,]
     years.lost <- apply(intF1times[,-1,drop=FALSE],1,sum)
-    if (pka==1) se.intF1times <- se.years.lostF1[newtimes,-1]
-    se.intF1mtimes <- se.years.lostF1m[newtimes,]
+    se.intF1mtimes <- se.years.lostF1m[newtimes,,drop=FALSE]
     stratatimes <- strata.jumps[newtimes]
-    intF1mtimes <- cbind(stratatimes,intF1times,se.intF1mtimes,years.lost)
-    colnames(intF1mtimes) <- c("strata","times",paste0("intF_",causes),paste0("se.intF_",causes),"total-years-lost")
-    rownames(intF1mtimes) <- rep(x$strata.level,length(times));
-    intF1mtimes=data.frame(intF1mtimes)
-    if (pka==1) {
-	    intF1pkatimes <- cbind(stratatimes,intF1times,se.intF1times)
-            colnames(intF1pkatimes) <- c("strata","times",paste0("intF_",causes),paste0("se.intF_",causes))
-            intF1pkatimes=data.frame(intF1times)
-    } else intF1pkatimes <- NULL
-    if (pepemori==1) {
-          se.intF1pmtimes <- se.years.lostF1pm[newtimes,]
-          intF1pmtimes <- cbind(stratatimes,intF1times,se.intF1pmtimes)
-          colnames(intF1pmtimes) <- c("strata","times",paste0("intF_",causes),paste0("se.intF_",causes))
-         intF1pmtimes=data.frame(intF1pmtimes)
-    } else intF1pmtimes <- NULL
-  } else coef <- var <- intF1pmtimes <-intF1mtimes <- intF1pkatimes <- NULL
+    yearslost_times <- cbind(stratatimes,intF1times,se.intF1mtimes,years.lost)
+    colnames(yearslost_times) <- c("strata","times",paste0("intF_",causes),paste0("se.intF_",causes),"total-years-lost")
+    rownames(yearslost_times) <- rep(x$strata.level,length(times));
+    yearslost_times <- data.frame(yearslost_times)
+
+    ## One lava 'estimate' object per cause per time (across strata). Causes are NOT
+    ## jointly estimated -- we do not have the covariance between cause-specific
+    ## estimates -- so each cause gets its own estimate object(s), keyed "cause<i>".
+    estimate_out <- list()
+    for (i in seq_along(causes)) {
+      cname  <- paste0("intF_",causes[i])
+      sename <- paste0("se.intF_",causes[i])
+      est_i <- vector("list",length(times))
+      for (k in seq_along(times)) {
+        wtime <- yearslost_times[,"times"]==times[k]
+        coefk <- yearslost_times[wtime,cname]
+        if (length(coefk)==length(x$strata.level)) names(coefk) <- x$strata.level
+        vcovk <- diag(yearslost_times[wtime,sename]^2,nrow=length(coefk))
+        if (nrow(vcovk)==length(x$strata.level)) rownames(vcovk) <- colnames(vcovk) <- x$strata.level
+        est_i[[k]] <- lava::estimate(coef=coefk,vcov=vcovk)
+      }
+      names(est_i) <- paste0("time",times)
+      estimate_out[[paste0("cause",causes[i])]] <- if (length(times)==1) est_i[[1]] else structure(est_i,class=c("resmean_estimate","list"))
+    }
+    class(estimate_out) <- c("resmean_estimate","list")
+  } else {
+	  yearslost_times <- estimate_out <- NULL
+  }
 
  se.years.lostF1 <- cbind(jumptimes,se.years.lostF1m)
  colnames(se.years.lostF1) <- c("time",paste("intF_",causes,sep=""))
@@ -2347,79 +2458,123 @@ cif_yearslost <- function(formula,data=data,cens.code=0,times=NULL,...)
        time=jumptimes, strata=strata.jumps,nstrata=nstrata,
        jumps=1:length(km),strata.name=x$strata.name,
        strata.level=x$strata.level,
-       intkmtimes=intF1mtimes, intF1times=intF1mtimes,
-       intF1pmtimes=intF1pmtimes, intF1pkatimes=intF1pkatimes,causes=causes
+       yearslost_times=yearslost_times,
+       estimate=estimate_out, causes=causes
        )
 class(out) <- c("resmean_phreg")
 return(out)
 }# }}}
 
+##' Summary for resmean_phreg/cif_yearslost fits
+##'
+##' If \code{times=NULL} was used when creating the object, the summary is the full
+##' curve at all event times -- exactly what \code{plot} would show -- as a data
+##' frame with the estimate, its standard error, confidence interval, and (for
+##' \code{resmean_phreg}) a years-lost column (\code{time - rmst}); for
+##' \code{cif_yearslost} one such table is given per cause.
+##'
+##' If \code{times} was given, the object already stores the relevant \code{lava}
+##' \code{"estimate"} object(s) (see \code{\link{estimate.resmean_phreg}}), and this
+##' just returns those stored object(s) as-is -- printing one shows the usual
+##' Estimate/Std.Err/CI/P-value table. No joint null-hypothesis test is added by
+##' default; pass \code{contrast} (a matrix or function, applied via
+##' \code{lava::estimate}) if you want to test a specific linear combination, in which
+##' case the usual \code{summary.estimate} output (including the test) is shown for
+##' that contrast (see \code{\link{summary.resmean_estimate}} for how this is applied
+##' when there is more than one time/cause). For \code{cif_yearslost} objects,
+##' \code{cause=NULL} (the default) summarizes every cause (returned as a named list);
+##' \code{cause=1} (say) restricts the summary to that cause. \code{time} similarly
+##' restricts to a single time (only relevant if \code{length(times)>1} in the
+##' original call).
+##'
+##' @param object Object of class \code{"resmean_phreg"}.
+##' @param contrast Optional contrast (matrix or function), applied via \code{lava::estimate} before summarizing; triggers the usual \code{summary.estimate} test output. Only used when \code{times} was given.
+##' @param cause Only relevant for \code{cif_yearslost} objects: restrict the summary to this cause (default: all causes).
+##' @param time Optional: restrict the summary to a single time (only relevant if several \code{times} were given in the original call).
+##' @param level Confidence level, only used for the no-\code{times} curve-summary.
+##' @param ... Additional arguments passed to \code{summary.estimate} (only used together with \code{contrast}) or to \code{conftype} (when \code{times=NULL}).
 ##' @export
-summary.resmean_phreg <- function(object,level=0.95,contrast=NULL,...)
+summary.resmean_phreg <- function(object,contrast=NULL,cause=NULL,time=NULL,level=0.95,...)
 {# {{{
 
-if (is.null(object$intkmtimes)) {
-	p <- ncol(object$cumhaz)
-	outl <- basecumhaz(object,columns=1:p) 
-	outl$strata.name  <- object$strata.name
-	outl$strata.level <- object$strata.level
-	outl$causes       <- object$causes
-} else  {
+  if (is.null(object$estimate)) {
+    ## no times given at construction: summary = the full curve, i.e. what plot() shows,
+    ## with an added confidence interval (and, for resmean_phreg, a years-lost column)
+    timev <- object$cumhaz[,1]
+    stratidx <- object$strata[object$jumps]
+    stratlab <- object$strata.level[stratidx+1]
 
-out <- object$intkmtimes
-if (ncol(out)==5) {
-   mu <- out[,3]; se <- out[,4];
-   xx <- conftype(mu,se,conf.int=level,...)
-   lower <- xx$lower
-   upper <- xx$upper
-   years.lost <- out[,5]
-   out <- cbind(out[,-5],lower,upper,years.lost)
-   if (!is.null(contrast)) {
-	   test <- estimate(object,f=contrast)
-	   out <- list(estimates=out,test=test)
-   }
-   outl <- out
-} else {
-	p <- ncol(out)
-        nn <- names(out)[1:2]
-        nl <- names(out)[p]
-        outl <- list()
-        oute <- list()
-	k <- 1
-	for (i in object$causes) {
-                   name <- paste("intF_",i,sep="")
-                   sename <- paste("se.intF_",i,sep="")
-		   mu <- out[,name];
-		   se <- out[,sename];
-                   xx <- conftype(mu,se,conf.int=level,...)
-		   loweri <- paste0("lower_",name)
-		   upperi <- paste0("upper_",name)
-		   out[,loweri] <- xx$lower
-		   out[,upperi] <- xx$upper
-		   xo <- out[,c(nn,name,sename)]
-		   xo[,loweri] <- xx$lower
-		   xo[,upperi] <- xx$upper
-		   oute[[name]] <- xo
-		   if (!is.null(contrast)) {
-             test <- estimate(coef=mu,vcov=diag(se^2),f=contrast)
-		   testname <- paste0("test",name)
-		   outl[[testname]] <- test
-		   }
-	}
-###        outl$estimate <- out
-	outl$estimate <- oute
-	outl$total.years.lost <- out[,nl]
-}
-}
+    if (is.null(object$causes)) {
+      mu <- object$cumhaz[,2]; se <- object$se.cumhaz[,2]
+      xx <- conftype(mu,se,conf.int=level,...)
+      outl <- data.frame(strata=stratlab,time=timev,rmst=mu,se.rmst=se,
+                          lower=xx$lower,upper=xx$upper,years.lost=timev-mu)
+      return(outl)
+    }
 
-return(outl)
+    ## cif_yearslost with no times: one years-lost curve summary per cause
+    causes <- if (is.null(cause)) object$causes else cause
+    outl <- list()
+    for (cc in causes) {
+      idx <- which(object$causes==cc)
+      mu <- object$cumhaz[,idx+1]; se <- object$se.cumhaz[,idx+1]
+      xx <- conftype(mu,se,conf.int=level,...)
+      outl[[paste0("cause",cc)]] <- data.frame(strata=stratlab,time=timev,years.lost=mu,
+                                                se.years.lost=se,lower=xx$lower,upper=xx$upper)
+    }
+    if (length(causes)==1) outl <- outl[[1]]
+    return(outl)
+  }
+
+  ## times were given: return the stored estimate object(s) as-is (no default joint
+  ## null-hypothesis test); that test is only shown if 'contrast' is given.
+  summarize <- function(est) {
+    if (!is.null(time) && !inherits(est,"estimate")) {
+      key <- paste0("time",time)
+      if (is.null(est[[key]])) stop(paste0("time=",time," not among the times given in the call\n"))
+      est <- est[[key]]
+    }
+    if (inherits(est,"resmean_estimate")) return(summary(est,contrast=contrast,...))
+    if (!is.null(contrast)) return(summary(estimate(est,f=contrast),...))
+    est
+  }
+
+  if (!is.null(object$causes)) {
+    causes <- if (is.null(cause)) object$causes else cause
+    outl <- list()
+    for (cc in causes) outl[[paste0("cause",cc)]] <- summarize(object$estimate[[paste0("cause",cc)]])
+    if (length(causes)==1) outl <- outl[[1]] else class(outl) <- c("resmean_estimate","list")
+    return(outl)
+  }
+
+  summarize(object$estimate)
 }# }}}
 
 
+##' Print method for resmean_phreg/cif_yearslost fits
+##'
+##' If \code{times} was given at call time, printing shows the stored estimate
+##' object(s) (same as \code{summary(x)}) since that output is already compact.
+##'
+##' If \code{times=NULL}, the full curve (all event times) can be long, so printing
+##' the object just gives a short description instead of dumping it -- use
+##' \code{summary(x)} (or \code{plot(x)}) to see the full rmst/years-lost curve.
+##'
+##' @param x Object of class \code{"resmean_phreg"}.
+##' @param ... Passed on to \code{summary.resmean_phreg} when \code{times} was given.
 ##' @export
 print.resmean_phreg <- function(x,...)
 {# {{{
-print(summary.resmean_phreg(x,...))
+  if (is.null(x$estimate)) {
+    cat("'",class(x)[1],"' object\n",sep="")
+    if (!is.null(x$causes)) cat("Competing risks, causes: ",paste(x$causes,collapse=", "),"\n",sep="")
+    if (x$nstrata>1) cat("Strata (",x$strata.name,"): ",paste(x$strata.level,collapse=", "),"\n",sep="")
+    cat(length(unique(x$time))," distinct event times, range ",
+        paste(round(range(x$time),3),collapse=" - "),"\n",sep="")
+    cat("('times' was not given at call time -- use summary(x) for the full curve at all event times (also shown by plot(x)), or refit with times=... for time-specific estimates)\n")
+    return(invisible(x))
+  }
+  print(summary.resmean_phreg(x,...))
 }# }}}
 
 ##' @export
@@ -2433,7 +2588,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 	if (inherits(x,"km") & is.null(ylab)) ylab <- "Survival probability"
 	if (inherits(x,"cif") & is.null(ylab)) ylab <- "Probability"
 	if (inherits(x,"resmean_phreg") & is.null(ylab)) ylab <- "Restricted residual mean life"
-	if (inherits(x,"resmean_phreg") & !is.null(x$intF1times)) ylab <- "Years lost up to t: t - E(min(T,t))"
+	if (inherits(x,"resmean_phreg") & !is.null(x$causes)) ylab <- "Years lost up to t: t - E(min(T,t))"
 	if (years.lost) ylab <- "Years lost up to t: t - E(min(T,t))"
 	if (is.null(xlab)) xlab <- "time"
 	ci.level <- level
@@ -2549,6 +2704,7 @@ plot.resmean_phreg <- function(x, se=FALSE,time=NULL,add=FALSE,ylim=NULL,xlim=NU
 
 
 # }}}
+
 
 ##' IPTW Cox Regression (Inverse Probability of Treatment Weighted)
 ##'
