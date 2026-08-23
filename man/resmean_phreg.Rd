@@ -18,10 +18,10 @@ resmean_phreg(x, times = NULL, covs = NULL, ...)
 }
 \value{
 An object of class \code{"resmean_phreg"} containing:
-\item{rmst}{Matrix of restricted mean survival times.}
-\item{se.rmst}{Standard errors for RMST.}
-\item{intkmtimes}{Restricted mean at specified times.}
-\item{years.lost}{Years lost (if applicable).}
+\item{rmst}{Matrix of restricted mean survival times (all event times, used by \code{plot}).}
+\item{se.rmst}{Standard errors for RMST (all event times).}
+\item{rmst_times}{Restricted mean (and years lost) at the specified \code{times}, one row per strata/time (\code{NULL} if \code{times=NULL}).}
+\item{estimate}{If \code{times} is given: a \code{lava} \code{"estimate"} object (or, if \code{length(times)>1}, a list of such objects, one per time) with the across-strata estimate and covariance at each time. \code{NULL} if \code{times=NULL}.}
 }
 \description{
 Computes the Restricted Mean Survival Time (RMST) for stratified Kaplan-Meier or
@@ -39,17 +39,42 @@ data(bmt)
 bmt$time <- bmt$time + runif(408) * 0.001
 out1 <- phreg(Surv(time, cause != 0) ~ strata(tcell, platelet), data = bmt)
 
+## No times given: the full rmst curve at all event times (what plot() shows)
+rm1 <- resmean_phreg(out1)
+rm1                     ## short description; use summary() for the full curve
+summary(rm1)
+
+## Several times: one lava 'estimate' object per time, stored on the object
 rm1 <- resmean_phreg(out1, times = 10 * (1:6))
 summary(rm1)
-e1 <- estimate(rm1)
+e1 <- estimate(rm1)     ## == rm1$estimate: a "resmean_estimate" list, one per time
+e1
+
+## Apply a contrast to every time at once (comparing the 4 strata)
+summary(e1, rbind(c(1, -1, 0, 0)))
+
+## Restrict to a single time first ...
+summary(rm1, time = 50)
+## ... optionally with a contrast for that time only
+summary(rm1, time = 50, rbind(c(1, -1, 0, 0)))
+estimate(rm1, time = 50, rbind(c(1, -1, 0, 0)))
+
+## All pairwise differences between the 4 strata, for one time or for all times
+de1 <- estimate(e1, lava:::pairwise_diff(4))
+de1
+summary(rm1, time = 50, lava:::pairwise_diff(4))
+
 par(mfrow = c(1, 2))
 plot(rm1, se = 1)
 plot(rm1, years.lost = TRUE, se = 1)
 
-## Comparing populations
+## Comparing populations (single time -> a plain estimate object)
 rm1 <- resmean_phreg(out1, times = 40)
 e1 <- estimate(rm1)
 estimate(e1, rbind(c(1, -1, 0, 0)))
+de1 <- estimate(e1, lava:::pairwise_diff(4))
+de1
+summary(rm1, lava:::pairwise_diff(4))
 }
 \author{
 Thomas Scheike
