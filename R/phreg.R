@@ -1897,7 +1897,7 @@ plot.predictphreg  <- function(x,se=FALSE,add=FALSE,ylim=NULL,xlim=NULL,lty=NULL
 ##' ## No times given: the full rmst curve at all event times (what plot() shows)
 ##' rm1 <- resmean_phreg(out1)
 ##' rm1                     ## short description; use summary() for the full curve
-##' head(summary(rm1))
+##' summary(rm1)
 ##'
 ##' ## Several times: one lava 'estimate' object per time, stored on the object
 ##' rm1 <- resmean_phreg(out1, times = 10 * (1:6))
@@ -2115,9 +2115,11 @@ estimate.resmean_phreg <- function(x,contrast=NULL,cause=1,time=NULL,...)
 ##' and shows the usual \code{summary.estimate} table (with its null-hypothesis test)
 ##' for each; with no \code{contrast}, it just returns the object unchanged.
 ##'
-##' @param x,object A \code{"resmean_estimate"} object.
-##' @param contrast Optional contrast (matrix or function), applied via \code{lava::estimate} to every element.
+##' @param x A \code{"resmean_estimate"} object (for \code{print}).
+##' @param object A \code{"resmean_estimate"} object (for \code{summary}).
+##' @param contrast Optional contrast (matrix or function), applied via \code{lava::estimate} to every element. Only used by \code{summary}.
 ##' @param ... Passed to \code{print}/\code{summary} of each element.
+##' @rdname resmean_estimate
 ##' @export
 print.resmean_estimate <- function(x,...)
 {# {{{
@@ -2129,6 +2131,7 @@ print.resmean_estimate <- function(x,...)
   invisible(x)
 }# }}}
 
+##' @rdname resmean_estimate
 ##' @export
 summary.resmean_estimate <- function(object,contrast=NULL,...)
 {# {{{
@@ -2201,6 +2204,8 @@ return(out)
 ##' ## No times given: full years-lost curve at all event times, one table per cause
 ##' drm1 <- cif_yearslost(Event(time, cause) ~ strata(tcell, platelet), data = bmt)
 ##' drm1                    ## short description; use summary() for the full curves
+##' summary(drm1)           ## both causes
+##' summary(drm1, cause=1)  ## just cause 1
 ##' plot(drm1, se=1)
 ##'
 ##' ## Years lost decomposed into causes, at specific times
