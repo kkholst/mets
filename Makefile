@@ -45,6 +45,8 @@ vignettes:
 
 vignettes/%.Rmd: FORCE
 	cd vignettes && Rscript rebuild-vignettes.R $*.Rmd.orig
+	@$(R) -q -e "pkgdown::build_article('$*')"
+	@echo "build 'docs/articles/$*.html'"
 
 FORCE:
 

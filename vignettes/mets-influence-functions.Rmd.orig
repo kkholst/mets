@@ -75,7 +75,7 @@ Cox-phreg
 Fine-Gray 
 
 ```{r}
- ph1 <- cifregFG(Event(time,cause)~tcell+platelet+age+cluster(id),bmt)
+ ph1 <- cifregFG(Event(time,cause)~tcell+platelet+age+cluster(id),data=bmt)
  summary(ph1)
  head(iid(ph1))
  head(iid(ph1,time=50,all=TRUE))
@@ -84,7 +84,7 @@ Fine-Gray
  e1 <- estimate(ph1,time=50,all=TRUE)
  head(iid(e1))
 
- ph1 <- cifregFG(Event(time,cause==1)~strata(tcell)+platelet+age+cluster(id),bmt)
+ ph1 <- cifregFG(Event(time,cause==1)~strata(tcell)+platelet+age+cluster(id),data=bmt)
  summary(ph1)
  head(iid(ph1))
  head(iid(ph1,time=50,all=TRUE))
@@ -195,7 +195,7 @@ Ghosh-Lin
 mlogit/cumoddsreg/ordreg
 
 ```{r}
- mreg <- mlogit(cause1~tcell+platelet+age+cluster(id),bmt)
+ mreg <- mlogit(cause1f~tcell+platelet+age+cluster(id),bmt)
  summary(mreg)
  head(iid(mreg))
  dim(iid(mreg))
