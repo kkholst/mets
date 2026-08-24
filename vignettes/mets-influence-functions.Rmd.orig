@@ -175,10 +175,6 @@ We can estimate marginal mean or cumulative incidence for recurrent events or co
  cif1 <- cif(Event(time,cause)~strata(tcell),data=bmt,cause=1)
  summary(cif1,time=50)
 
- library(prodlim)
- cif1 <- prodlim(Hist(time,cause)~tcell,data=bmt)
- ## MG-standard errors 
- summary(cif1,time=50,cause=1)
 ```
 
 IPCW binomial regression 
