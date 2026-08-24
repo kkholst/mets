@@ -19,11 +19,12 @@ knitr::opts_chunk$set(
 library(mets)
 ```
 
-Influence functions are available from many models in the mets package. We here illustrate some of these models and how to get the 
-influence functions. 
 
-Examples 
-==========
+Influence functions are available from many models in the mets package. We here illustrate some of these models and how to 
+get the influence functions, they can be combined using the estimate function of the lava-package.  
+
+First setting up some data 
+=========================
 
 
 ```{r}
@@ -51,7 +52,10 @@ Examples
  sum(duplicated(hf$time[hf$status %in% c(0,1,2)]))
 ```
 
-Cox-phreg 
+Semi-parametric regression models 
+=================================
+
+We can do Cox regression and get the influence functions of the baselines and regression coefficients
 
 ```{r}
  ph1 <- phreg(Event(time,cause==1)~tcell+platelet+age+cluster(id),bmt)
@@ -73,7 +77,7 @@ Cox-phreg
  head(iid(e1))
 ```
 
-Fine-Gray 
+We can do Fine-Gray regression and get the influence functions of the baselines and regression coefficients
 
 ```{r}
  ph1 <- cifregFG(Event(time,cause)~tcell+platelet+age+cluster(id),data=bmt)
@@ -95,7 +99,7 @@ Fine-Gray
  head(iid(e1))
 ```
 
-Ghosh-Lin
+For recurrent events we can fit  a Ghosh-Lin regression model and get the influence functions of the baselines and regression coefficients
 
 ```{r}
  gl <- recreg(Event(entry,time,status)~treatment+z+cluster(id),data=hf,cause=1,death.code=2)
@@ -125,7 +129,16 @@ Ghosh-Lin
  e1 <- estimate(gls,time=50,all=TRUE)
  head(iid(e1))
  e1
+```
 
+
+Non-parametric marginal mean 
+=============================
+
+We can estimate marginal mean or cumulative incidence for recurrent events or competing risks data 
+
+
+```{r}
  ############# Marginal mean recurrent/cif
  ms <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+
 			  cluster(id),data=hf,cause=1,death.code=2)
@@ -137,7 +150,7 @@ Ghosh-Lin
 
  ms <- recurrent_marginal(Event(time,cause)~strata(tcell)+
 			  cluster(id),data=bmt,cause=1,death.code=1:2)
- plot(ms)
+ plot(ms,se=1)
  head(iid(ms,time=50))
  ###
  e1 <- estimate(ms,time=50,all=TRUE)
@@ -170,7 +183,11 @@ Ghosh-Lin
  summary(cif1,time=50,cause=1)
 ```
 
- binreg 
+IPCW binomial regression 
+=========================
+
+The binomial regression or ATE estimation 
+
 
 ```{r}
 
@@ -192,6 +209,55 @@ Ghosh-Lin
  e1 <- estimate(out)
  e1
 ```
+
+
+IPCW RMST,RMTL for competing risks 
+==================================
+
+
+The RMST, RMTL regression or ATE estimation 
+
+
+``` r
+
+ ## rmst regression, exp-link
+ out <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet,bmt,time=50)
+ summary(out)
+ head(iid(out))
+ e1 <- estimate(out)
+ e1
+
+ ## rmtl for cause 1 regression, exp link 
+ out <- resmeanIPCW(Event(time,cause)~tcell+platelet,bmt,time=50,cause=1)
+ summary(out)
+ head(iid(out))
+ e1 <- estimate(out)
+ e1
+
+ ############# rmst for tcell 
+ dfactor(bmt) <- tcellf~tcell
+ out <- resmeanATE(Event(time,cause!=0)~tcellf+platelet+age,bmt,time=50,
+                         treat.model=tcellf~platelet+age)
+ summary(out)
+ head(iid(out))
+ e1 <- estimate(out)
+ e1
+
+ ############# rmtl for tcell 
+ dfactor(bmt) <- tcellf~tcell
+ out <- resmeanATE(Event(time,cause)~tcellf+platelet+age,bmt,time=50,
+                         treat.model=tcellf~platelet+age)
+ summary(out)
+ head(iid(out))
+ e1 <- estimate(out)
+ e1
+```
+
+
+
+Multinomial regression or cumulative odds regression
+=====================================================
+
 
 mlogit/cumoddsreg/ordreg
 
