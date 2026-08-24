@@ -34,8 +34,6 @@ First setting up some data
  dfactor(bmt) <- cause1f~cause
  drelevel(bmt,ref=3) <- cause3f~cause
  dlevels(bmt)
-### sum(duplicated(bmt$time[bmt$cause %in% c(1,2)]))
-### sum(duplicated(bmt$time[bmt$cause %in% c(0,1,2)]))
 
  data(hfactioncpx12)
  hf <- hfactioncpx12
@@ -258,12 +256,11 @@ The RMST, RMTL regression or ATE estimation
 Multinomial regression or cumulative odds regression
 =====================================================
 
-
 mlogit/cumoddsreg/ordreg
 
 ```{r}
  mreg <- mlogit(cause1f~tcell+platelet+age+cluster(id),bmt)
- summary(mreg)
+ summary(mreg)a
  head(iid(mreg))
  dim(iid(mreg))
 
