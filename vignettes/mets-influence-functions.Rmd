@@ -1,0 +1,947 @@
+---
+title: "Influence functions in METS"
+author: Klaus Holst & Thomas Scheike
+date: "2026-08-24"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{Influence functions in METS}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+<!-- DO NOT EDIT: auto-generated from the .Rmd.orig source -->
+
+
+
+
+Influence functions are available from many models in the mets package. We here illustrate some of these models and how to 
+get the influence functions, they can be combined using the estimate function of the lava-package.  
+
+First setting up some data 
+=========================
+
+
+
+``` r
+ data(bmt)
+ bmt$time <- bmt$time+runif(408)*.001
+ bmt$id <- sample(200,408,replace=TRUE)
+ dfactor(bmt) <- cause1f~cause
+ drelevel(bmt,ref=3) <- cause3f~cause
+ dlevels(bmt)
+#> cause1f #levels=:3 
+#> [1] "0" "1" "2"
+#> -----------------------------------------
+#> cause3f #levels=:3 
+#> [1] "2" "0" "1"
+#> -----------------------------------------
+
+ data(hfactioncpx12)
+ hf <- hfactioncpx12
+ head(hf)
+#>   id      entry       time status trt treatment Count1
+#> 1  1 0.00000000 0.60506502      1   0         0      0
+#> 2  1 0.60506502 1.04859685      0   0         0      1
+#> 3  2 0.00000000 0.06297057      1   0         0      0
+#> 4  2 0.06297057 0.35865845      1   0         0      1
+#> 5  2 0.35865845 0.39698836      1   0         0      2
+#> 6  2 0.39698836 3.83299110      0   0         0      3
+ hf <- tie_breaker(hf,status="status",cause=1:2)
+ hf$x <- as.numeric(hf$treatment)
+ hf$z <- rnorm(741)[hf$id]
+ dd <- data.frame(treatment=levels(hf$treatment),id=1)
+ sum(duplicated(hf$time[hf$status %in% c(1,2)]))
+#> [1] 0
+ sum(duplicated(hf$time[hf$status %in% c(0,1,2)]))
+#> [1] 143
+
+ ## also break ties for censorings
+ hf <- tie_breaker(hf,status="status",cause=0:2,cens.code=9)
+#> 143 tied event time(s) found and perturbed.
+ sum(duplicated(hf$time[hf$status %in% c(0,1,2)]))
+#> [1] 0
+```
+
+Semi-parametric regression models 
+=================================
+
+We can do Cox regression and get the influence functions of the baselines and regression coefficients
+
+
+``` r
+ ph1 <- phreg(Event(time,cause==1)~tcell+platelet+age+cluster(id),bmt)
+ summary(ph1)
+#> 
+#>    n events
+#>  408    161
+#> coefficients:
+#>           Estimate      S.E.   dU^-1/2 P-value
+#> tcell    -0.651802  0.270124  0.276340  0.0158
+#> platelet -0.520442  0.184594  0.187209  0.0048
+#> age       0.408642  0.080974  0.089034  0.0000
+#> 
+#> exp(coefficients):
+#>          Estimate    2.5%  97.5%
+#> tcell     0.52111 0.30690 0.8848
+#> platelet  0.59426 0.41386 0.8533
+#> age       1.50477 1.28394 1.7636
+ head(iid(ph1))
+#>          tcell     platelet           age
+#> 1 -0.010592226  0.025264907 -6.471734e-05
+#> 2 -0.002681394 -0.006664993 -4.463371e-03
+#> 3  0.002188080 -0.021790787 -7.777888e-05
+#> 5 -0.038188666  0.007693086 -2.255433e-03
+#> 6  0.008601292 -0.001411981  3.280773e-03
+#> 7 -0.020880015 -0.009089485 -1.395443e-03
+ head(iid(ph1,time=50,all=TRUE))
+#>          tcell     platelet           age      strata0
+#> 1 -0.010592226  0.025264907 -6.471734e-05 -0.001333676
+#> 2 -0.002681394 -0.006664993 -4.463371e-03  0.005152510
+#> 3  0.002188080 -0.021790787 -7.777888e-05  0.003938352
+#> 5 -0.038188666  0.007693086 -2.255433e-03 -0.001150733
+#> 6  0.008601292 -0.001411981  3.280773e-03 -0.007426245
+#> 7 -0.020880015 -0.009089485 -1.395443e-03  0.002877317
+ head(iid(ph1,time=50))
+#>        strata0
+#> 1 -0.001333676
+#> 2  0.005152510
+#> 3  0.003938352
+#> 5 -0.001150733
+#> 6 -0.007426245
+#> 7  0.002877317
+ ###
+ e1 <- estimate(ph1,time=50,all=TRUE)
+ head(iid(e1))
+#>          tcell     platelet           age      strata0
+#> 1 -0.010592226  0.025264907 -6.471734e-05 -0.001333676
+#> 2 -0.002681394 -0.006664993 -4.463371e-03  0.005152510
+#> 3  0.002188080 -0.021790787 -7.777888e-05  0.003938352
+#> 5 -0.038188666  0.007693086 -2.255433e-03 -0.001150733
+#> 6  0.008601292 -0.001411981  3.280773e-03 -0.007426245
+#> 7 -0.020880015 -0.009089485 -1.395443e-03  0.002877317
+
+ ph1 <- phreg(Event(time,cause==1)~strata(tcell)+platelet+age+cluster(id),bmt)
+ summary(ph1)
+#> 
+#>    n events
+#>  408    161
+#> coefficients:
+#>           Estimate      S.E.   dU^-1/2 P-value
+#> platelet -0.521330  0.184537  0.187370  0.0047
+#> age       0.406305  0.080379  0.089044  0.0000
+#> 
+#> exp(coefficients):
+#>          Estimate    2.5%  97.5%
+#> platelet  0.59373 0.41353 0.8524
+#> age       1.50126 1.28244 1.7574
+ head(iid(ph1))
+#>       platelet           age
+#> 1  0.025438135 -0.0001766474
+#> 2 -0.006546701 -0.0044499809
+#> 3 -0.021759571 -0.0002188445
+#> 5  0.006708066 -0.0019213764
+#> 6 -0.001366534  0.0032685853
+#> 7 -0.010432172 -0.0013869217
+ head(iid(ph1,time=50,all=TRUE))
+#>       platelet           age       strata0       strata1
+#> 1  0.025438135 -0.0001766474 -0.0013634948 -0.0046645957
+#> 2 -0.006546701 -0.0044499809  0.0049495231  0.0025617071
+#> 3 -0.021759571 -0.0002188445  0.0036853656  0.0041020781
+#> 5  0.006708066 -0.0019213764 -0.0009280753 -0.0127836689
+#> 6 -0.001366534  0.0032685853 -0.0071782235 -0.0007362853
+#> 7 -0.010432172 -0.0013869217  0.0034285783 -0.0143184724
+ head(iid(ph1,time=50))
+#>         strata0       strata1
+#> 1 -0.0013634948 -0.0046645957
+#> 2  0.0049495231  0.0025617071
+#> 3  0.0036853656  0.0041020781
+#> 5 -0.0009280753 -0.0127836689
+#> 6 -0.0071782235 -0.0007362853
+#> 7  0.0034285783 -0.0143184724
+ ###
+ e1 <- estimate(ph1,time=50,all=TRUE)
+ head(iid(e1))
+#>       platelet           age       strata0       strata1
+#> 1  0.025438135 -0.0001766474 -0.0013634948 -0.0046645957
+#> 2 -0.006546701 -0.0044499809  0.0049495231  0.0025617071
+#> 3 -0.021759571 -0.0002188445  0.0036853656  0.0041020781
+#> 5  0.006708066 -0.0019213764 -0.0009280753 -0.0127836689
+#> 6 -0.001366534  0.0032685853 -0.0071782235 -0.0007362853
+#> 7 -0.010432172 -0.0013869217  0.0034285783 -0.0143184724
+```
+
+We can do Fine-Gray regression and get the influence functions of the baselines and regression coefficients
+
+
+``` r
+ ph1 <- cifregFG(Event(time,cause)~tcell+platelet+age+cluster(id),data=bmt)
+ summary(ph1)
+#> 
+#>    n events
+#>  408    161
+#> 
+#>  178 clusters
+#> coefficients:
+#>           Estimate      S.E.   dU^-1/2 P-value
+#> tcell    -0.596667  0.255080  0.275783  0.0193
+#> platelet -0.426077  0.189060  0.187720  0.0242
+#> age       0.343799  0.076691  0.086282  0.0000
+#> 
+#> exp(coefficients):
+#>          Estimate    2.5%  97.5%
+#> tcell     0.55064 0.33400 0.9078
+#> platelet  0.65307 0.45085 0.9460
+#> age       1.41030 1.21347 1.6390
+ head(iid(ph1))
+#>          tcell      platelet           age
+#> 1 -0.004169171  0.0325281792 -0.0019937228
+#> 2 -0.002932167 -0.0072823256 -0.0042222459
+#> 3  0.001427640 -0.0203161295  0.0002350885
+#> 5 -0.034870291  0.0069855896 -0.0020115793
+#> 6  0.009249094  0.0007050189  0.0033577896
+#> 7 -0.014686612 -0.0053916431 -0.0051133840
+ head(iid(ph1,time=50,all=TRUE))
+#>          tcell      platelet           age       strata0
+#> 1 -0.004169171  0.0325281792 -0.0019937228 -5.959954e-03
+#> 2 -0.002932167 -0.0072823256 -0.0042222459  4.692893e-03
+#> 3  0.001427640 -0.0203161295  0.0002350885  3.740323e-03
+#> 5 -0.034870291  0.0069855896 -0.0020115793 -9.116295e-04
+#> 6  0.009249094  0.0007050189  0.0033577896 -7.541358e-03
+#> 7 -0.014686612 -0.0053916431 -0.0051133840  3.969736e-05
+ head(iid(ph1,time=50))
+#>         strata0
+#> 1 -5.959954e-03
+#> 2  4.692893e-03
+#> 3  3.740323e-03
+#> 5 -9.116295e-04
+#> 6 -7.541358e-03
+#> 7  3.969736e-05
+ ###
+ e1 <- estimate(ph1,time=50,all=TRUE)
+ head(iid(e1))
+#>          tcell      platelet           age       strata0
+#> 1 -0.004169171  0.0325281792 -0.0019937228 -5.959954e-03
+#> 2 -0.002932167 -0.0072823256 -0.0042222459  4.692893e-03
+#> 3  0.001427640 -0.0203161295  0.0002350885  3.740323e-03
+#> 5 -0.034870291  0.0069855896 -0.0020115793 -9.116295e-04
+#> 6  0.009249094  0.0007050189  0.0033577896 -7.541358e-03
+#> 7 -0.014686612 -0.0053916431 -0.0051133840  3.969736e-05
+
+ ph1 <- cifregFG(Event(time,cause==1)~strata(tcell)+platelet+age+cluster(id),data=bmt)
+ summary(ph1)
+#> 
+#>    n events
+#>  408    161
+#> 
+#>  178 clusters
+#> coefficients:
+#>           Estimate      S.E.   dU^-1/2 P-value
+#> platelet -0.521330  0.184537  0.187370  0.0047
+#> age       0.406305  0.080379  0.089044  0.0000
+#> 
+#> exp(coefficients):
+#>          Estimate    2.5%  97.5%
+#> platelet  0.59373 0.41353 0.8524
+#> age       1.50126 1.28244 1.7574
+ head(iid(ph1))
+#>       platelet           age
+#> 1  0.025438135 -0.0001766474
+#> 2 -0.006546701 -0.0044499809
+#> 3 -0.021759571 -0.0002188445
+#> 5  0.006708066 -0.0019213764
+#> 6 -0.001366534  0.0032685853
+#> 7 -0.010432172 -0.0013869217
+ head(iid(ph1,time=50,all=TRUE))
+#>       platelet           age       strata0       strata1
+#> 1  0.025438135 -0.0001766474 -0.0013634948 -0.0046645957
+#> 2 -0.006546701 -0.0044499809  0.0049495231  0.0025617071
+#> 3 -0.021759571 -0.0002188445  0.0036853656  0.0041020781
+#> 5  0.006708066 -0.0019213764 -0.0009280753 -0.0127836689
+#> 6 -0.001366534  0.0032685853 -0.0071782235 -0.0007362853
+#> 7 -0.010432172 -0.0013869217 -0.0132447448  0.0023548507
+ head(iid(ph1,time=50))
+#>         strata0       strata1
+#> 1 -0.0013634948 -0.0046645957
+#> 2  0.0049495231  0.0025617071
+#> 3  0.0036853656  0.0041020781
+#> 5 -0.0009280753 -0.0127836689
+#> 6 -0.0071782235 -0.0007362853
+#> 7 -0.0132447448  0.0023548507
+ ###
+ e1 <- estimate(ph1,time=50,all=TRUE)
+#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
+#> |mean|/rms = 0.13). Using lava.options(check.ic = FALSE) disables the warning
+#> globally.
+ head(iid(e1))
+#>       platelet           age       strata0       strata1
+#> 1  0.025438135 -0.0001766474 -0.0013634948 -0.0046645957
+#> 2 -0.006546701 -0.0044499809  0.0049495231  0.0025617071
+#> 3 -0.021759571 -0.0002188445  0.0036853656  0.0041020781
+#> 5  0.006708066 -0.0019213764 -0.0009280753 -0.0127836689
+#> 6 -0.001366534  0.0032685853 -0.0071782235 -0.0007362853
+#> 7 -0.010432172 -0.0013869217 -0.0132447448  0.0023548507
+```
+
+For recurrent events we can fit  a Ghosh-Lin regression model and get the influence functions of the baselines and regression coefficients
+
+
+``` r
+ gl <- recreg(Event(entry,time,status)~treatment+z+cluster(id),data=hf,cause=1,death.code=2)
+ summary(gl)
+#> 
+#>     n events
+#>  2132   1391
+#> 
+#>  741 clusters
+#> coefficients:
+#>             Estimate      S.E.   dU^-1/2 P-value
+#> treatment1 -0.110315  0.078104  0.053777  0.1578
+#> z           0.121134  0.040883  0.026836  0.0030
+#> 
+#> exp(coefficients):
+#>            Estimate    2.5%  97.5%
+#> treatment1  0.89555 0.76844 1.0437
+#> z           1.12878 1.04186 1.2229
+ head(iid(gl))
+#>      treatment1             z
+#> 1 -3.584262e-04 -3.077381e-04
+#> 2 -1.466395e-04  1.068671e-04
+#> 3  2.735528e-03  3.807626e-04
+#> 4  1.545717e-03 -5.459701e-04
+#> 5  4.915136e-05  2.372781e-05
+#> 6  2.633566e-03 -1.255283e-03
+ head(iid(gl,time=50,all=TRUE))
+#>      treatment1             z       strata0
+#> 1 -3.584262e-04 -3.077381e-04  0.0010497465
+#> 2 -1.466395e-04  1.068671e-04 -0.0020688808
+#> 3  2.735528e-03  3.807626e-04 -0.0004395766
+#> 4  1.545717e-03 -5.459701e-04 -0.0042409246
+#> 5  4.915136e-05  2.372781e-05 -0.0001184071
+#> 6  2.633566e-03 -1.255283e-03 -0.0046861327
+ head(iid(gl,time=50))
+#>         strata0
+#> 1  0.0010497465
+#> 2 -0.0020688808
+#> 3 -0.0004395766
+#> 4 -0.0042409246
+#> 5 -0.0001184071
+#> 6 -0.0046861327
+ ###
+ e1 <- estimate(gl,time=50,all=TRUE)
+ head(iid(e1))
+#>      treatment1             z       strata0
+#> 1 -3.584262e-04 -3.077381e-04  0.0010497465
+#> 2 -1.466395e-04  1.068671e-04 -0.0020688808
+#> 3  2.735528e-03  3.807626e-04 -0.0004395766
+#> 4  1.545717e-03 -5.459701e-04 -0.0042409246
+#> 5  4.915136e-05  2.372781e-05 -0.0001184071
+#> 6  2.633566e-03 -1.255283e-03 -0.0046861327
+
+ gls <- recreg(Event(entry,time,status)~strata(treatment)+z+cluster(id),data=hf,cause=1,death.code=2)
+ summary(gls)
+#> 
+#>     n events
+#>  2132   1391
+#> 
+#>  741 clusters
+#> coefficients:
+#>   Estimate     S.E.  dU^-1/2 P-value
+#> z 0.120650 0.040801 0.026839  0.0031
+#> 
+#> exp(coefficients):
+#>   Estimate   2.5%  97.5%
+#> z   1.1282 1.0415 1.2222
+ head(iid(gls))
+#>               z
+#> 1 -3.101583e-04
+#> 2  1.036902e-04
+#> 3  3.707161e-04
+#> 4 -5.424299e-04
+#> 5  2.472162e-05
+#> 6 -1.298731e-03
+ head(iid(gls,time=50,all=TRUE))
+#>               z       strata0       strata1
+#> 1 -3.101583e-04  0.0010753825  1.152658e-04
+#> 2  1.036902e-04 -0.0042640692 -3.853495e-05
+#> 3  3.707161e-04 -0.0001775928  6.295191e-03
+#> 4 -5.424299e-04 -0.0047471867  2.015861e-04
+#> 5  2.472162e-05 -0.0001079006 -9.187425e-06
+#> 6 -1.298731e-03 -0.0041769375  4.826543e-04
+ head(iid(gls,time=50))
+#>         strata0       strata1
+#> 1  0.0010753825  1.152658e-04
+#> 2 -0.0042640692 -3.853495e-05
+#> 3 -0.0001775928  6.295191e-03
+#> 4 -0.0047471867  2.015861e-04
+#> 5 -0.0001079006 -9.187425e-06
+#> 6 -0.0041769375  4.826543e-04
+ ###
+ e1 <- estimate(gls,time=50,all=TRUE)
+#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
+#> |mean|/rms = 0.00031). Using lava.options(check.ic = FALSE) disables the
+#> warning globally.
+ head(iid(e1))
+#>               z       strata0       strata1
+#> 1 -3.101583e-04  0.0010753825  1.152658e-04
+#> 2  1.036902e-04 -0.0042640692 -3.853495e-05
+#> 3  3.707161e-04 -0.0001775928  6.295191e-03
+#> 4 -5.424299e-04 -0.0047471867  2.015861e-04
+#> 5  2.472162e-05 -0.0001079006 -9.187425e-06
+#> 6 -1.298731e-03 -0.0041769375  4.826543e-04
+
+ gls <- recreg(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,cause=1,death.code=2)
+ summary(gls)
+#> 
+#>     n events
+#>  2132   1391
+ head(iid(gls))
+#> Error in `IC.recreg()`:
+#> ! supply 'time' argument
+ head(iid(gls,time=50,all=TRUE))
+#>         strata0     strata1
+#> 1  0.0004826020 0.000000000
+#> 2 -0.0029119802 0.000000000
+#> 3  0.0000000000 0.006881006
+#> 4 -0.0044466374 0.000000000
+#> 5 -0.0001078009 0.000000000
+#> 6 -0.0034098234 0.000000000
+ head(iid(gls,time=50))
+#>         strata0     strata1
+#> 1  0.0004826020 0.000000000
+#> 2 -0.0029119802 0.000000000
+#> 3  0.0000000000 0.006881006
+#> 4 -0.0044466374 0.000000000
+#> 5 -0.0001078009 0.000000000
+#> 6 -0.0034098234 0.000000000
+ ###
+ e1 <- estimate(gls,time=50,all=TRUE)
+#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
+#> |mean|/rms = 0.0003). Using lava.options(check.ic = FALSE) disables the warning
+#> globally.
+ head(iid(e1))
+#>         strata0     strata1
+#> 1  0.0004826020 0.000000000
+#> 2 -0.0029119802 0.000000000
+#> 3  0.0000000000 0.006881006
+#> 4 -0.0044466374 0.000000000
+#> 5 -0.0001078009 0.000000000
+#> 6 -0.0034098234 0.000000000
+ e1
+#>         Estimate Std.Err  2.5% 97.5%   P-value
+#> strata0    2.682  0.1544 2.379 2.985 1.399e-67
+#> strata1    2.313  0.1497 2.019 2.606 7.910e-54
+```
+
+
+Non-parametric marginal mean 
+=============================
+
+We can estimate marginal mean or cumulative incidence for recurrent events or competing risks data 
+
+
+
+``` r
+ ############# Marginal mean recurrent/cif
+ ms <- recurrent_marginal(Event(entry,time,status)~strata(treatment)+
+			  cluster(id),data=hf,cause=1,death.code=2)
+ head(iid(ms,time=50))
+#>         strata0     strata1
+#> 1  5.822025e-04 0.000000000
+#> 2 -3.032866e-03 0.000000000
+#> 3  0.000000e+00 0.006979682
+#> 4 -4.441553e-03 0.000000000
+#> 5 -8.948593e-05 0.000000000
+#> 6 -3.704212e-03 0.000000000
+ ###
+ e1 <- estimate(ms,time=50,all=TRUE)
+ head(iid(e1))
+#>              p1          p2
+#> 1  5.822025e-04 0.000000000
+#> 2 -3.032866e-03 0.000000000
+#> 3  0.000000e+00 0.006979682
+#> 4 -4.441553e-03 0.000000000
+#> 5 -8.948593e-05 0.000000000
+#> 6 -3.704212e-03 0.000000000
+ e1
+#>    Estimate Std.Err  2.5% 97.5%   P-value
+#> p1    2.682  0.1545 2.379 2.984 1.808e-67
+#> p2    2.313  0.1496 2.020 2.607 6.405e-54
+
+ ms <- recurrent_marginal(Event(time,cause)~strata(tcell)+
+			  cluster(id),data=bmt,cause=1,death.code=1:2)
+ plot(ms,se=1)
+```
+
+![](figure/mets-influence-functions-unnamed-chunk-6-1.png)
+
+``` r
+ head(iid(ms,time=50))
+#>         strata0      strata1
+#> 1 -0.0004793790  0.000000000
+#> 2  0.0016257930  0.000000000
+#> 3  0.0005513209  0.000000000
+#> 5  0.0000000000 -0.006868579
+#> 6 -0.0037986036  0.000000000
+#> 7 -0.0070947624  0.000000000
+ ###
+ e1 <- estimate(ms,time=50,all=TRUE)
+#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
+#> |mean|/rms = 0.11). Using lava.options(check.ic = FALSE) disables the warning
+#> globally.
+ head(iid(e1))
+#>              p1           p2
+#> 1 -0.0004793790  0.000000000
+#> 2  0.0016257930  0.000000000
+#> 3  0.0005513209  0.000000000
+#> 5  0.0000000000 -0.006868579
+#> 6 -0.0037986036  0.000000000
+#> 7 -0.0070947624  0.000000000
+ e1
+#>    Estimate Std.Err   2.5%  97.5%   P-value
+#> p1   0.4255 0.04865 0.3301 0.5208 2.234e-18
+#> p2   0.3062 0.05177 0.2047 0.4077 3.316e-09
+ summary(ms,time=50)
+#> [[1]]
+#>     new.time      mean         se   CI-2.5% CI-97.5% strata
+#> 146       50 0.4254583 0.02569164 0.3779693 0.478914      0
+#> 
+#> [[2]]
+#>    new.time      mean         se   CI-2.5%  CI-97.5% strata
+#> 16       50 0.3061988 0.06500433 0.2019752 0.4642041      1
+```
+ 
+ Cumulative incidence 
+
+
+``` r
+ cif1 <- cif(Event(time,cause)~strata(tcell)+cluster(id),data=bmt,cause=1)
+ class(cif1)
+#> [1] "recurrent" "recurrent"
+ plot(cif1,se=1,ylim=c(0,1))
+ summary(cif1,time=50)
+#> [[1]]
+#>     new.time      mean         se   CI-2.5% CI-97.5% strata
+#> 146       50 0.4254583 0.02569164 0.3779693 0.478914      0
+#> 
+#> [[2]]
+#>    new.time      mean         se   CI-2.5%  CI-97.5% strata
+#> 16       50 0.3061988 0.06500433 0.2019752 0.4642041      1
+ head(iid(cif1,time=50))
+#>         strata0      strata1
+#> 1 -0.0004793790  0.000000000
+#> 2  0.0016257930  0.000000000
+#> 3  0.0005513209  0.000000000
+#> 5  0.0000000000 -0.006868579
+#> 6 -0.0037986036  0.000000000
+#> 7 -0.0070947624  0.000000000
+ ###
+ e1 <- estimate(cif1,time=50,all=TRUE)
+#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
+#> |mean|/rms = 0.11). Using lava.options(check.ic = FALSE) disables the warning
+#> globally.
+ head(iid(e1))
+#>              p1           p2
+#> 1 -0.0004793790  0.000000000
+#> 2  0.0016257930  0.000000000
+#> 3  0.0005513209  0.000000000
+#> 5  0.0000000000 -0.006868579
+#> 6 -0.0037986036  0.000000000
+#> 7 -0.0070947624  0.000000000
+ e1
+#>    Estimate Std.Err   2.5%  97.5%   P-value
+#> p1   0.4255 0.04865 0.3301 0.5208 2.234e-18
+#> p2   0.3062 0.05177 0.2047 0.4077 3.316e-09
+ ###
+ plot(ms,add=TRUE,se=1)
+```
+
+![](figure/mets-influence-functions-unnamed-chunk-7-1.png)
+
+``` r
+
+ cif1 <- cif(Event(time,cause)~strata(tcell),data=bmt,cause=1)
+ summary(cif1,time=50)
+#> [[1]]
+#>     new.time      mean         se   CI-2.5%  CI-97.5% strata
+#> 146       50 0.4254583 0.02729329 0.3751908 0.4824606      0
+#> 
+#> [[2]]
+#>    new.time      mean         se   CI-2.5%  CI-97.5% strata
+#> 16       50 0.3061988 0.06841022 0.1976196 0.4744353      1
+
+ library(prodlim)
+ cif1 <- prodlim(Hist(time,cause)~tcell,data=bmt)
+ ## MG-standard errors 
+ summary(cif1,time=50,cause=1)
+#>   tcell time cause n.risk n.event n.lost cuminc se.cuminc lower upper
+#> 1     0   50     1     64       0      0  0.425    0.0273 0.372 0.479
+#> 2     1   50     1      7       0      0  0.306    0.0682 0.173 0.440
+```
+
+IPCW binomial regression 
+=========================
+
+The binomial regression or ATE estimation 
+
+
+
+``` r
+
+ out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
+ summary(out)
+#>    n events
+#>  408    160
+#> 
+#>  408 clusters
+#> coeffients:
+#>              Estimate   Std.Err      2.5%     97.5% P-value
+#> (Intercept) -0.180390  0.126757 -0.428829  0.068049  0.1547
+#> tcell       -0.418737  0.345437 -1.095781  0.258307  0.2254
+#> platelet    -0.436925  0.240970 -0.909219  0.035368  0.0698
+#> 
+#> exp(coeffients):
+#>             Estimate    2.5%  97.5%
+#> (Intercept)  0.83494 0.65127 1.0704
+#> tcell        0.65788 0.33428 1.2947
+#> platelet     0.64602 0.40284 1.0360
+ head(iid(out))
+#>           [,1]        [,2]        [,3]
+#> 1 -0.006946228 0.004003693 0.006177052
+#> 2 -0.006946228 0.004003693 0.006177052
+#> 3 -0.006946228 0.004003693 0.006177052
+#> 4 -0.006946228 0.004003693 0.006177052
+#> 5 -0.006946228 0.004003693 0.006177052
+#> 6 -0.006946228 0.004003693 0.006177052
+ ###
+ e1 <- estimate(out)
+ e1
+#>             Estimate Std.Err    2.5%   97.5% P-value
+#> (Intercept)  -0.1804  0.1268 -0.4288 0.06805  0.1547
+#> tcell        -0.4187  0.3454 -1.0958 0.25831  0.2254
+#> platelet     -0.4369  0.2410 -0.9092 0.03537  0.0698
+
+############# binregATE
+
+ dfactor(bmt) <- tcellf~tcell
+ out <- binregATE(Event(time,cause)~tcellf+platelet+age,bmt,time=50,
+                         treat.model=tcellf~platelet+age)
+ summary(out)
+#>    n events
+#>  408    160
+#> 
+#>  408 clusters
+#> coeffients:
+#>              Estimate   Std.Err      2.5%     97.5% P-value
+#> (Intercept) -0.199007  0.130989 -0.455740  0.057726  0.1287
+#> tcellf1     -0.637514  0.356626 -1.336489  0.061460  0.0738
+#> platelet    -0.344135  0.246027 -0.826339  0.138068  0.1619
+#> age          0.437242  0.107267  0.227003  0.647482  0.0000
+#> 
+#> exp(coeffients):
+#>             Estimate    2.5%  97.5%
+#> (Intercept)  0.81954 0.63398 1.0594
+#> tcellf1      0.52860 0.26277 1.0634
+#> platelet     0.70883 0.43765 1.1481
+#> age          1.54843 1.25483 1.9107
+#> 
+#> Average Treatment effects (G-formula) :
+#>             Estimate    Std.Err       2.5%      97.5% P-value
+#> treat0     0.4287982  0.0275153  0.3748692  0.4827273   0.000
+#> treat1     0.2899148  0.0659025  0.1607483  0.4190812   0.000
+#> treat:1-0 -0.1388835  0.0717733 -0.2795566  0.0017896   0.053
+#> 
+#> Average Treatment effects (double robust) :
+#>            Estimate   Std.Err      2.5%     97.5% P-value
+#> treat0     0.428210  0.027617  0.374081  0.482339  0.0000
+#> treat1     0.250413  0.064791  0.123425  0.377401  0.0001
+#> treat:1-0 -0.177797  0.070147 -0.315282 -0.040311  0.0113
+ head(iid(out))
+#>         iidriskDR     iidriskDR     iidriskG      iidriskG
+#> [1,] -0.001159043 -3.543877e-05 -0.001190754 -0.0001528333
+#> [2,] -0.001201108  7.593199e-05 -0.001242455  0.0001089279
+#> [3,] -0.001326532  3.360396e-04 -0.001355293  0.0006916609
+#> [4,] -0.001320391  3.248305e-04 -0.001350706  0.0006677444
+#> [5,] -0.001140791 -9.113976e-05 -0.001164520 -0.0002838629
+#> [6,] -0.001398304  4.595914e-04 -0.001404141  0.0009472438
+ ###
+ e1 <- estimate(out)
+ e1
+#>           Estimate Std.Err   2.5%  97.5%   P-value
+#> G-treat0    0.4288 0.02752 0.3749 0.4827 9.353e-55
+#> G-treat1    0.2899 0.06590 0.1607 0.4191 1.087e-05
+#> DR-treat0   0.4282 0.02762 0.3741 0.4823 3.199e-54
+#> DR-treat1   0.2504 0.06479 0.1234 0.3774 1.111e-04
+```
+
+
+IPCW RMST,RMTL for competing risks 
+==================================
+
+
+The RMST, RMTL regression or ATE estimation 
+
+
+``` r
+
+ ## rmst regression, exp-link
+ out <- resmeanIPCW(Event(time,cause!=0)~tcell+platelet,bmt,time=50)
+ summary(out)
+ head(iid(out))
+ e1 <- estimate(out)
+ e1
+
+ ## rmtl for cause 1 regression, exp link 
+ out <- resmeanIPCW(Event(time,cause)~tcell+platelet,bmt,time=50,cause=1)
+ summary(out)
+ head(iid(out))
+ e1 <- estimate(out)
+ e1
+
+ ############# rmst for tcell 
+ dfactor(bmt) <- tcellf~tcell
+ out <- resmeanATE(Event(time,cause!=0)~tcellf+platelet+age,bmt,time=50,
+                         treat.model=tcellf~platelet+age)
+ summary(out)
+ head(iid(out))
+ e1 <- estimate(out)
+ e1
+
+ ############# rmtl for tcell 
+ dfactor(bmt) <- tcellf~tcell
+ out <- resmeanATE(Event(time,cause)~tcellf+platelet+age,bmt,time=50,
+                         treat.model=tcellf~platelet+age)
+ summary(out)
+ head(iid(out))
+ e1 <- estimate(out)
+ e1
+```
+
+
+
+Multinomial regression or cumulative odds regression
+=====================================================
+
+mlogit/cumoddsreg/ordreg
+
+
+``` r
+ mreg <- mlogit(cause1f~tcell+platelet+age+cluster(id),bmt)
+ summary(mreg)
+#> 
+#>     n events
+#>  1224    408
+#> 
+#>  1224 clusters
+#> coefficients:
+#>             Estimate     S.E.  dU^-1/2 P-value
+#> Intercept_2  0.24467  0.13932  0.14216  0.0791
+#> tcell_2     -0.53542  0.37553  0.37184  0.1539
+#> platelet_2  -0.58808  0.27054  0.25586  0.0297
+#> age_2        0.49490  0.10771  0.12175  0.0000
+#> Intercept_3 -0.53964  0.16713  0.17204  0.0012
+#> tcell_3      0.38680  0.38006  0.37086  0.3088
+#> platelet_3  -0.31502  0.31617  0.28939  0.3191
+#> age_3        0.19712  0.16285  0.13719  0.2261
+#> 
+#> exp(coefficients):
+#>             Estimate    2.5%  97.5%
+#> Intercept_2  1.27720 0.97201 1.6782
+#> tcell_2      0.58542 0.28043 1.2221
+#> platelet_2   0.55540 0.32683 0.9438
+#> age_2        1.64033 1.32816 2.0259
+#> Intercept_3  0.58296 0.42012 0.8089
+#> tcell_3      1.47227 0.69900 3.1010
+#> platelet_3   0.72977 0.39271 1.3562
+#> age_3        1.21789 0.88510 1.6758
+ head(iid(mreg))
+#>     Intercept_2      tcell_2   platelet_2         age_2  Intercept_3
+#> 1 -0.0002303805 -0.016028113  0.035555193  0.0033287945  0.027858270
+#> 2  0.0098331567 -0.003895882 -0.009007803 -0.0032919192  0.000222473
+#> 3  0.0055085976  0.011624088 -0.031002515 -0.0042801169 -0.002723633
+#> 5  0.0009836783 -0.012806476  0.001488242 -0.0004150544  0.007432280
+#> 6 -0.0010309795  0.009371335 -0.016439524  0.0039692290  0.036253796
+#> 7  0.0099806800 -0.043467663 -0.016773297 -0.0014081747  0.022757722
+#>         tcell_3    platelet_3         age_3
+#> 1 -2.657609e-02 -0.0159542593  0.0180455282
+#> 2 -7.128528e-05 -0.0004347908  0.0005218314
+#> 3  1.731747e-02 -0.0206038838 -0.0085170832
+#> 5  5.528703e-02 -0.0223548497  0.0070170384
+#> 6 -1.051333e-02 -0.0479405423  0.0006164556
+#> 7 -5.692628e-02 -0.0271855755  0.0113057694
+ dim(iid(mreg))
+#> [1] 178   8
+
+ head(predict(mreg,bmt))
+#>        pred         se       lower     upper
+#> 1 0.2010931 0.06909054  0.06567815 0.3365081
+#> 2 0.1938713 0.07934334  0.03836124 0.3493814
+#> 3 0.1769981 0.11812618 -0.05452494 0.4085212
+#> 4 0.1776947 0.11629856 -0.05024625 0.4056357
+#> 5 0.2044721 0.06701433  0.07312638 0.3358177
+#> 6 0.1695809 0.13838299 -0.10164475 0.4408066
+ head(predict(mreg,bmt,response=FALSE))
+#>           0         1         2
+#> 1 0.3319013 0.4670056 0.2010931
+#> 2 0.2937226 0.5124061 0.1938713
+#> 3 0.2289264 0.5940755 0.1769981
+#> 4 0.2311887 0.5911166 0.1776947
+#> 5 0.3542815 0.4412465 0.2044721
+#> 6 0.2063692 0.6240499 0.1695809
+
+ mmreg <- cumoddsreg(cause~tcell+platelet+age+cluster(id),bmt)
+ summary(mmreg)
+#> $baseline
+#>    Estimate Std.Err    2.5% 97.5%   P-value
+#> p1   0.7707  0.1577  0.4616  1.08 1.024e-06
+#> p2  15.5881  0.1748 15.2455 15.93 0.000e+00
+#> 
+#> $logor
+#>    Estimate Std.Err     2.5%   97.5% P-value
+#> p1  -0.8830  0.3578 -1.58418 -0.1818 0.01358
+#> p2  -0.2371  0.3279 -0.87975  0.4055 0.46951
+#> p3   0.2796  0.1620 -0.03801  0.5972 0.08445
+#> 
+#> $or
+#>     Estimate      2.5%     97.5%
+#> p1 0.4135423 0.2051155 0.8337608
+#> p2 0.7888793 0.4148854 1.5000056
+#> p3 1.3225835 0.9627079 1.8169865
+ estimate(mmreg)
+#>    Estimate Std.Err     2.5%   97.5%   P-value
+#> p1   0.7707  0.1577  0.46158  1.0797 1.024e-06
+#> p2  15.5881  0.1579 15.27858 15.8975 0.000e+00
+#> p3  -0.8830  0.3578 -1.58418 -0.1818 1.358e-02
+#> p4  -0.2371  0.3279 -0.87975  0.4055 4.695e-01
+#> p5   0.2796  0.1620 -0.03801  0.5972 8.445e-02
+ head(iid(mmreg))
+#>           [,1]         [,2]         [,3]         [,4]         [,5]
+#> 1  0.028150776  0.009737171 -0.008026976 -0.053244613  0.013000735
+#> 2 -0.009836355 -0.007637265  0.004218562  0.009214619  0.003765971
+#> 3 -0.006883207 -0.006408836  0.006015014  0.005046740 -0.004160354
+#> 5  0.005099486 -0.014838814  0.072587221 -0.021459738  0.007995758
+#> 6  0.038010358  0.010626182 -0.020438802 -0.033714939 -0.005373878
+#> 7  0.011184349  0.002506324 -0.013327433 -0.006574362  0.014644671
+ dim(iid(mmreg))
+#> [1] 178   5
+ mmreg$ploglik
+#> [1] -155.7988
+
+ library(lava)
+ or <- ordreg(cause ~ tcell+platelet+age,bmt,family=binomial(logit)) 
+ head(iid(or))
+#>                                    tcell     platelet           age
+#> 1 -0.006894447 -0.004041466 -0.006128506 -0.007554247  0.0004011368
+#> 2 -0.006644534 -0.003711172 -0.007426401 -0.006858489  0.0036114073
+#> 3 -0.006164955 -0.003119347 -0.009569669 -0.005619761  0.0090349103
+#> 4 -0.006183237 -0.003140944 -0.009495939 -0.005664770  0.0088450762
+#> 5 -0.007032935 -0.004231371 -0.005352427 -0.007955581 -0.0014984436
+#> 6 -0.005974851 -0.002899117 -0.010300426 -0.005161717  0.0109326740
+ e1 <- estimate(or,id=bmt$id)
+ head(iid(e1))
+#>              0|1          1|2        tcell     platelet          age
+#> 37  -0.001951801 -0.001385220 -0.011777781  0.009080198  0.009181537
+#> 1   -0.012320996 -0.001295388 -0.018925957  0.002910724  0.009291784
+#> 151  0.015120327 -0.002278292 -0.117852253  0.039725219  0.030779817
+#> 76  -0.002627823 -0.001129482 -0.003861628 -0.015346861  0.018794399
+#> 39  -0.015861094 -0.002959369 -0.046277983 -0.027494355 -0.012817321
+#> 25  -0.015231897  0.005332218 -0.010510856 -0.010302780  0.010235558
+ e1
+#>          Estimate Std.Err     2.5%   97.5%   P-value
+#> 0|1       -0.5172 0.11820 -0.74884 -0.2855 1.212e-05
+#> 1|2        0.5778 0.07007  0.44049  0.7152 1.631e-16
+#> tcell      0.2003 0.34544 -0.47671  0.8774 5.619e-01
+#> platelet  -0.3624 0.24173 -0.83621  0.1113 1.338e-01
+#> age        0.2615 0.12151  0.02331  0.4996 3.141e-02
+
+ mmreg <- cumoddsreg(cause1f~tcell+platelet+age,bmt)
+ head(iid(mmreg))
+#>             [,1]       [,2]         [,3]         [,4]          [,5]
+#> [1,] 0.006894058 0.01555460 -0.006128464 -0.007553989  0.0004011703
+#> [2,] 0.006644190 0.01459695 -0.007426362 -0.006858282  0.0036114117
+#> [3,] 0.006164689 0.01284924 -0.009569636 -0.005619644  0.0090348644
+#> [4,] 0.006182969 0.01291380 -0.009495905 -0.005664650  0.0088450321
+#> [5,] 0.007032521 0.01610000 -0.005352383 -0.007955292 -0.0014983929
+#> [6,] 0.005974614 0.01218723 -0.010300394 -0.005161632  0.0109326101
+ e1 <- estimate(mmreg)
+ e1
+#>          Estimate Std.Err     2.5%    97.5%   P-value
+#> time1     -0.5172  0.1158 -0.74410 -0.29024 7.940e-06
+#> time2      1.0807  0.1483  0.79011  1.37138 3.142e-13
+#> tcell     -0.2003  0.3379 -0.86267  0.46200 5.533e-01
+#> platelet   0.3624  0.2225 -0.07369  0.79855 1.034e-01
+#> age       -0.2615  0.1116 -0.48017 -0.04276 1.912e-02
+ head(iid(e1))
+#>            time1      time2        tcell     platelet           age
+#> [1,] 0.006894058 0.01555460 -0.006128464 -0.007553989  0.0004011703
+#> [2,] 0.006644190 0.01459695 -0.007426362 -0.006858282  0.0036114117
+#> [3,] 0.006164689 0.01284924 -0.009569636 -0.005619644  0.0090348644
+#> [4,] 0.006182969 0.01291380 -0.009495905 -0.005664650  0.0088450321
+#> [5,] 0.007032521 0.01610000 -0.005352383 -0.007955292 -0.0014983929
+#> [6,] 0.005974614 0.01218723 -0.010300394 -0.005161632  0.0109326101
+
+ mmreg <- cumoddsreg(cause1f~tcell+platelet+age+cluster(id),bmt)
+ e1 <- estimate(mmreg)
+ e1
+#>          Estimate Std.Err    2.5%    97.5%   P-value
+#> time1     -0.5172  0.1182 -0.7488 -0.28550 1.213e-05
+#> time2      1.0807  0.1496  0.7875  1.37401 5.090e-13
+#> tcell     -0.2003  0.3454 -0.8774  0.47671 5.619e-01
+#> platelet   0.3624  0.2417 -0.1114  0.83621 1.338e-01
+#> age       -0.2615  0.1215 -0.4996 -0.02331 3.141e-02
+ head(iid(e1))
+#>         time1        time2         tcell     platelet           age
+#> 1 0.012320814  0.015096797 -0.0189259827  0.002910901  0.0092917853
+#> 2 0.005243116 -0.003508145 -0.0004858637 -0.003117632 -0.0002881911
+#> 3 0.001963982 -0.003332578  0.0134843428 -0.021580887 -0.0054315634
+#> 5 0.001768759  0.007708977  0.0501017959 -0.014083415  0.0038157837
+#> 6 0.012550956  0.032876103 -0.0022898241 -0.031730676 -0.0017361101
+#> 7 0.012334051  0.014784565 -0.0498903461 -0.020843489  0.0061624687
+```
+
+
+SessionInfo
+============
+
+
+``` r
+sessionInfo()
+#> R version 4.5.2 (2025-10-31)
+#> Platform: x86_64-pc-linux-gnu
+#> Running under: Ubuntu 26.04 LTS
+#> 
+#> Matrix products: default
+#> BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.12.1 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.1;  LAPACK version 3.12.0
+#> 
+#> locale:
+#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+#> 
+#> time zone: Europe/Copenhagen
+#> tzcode source: system (glibc)
+#> 
+#> attached base packages:
+#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+#> 
+#> other attached packages:
+#> [1] lava_1.9.3         prodlim_2026.03.11 mets_1.3.13        colorout_1.3-3    
+#> 
+#> loaded via a namespace (and not attached):
+#>  [1] vctrs_0.7.3            cli_3.6.6              knitr_1.51            
+#>  [4] rlang_1.3.0            xfun_0.60              otel_0.2.0            
+#>  [7] data.table_1.18.4      glue_1.8.1             future.apply_1.20.2   
+#> [10] listenv_1.0.0          grid_4.5.2             evaluate_1.0.5        
+#> [13] lifecycle_1.0.5        mvtnorm_1.4-2          numDeriv_2016.8-1.1   
+#> [16] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      
+#> [19] Rcpp_1.1.2             future_1.75.0          lattice_0.23-1        
+#> [22] digest_0.6.39          pillar_1.11.1          parallelly_1.48.0     
+#> [25] parallel_4.5.2         splines_4.5.2          Matrix_1.7-6          
+#> [28] tools_4.5.2            RcppArmadillo_15.4.2-1 globals_0.19.1        
+#> [31] survival_3.8-11
+```
+
