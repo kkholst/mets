@@ -260,7 +260,7 @@ mlogit/cumoddsreg/ordreg
 
 ```{r}
  mreg <- mlogit(cause1f~tcell+platelet+age+cluster(id),bmt)
- summary(mreg)a
+ summary(mreg)
  head(iid(mreg))
  dim(iid(mreg))
 
