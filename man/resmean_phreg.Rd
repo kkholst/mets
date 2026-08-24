@@ -42,7 +42,7 @@ out1 <- phreg(Surv(time, cause != 0) ~ strata(tcell, platelet), data = bmt)
 ## No times given: the full rmst curve at all event times (what plot() shows)
 rm1 <- resmean_phreg(out1)
 rm1                     ## short description; use summary() for the full curve
-summary(rm1)
+head(summary(rm1))
 
 ## Several times: one lava 'estimate' object per time, stored on the object
 rm1 <- resmean_phreg(out1, times = 10 * (1:6))
