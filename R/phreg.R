@@ -2204,7 +2204,7 @@ return(out)
 ##' ## No times given: full years-lost curve at all event times, one table per cause
 ##' drm1 <- cif_yearslost(Event(time, cause) ~ strata(tcell, platelet), data = bmt)
 ##' drm1                         ## short description; use summary() for the full curves
-##' tail(summary(drm1, cause=1)  ## just cause 1
+##' tail(summary(drm1, cause=1))  ## just cause 1
 ##' plot(drm1, se=1)
 ##'
 ##' ## Years lost decomposed into causes, at specific times
