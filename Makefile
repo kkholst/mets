@@ -40,11 +40,11 @@ v:
 	@echo "Vignettes build in docs/articles/"
 
 vignettes:
-	@cd vignettes && Rscript rebuild-vignettes.R
+	@cd vignettes && Rscript rebuild-vignettes.RR
 	@$(MAKE) v
 
 vignettes/%.Rmd: FORCE
-	cd vignettes && Rscript rebuild-vignettes.R $*.Rmd.orig
+	cd vignettes && Rscript rebuild-vignettes.RR $*.Rmd.orig
 	@$(R) -q -e "pkgdown::build_article('$*')"
 	@echo "build 'docs/articles/$*.html'"
 
