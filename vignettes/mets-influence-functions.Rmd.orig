@@ -29,6 +29,7 @@ First setting up some data
 
 ```{r}
  data(bmt)
+ set.seed(123)
  bmt$time <- bmt$time+runif(408)*.001
  bmt$id <- sample(200,408,replace=TRUE)
  dfactor(bmt) <- cause1f~cause
