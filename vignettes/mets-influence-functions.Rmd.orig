@@ -120,7 +120,6 @@ For recurrent events we can fit  a Ghosh-Lin regression model and get the influe
 
  gls <- recreg(Event(entry,time,status)~strata(treatment)+cluster(id),data=hf,cause=1,death.code=2)
  summary(gls)
- head(iid(gls))
  head(iid(gls,time=50,all=TRUE))
  head(iid(gls,time=50))
  ###
