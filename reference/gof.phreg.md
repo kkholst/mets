@@ -116,9 +116,9 @@ gg <- gof(m1)
 gg
 #> Cumulative score process test for Proportionality:
 #>          Sup|U(t)|  pval
-#> vf        7.276731 0.009
-#> chf       8.971263 0.078
-#> diabetes  3.044404 0.788
+#> vf        7.276731 0.007
+#> chf       8.971263 0.072
+#> diabetes  3.044404 0.780
 par(mfrow=c(1,3))
 plot(gg)
 
@@ -133,7 +133,7 @@ gg <- gof(m1)
 gg
 #> Cumulative score process test for Proportionality:
 #>          Sup|U(t)|  pval
-#> vf        7.276731 0.004
-#> chf       8.971263 0.067
-#> diabetes  3.044404 0.790
+#> vf        7.276731 0.006
+#> chf       8.971263 0.087
+#> diabetes  3.044404 0.804
 ```

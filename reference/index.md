@@ -95,7 +95,8 @@
   :
 
   Cross-validated Brier score for competing risks, RMST and RMTL
-  regression using stratified leave-fold-out fits (`binregStrata`)
+  regression using stratified leave-fold-out fits (`binreg`
+  `binregStrata`)
 
 - [`calgb8923`](http://kkholst.github.io/mets/reference/calgb8923.md) :
   CALGB 8923, twostage randomization SMART design
@@ -200,8 +201,12 @@
 - [`estimate(`*`<binregCV>`*`)`](http://kkholst.github.io/mets/reference/estimate.binregCV.md)
   : Joint estimate across CV models for a binregCV object
 
+- [`estimate(`*`<resmean_phreg>`*`)`](http://kkholst.github.io/mets/reference/estimate.resmean_phreg.md)
+  : Extract the stored lava 'estimate' object(s) from a
+  resmean_phreg/cif_yearslost fit
+
 - [`event_split()`](http://kkholst.github.io/mets/reference/event_split.md)
-  : event_split (SurvSplit).
+  : Split event-history records at one or more cut points (SurvSplit)
 
 - [`event_split2()`](http://kkholst.github.io/mets/reference/event_split2.md)
   : Event split with two time-scales, time and gaptime
@@ -361,6 +366,9 @@
 - [`print(`*`<casewise>`*`)`](http://kkholst.github.io/mets/reference/print.casewise.md)
   : prints Concordance test
 
+- [`print(`*`<resmean_phreg>`*`)`](http://kkholst.github.io/mets/reference/print.resmean_phreg.md)
+  : Print method for resmean_phreg/cif_yearslost fits
+
 - [`print(`*`<summary_binregCV_multi>`*`)`](http://kkholst.github.io/mets/reference/print.summary_binregCV_multi.md)
   : Print method for summary_binregCV_multi objects
 
@@ -400,6 +408,11 @@
 
 - [`resmeanIPCW()`](http://kkholst.github.io/mets/reference/resmeanIPCW.md)
   : Restricted IPCW Mean for Censored Survival Data
+
+- [`print(`*`<resmean_estimate>`*`)`](http://kkholst.github.io/mets/reference/resmean_estimate.md)
+  [`summary(`*`<resmean_estimate>`*`)`](http://kkholst.github.io/mets/reference/resmean_estimate.md)
+  : Print/summary for a list of estimate objects
+  (resmean_phreg/cif_yearslost)
 
 - [`resmean_phreg()`](http://kkholst.github.io/mets/reference/resmean_phreg.md)
   : Restricted Mean for Stratified Kaplan-Meier or Cox Model
@@ -461,6 +474,9 @@
 
 - [`summary(`*`<cor>`*`)`](http://kkholst.github.io/mets/reference/summary.cor.md)
   : Summary for dependence models for competing risks
+
+- [`summary(`*`<resmean_phreg>`*`)`](http://kkholst.github.io/mets/reference/summary.resmean_phreg.md)
+  : Summary for resmean_phreg/cif_yearslost fits
 
 - [`summaryGLM()`](http://kkholst.github.io/mets/reference/summaryGLM.md)
   : Reporting OR (exp(coef)) from glm with binomial link and glm

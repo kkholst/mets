@@ -81,15 +81,15 @@ e <- ClaytonOakes(survival::Surv(lefttime,time,status)~x+cluster(~1,cluster),
                   cuts=c(0,0.5,1,2),data=d)
 e
 #>                     Estimate     2.5%   97.5%
-#> log-Var:(Intercept) -0.92227 -1.16927 -0.6753
-#> x                    2.88805  2.58175  3.2307
-#> (0,0.5]              1.07891  0.95530  1.2185
-#> (0.5,1]              1.21696  1.06966  1.3846
+#> log-Var:(Intercept) -0.92226 -1.16926 -0.6753
+#> x                    2.88805  2.58174  3.2307
+#> (0,0.5]              1.07892  0.95530  1.2185
+#> (0.5,1]              1.21696  1.06966  1.3845
 #> (1,2]                1.16268  1.01451  1.3325
 #> 
 #> Dependence parameters:
 #>             Variance    2.5%   97.5% Kendall's tau    2.5%  97.5%
-#> (Intercept)  0.39761 0.31059 0.50902       0.16584 0.13442 0.2029
+#> (Intercept)  0.39762 0.31060 0.50902       0.16584 0.13442 0.2029
 
 d2 <- sim_ClaytonOakes(500,4,2,1,stoptime=2,left=0)
 d2$z <- rep(1,nrow(d2)); d2$z[d2$cluster%in%sample(d2$cluster,100)] <- 0
@@ -104,7 +104,7 @@ e2 <- ClaytonOakes(survival::Surv(time,status)~x+cluster(~-1+factor(z),cluster),
                    cuts=c(0,0.5,1,2),data=d2)
 e2
 #>                    Estimate     2.5%   97.5%
-#> log-Var:factor(z)0 -0.58294 -0.95494 -0.2109
+#> log-Var:factor(z)0 -0.58294 -0.95495 -0.2109
 #> log-Var:factor(z)1 -0.52286 -0.71031 -0.3354
 #> x                   2.57827  2.37165  2.8029
 #> (0,0.5]             1.03878  0.94306  1.1442

@@ -37,7 +37,9 @@ binreg(
 - formula:
 
   A formula object specifying the outcome and covariates. The outcome
-  must be an `Event` object (`Event(time, cause)`).
+  must be an `Event` object (`Event(time, cause)`). Outcome can also be
+  a numeric or a factor that is then used as `as.numeric(factor)-1` to
+  do regression or logistic regression.
 
 - data:
 

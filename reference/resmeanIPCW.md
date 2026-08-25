@@ -196,16 +196,11 @@ estimate(out)
 out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet), data=bmt)
 rm1 <- resmean_phreg(out1, times=30)
 summary(rm1)
-#>                     strata times    rmean  se.rmean    lower    upper
-#> tcell=0, platelet=0      0    30 13.60291 0.8315434 12.06697 15.33436
-#> tcell=0, platelet=1      1    30 18.90123 1.2693318 16.57016 21.56023
-#> tcell=1, platelet=0      2    30 16.19125 2.4006087 12.10811 21.65132
-#> tcell=1, platelet=1      3    30 17.76607 2.4422072 13.57004 23.25956
-#>                     years.lost
-#> tcell=0, platelet=0   16.39709
-#> tcell=0, platelet=1   11.09877
-#> tcell=1, platelet=0   13.80875
-#> tcell=1, platelet=1   12.23393
+#>                     Estimate Std.Err  2.5% 97.5%   P-value
+#> tcell=0, platelet=0    13.60  0.8315 11.97 15.23 3.775e-60
+#> tcell=0, platelet=1    18.90  1.2693 16.41 21.39 3.788e-50
+#> tcell=1, platelet=0    16.19  2.4006 11.49 20.90 1.534e-11
+#> tcell=1, platelet=1    17.77  2.4422 12.98 22.55 3.475e-13
 
 ### Years lost regression
 outl <- resmeanIPCW(Event(time,cause!=0)~-1+int, bmt, time=30, outcome="years-lost",
@@ -229,23 +224,16 @@ estimate(out)
 ## Same as integrated cumulative incidence 
 rmc1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet), data=bmt, times=30)
 summary(rmc1)
-#> $estimate
-#> $estimate$intF_1
-#>                     strata times    intF_1 se.intF_1 lower_intF_1 upper_intF_1
-#> tcell=0, platelet=0      0    30 12.105150 0.8508117    10.547351    13.893030
-#> tcell=0, platelet=1      1    30  6.884207 1.1741044     4.928119     9.616714
-#> tcell=1, platelet=0      2    30  7.260710 2.3532715     3.846767    13.704473
-#> tcell=1, platelet=1      3    30  5.780407 2.0925106     2.843302    11.751515
-#> 
-#> $estimate$intF_2
-#>                     strata times   intF_2 se.intF_2 lower_intF_2 upper_intF_2
-#> tcell=0, platelet=0      0    30 4.291939 0.6161454     3.239337     5.686578
-#> tcell=0, platelet=1      1    30 4.214566 0.9057057     2.765862     6.422072
-#> tcell=1, platelet=0      2    30 6.548043 1.9703358     3.630623    11.809783
-#> tcell=1, platelet=1      3    30 6.453525 2.0815194     3.429656    12.143489
-#> 
-#> 
-#> $total.years.lost
-#> [1] 16.39709 11.09877 13.80875 12.23393
-#> 
+#> cause1 
+#>                     Estimate Std.Err   2.5%  97.5%   P-value
+#> tcell=0, platelet=0   12.105  0.8508 10.438 13.773 6.162e-46
+#> tcell=0, platelet=1    6.884  1.1741  4.583  9.185 4.536e-09
+#> tcell=1, platelet=0    7.261  2.3533  2.648 11.873 2.033e-03
+#> tcell=1, platelet=1    5.780  2.0925  1.679  9.882 5.737e-03
+#> cause2 
+#>                     Estimate Std.Err  2.5% 97.5%   P-value
+#> tcell=0, platelet=0    4.292  0.6161 3.084  5.50 3.266e-12
+#> tcell=0, platelet=1    4.215  0.9057 2.439  5.99 3.266e-06
+#> tcell=1, platelet=0    6.548  1.9703 2.686 10.41 8.896e-04
+#> tcell=1, platelet=1    6.454  2.0815 2.374 10.53 1.933e-03
 ```

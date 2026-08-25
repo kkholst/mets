@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.13</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +32,7 @@
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a></li>
     <li><a class="dropdown-item" href="../articles/mediation-survival.html">Mediation Analysis for survival data</a></li>
+    <li><a class="dropdown-item" href="../articles/mets-influence-functions.html">Influence functions in METS</a></li>
     <li><a class="dropdown-item" href="../articles/phreg_rct.html">Randomization for Cox Type rate models</a></li>
     <li><a class="dropdown-item" href="../articles/quantitative-twin.html">Twin models</a></li>
     <li><a class="dropdown-item" href="../articles/recurrent-events.html">Recurrent events</a></li>
@@ -259,7 +260,7 @@
           <code><a href="brier_binreg.html">brier_binreg()</a></code>
 
         </dt>
-        <dd>Cross-validated Brier score for competing risks, RMST and RMTL regression using stratified leave-fold-out fits (<code>binregStrata</code>)</dd>
+        <dd>Cross-validated Brier score for competing risks, RMST and RMTL regression using stratified leave-fold-out fits (<code>binreg</code> <code>binregStrata</code>)</dd>
 
         <dt>
 
@@ -487,10 +488,17 @@
 
         <dt>
 
+          <code><a href="estimate.resmean_phreg.html">estimate(<i>&lt;resmean_phreg&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Extract the stored lava 'estimate' object(s) from a resmean_phreg/cif_yearslost fit</dd>
+
+        <dt>
+
           <code><a href="event_split.html">event_split()</a></code>
 
         </dt>
-        <dd>event_split (SurvSplit).</dd>
+        <dd>Split event-history records at one or more cut points (SurvSplit)</dd>
 
         <dt>
 
@@ -844,6 +852,13 @@
 
         <dt>
 
+          <code><a href="print.resmean_phreg.html">print(<i>&lt;resmean_phreg&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Print method for resmean_phreg/cif_yearslost fits</dd>
+
+        <dt>
+
           <code><a href="print.summary_binregCV_multi.html">print(<i>&lt;summary_binregCV_multi&gt;</i>)</a></code>
 
         </dt>
@@ -932,6 +947,13 @@
 
         </dt>
         <dd>Restricted IPCW Mean for Censored Survival Data</dd>
+
+        <dt>
+
+          <code><a href="resmean_estimate.html">print(<i>&lt;resmean_estimate&gt;</i>)</a></code> <code><a href="resmean_estimate.html">summary(<i>&lt;resmean_estimate&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Print/summary for a list of estimate objects (resmean_phreg/cif_yearslost)</dd>
 
         <dt>
 
@@ -1058,6 +1080,13 @@
 
         </dt>
         <dd>Summary for dependence models for competing risks</dd>
+
+        <dt>
+
+          <code><a href="summary.resmean_phreg.html">summary(<i>&lt;resmean_phreg&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Summary for resmean_phreg/cif_yearslost fits</dd>
 
         <dt>
 

@@ -76,16 +76,11 @@ set.seed(101)
      out1 <- phreg(Surv(time,cause!=0)~strata(tcell,platelet),data=bmt)
      rm1 <- resmean_phreg(out1,times=30)
      summary(rm1)
-#>                     strata times    rmean  se.rmean    lower    upper
-#> tcell=0, platelet=0      0    30 13.60295 0.8315418 12.06700 15.33439
-#> tcell=0, platelet=1      1    30 18.90127 1.2693263 16.57021 21.56026
-#> tcell=1, platelet=0      2    30 16.19121 2.4006185 12.10806 21.65131
-#> tcell=1, platelet=1      3    30 17.76610 2.4421987 13.57008 23.25956
-#>                     years.lost
-#> tcell=0, platelet=0   16.39705
-#> tcell=0, platelet=1   11.09873
-#> tcell=1, platelet=0   13.80879
-#> tcell=1, platelet=1   12.23390
+#>                     Estimate Std.Err  2.5% 97.5%   P-value
+#> tcell=0, platelet=0    13.60  0.8315 11.97 15.23 3.771e-60
+#> tcell=0, platelet=1    18.90  1.2693 16.41 21.39 3.783e-50
+#> tcell=1, platelet=0    16.19  2.4006 11.49 20.90 1.534e-11
+#> tcell=1, platelet=1    17.77  2.4422 12.98 22.55 3.474e-13
      
      ## competing risks years-lost for cause 1  
      out <- resmeanIPCW(Event(time,cause)~-1+int,bmt,time=30,cause=1,
@@ -99,24 +94,18 @@ set.seed(101)
      ## same as integrated cumulative incidence 
      rmc1 <- cif_yearslost(Event(time,cause)~strata(tcell,platelet),data=bmt,times=30,cause=1)
      summary(rmc1)
-#> $estimate
-#> $estimate$intF_1
-#>                     strata times    intF_1 se.intF_1 lower_intF_1 upper_intF_1
-#> tcell=0, platelet=0      0    30 12.105125 0.8508102    10.547328    13.893001
-#> tcell=0, platelet=1      1    30  6.884171 1.1740988     4.928092     9.616665
-#> tcell=1, platelet=0      2    30  7.260755 2.3532867     3.846790    13.704561
-#> tcell=1, platelet=1      3    30  5.780369 2.0924946     2.843285    11.751429
-#> 
-#> $estimate$intF_2
-#>                     strata times   intF_2 se.intF_2 lower_intF_2 upper_intF_2
-#> tcell=0, platelet=0      0    30 4.291930 0.6161439     3.239330     5.686565
-#> tcell=0, platelet=1      1    30 4.214556 0.9057028     2.765857     6.422055
-#> tcell=1, platelet=0      2    30 6.548034 1.9703340     3.630616    11.809770
-#> tcell=1, platelet=1      3    30 6.453535 2.0815225     3.429661    12.143507
-#> 
-#> 
-#> $total.years.lost
-#> [1] 16.39705 11.09873 13.80879 12.23390
+#> cause1 
+#>                     Estimate Std.Err   2.5%  97.5%   P-value
+#> tcell=0, platelet=0   12.105  0.8508 10.438 13.773 6.162e-46
+#> tcell=0, platelet=1    6.884  1.1741  4.583  9.185 4.536e-09
+#> tcell=1, platelet=0    7.261  2.3533  2.648 11.873 2.033e-03
+#> tcell=1, platelet=1    5.780  2.0925  1.679  9.882 5.737e-03
+#> cause2 
+#>                     Estimate Std.Err  2.5% 97.5%   P-value
+#> tcell=0, platelet=0    4.292  0.6161 3.084  5.50 3.266e-12
+#> tcell=0, platelet=1    4.215  0.9057 2.439  5.99 3.266e-06
+#> tcell=1, platelet=0    6.548  1.9703 2.686 10.41 8.896e-04
+#> tcell=1, platelet=1    6.454  2.0815 2.374 10.53 1.933e-03
 
      ## plotting the years lost for different horizon's and the two causes 
      par(mfrow=c(1,3))
@@ -263,13 +252,13 @@ survival and years lost in the competing risks setting.
 ``` r
 
 sessionInfo()
-#> R version 4.6.0 (2026-04-24)
+#> R version 4.5.2 (2025-10-31)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.4 LTS
+#> Running under: Ubuntu 26.04 LTS
 #> 
 #> Matrix products: default
-#> BLAS:   /home/kkzh/.asdf/installs/r/4.6.0/lib/R/lib/libRblas.so 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
+#> BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.12.1 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.1;  LAPACK version 3.12.0
 #> 
 #> locale:
 #>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -287,17 +276,19 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.12   
+#> [1] lava_1.9.3         prodlim_2026.03.11 timereg_2.0.7      survival_3.8-9    
+#> [5] mets_1.3.13        colorout_1.3-3    
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
-#>  [4] xfun_0.57              KernSmooth_2.23-26     otel_0.2.0            
-#>  [7] future.apply_1.20.2    listenv_0.10.1         lava_1.9.2.1          
-#> [10] stats4_4.6.0           grid_4.6.0             evaluate_1.0.5        
-#> [13] yaml_2.3.12            mvtnorm_1.3-7          numDeriv_2016.8-1.1   
-#> [16] compiler_4.6.0         codetools_0.2-20       Rcpp_1.1.1-1.1        
-#> [19] ucminf_1.2.3           future_1.70.0          lattice_0.22-9        
-#> [22] digest_0.6.39          parallelly_1.47.0      parallel_4.6.0        
-#> [25] Matrix_1.7-5           tools_4.6.0            RcppArmadillo_15.2.6-1
-#> [28] globals_0.19.1
+#>  [1] vctrs_0.7.3            cli_3.6.6              knitr_1.51            
+#>  [4] rlang_1.3.0            xfun_0.60              KernSmooth_2.23-27    
+#>  [7] otel_0.2.0             data.table_1.18.4      glue_1.8.1            
+#> [10] future.apply_1.20.2    listenv_1.0.0          grid_4.5.2            
+#> [13] evaluate_1.0.5         lifecycle_1.0.5        yaml_2.3.12           
+#> [16] mvtnorm_1.4-2          numDeriv_2016.8-1.1    compiler_4.5.2        
+#> [19] codetools_0.2-20       ucminf_1.2.3           Rcpp_1.1.2            
+#> [22] future_1.75.0          lattice_0.23-1         digest_0.6.39         
+#> [25] pillar_1.11.1          parallelly_1.48.0      parallel_4.5.2        
+#> [28] Matrix_1.7-6           tools_4.5.2            RcppArmadillo_15.4.2-1
+#> [31] globals_0.19.1
 ```

@@ -19,7 +19,7 @@ test_logrankRecurrent(
   km = TRUE,
   start = 0,
   stop = NULL,
-  at.risk = 5,
+  at.risk = 0,
   cluster.id = NULL,
   ...
 )
@@ -63,7 +63,7 @@ test_logrankRecurrent(
 - at.risk:
 
   Minimum combined risk-set size below which the weight is set to zero.
-  Default is `5`.
+  Default is `0`.
 
 - cluster.id:
 

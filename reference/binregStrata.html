@@ -21,7 +21,7 @@ censoring distribution."><meta property="og:image" content="http://kkholst.githu
 
     <a class="navbar-brand me-2" href="../index.html">mets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.13</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,6 +46,7 @@ censoring distribution."><meta property="og:image" content="http://kkholst.githu
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a></li>
     <li><a class="dropdown-item" href="../articles/mediation-survival.html">Mediation Analysis for survival data</a></li>
+    <li><a class="dropdown-item" href="../articles/mets-influence-functions.html">Influence functions in METS</a></li>
     <li><a class="dropdown-item" href="../articles/phreg_rct.html">Randomization for Cox Type rate models</a></li>
     <li><a class="dropdown-item" href="../articles/quantitative-twin.html">Twin models</a></li>
     <li><a class="dropdown-item" href="../articles/recurrent-events.html">Recurrent events</a></li>
@@ -106,7 +107,7 @@ censoring distribution.</p>
 <span>  Ydirect <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  strata <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cv.fold <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  low.memory <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  low.memory <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -116,10 +117,11 @@ censoring distribution.</p>
 
 
 <dl><dt id="arg-formula">formula<a class="anchor" aria-label="anchor" href="#arg-formula"></a></dt>
-<dd><p>A formula with a <code><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></code> or
-<code>Event</code> object on the left-hand side, and covariates, optional
-<code><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster()</a></code>, <code><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata()</a></code>, <code><a href="https://rdrr.io/r/stats/offset.html" class="external-link">offset()</a></code>, and <code><a href="https://rdrr.io/r/stats/weights.html" class="external-link">weights()</a></code>
-terms on the right-hand side.</p></dd>
+<dd><p>A formula with a survival outcome, <code><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></code> or
+ <code>Event</code> object, on the left-hand side optional
+ <code><a href="https://rdrr.io/pkg/survival/man/cluster.html" class="external-link">cluster()</a></code>, <code><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata()</a></code>, <code><a href="https://rdrr.io/r/stats/offset.html" class="external-link">offset()</a></code>, and <code><a href="https://rdrr.io/r/stats/weights.html" class="external-link">weights()</a></code>
+ terms on the right-hand side. Left-hand side response can also be a numeric or a factor
+that is then  used as <code>as.numeric(factor)-1</code> for example to do logistic regression.</p></dd>
 
 
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>

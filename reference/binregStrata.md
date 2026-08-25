@@ -34,7 +34,7 @@ binregStrata(
   Ydirect = NULL,
   strata = NULL,
   cv.fold = FALSE,
-  low.memory = FALSE,
+  low.memory = TRUE,
   ...
 )
 ```
@@ -43,13 +43,16 @@ binregStrata(
 
 - formula:
 
-  A formula with a [`Surv`](https://rdrr.io/pkg/survival/man/Surv.html)
-  or `Event` object on the left-hand side, and covariates, optional
+  A formula with a survival outcome,
+  [`Surv`](https://rdrr.io/pkg/survival/man/Surv.html) or `Event`
+  object, on the left-hand side optional
   [`cluster()`](https://rdrr.io/pkg/survival/man/cluster.html),
   [`strata()`](https://rdrr.io/pkg/survival/man/strata.html),
   [`offset()`](https://rdrr.io/r/stats/offset.html), and
   [`weights()`](https://rdrr.io/r/stats/weights.html) terms on the
-  right-hand side.
+  right-hand side. Left-hand side response can also be a numeric or a
+  factor that is then used as `as.numeric(factor)-1` for example to do
+  logistic regression.
 
 - data:
 

@@ -683,13 +683,13 @@ use the parametrization with log-odd-ratio regression.
 ``` r
 
 sessionInfo()
-#> R version 4.6.0 (2026-04-24)
+#> R version 4.5.2 (2025-10-31)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.4 LTS
+#> Running under: Ubuntu 26.04 LTS
 #> 
 #> Matrix products: default
-#> BLAS:   /home/kkzh/.asdf/installs/r/4.6.0/lib/R/lib/libRblas.so 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
+#> BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.12.1 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.1;  LAPACK version 3.12.0
 #> 
 #> locale:
 #>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -706,16 +706,16 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.12   
+#> [1] timereg_2.0.7  survival_3.8-9 mets_1.3.13    colorout_1.3-3
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] digest_0.6.39          numDeriv_2016.8-1.1    codetools_0.2-20      
-#>  [4] RcppArmadillo_15.2.6-1 Matrix_1.7-5           xfun_0.57             
-#>  [7] lattice_0.22-9         splines_4.6.0          lava_1.9.2.1          
-#> [10] knitr_1.51             parallel_4.6.0         mvtnorm_1.3-7         
-#> [13] cli_3.6.6              parallelly_1.47.0      grid_4.6.0            
-#> [16] future_1.70.0          compiler_4.6.0         globals_0.19.1        
-#> [19] tools_4.6.0            listenv_0.10.1         future.apply_1.20.2   
-#> [22] evaluate_1.0.5         Rcpp_1.1.1-1.1         otel_0.2.0            
-#> [25] rlang_1.2.0
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.3.0           
+#>  [4] xfun_0.60              otel_0.2.0             future.apply_1.20.2   
+#>  [7] listenv_1.0.0          lava_1.9.3             grid_4.5.2            
+#> [10] evaluate_1.0.5         mvtnorm_1.4-2          numDeriv_2016.8-1.1   
+#> [13] compiler_4.5.2         codetools_0.2-20       Rcpp_1.1.2            
+#> [16] future_1.75.0          lattice_0.23-1         digest_0.6.39         
+#> [19] parallelly_1.48.0      parallel_4.5.2         splines_4.5.2         
+#> [22] Matrix_1.7-6           tools_4.5.2            RcppArmadillo_15.4.2-1
+#> [25] globals_0.19.1
 ```

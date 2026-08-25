@@ -16,6 +16,7 @@
 <url><loc>http://kkholst.github.io/mets/articles/interval-discrete-survival.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/articles/marginal-cox.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/articles/mediation-survival.html</loc></url>
+<url><loc>http://kkholst.github.io/mets/articles/mets-influence-functions.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/articles/phreg_rct.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/articles/quantitative-twin.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/articles/recurrent-events.html</loc></url>
@@ -87,6 +88,7 @@
 <url><loc>http://kkholst.github.io/mets/reference/dtable.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/dtransform.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/estimate.binregCV.html</loc></url>
+<url><loc>http://kkholst.github.io/mets/reference/estimate.resmean_phreg.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/event_split.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/event_split2.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/eventpois.html</loc></url>
@@ -141,6 +143,7 @@
 <url><loc>http://kkholst.github.io/mets/reference/predict.mlogit.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/predict.phreg.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/print.casewise.html</loc></url>
+<url><loc>http://kkholst.github.io/mets/reference/print.resmean_phreg.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/print.summary_binregCV_multi.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/prob_exceed_recurrent.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/prt.html</loc></url>
@@ -155,6 +158,7 @@
 <url><loc>http://kkholst.github.io/mets/reference/reexports.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/resmeanATE.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/resmeanIPCW.html</loc></url>
+<url><loc>http://kkholst.github.io/mets/reference/resmean_estimate.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/resmean_phreg.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/rweibullcox.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/sim_ClaytonOakes.html</loc></url>
@@ -173,6 +177,7 @@
 <url><loc>http://kkholst.github.io/mets/reference/summary.binregCV.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/summary.binregCV_list.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/summary.cor.html</loc></url>
+<url><loc>http://kkholst.github.io/mets/reference/summary.resmean_phreg.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/summaryGLM.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/summaryTimeobject.html</loc></url>
 <url><loc>http://kkholst.github.io/mets/reference/surv_boxarea.html</loc></url>

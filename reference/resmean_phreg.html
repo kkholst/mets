@@ -9,7 +9,7 @@ stratified Cox models with martingale standard errors."><meta property="og:image
 
     <a class="navbar-brand me-2" href="../index.html">mets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.13</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,6 +34,7 @@ stratified Cox models with martingale standard errors."><meta property="og:image
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a></li>
     <li><a class="dropdown-item" href="../articles/mediation-survival.html">Mediation Analysis for survival data</a></li>
+    <li><a class="dropdown-item" href="../articles/mets-influence-functions.html">Influence functions in METS</a></li>
     <li><a class="dropdown-item" href="../articles/phreg_rct.html">Randomization for Cox Type rate models</a></li>
     <li><a class="dropdown-item" href="../articles/quantitative-twin.html">Twin models</a></li>
     <li><a class="dropdown-item" href="../articles/recurrent-events.html">Recurrent events</a></li>
@@ -93,16 +94,16 @@ stratified Cox models with martingale standard errors.</p>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>An object of class <code>"resmean_phreg"</code> containing:</p>
 <dl><dt>rmst</dt>
-<dd><p>Matrix of restricted mean survival times.</p></dd>
+<dd><p>Matrix of restricted mean survival times (all event times, used by <code>plot</code>).</p></dd>
 
 <dt>se.rmst</dt>
-<dd><p>Standard errors for RMST.</p></dd>
+<dd><p>Standard errors for RMST (all event times).</p></dd>
 
-<dt>intkmtimes</dt>
-<dd><p>Restricted mean at specified times.</p></dd>
+<dt>rmst_times</dt>
+<dd><p>Restricted mean (and years lost) at the specified <code>times</code>, one row per strata/time (<code>NULL</code> if <code>times=NULL</code>).</p></dd>
 
-<dt>years.lost</dt>
-<dd><p>Years lost (if applicable).</p></dd>
+<dt>estimate</dt>
+<dd><p>If <code>times</code> is given: a <code>lava</code> <code>"estimate"</code> object (or, if <code>length(times)&gt;1</code>, a list of such objects, one per time) with the across-strata estimate and covariance at each time. <code>NULL</code> if <code>times=NULL</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -123,70 +124,312 @@ using the <code>cif_yearslost</code> function.</p>
 <span class="r-in"><span><span class="va">bmt</span><span class="op">$</span><span class="va">time</span> <span class="op">&lt;-</span> <span class="va">bmt</span><span class="op">$</span><span class="va">time</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">408</span><span class="op">)</span> <span class="op">*</span> <span class="fl">0.001</span></span></span>
 <span class="r-in"><span><span class="va">out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="phreg.html">phreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">cause</span> <span class="op">!=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/strata.html" class="external-link">strata</a></span><span class="op">(</span><span class="va">tcell</span>, <span class="va">platelet</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">bmt</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## No times given: the full rmst curve at all event times (what plot() shows)</span></span></span>
+<span class="r-in"><span><span class="va">rm1</span> <span class="op">&lt;-</span> <span class="fu">resmean_phreg</span><span class="op">(</span><span class="va">out1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rm1</span>                     <span class="co">## short description; use summary() for the full curve</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'resmean_phreg' object</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Strata (strata(tcell, platelet)): tcell=0, platelet=0, tcell=0, platelet=1, tcell=1, platelet=0, tcell=1, platelet=1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 248 distinct event times, range 0.03 - 70.625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ('times' was not given at call time -- use summary(x) for the full curve at all event times (also shown by plot(x)), or refit with times=... for time-specific estimates)</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">rm1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                strata       time       rmst      se.rmst      lower      upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 tcell=0, platelet=0 0.03016045 0.03016045 0.000000e+00 0.03016045 0.03016045</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 tcell=0, platelet=0 0.03020276 0.03020260 1.662472e-07 0.03020227 0.03020292</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 tcell=0, platelet=0 0.03031414 0.03031309 7.443638e-07 0.03031163 0.03031455</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 tcell=0, platelet=0 0.03054388 0.03054012 2.201127e-06 0.03053581 0.03054444</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 tcell=0, platelet=0 0.03059844 0.03059383 2.572038e-06 0.03058879 0.03059887</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 tcell=0, platelet=0 0.03065250 0.03064682 2.960358e-06 0.03064102 0.03065263</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     years.lost</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.000000e+00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 1.665755e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 1.043543e-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 3.757058e-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 4.616327e-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 5.680482e-06</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Several times: one lava 'estimate' object per time, stored on the object</span></span></span>
 <span class="r-in"><span><span class="va">rm1</span> <span class="op">&lt;-</span> <span class="fu">resmean_phreg</span><span class="op">(</span><span class="va">out1</span>, times <span class="op">=</span> <span class="fl">10</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">rm1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       strata times     rmean  se.rmean     lower     upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0        0    10  5.863311 0.2565986  5.381352  6.388434</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1        1    10  7.631940 0.3423876  6.989530  8.333394</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0        2    10  7.277630 0.7092737  6.012185  8.809426</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1        3    10  7.670121 0.5624603  6.643279  8.855681</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.1      0    20  9.888933 0.5393873  8.886301 11.004691</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.1      1    20 13.506436 0.8000250 12.026012 15.169102</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.1      2    20 12.103046 1.5545505  9.409442 15.567737</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.1      3    20 12.787711 1.4675899 10.211843 16.013325</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.2      0    30 13.602921 0.8315433 12.066976 15.334370</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.2      1    30 18.901263 1.2693285 16.570199 21.560255</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.2      2    30 16.191227 2.4006087 12.108086 21.651302</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.2      3    30 17.766066 2.4422087 13.570037 23.259562</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.3      0    40 17.160422 1.1236264 15.093611 19.510246</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.3      1    40 23.883656 1.7373008 20.710200 27.543387</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.3      2    40 19.549274 3.2030820 14.179606 26.952379</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.3      3    40 22.433278 3.3838434 16.691571 30.150067</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.4      0    50 20.483891 1.4110947 17.896778 23.444989</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.4      1    50 28.330704 2.1961739 24.337327 32.979331</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.4      2    50 22.746077 4.0536978 16.040187 32.255487</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.4      3    50 26.115614 4.2306924 19.011080 35.875146</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.5      0    60 23.743838 1.7038298 20.628597 27.329528</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.5      1    60 32.771230 2.6865754 27.906894 38.483449</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.5      2    60 25.942880 4.9475921 17.851911 37.700896</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.5      3    60 29.671581 5.1599228 21.101618 41.722050</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       years.lost</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0     4.136689</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1     2.368060</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0     2.722370</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1     2.329879</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.1  10.111067</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.1   6.493564</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.1   7.896954</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.1   7.212289</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.2  16.397079</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.2  11.098737</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.2  13.808773</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.2  12.233934</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.3  22.839578</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.3  16.116344</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.3  20.450726</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.3  17.566722</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.4  29.516109</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.4  21.669296</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.4  27.253923</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.4  23.884386</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.0.5  36.256162</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.0..platelet.1.5  27.228770</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.0.5  34.057120</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> tcell.1..platelet.1.5  30.328419</span>
-<span class="r-in"><span><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">rm1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time10 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std.Err  2.5% 97.5%    P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0    5.863  0.2566 5.360 6.366 1.457e-115</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1    7.632  0.3424 6.961 8.303 4.584e-110</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0    7.278  0.7093 5.887 8.668  1.060e-24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1    7.670  0.5625 6.568 8.773  2.422e-42</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time20 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std.Err   2.5% 97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0    9.889  0.5394  8.832 10.95 4.460e-75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1   13.506  0.8000 11.938 15.07 6.051e-64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0   12.103  1.5546  9.056 15.15 6.941e-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1   12.788  1.4676  9.911 15.66 2.949e-18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time30 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std.Err  2.5% 97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0    13.60  0.8315 11.97 15.23 3.774e-60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1    18.90  1.2693 16.41 21.39 3.785e-50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0    16.19  2.4006 11.49 20.90 1.534e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1    17.77  2.4422 12.98 22.55 3.475e-13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time40 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std.Err  2.5% 97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0    17.16   1.124 14.96 19.36 1.169e-52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1    23.88   1.737 20.48 27.29 5.267e-43</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0    19.55   3.203 13.27 25.83 1.039e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1    22.43   3.384 15.80 29.07 3.368e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time50 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std.Err  2.5% 97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0    20.48   1.411 17.72 23.25 9.551e-48</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1    28.33   2.196 24.03 32.64 4.499e-38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0    22.75   4.054 14.80 30.69 2.009e-08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1    26.12   4.231 17.82 34.41 6.705e-10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time60 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std.Err  2.5% 97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0    23.74   1.704 20.40 27.08 3.851e-44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1    32.77   2.687 27.51 38.04 3.180e-34</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0    25.94   4.948 16.25 35.64 1.575e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1    29.67   5.160 19.56 39.78 8.904e-09</span>
+<span class="r-in"><span><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">rm1</span><span class="op">)</span>     <span class="co">## == rm1$estimate: a "resmean_estimate" list, one per time</span></span></span>
+<span class="r-in"><span><span class="va">e1</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time10 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std.Err  2.5% 97.5%    P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0    5.863  0.2566 5.360 6.366 1.457e-115</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1    7.632  0.3424 6.961 8.303 4.584e-110</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0    7.278  0.7093 5.887 8.668  1.060e-24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1    7.670  0.5625 6.568 8.773  2.422e-42</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time20 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std.Err   2.5% 97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0    9.889  0.5394  8.832 10.95 4.460e-75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1   13.506  0.8000 11.938 15.07 6.051e-64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0   12.103  1.5546  9.056 15.15 6.941e-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1   12.788  1.4676  9.911 15.66 2.949e-18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time30 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std.Err  2.5% 97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0    13.60  0.8315 11.97 15.23 3.774e-60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1    18.90  1.2693 16.41 21.39 3.785e-50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0    16.19  2.4006 11.49 20.90 1.534e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1    17.77  2.4422 12.98 22.55 3.475e-13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time40 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std.Err  2.5% 97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0    17.16   1.124 14.96 19.36 1.169e-52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1    23.88   1.737 20.48 27.29 5.267e-43</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0    19.55   3.203 13.27 25.83 1.039e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1    22.43   3.384 15.80 29.07 3.368e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time50 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std.Err  2.5% 97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0    20.48   1.411 17.72 23.25 9.551e-48</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1    28.33   2.196 24.03 32.64 4.499e-38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0    22.75   4.054 14.80 30.69 2.009e-08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1    26.12   4.231 17.82 34.41 6.705e-10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time60 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std.Err  2.5% 97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0    23.74   1.704 20.40 27.08 3.851e-44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1    32.77   2.687 27.51 38.04 3.180e-34</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0    25.94   4.948 16.25 35.64 1.575e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1    29.67   5.160 19.56 39.78 8.904e-09</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Apply a contrast to every time at once (comparing the 4 strata)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">e1</span>, <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time10 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call: estimate.default(x = o, f = contrast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           Estimate Std.Err   2.5% 97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0]....   -1.769  0.4279 -2.607 -0.93 3.572e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[tcell=0, platelet=0] - [tcell=0, platelet=1]] = 0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 17.0864, df = 1, p-value = 3.572e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time20 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call: estimate.default(x = o, f = contrast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           Estimate Std.Err   2.5%  97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0]....   -3.618  0.9649 -5.509 -1.726 0.0001774</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[tcell=0, platelet=0] - [tcell=0, platelet=1]] = 0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 14.0565, df = 1, p-value = 0.0001774</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time30 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call: estimate.default(x = o, f = contrast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           Estimate Std.Err   2.5%  97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0]....   -5.298   1.517 -8.272 -2.324 0.0004801</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[tcell=0, platelet=0] - [tcell=0, platelet=1]] = 0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 12.1913, df = 1, p-value = 0.0004801</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time40 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call: estimate.default(x = o, f = contrast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           Estimate Std.Err   2.5%  97.5%  P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0]....   -6.723   2.069 -10.78 -2.668 0.001156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[tcell=0, platelet=0] - [tcell=0, platelet=1]] = 0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 10.5593, df = 1, p-value = 0.001156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time50 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call: estimate.default(x = o, f = contrast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           Estimate Std.Err   2.5% 97.5%  P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0]....   -7.847    2.61 -12.96 -2.73 0.002648</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[tcell=0, platelet=0] - [tcell=0, platelet=1]] = 0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 9.0357, df = 1, p-value = 0.002648</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> time60 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call: estimate.default(x = o, f = contrast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           Estimate Std.Err   2.5%  97.5%  P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0]....   -9.027   3.181 -15.26 -2.792 0.004545</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[tcell=0, platelet=0] - [tcell=0, platelet=1]] = 0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 8.0522, df = 1, p-value = 0.004545</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Restrict to a single time first ...</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">rm1</span>, time <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     Estimate Std.Err  2.5% 97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=0    20.48   1.411 17.72 23.25 9.551e-48</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=0, platelet=1    28.33   2.196 24.03 32.64 4.499e-38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=0    22.75   4.054 14.80 30.69 2.009e-08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tcell=1, platelet=1    26.12   4.231 17.82 34.41 6.705e-10</span>
+<span class="r-in"><span><span class="co">## ... optionally with a contrast for that time only</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">rm1</span>, time <span class="op">=</span> <span class="fl">50</span>, <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call: estimate.default(x = est, f = contrast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           Estimate Std.Err   2.5% 97.5%  P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0]....   -7.847    2.61 -12.96 -2.73 0.002648</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[tcell=0, platelet=0] - [tcell=0, platelet=1]] = 0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 9.0357, df = 1, p-value = 0.002648</span>
+<span class="r-in"><span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">rm1</span>, time <span class="op">=</span> <span class="fl">50</span>, <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           Estimate Std.Err   2.5% 97.5%  P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0]....   -7.847    2.61 -12.96 -2.73 0.002648</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## All pairwise differences between the 4 strata, for one time or for all times</span></span></span>
+<span class="r-in"><span><span class="va">de1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">e1</span>, <span class="fu">lava</span><span class="fu">:::</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/contr.html" class="external-link">pairwise_diff</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">de1</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $time10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                             Estimate Std.Err   2.5%    97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0]....   -1.76863  0.4279 -2.607 -0.93002 3.572e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0].....1 -1.41432  0.7543 -2.893  0.06401 6.078e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0].....2 -1.80681  0.6182 -3.019 -0.59511 3.472e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=1]....    0.35431  0.7876 -1.189  1.89796 6.528e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=1].....1 -0.03818  0.6585 -1.329  1.25241 9.538e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=1, platelet=0]....   -0.39249  0.9052 -2.167  1.38172 6.646e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $time20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                             Estimate Std.Err   2.5%   97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0]....    -3.6175  0.9649 -5.509 -1.7264 0.0001774</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0].....1  -2.2141  1.6455 -5.439  1.0109 0.1784373</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0].....2  -2.8988  1.5636 -5.963  0.1658 0.0637469</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=1]....     1.4034  1.7483 -2.023  4.8301 0.4221471</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=1].....1   0.7187  1.6715 -2.557  3.9948 0.6672017</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=1, platelet=0]....    -0.6847  2.1379 -4.875  3.5055 0.7487733</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $time30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                             Estimate Std.Err   2.5%   97.5%   P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0]....     -5.298   1.517 -8.272 -2.3242 0.0004801</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0].....1   -2.588   2.541 -7.568  2.3911 0.3082988</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0].....2   -4.163   2.580 -9.220  0.8934 0.1065949</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=1]....      2.710   2.716 -2.612  8.0324 0.3182912</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=1].....1    1.135   2.752 -4.259  6.5298 0.6800154</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=1, platelet=0]....     -1.575   3.425 -8.287  5.1371 0.6456080</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $time40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                             Estimate Std.Err    2.5%  97.5%  P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0]....     -6.723   2.069 -10.778 -2.668 0.001156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0].....1   -2.389   3.394  -9.042  4.264 0.481587</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0].....2   -5.273   3.566 -12.261  1.715 0.139181</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=1]....      4.334   3.644  -2.808 11.476 0.234246</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=1].....1    1.450   3.804  -6.005  8.906 0.702980</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=1, platelet=0]....     -2.884   4.659 -12.016  6.248 0.535941</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $time50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                             Estimate Std.Err    2.5%  97.5%  P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0]....     -7.847   2.610 -12.963 -2.730 0.002648</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0].....1   -2.262   4.292 -10.675  6.151 0.598168</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0].....2   -5.632   4.460 -14.373  3.109 0.206672</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=1]....      5.585   4.610  -3.452 14.621 0.225775</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=1].....1    2.215   4.767  -7.128 11.558 0.642149</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=1, platelet=0]....     -3.370   5.859 -14.854  8.114 0.565240</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $time60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                             Estimate Std.Err    2.5%  97.5%  P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0]....     -9.027   3.181 -15.263 -2.792 0.004545</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0].....1   -2.199   5.233 -12.455  8.057 0.674306</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0].....2   -5.928   5.434 -16.578  4.723 0.275329</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=1]....      6.828   5.630  -4.206 17.863 0.225183</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=1].....1    3.100   5.817  -8.302 14.502 0.594158</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=1, platelet=0]....     -3.729   7.149 -17.740 10.282 0.601953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "estimate.list" "list"         </span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">rm1</span>, time <span class="op">=</span> <span class="fl">50</span>, <span class="fu">lava</span><span class="fu">:::</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/contr.html" class="external-link">pairwise_diff</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call: estimate.default(x = est, f = contrast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                             Estimate Std.Err    2.5%  97.5%  P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0]....     -7.847   2.610 -12.963 -2.730 0.002648</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0].....1   -2.262   4.292 -10.675  6.151 0.598168</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0].....2   -5.632   4.460 -14.373  3.109 0.206672</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=1]....      5.585   4.610  -3.452 14.621 0.225775</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=1].....1    2.215   4.767  -7.128 11.558 0.642149</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=1, platelet=0]....     -3.370   5.859 -14.854  8.114 0.565240</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[tcell=0, platelet=0] - [tcell=0, platelet=1]] = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[tcell=0, platelet=0] - [tcell=1, platelet=0]] = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[tcell=0, platelet=0] - [tcell=1, platelet=1]] = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[tcell=0, platelet=1] - [tcell=1, platelet=0]] = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[tcell=0, platelet=1] - [tcell=1, platelet=1]] = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[tcell=1, platelet=0] - [tcell=1, platelet=1]] = 0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 9.6173, df = 3, p-value = 0.02212</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">rm1</span>, se <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">rm1</span>, years.lost <span class="op">=</span> <span class="cn">TRUE</span>, se <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="resmean_phreg-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Comparing populations</span></span></span>
+<span class="r-in"><span><span class="co">## Comparing populations (single time -&gt; a plain estimate object)</span></span></span>
 <span class="r-in"><span><span class="va">rm1</span> <span class="op">&lt;-</span> <span class="fu">resmean_phreg</span><span class="op">(</span><span class="va">out1</span>, times <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">rm1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">e1</span>, <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           Estimate Std.Err   2.5%  97.5%  P-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0]....   -6.723   2.069 -10.78 -2.668 0.001156</span>
+<span class="r-in"><span><span class="va">de1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/lava/reference/estimate.default.html" class="external-link">estimate</a></span><span class="op">(</span><span class="va">e1</span>, <span class="fu">lava</span><span class="fu">:::</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/contr.html" class="external-link">pairwise_diff</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">de1</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                             Estimate Std.Err    2.5%  97.5%  P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0]....     -6.723   2.069 -10.778 -2.668 0.001156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0].....1   -2.389   3.394  -9.042  4.264 0.481587</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0].....2   -5.273   3.566 -12.261  1.715 0.139181</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=1]....      4.334   3.644  -2.808 11.476 0.234246</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=1].....1    1.450   3.804  -6.005  8.906 0.702980</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=1, platelet=0]....     -2.884   4.659 -12.016  6.248 0.535941</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">rm1</span>, <span class="fu">lava</span><span class="fu">:::</span><span class="fu"><a href="https://kkholst.github.io/lava/reference/contr.html" class="external-link">pairwise_diff</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call: estimate.default(x = est, f = contrast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                             Estimate Std.Err    2.5%  97.5%  P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0]....     -6.723   2.069 -10.778 -2.668 0.001156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0].....1   -2.389   3.394  -9.042  4.264 0.481587</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=0].....2   -5.273   3.566 -12.261  1.715 0.139181</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=1]....      4.334   3.644  -2.808 11.476 0.234246</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=0, platelet=1].....1    1.450   3.804  -6.005  8.906 0.702980</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [tcell=1, platelet=0]....     -2.884   4.659 -12.016  6.248 0.535941</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Null Hypothesis: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[tcell=0, platelet=0] - [tcell=0, platelet=1]] = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[tcell=0, platelet=0] - [tcell=1, platelet=0]] = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[tcell=0, platelet=0] - [tcell=1, platelet=1]] = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[tcell=0, platelet=1] - [tcell=1, platelet=0]] = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[tcell=0, platelet=1] - [tcell=1, platelet=1]] = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [[tcell=1, platelet=0] - [tcell=1, platelet=1]] = 0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> chisq = 11.439, df = 3, p-value = 0.009574</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -19,7 +19,7 @@ influence functions of Ghosh and Lin (2000)."><meta property="og:image" content=
 
     <a class="navbar-brand me-2" href="../index.html">mets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.13</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,6 +44,7 @@ influence functions of Ghosh and Lin (2000)."><meta property="og:image" content=
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a></li>
     <li><a class="dropdown-item" href="../articles/mediation-survival.html">Mediation Analysis for survival data</a></li>
+    <li><a class="dropdown-item" href="../articles/mets-influence-functions.html">Influence functions in METS</a></li>
     <li><a class="dropdown-item" href="../articles/phreg_rct.html">Randomization for Cox Type rate models</a></li>
     <li><a class="dropdown-item" href="../articles/quantitative-twin.html">Twin models</a></li>
     <li><a class="dropdown-item" href="../articles/recurrent-events.html">Recurrent events</a></li>
@@ -88,7 +89,7 @@ influence functions of Ghosh and Lin (2000).</p>
 <span>  km <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  start <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  stop <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  at.risk <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  at.risk <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  cluster.id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -132,7 +133,7 @@ observed jump time.</p></dd>
 
 <dt id="arg-at-risk">at.risk<a class="anchor" aria-label="anchor" href="#arg-at-risk"></a></dt>
 <dd><p>Minimum combined risk-set size below which the weight is set
-to zero. Default is <code>5</code>.</p></dd>
+to zero. Default is <code>0</code>.</p></dd>
 
 
 <dt id="arg-cluster-id">cluster.id<a class="anchor" aria-label="anchor" href="#arg-cluster-id"></a></dt>

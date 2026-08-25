@@ -30,6 +30,8 @@
   data](http://kkholst.github.io/mets/articles/marginal-cox.md):
 - [Mediation Analysis for survival
   data](http://kkholst.github.io/mets/articles/mediation-survival.md):
+- [Influence functions in
+  METS](http://kkholst.github.io/mets/articles/mets-influence-functions.md):
 - [Randomization for Cox Type rate
   models](http://kkholst.github.io/mets/articles/phreg_rct.md):
 - [Twin

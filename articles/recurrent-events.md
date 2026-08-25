@@ -428,16 +428,16 @@ recEFF14 <- recurrent_marginalAIPCW(Event(start,stop,statusD)~cluster(id),data=r
 death.code=3,cause=1,augment.model=~Nt+I(Nt^2)+I(exp(-Nt))+ I( Nt*exp(-Nt)))
 with(recEFF14,cbind(times,muP,semuP,muPAt,semuPAt,semuPAt/semuP))
 #>       times       muP     semuP     muPAt   semuPAt          
-#>  [1,]   500 0.8744004 0.1059068 0.8666135 0.1054672 0.9958484
-#>  [2,]  1000 1.2696069 0.1458220 1.2643398 0.1444958 0.9909053
-#>  [3,]  1500 1.7921498 0.2291966 1.8063914 0.2218548 0.9679670
-#>  [4,]  2000 2.1216192 0.3047378 2.1433122 0.2888682 0.9479237
-#>  [5,]  2500 2.4775306 0.3934784 2.4921659 0.3607250 0.9167593
-#>  [6,]  3000 2.7947412 0.5183678 2.6962370 0.4264556 0.8226892
-#>  [7,]  3500 3.0289847 0.6033927 2.7724842 0.4558824 0.7555319
-#>  [8,]  4000 3.3163659 0.7183096 2.8716708 0.4752409 0.6616101
-#>  [9,]  4500 3.6229966 0.8415333 2.9362144 0.4519118 0.5370100
-#> [10,]  5000 3.8810150 0.9255727 2.9717225 0.3831618 0.4139726
+#>  [1,]   500 0.8744004 0.1059068 0.8666254 0.1054678 0.9958547
+#>  [2,]  1000 1.2696069 0.1458220 1.2643342 0.1444956 0.9909041
+#>  [3,]  1500 1.7921498 0.2291966 1.8063986 0.2218550 0.9679681
+#>  [4,]  2000 2.1216192 0.3047378 2.1433094 0.2888681 0.9479233
+#>  [5,]  2500 2.4775306 0.3934784 2.4921873 0.3607253 0.9167602
+#>  [6,]  3000 2.7947412 0.5183678 2.6962228 0.4264555 0.8226890
+#>  [7,]  3500 3.0289847 0.6033927 2.7724665 0.4558818 0.7555309
+#>  [8,]  4000 3.3163659 0.7183096 2.8716653 0.4752409 0.6616101
+#>  [9,]  4500 3.6229966 0.8415333 2.9362323 0.4519122 0.5370105
+#> [10,]  5000 3.8810150 0.9255727 2.9717826 0.3831652 0.4139763
 
 plot(out,se=TRUE,ylab="marginal mean",col=2)
 k <- 1
@@ -1184,13 +1184,13 @@ in the vector \rho=(\rho\_{12},\rho\_{13},\rho\_{23}).
 ``` r
 
 sessionInfo()
-#> R version 4.6.0 (2026-04-24)
+#> R version 4.5.2 (2025-10-31)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.4 LTS
+#> Running under: Ubuntu 26.04 LTS
 #> 
 #> Matrix products: default
-#> BLAS:   /home/kkzh/.asdf/installs/r/4.6.0/lib/R/lib/libRblas.so 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
+#> BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.12.1 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.1;  LAPACK version 3.12.0
 #> 
 #> locale:
 #>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -1208,17 +1208,19 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#> [1] timereg_2.0.7  survival_3.8-6 mets_1.3.12   
+#> [1] lava_1.9.3         prodlim_2026.03.11 timereg_2.0.7      survival_3.8-9    
+#> [5] mets_1.3.13        colorout_1.3-3    
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
-#>  [4] xfun_0.57              KernSmooth_2.23-26     otel_0.2.0            
-#>  [7] future.apply_1.20.2    listenv_0.10.1         lava_1.9.2.1          
-#> [10] stats4_4.6.0           grid_4.6.0             evaluate_1.0.5        
-#> [13] yaml_2.3.12            mvtnorm_1.3-7          numDeriv_2016.8-1.1   
-#> [16] compiler_4.6.0         codetools_0.2-20       Rcpp_1.1.1-1.1        
-#> [19] ucminf_1.2.3           future_1.70.0          lattice_0.22-9        
-#> [22] digest_0.6.39          parallelly_1.47.0      parallel_4.6.0        
-#> [25] Matrix_1.7-5           tools_4.6.0            RcppArmadillo_15.2.6-1
-#> [28] globals_0.19.1
+#>  [1] vctrs_0.7.3            cli_3.6.6              knitr_1.51            
+#>  [4] rlang_1.3.0            xfun_0.60              KernSmooth_2.23-27    
+#>  [7] otel_0.2.0             data.table_1.18.4      glue_1.8.1            
+#> [10] future.apply_1.20.2    listenv_1.0.0          grid_4.5.2            
+#> [13] evaluate_1.0.5         lifecycle_1.0.5        yaml_2.3.12           
+#> [16] mvtnorm_1.4-2          numDeriv_2016.8-1.1    compiler_4.5.2        
+#> [19] codetools_0.2-20       ucminf_1.2.3           Rcpp_1.1.2            
+#> [22] future_1.75.0          lattice_0.23-1         digest_0.6.39         
+#> [25] pillar_1.11.1          parallelly_1.48.0      parallel_4.5.2        
+#> [28] Matrix_1.7-6           tools_4.5.2            RcppArmadillo_15.4.2-1
+#> [31] globals_0.19.1
 ```

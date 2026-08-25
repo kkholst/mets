@@ -1,4 +1,4 @@
-# Cross-validated Brier score for competing risks, RMST and RMTL regression using stratified leave-fold-out fits (`binregStrata`)
+# Cross-validated Brier score for competing risks, RMST and RMTL regression using stratified leave-fold-out fits (`binreg` `binregStrata`)
 
 Fits candidate models via
 [`binregStrata`](http://kkholst.github.io/mets/reference/binregStrata.md)
@@ -14,7 +14,7 @@ survival time (RMST), and restricted mean time lost (RMTL).
 brier_binreg(
   formula,
   data,
-  time,
+  time = NULL,
   fold = 5,
   rhs = NULL,
   rhs0 = ~+1,
@@ -278,5 +278,24 @@ fit_rmtl <- brier_binreg(
   outcome = "rmtl"
 )
 summary(fit_rmtl, transform = exp)
+
+## --- no IPCW adjustment, regression ---------
+fit_reg <- brier_binreg(
+  time ~ tcell + platelet + age + cluster(id),
+  data = bmt, 
+  rhs    = list(small = ~age, full = ~tcell + platelet + age)
+)
+summary(fit_reg, transform = exp)
+
+## --- no IPCW adjustment  binomial-regression  ---------------
+bmt$binY  <- as.numeric(bmt$time>30)
+fit_bin <- brier_binreg(
+  binY ~ tcell + platelet + age + cluster(id),
+  data = bmt, model="logit",
+  rhs    = list(small = ~age, full = ~tcell + platelet + age)
+)
+summary(fit_bin, transform = exp)
+
+
 } # }
 ```

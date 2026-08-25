@@ -2,6 +2,8 @@
 
 ## mets 1.3.12
 
+CRAN release: 2026-07-30
+
 - brier score for binreg objects `brier_binreg`
 
 ## mets 1.3.11

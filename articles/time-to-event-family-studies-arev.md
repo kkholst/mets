@@ -1162,13 +1162,13 @@ age.](figure/time-to-event-family-studies-arev-unnamed-chunk-18-4.png)
 ``` r
 
 sessionInfo()
-#> R version 4.6.0 (2026-04-24)
+#> R version 4.5.2 (2025-10-31)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.4 LTS
+#> Running under: Ubuntu 26.04 LTS
 #> 
 #> Matrix products: default
-#> BLAS:   /home/kkzh/.asdf/installs/r/4.6.0/lib/R/lib/libRblas.so 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
+#> BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.12.1 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.1;  LAPACK version 3.12.0
 #> 
 #> locale:
 #>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -1186,17 +1186,19 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#> [1] prodlim_2026.03.11 timereg_2.0.7      survival_3.8-6     mets_1.3.12       
+#> [1] lava_1.9.3         prodlim_2026.03.11 timereg_2.0.7      survival_3.8-9    
+#> [5] mets_1.3.13        colorout_1.3-3    
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.6              knitr_1.51             rlang_1.2.0           
-#>  [4] xfun_0.57              KernSmooth_2.23-26     otel_0.2.0            
-#>  [7] data.table_1.18.4      future.apply_1.20.2    listenv_0.10.1        
-#> [10] lava_1.9.2.1           stats4_4.6.0           grid_4.6.0            
-#> [13] evaluate_1.0.5         yaml_2.3.12            mvtnorm_1.3-7         
-#> [16] numDeriv_2016.8-1.1    compiler_4.6.0         codetools_0.2-20      
-#> [19] Rcpp_1.1.1-1.1         ucminf_1.2.3           future_1.70.0         
-#> [22] lattice_0.22-9         digest_0.6.39          parallelly_1.47.0     
-#> [25] parallel_4.6.0         Matrix_1.7-5           tools_4.6.0           
-#> [28] RcppArmadillo_15.2.6-1 globals_0.19.1
+#>  [1] vctrs_0.7.3            cli_3.6.6              knitr_1.51            
+#>  [4] rlang_1.3.0            xfun_0.60              KernSmooth_2.23-27    
+#>  [7] otel_0.2.0             data.table_1.18.4      glue_1.8.1            
+#> [10] future.apply_1.20.2    listenv_1.0.0          grid_4.5.2            
+#> [13] evaluate_1.0.5         lifecycle_1.0.5        yaml_2.3.12           
+#> [16] mvtnorm_1.4-2          numDeriv_2016.8-1.1    compiler_4.5.2        
+#> [19] codetools_0.2-20       ucminf_1.2.3           Rcpp_1.1.2            
+#> [22] future_1.75.0          lattice_0.23-1         digest_0.6.39         
+#> [25] pillar_1.11.1          parallelly_1.48.0      parallel_4.5.2        
+#> [28] Matrix_1.7-6           tools_4.5.2            RcppArmadillo_15.4.2-1
+#> [31] globals_0.19.1
 ```

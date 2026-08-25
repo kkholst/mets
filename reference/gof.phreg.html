@@ -15,7 +15,7 @@ where \(\hat M_i(s)\) are the martingale residuals."><meta property="og:image" c
 
     <a class="navbar-brand me-2" href="../index.html">mets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.13</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,6 +40,7 @@ where \(\hat M_i(s)\) are the martingale residuals."><meta property="og:image" c
     <li><a class="dropdown-item" href="../articles/interval-discrete-survival.html">Discrete Interval Censored Survival Models</a></li>
     <li><a class="dropdown-item" href="../articles/marginal-cox.html">Marginal modelling of clustered survival data</a></li>
     <li><a class="dropdown-item" href="../articles/mediation-survival.html">Mediation Analysis for survival data</a></li>
+    <li><a class="dropdown-item" href="../articles/mets-influence-functions.html">Influence functions in METS</a></li>
     <li><a class="dropdown-item" href="../articles/phreg_rct.html">Randomization for Cox Type rate models</a></li>
     <li><a class="dropdown-item" href="../articles/quantitative-twin.html">Twin models</a></li>
     <li><a class="dropdown-item" href="../articles/recurrent-events.html">Recurrent events</a></li>
@@ -166,9 +167,9 @@ the null hypothesis of proportional hazards.</p>
 <span class="r-in"><span><span class="va">gg</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Cumulative score process test for Proportionality:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Sup|U(t)|  pval</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> vf        7.276731 0.009</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> chf       8.971263 0.078</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> diabetes  3.044404 0.788</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> vf        7.276731 0.007</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> chf       8.971263 0.072</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> diabetes  3.044404 0.780</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">gg</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="gof.phreg-1.png" alt="" width="700" height="433"></span>
@@ -183,9 +184,9 @@ the null hypothesis of proportional hazards.</p>
 <span class="r-in"><span><span class="va">gg</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Cumulative score process test for Proportionality:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Sup|U(t)|  pval</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> vf        7.276731 0.004</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> chf       8.971263 0.067</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> diabetes  3.044404 0.790</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> vf        7.276731 0.006</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> chf       8.971263 0.087</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> diabetes  3.044404 0.804</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

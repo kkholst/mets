@@ -39,15 +39,24 @@ An object of class `"resmean_phreg"` containing:
 
 - cumhaz:
 
-  Matrix of cumulative hazards (years lost).
+  Matrix of years lost (all event times, used by `plot`), one column per
+  cause.
 
 - se.cumhaz:
 
-  Standard errors.
+  Standard errors (all event times).
 
-- intF1times:
+- yearslost_times:
 
-  Years lost at specified times.
+  Years lost per cause at the specified `times`, one row per strata/time
+  (`NULL` if `times=NULL`).
+
+- estimate:
+
+  If `times` is given: a named list, one element per cause, each a
+  `lava` `"estimate"` object (or, if `length(times)>1`, a list of such
+  objects, one per time). Causes are estimated separately as their
+  covariance is not available. `NULL` if `times=NULL`.
 
 - causes:
 
@@ -70,125 +79,234 @@ Thomas Scheike
 data(bmt)
 bmt$time <- bmt$time + runif(408) * 0.001
 
-## Years lost decomposed into causes
+## No times given: full years-lost curve at all event times, one table per cause
+drm1 <- cif_yearslost(Event(time, cause) ~ strata(tcell, platelet), data = bmt)
+drm1                         ## short description; use summary() for the full curves
+#> 'resmean_phreg' object
+#> Competing risks, causes: 1, 2
+#> Strata (strata(tcell, platelet)): tcell=0, platelet=0, tcell=0, platelet=1, tcell=1, platelet=0, tcell=1, platelet=1
+#> 248 distinct event times, range 0.03 - 70.626
+#> ('times' was not given at call time -- use summary(x) for the full curve at all event times (also shown by plot(x)), or refit with times=... for time-specific estimates)
+tail(summary(drm1, cause=1))  ## just cause 1
+#>                  strata     time years.lost se.years.lost     lower    upper
+#> 243 tcell=0, platelet=0 40.13293  16.780445      1.166778 14.642584 19.23044
+#> 244 tcell=0, platelet=1 40.26369   9.811029      1.621059  7.096955 13.56304
+#> 245 tcell=1, platelet=1 41.77681   8.821595      3.013795  4.515897 17.23258
+#> 246 tcell=0, platelet=0 52.27050  22.423447      1.548327 19.585171 25.67305
+#> 247 tcell=0, platelet=0 68.28972  29.871106      2.056342 26.100821 34.18601
+#> 248 tcell=0, platelet=0 70.62570  30.957149      2.130654 27.050559 35.42792
+plot(drm1, se=1)
+
+
+## Years lost decomposed into causes, at specific times
 drm1 <- cif_yearslost(Event(time, cause) ~ strata(tcell, platelet), data = bmt, times = c(40, 50))
 par(mfrow = c(1, 2))
 plot(drm1, cause = 1, se = 1)
 plot(drm1, cause = 2, se = 1)
 
-summary(drm1)
-#> $estimate
-#> $estimate$intF_1
-#>                       strata times    intF_1 se.intF_1 lower_intF_1
-#> tcell.0..platelet.0        0    40 16.718643  1.162627    14.588405
-#> tcell.0..platelet.1        1    40  9.731559  1.609585     7.037121
-#> tcell.1..platelet.0        2    40  9.953077  3.221209     5.278067
-#> tcell.1..platelet.1        3    40  8.302397  2.871799     4.214760
-#> tcell.0..platelet.0.1      0    50 21.367845  1.476646    18.661116
-#> tcell.0..platelet.1.1      1    50 12.985913  2.047935     9.533103
-#> tcell.1..platelet.0.1      2    50 12.645385  4.089967     6.708466
-#> tcell.1..platelet.1.1      3    50 11.809303  3.673690     6.418429
-#>                       upper_intF_1
-#> tcell.0..platelet.0       19.15994
-#> tcell.0..platelet.1       13.45767
-#> tcell.1..platelet.0       18.76894
-#> tcell.1..platelet.1       16.35438
-#> tcell.0..platelet.0.1     24.46718
-#> tcell.0..platelet.1.1     17.68930
-#> tcell.1..platelet.0.1     23.83641
-#> tcell.1..platelet.1.1     21.72800
-#> 
-#> $estimate$intF_2
-#>                       strata times    intF_2 se.intF_2 lower_intF_2
-#> tcell.0..platelet.0        0    40  6.120930 0.8509983     4.660947
-#> tcell.0..platelet.1        1    40  6.388230 1.2998312     4.287303
-#> tcell.1..platelet.0        2    40 10.497757 2.8144225     6.207140
-#> tcell.1..platelet.1        3    40  9.264228 2.9840677     4.927558
-#> tcell.0..platelet.0.1      0    50  8.148258 1.0944538     6.262295
-#> tcell.0..platelet.1.1      1    50  8.689754 1.7124193     5.905655
-#> tcell.1..platelet.0.1      2    50 14.608646 3.7302732     8.856421
-#> tcell.1..platelet.1.1      3    50 12.074989 3.8902005     6.421775
-#>                       upper_intF_2
-#> tcell.0..platelet.0       8.038235
-#> tcell.0..platelet.1       9.518684
-#> tcell.1..platelet.0      17.754217
-#> tcell.1..platelet.1      17.417538
-#> tcell.0..platelet.0.1    10.602202
-#> tcell.0..platelet.1.1    12.786358
-#> tcell.1..platelet.0.1    24.096928
-#> tcell.1..platelet.1.1    22.704840
-#> 
-#> 
-#> $total.years.lost
-#> [1] 22.83957 16.11979 20.45083 17.56663 29.51610 21.67567 27.25403 23.88429
-#> 
-estimate(drm1, cause = 1)
-#> [[1]]
+summary(drm1)          ## both causes
+#> cause1 
+#> time40 
 #>                     Estimate Std.Err   2.5% 97.5%   P-value
 #> tcell=0, platelet=0   16.719   1.163 14.440 19.00 6.904e-47
 #> tcell=0, platelet=1    9.732   1.610  6.577 12.89 1.485e-09
 #> tcell=1, platelet=0    9.953   3.221  3.640 16.27 2.003e-03
 #> tcell=1, platelet=1    8.302   2.872  2.674 13.93 3.840e-03
-#> 
-#> [[2]]
+#> time50 
 #>                     Estimate Std.Err   2.5% 97.5%   P-value
 #> tcell=0, platelet=0    21.37   1.477 18.474 24.26 1.860e-47
 #> tcell=0, platelet=1    12.99   2.048  8.972 17.00 2.283e-10
 #> tcell=1, platelet=0    12.65   4.090  4.629 20.66 1.989e-03
 #> tcell=1, platelet=1    11.81   3.674  4.609 19.01 1.306e-03
-#> 
-estimate(drm1, cause = 2)
-#> [[1]]
+#> cause2 
+#> time40 
 #>                     Estimate Std.Err  2.5%  97.5%   P-value
 #> tcell=0, platelet=0    6.121   0.851 4.453  7.789 6.355e-13
 #> tcell=0, platelet=1    6.388   1.300 3.841  8.936 8.894e-07
 #> tcell=1, platelet=0   10.498   2.814 4.982 16.014 1.915e-04
 #> tcell=1, platelet=1    9.264   2.984 3.416 15.113 1.906e-03
-#> 
-#> [[2]]
+#> time50 
 #>                     Estimate Std.Err  2.5% 97.5%   P-value
 #> tcell=0, platelet=0    8.148   1.094 6.003 10.29 9.691e-14
 #> tcell=0, platelet=1    8.690   1.712 5.333 12.05 3.884e-07
 #> tcell=1, platelet=0   14.609   3.730 7.297 21.92 8.994e-05
 #> tcell=1, platelet=1   12.075   3.890 4.450 19.70 1.910e-03
-#> 
+summary(drm1, cause=1) ## just cause 1
+#> time40 
+#>                     Estimate Std.Err   2.5% 97.5%   P-value
+#> tcell=0, platelet=0   16.719   1.163 14.440 19.00 6.904e-47
+#> tcell=0, platelet=1    9.732   1.610  6.577 12.89 1.485e-09
+#> tcell=1, platelet=0    9.953   3.221  3.640 16.27 2.003e-03
+#> tcell=1, platelet=1    8.302   2.872  2.674 13.93 3.840e-03
+#> time50 
+#>                     Estimate Std.Err   2.5% 97.5%   P-value
+#> tcell=0, platelet=0    21.37   1.477 18.474 24.26 1.860e-47
+#> tcell=0, platelet=1    12.99   2.048  8.972 17.00 2.283e-10
+#> tcell=1, platelet=0    12.65   4.090  4.629 20.66 1.989e-03
+#> tcell=1, platelet=1    11.81   3.674  4.609 19.01 1.306e-03
 
-## Comparing populations
+## Causes are stored (and estimated) separately: one "resmean_estimate" list per cause
+e1 <- estimate(drm1, cause = 1)
+e1
+#> time40 
+#>                     Estimate Std.Err   2.5% 97.5%   P-value
+#> tcell=0, platelet=0   16.719   1.163 14.440 19.00 6.904e-47
+#> tcell=0, platelet=1    9.732   1.610  6.577 12.89 1.485e-09
+#> tcell=1, platelet=0    9.953   3.221  3.640 16.27 2.003e-03
+#> tcell=1, platelet=1    8.302   2.872  2.674 13.93 3.840e-03
+#> time50 
+#>                     Estimate Std.Err   2.5% 97.5%   P-value
+#> tcell=0, platelet=0    21.37   1.477 18.474 24.26 1.860e-47
+#> tcell=0, platelet=1    12.99   2.048  8.972 17.00 2.283e-10
+#> tcell=1, platelet=0    12.65   4.090  4.629 20.66 1.989e-03
+#> tcell=1, platelet=1    11.81   3.674  4.609 19.01 1.306e-03
+e2 <- estimate(drm1, cause = 2)
+e2
+#> time40 
+#>                     Estimate Std.Err  2.5%  97.5%   P-value
+#> tcell=0, platelet=0    6.121   0.851 4.453  7.789 6.355e-13
+#> tcell=0, platelet=1    6.388   1.300 3.841  8.936 8.894e-07
+#> tcell=1, platelet=0   10.498   2.814 4.982 16.014 1.915e-04
+#> tcell=1, platelet=1    9.264   2.984 3.416 15.113 1.906e-03
+#> time50 
+#>                     Estimate Std.Err  2.5% 97.5%   P-value
+#> tcell=0, platelet=0    8.148   1.094 6.003 10.29 9.691e-14
+#> tcell=0, platelet=1    8.690   1.712 5.333 12.05 3.884e-07
+#> tcell=1, platelet=0   14.609   3.730 7.297 21.92 8.994e-05
+#> tcell=1, platelet=1   12.075   3.890 4.450 19.70 1.910e-03
+
+## Apply a contrast to every time at once, for one cause
+summary(e1, rbind(c(1, -1, 0, 0)))
+#> time40 
+#> Call: estimate.default(x = o, f = contrast)
+#> ────────────────────────────────────────────────────────────
+#>                           Estimate Std.Err  2.5% 97.5%   P-value
+#> [tcell=0, platelet=0]....    6.987   1.986 3.095 10.88 0.0004333
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
+#>   [[tcell=0, platelet=0] - [tcell=0, platelet=1]] = 0 
+#>  
+#> chisq = 12.3829, df = 1, p-value = 0.0004333
+#> time50 
+#> Call: estimate.default(x = o, f = contrast)
+#> ────────────────────────────────────────────────────────────
+#>                           Estimate Std.Err  2.5% 97.5%   P-value
+#> [tcell=0, platelet=0]....    8.382   2.525 3.433 13.33 0.0009006
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
+#>   [[tcell=0, platelet=0] - [tcell=0, platelet=1]] = 0 
+#>  
+#> chisq = 11.0215, df = 1, p-value = 0.0009006
+
+## Restrict to a single time first ...
+summary(drm1, cause = 1, time = 50)
+#>                     Estimate Std.Err   2.5% 97.5%   P-value
+#> tcell=0, platelet=0    21.37   1.477 18.474 24.26 1.860e-47
+#> tcell=0, platelet=1    12.99   2.048  8.972 17.00 2.283e-10
+#> tcell=1, platelet=0    12.65   4.090  4.629 20.66 1.989e-03
+#> tcell=1, platelet=1    11.81   3.674  4.609 19.01 1.306e-03
+## ... optionally with a contrast for that time only
+summary(drm1, cause = 1, time = 50, rbind(c(1, -1, 0, 0)))
+#> Call: estimate.default(x = est, f = contrast)
+#> ────────────────────────────────────────────────────────────
+#>                           Estimate Std.Err  2.5% 97.5%   P-value
+#> [tcell=0, platelet=0]....    8.382   2.525 3.433 13.33 0.0009006
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
+#>   [[tcell=0, platelet=0] - [tcell=0, platelet=1]] = 0 
+#>  
+#> chisq = 11.0215, df = 1, p-value = 0.0009006
+estimate(drm1, cause = 1, time = 50, rbind(c(1, -1, 0, 0)))
+#>                           Estimate Std.Err  2.5% 97.5%   P-value
+#> [tcell=0, platelet=0]....    8.382   2.525 3.433 13.33 0.0009006
+
+## All pairwise differences between the 4 strata, for one time or for all times
+de1 <- estimate(e1, lava:::pairwise_diff(4))
+de1
+#> $time40
+#>                             Estimate Std.Err     2.5%  97.5%   P-value
+#> [tcell=0, platelet=0]....     6.9871   1.986  3.09545 10.879 0.0004333
+#> [tcell=0, platelet=0].....1   6.7656   3.425  0.05347 13.478 0.0482026
+#> [tcell=0, platelet=0].....2   8.4162   3.098  2.34386 14.489 0.0065980
+#> [tcell=0, platelet=1]....    -0.2215   3.601 -7.27928  6.836 0.9509481
+#> [tcell=0, platelet=1].....1   1.4292   3.292 -5.02326  7.882 0.6642032
+#> [tcell=1, platelet=0]....     1.6507   4.315 -6.80752 10.109 0.7020894
+#> 
+#> $time50
+#>                             Estimate Std.Err    2.5%  97.5%   P-value
+#> [tcell=0, platelet=0]....     8.3819   2.525  3.4335 13.330 0.0009006
+#> [tcell=0, platelet=0].....1   8.7225   4.348  0.1998 17.245 0.0448653
+#> [tcell=0, platelet=0].....2   9.5585   3.959  1.7984 17.319 0.0157712
+#> [tcell=0, platelet=1]....     0.3405   4.574 -8.6244  9.305 0.9406540
+#> [tcell=0, platelet=1].....1   1.1766   4.206 -7.0669  9.420 0.7796702
+#> [tcell=1, platelet=0]....     0.8361   5.498 -9.9391 11.611 0.8791232
+#> 
+#> attr(,"class")
+#> [1] "estimate.list" "list"         
+summary(drm1, cause = 1, time = 50, lava:::pairwise_diff(4))
+#> Call: estimate.default(x = est, f = contrast)
+#> ────────────────────────────────────────────────────────────
+#>                             Estimate Std.Err    2.5%  97.5%   P-value
+#> [tcell=0, platelet=0]....     8.3819   2.525  3.4335 13.330 0.0009006
+#> [tcell=0, platelet=0].....1   8.7225   4.348  0.1998 17.245 0.0448653
+#> [tcell=0, platelet=0].....2   9.5585   3.959  1.7984 17.319 0.0157712
+#> [tcell=0, platelet=1]....     0.3405   4.574 -8.6244  9.305 0.9406540
+#> [tcell=0, platelet=1].....1   1.1766   4.206 -7.0669  9.420 0.7796702
+#> [tcell=1, platelet=0]....     0.8361   5.498 -9.9391 11.611 0.8791232
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
+#>   [[tcell=0, platelet=0] - [tcell=0, platelet=1]] = 0
+#>   [[tcell=0, platelet=0] - [tcell=1, platelet=0]] = 0
+#>   [[tcell=0, platelet=0] - [tcell=1, platelet=1]] = 0
+#>   [[tcell=0, platelet=1] - [tcell=1, platelet=0]] = 0
+#>   [[tcell=0, platelet=1] - [tcell=1, platelet=1]] = 0
+#>   [[tcell=1, platelet=0] - [tcell=1, platelet=1]] = 0 
+#>  
+#> chisq = 15.5277, df = 3, p-value = 0.001417
+
+## Comparing populations (single time -> a plain estimate object per cause)
 drm1 <- cif_yearslost(Event(time, cause) ~ strata(tcell, platelet), data = bmt, times = 40)
-summary(drm1, contrast = list(1:4))
-#> $testintF_1
-#>             Estimate Std.Err    2.5% 97.5%   P-value
-#> [p1] - [p2]    6.987   1.986 3.09545 10.88 0.0004333
-#> [p1] - [p3]    6.766   3.425 0.05347 13.48 0.0482026
-#> [p1] - [p4]    8.416   3.098 2.34386 14.49 0.0065980
-#> 
-#> $testintF_2
-#>             Estimate Std.Err    2.5% 97.5% P-value
-#> [p1] - [p2]  -0.2673   1.554  -3.312 2.778  0.8634
-#> [p1] - [p3]  -4.3768   2.940 -10.140 1.386  0.1366
-#> [p1] - [p4]  -3.1433   3.103  -9.225 2.939  0.3111
-#> 
-#> $estimate
-#> $estimate$intF_1
-#>                     strata times    intF_1 se.intF_1 lower_intF_1 upper_intF_1
-#> tcell=0, platelet=0      0    40 16.718643  1.162627    14.588405     19.15994
-#> tcell=0, platelet=1      1    40  9.731559  1.609585     7.037121     13.45767
-#> tcell=1, platelet=0      2    40  9.953077  3.221209     5.278067     18.76894
-#> tcell=1, platelet=1      3    40  8.302397  2.871799     4.214760     16.35438
-#> 
-#> $estimate$intF_2
-#>                     strata times    intF_2 se.intF_2 lower_intF_2 upper_intF_2
-#> tcell=0, platelet=0      0    40  6.120930 0.8509983     4.660947     8.038235
-#> tcell=0, platelet=1      1    40  6.388230 1.2998312     4.287303     9.518684
-#> tcell=1, platelet=0      2    40 10.497757 2.8144225     6.207140    17.754217
-#> tcell=1, platelet=1      3    40  9.264228 2.9840677     4.927558    17.417538
-#> 
-#> 
-#> $total.years.lost
-#> [1] 22.83957 16.11979 20.45083 17.56663
-#> 
-e1 <- estimate(drm1)
+summary(drm1, cause = 1, contrast = rbind(c(1, -1, 0, 0)))
+#> Call: estimate.default(x = est, f = contrast)
+#> ────────────────────────────────────────────────────────────
+#>                           Estimate Std.Err  2.5% 97.5%   P-value
+#> [tcell=0, platelet=0]....    6.987   1.986 3.095 10.88 0.0004333
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
+#>   [[tcell=0, platelet=0] - [tcell=0, platelet=1]] = 0 
+#>  
+#> chisq = 12.3829, df = 1, p-value = 0.0004333
+e1 <- estimate(drm1, cause = 1)
 estimate(e1, rbind(c(1, -1, 0, 0)))
 #>                           Estimate Std.Err  2.5% 97.5%   P-value
 #> [tcell=0, platelet=0]....    6.987   1.986 3.095 10.88 0.0004333
+de1 <- estimate(e1, lava:::pairwise_diff(4))
+de1
+#>                             Estimate Std.Err     2.5%  97.5%   P-value
+#> [tcell=0, platelet=0]....     6.9871   1.986  3.09545 10.879 0.0004333
+#> [tcell=0, platelet=0].....1   6.7656   3.425  0.05347 13.478 0.0482026
+#> [tcell=0, platelet=0].....2   8.4162   3.098  2.34386 14.489 0.0065980
+#> [tcell=0, platelet=1]....    -0.2215   3.601 -7.27928  6.836 0.9509481
+#> [tcell=0, platelet=1].....1   1.4292   3.292 -5.02326  7.882 0.6642032
+#> [tcell=1, platelet=0]....     1.6507   4.315 -6.80752 10.109 0.7020894
+summary(drm1, cause = 1, contrast = lava:::pairwise_diff(4))
+#> Call: estimate.default(x = est, f = contrast)
+#> ────────────────────────────────────────────────────────────
+#>                             Estimate Std.Err     2.5%  97.5%   P-value
+#> [tcell=0, platelet=0]....     6.9871   1.986  3.09545 10.879 0.0004333
+#> [tcell=0, platelet=0].....1   6.7656   3.425  0.05347 13.478 0.0482026
+#> [tcell=0, platelet=0].....2   8.4162   3.098  2.34386 14.489 0.0065980
+#> [tcell=0, platelet=1]....    -0.2215   3.601 -7.27928  6.836 0.9509481
+#> [tcell=0, platelet=1].....1   1.4292   3.292 -5.02326  7.882 0.6642032
+#> [tcell=1, platelet=0]....     1.6507   4.315 -6.80752 10.109 0.7020894
+#> ────────────────────────────────────────────────────────────
+#> Null Hypothesis: 
+#>   [[tcell=0, platelet=0] - [tcell=0, platelet=1]] = 0
+#>   [[tcell=0, platelet=0] - [tcell=1, platelet=0]] = 0
+#>   [[tcell=0, platelet=0] - [tcell=1, platelet=1]] = 0
+#>   [[tcell=0, platelet=1] - [tcell=1, platelet=0]] = 0
+#>   [[tcell=0, platelet=1] - [tcell=1, platelet=1]] = 0
+#>   [[tcell=1, platelet=0] - [tcell=1, platelet=1]] = 0 
+#>  
+#> chisq = 17.6322, df = 3, p-value = 0.0005238
 ```
