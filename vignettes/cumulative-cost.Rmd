@@ -1,10 +1,12 @@
 ---
 title: "IPCW Cumulative Cost"
 author: Klaus Holst & Thomas Scheike
-date: "2026-08-23"
+date: "2026-08-27"
 output:
   rmarkdown::html_vignette:
     fig_caption: no
+  pdf_document:
+    latex_engine: xelatex
 header-includes: 
   - \usepackage{tikz}
 vignette: >
@@ -368,16 +370,17 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] timereg_2.0.7  survival_3.8-9 mets_1.3.13    colorout_1.3-3
+#> [1] mets_1.3.13    colorout_1.3-3
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] cli_3.6.6              knitr_1.51             rlang_1.3.0           
 #>  [4] xfun_0.60              otel_0.2.0             future.apply_1.20.2   
 #>  [7] listenv_1.0.0          lava_1.9.3             grid_4.5.2            
-#> [10] evaluate_1.0.5         yaml_2.3.12            mvtnorm_1.4-2         
-#> [13] numDeriv_2016.8-1.1    compiler_4.5.2         codetools_0.2-20      
-#> [16] ucminf_1.2.3           Rcpp_1.1.2             future_1.75.0         
+#> [10] evaluate_1.0.5         numDeriv_2016.8-1.1    yaml_2.3.12           
+#> [13] mvtnorm_1.4-2          timereg_2.0.7          compiler_4.5.2        
+#> [16] codetools_0.2-20       Rcpp_1.1.2             future_1.75.0         
 #> [19] lattice_0.23-1         digest_0.6.39          parallelly_1.48.0     
 #> [22] parallel_4.5.2         splines_4.5.2          Matrix_1.7-6          
-#> [25] tools_4.5.2            RcppArmadillo_15.4.2-1 globals_0.19.1
+#> [25] tools_4.5.2            RcppArmadillo_15.4.2-1 globals_0.19.1        
+#> [28] survival_3.8-9
 ```

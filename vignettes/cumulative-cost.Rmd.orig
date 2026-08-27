@@ -5,6 +5,8 @@ date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
     fig_caption: no
+  pdf_document:
+    latex_engine: xelatex
 header-includes: 
   - \usepackage{tikz}
 vignette: >
