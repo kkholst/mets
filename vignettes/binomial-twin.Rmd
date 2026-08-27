@@ -1,7 +1,7 @@
 ---
 title: "Analysis of bivariate binomial data: Twin analysis"
 author: Klaus Holst & Thomas Scheike
-date: "2026-08-23"
+date: "2026-08-27"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes
@@ -10,7 +10,6 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-<!-- DO NOT EDIT: auto-generated from the .Rmd.orig source -->
 
 
 
@@ -538,247 +537,15 @@ OR model with an intercept. This clearly shows a significant difference.
 
 
 
-``` r
-theta.des <- model.matrix( ~-1+factor(zyg),data=twinstut)
-margbin <- glm(binstut~sex,data=twinstut,family=binomial())
-bintwin <- binomial_twostage(margbin,data=twinstut,model="gamma",
-     clusters=twinstut$tvparnr,detail=0,theta=c(0.1)/1,var.link=1,
-     theta.des=theta.des)
-summary(bintwin)
-#> Dependence parameter for Clayton-Oakes model
-#> Variance of Gamma distributed random effects 
-#> With log-link
-#> $estimates
-#>                     theta        se
-#> factor(zyg)dz -2.13348460 1.0821489
-#> factor(zyg)mz -0.07740026 0.5790839
-#> 
-#> $vargam
-#>               Estimate Std.Err    2.5%  97.5% P-value
-#> factor(zyg)dz   0.1184  0.1282 -0.1327 0.3696 0.35544
-#> factor(zyg)mz   0.9255  0.5360 -0.1249 1.9760 0.08419
-#> 
-#> $type
-#> [1] "gamma"
-#> 
-#> attr(,"class")
-#> [1] "summary.mets.twostage"
-
-# test for same dependence in MZ and DZ 
-theta.des <- model.matrix( ~factor(zyg),data=twinstut)
-margbin <- glm(binstut~sex,data=twinstut,family=binomial())
-bintwin <- binomial_twostage(margbin,data=twinstut,model="gamma",
-     clusters=twinstut$tvparnr,detail=0,theta=c(0.1)/1,var.link=1,
-     theta.des=theta.des)
-summary(bintwin)
-#> Dependence parameter for Clayton-Oakes model
-#> Variance of Gamma distributed random effects 
-#> With log-link
-#> $estimates
-#>                   theta       se
-#> (Intercept)   -2.133485 1.082149
-#> factor(zyg)mz  2.056084 1.227348
-#> 
-#> $vargam
-#>               Estimate Std.Err     2.5%   97.5% P-value
-#> (Intercept)     0.1184  0.1282  -0.1327  0.3696  0.3554
-#> factor(zyg)mz   7.8153  9.5921 -10.9849 26.6155  0.4152
-#> 
-#> $type
-#> [1] "gamma"
-#> 
-#> attr(,"class")
-#> [1] "summary.mets.twostage"
-```
-
-Polygenic modelling 
------------------------
-
-   First setting up the random effects design and
-   the relationship between variance parameters.
-   We see that the genetic random effect has size 1 for MZ and 0.5 for DZ subjects,
-   who have shared and non-shared genetic components with variance 0.5 such that the total
-   genetic variance is the same for all subjects. The shared environmental effect is the same for
-   all. Thus two parameters with these constraints.
-
-
-``` r
-out <- twin_polygen_design(twinstut,id="tvparnr",zygname="zyg",zyg="dz",type="ace")
-head(cbind(out$des.rv,twinstut$tvparnr),10)
-#>    MZ DZ DZns1 DZns2 env   
-#> 1   1  0     0     0   1  1
-#> 2   1  0     0     0   1  1
-#> 3   0  1     1     0   1  2
-#> 8   1  0     0     0   1  5
-#> 9   1  0     0     0   1  5
-#> 11  0  1     1     0   1  7
-#> 12  0  1     1     0   1  8
-#> 13  0  1     0     1   1  8
-#> 15  0  1     1     0   1 10
-#> 18  0  1     1     0   1 12
-out$pardes
-#>      [,1] [,2]
-#> [1,]  1.0    0
-#> [2,]  0.5    0
-#> [3,]  0.5    0
-#> [4,]  0.5    0
-#> [5,]  0.0    1
-```
-
-
-Now, fitting the ACE model, we see that the variance of the genetic, 
-component, is 1.5 and the environmental variance is -0.5. Thus suggesting that 
-the ACE model does not fit the data.  When the random design is given we 
-automatically use the gamma fralty model. 
-
-
-``` r
-margbin <- glm(binstut~sex,data=twinstut,family=binomial())
-bintwin1 <- binomial_twostage(margbin,data=twinstut,
-     clusters=twinstut$tvparnr,detail=0,theta=c(0.1)/1,var.link=0,
-     random.design=out$des.rv,theta.des=out$pardes)
-summary(bintwin1)
-#> Dependence parameter for Clayton-Oakes model
-#> Variance of Gamma distributed random effects
-#> $estimates
-#>                  theta        se
-#> dependence1  1.1700713 0.9350041
-#> dependence2 -0.2552978 0.5910697
-#> 
-#> $type
-#> [1] "clayton.oakes"
-#> 
-#> $h
-#>             Estimate Std.Err     2.5%  97.5% P-value
-#> dependence1   1.2791  0.6039  0.09552 2.4626 0.03416
-#> dependence2  -0.2791  0.6039 -1.46265 0.9045 0.64397
-#> 
-#> $vare
-#> NULL
-#> 
-#> $vartot
-#>    Estimate Std.Err    2.5% 97.5% P-value
-#> p1   0.9148  0.5352 -0.1343 1.964 0.08744
-#> 
-#> attr(,"class")
-#> [1] "summary.mets.twostage"
-```
-
-
-For this model we estimate the concordance and casewise concordance as well 
-as the marginal rates of stuttering for females. 
-
-
-``` r
-concordanceTwinACE(bintwin1,type="ace")
-#> $MZ
-#>                      Estimate  Std.Err     2.5%   97.5%   P-value
-#> concordance          0.009738 0.004010 0.001878 0.01760 1.517e-02
-#> casewise concordance 0.476141 0.190613 0.102547 0.84974 1.249e-02
-#> marginal             0.020452 0.005083 0.010489 0.03041 5.733e-05
-#> 
-#> $DZ
-#>                      Estimate  Std.Err       2.5%   97.5%   P-value
-#> concordance          0.001301 0.001158 -0.0009681 0.00357 2.611e-01
-#> casewise concordance 0.063604 0.057255 -0.0486137 0.17582 2.666e-01
-#> marginal             0.020452 0.005083  0.0104894 0.03041 5.733e-05
-```
-
-
-The E component was not consistent with the fit of the data and we
-now consider instead the AE model. 
 
 
 
-``` r
-out <- twin.polygen.design(twinstut,id="tvparnr",zygname="zyg",zyg="dz",type="ae")
-
-bintwin <- binomial_twostage(margbin,data=twinstut,
-     clusters=twinstut$tvparnr,detail=0,theta=c(0.1)/1,var.link=0,
-     random.design=out$des.rv,theta.des=out$pardes)
-summary(bintwin)
-#> Dependence parameter for Clayton-Oakes model
-#> Variance of Gamma distributed random effects
-#> $estimates
-#>                 theta        se
-#> dependence1 0.8485392 0.4941264
-#> 
-#> $type
-#> [1] "clayton.oakes"
-#> 
-#> $h
-#>             Estimate Std.Err 2.5% 97.5% P-value
-#> dependence1        1       0    1     1       0
-#> 
-#> $vare
-#> NULL
-#> 
-#> $vartot
-#>    Estimate Std.Err    2.5% 97.5% P-value
-#> p1   0.8485  0.4941 -0.1199 1.817 0.08593
-#> 
-#> attr(,"class")
-#> [1] "summary.mets.twostage"
-```
-
-Again, the concordance can be computed: 
 
 
-``` r
-concordanceTwinACE(bintwin,type="ae")
-#> $MZ
-#>                      Estimate  Std.Err     2.5%   97.5%   P-value
-#> concordance          0.009236 0.003778 0.001831 0.01664 1.450e-02
-#> casewise concordance 0.451605 0.189131 0.080916 0.82229 1.695e-02
-#> marginal             0.020452 0.005083 0.010489 0.03041 5.733e-05
-#> 
-#> $DZ
-#>                      Estimate   Std.Err      2.5%    97.5%   P-value
-#> concordance          0.001966 0.0007099 0.0005741 0.003357 5.628e-03
-#> casewise concordance 0.096106 0.0196561 0.0575803 0.134631 1.012e-06
-#> marginal             0.020452 0.0050831 0.0104894 0.030415 5.733e-05
-```
 
 
-SessionInfo
-============
 
 
-``` r
-sessionInfo()
-#> R version 4.5.2 (2025-10-31)
-#> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 26.04 LTS
-#> 
-#> Matrix products: default
-#> BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.12.1 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.1;  LAPACK version 3.12.0
-#> 
-#> locale:
-#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
-#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
-#> 
-#> time zone: Europe/Copenhagen
-#> tzcode source: system (glibc)
-#> 
-#> attached base packages:
-#> [1] stats     graphics  grDevices utils     datasets  methods   base     
-#> 
-#> other attached packages:
-#> [1] timereg_2.0.7  survival_3.8-9 mets_1.3.13    colorout_1.3-3
-#> 
-#> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.6              knitr_1.51             rlang_1.3.0           
-#>  [4] xfun_0.60              otel_0.2.0             future.apply_1.20.2   
-#>  [7] listenv_1.0.0          lava_1.9.3             grid_4.5.2            
-#> [10] evaluate_1.0.5         mvtnorm_1.4-2          numDeriv_2016.8-1.1   
-#> [13] compiler_4.5.2         codetools_0.2-20       ucminf_1.2.3          
-#> [16] Rcpp_1.1.2             future_1.75.0          lattice_0.23-1        
-#> [19] digest_0.6.39          parallelly_1.48.0      parallel_4.5.2        
-#> [22] splines_4.5.2          Matrix_1.7-6           tools_4.5.2           
-#> [25] RcppArmadillo_15.4.2-1 globals_0.19.1
-```
+
+
+
