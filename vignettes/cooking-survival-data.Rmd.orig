@@ -772,6 +772,35 @@ library(mets)
 
 ```
 
+With our own covariates 
+
+```{r}
+#| fig.alt: >
+#|   Recurrent events: two-stage-II Cox model.
+ X <- matrix(rbinom(2*n,1,0.5),n,2)
+ beta1 <- c(0.3,-0.3)
+ betad <- c(0.3,-0.3)
+ r1 <- exp( X%*% beta1)
+ rd <- exp( X%*% beta1)
+ simccO <- sim_recurrent_ts(xr,dr,n=n,r1=r1,rd=rd,cens=0.25)
+ simccO$X1 <- X[simccO$id,1]
+ simccO$X2 <- X[simccO$id,2]
+
+ xrs <- phreg(Surv(entry,time,status==1)~X1+X2+cluster(id),data=simccO)
+ drs <- phreg(Surv(entry,time,status==3)~X1+X2+cluster(id),data=simccO)
+ estimate(xrs)
+ estimate(drs)
+
+ par(mfrow=c(1,2))
+ plot(xrs); 
+ plot(xr,add=TRUE,col=3,lwd=3)
+###
+ plot(drs)
+ plot(dr,add=TRUE,col=3,lwd=3)
+```
+
+
+
 Now with Ghosh-Lin and Cox marginals:
 
 ```{r}
@@ -795,6 +824,9 @@ Now with Ghosh-Lin and Cox marginals:
  plot(dr,add=TRUE)
 
 ```
+
+
+
 
 We can also fit and simulate from stratified models:
 

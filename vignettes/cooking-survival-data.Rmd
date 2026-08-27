@@ -960,6 +960,42 @@ library(mets)
 
 <img src="figure/cooking-survival-data-unnamed-chunk-15-1.png" alt="Recurrent events: two-stage Cox model."  />
 
+With our own covariates 
+
+
+``` r
+ X <- matrix(rbinom(2*n,1,0.5),n,2)
+ beta1 <- c(0.3,-0.3)
+ betad <- c(0.3,-0.3)
+ r1 <- exp( X%*% beta1)
+ rd <- exp( X%*% beta1)
+ simccO <- sim_recurrent_ts(xr,dr,n=n,r1=r1,rd=rd,cens=0.25)
+ simccO$X1 <- X[simccO$id,1]
+ simccO$X2 <- X[simccO$id,2]
+
+ xrs <- phreg(Surv(entry,time,status==1)~X1+X2+cluster(id),data=simccO)
+ drs <- phreg(Surv(entry,time,status==3)~X1+X2+cluster(id),data=simccO)
+ estimate(xrs)
+#>    Estimate Std.Err    2.5%   97.5% P-value
+#> X1   0.1409  0.1824 -0.2166  0.4984 0.43974
+#> X2  -0.5093  0.1816 -0.8652 -0.1535 0.00503
+ estimate(drs)
+#>    Estimate Std.Err    2.5%   97.5%  P-value
+#> X1  -0.2279  0.3055 -0.8268  0.3709 0.455630
+#> X2  -0.8256  0.3181 -1.4492 -0.2021 0.009453
+
+ par(mfrow=c(1,2))
+ plot(xrs); 
+ plot(xr,add=TRUE,col=3,lwd=3)
+###
+ plot(drs)
+ plot(dr,add=TRUE,col=3,lwd=3)
+```
+
+<img src="figure/cooking-survival-data-unnamed-chunk-16-1.png" alt="Recurrent events: two-stage-II Cox model."  />
+
+
+
 Now with Ghosh-Lin and Cox marginals:
 
 
@@ -978,10 +1014,10 @@ Now with Ghosh-Lin and Cox marginals:
  drs <- phreg(Surv(entry,time,status==3)~treatment+cluster(id),data=simglcox)
  estimate(GLs)
 #>            Estimate Std.Err    2.5%  97.5% P-value
-#> treatment1 -0.05645  0.1593 -0.3687 0.2558   0.723
+#> treatment1 -0.04038  0.1476 -0.3296 0.2489  0.7844
  estimate(drs)
-#>            Estimate Std.Err   2.5%   97.5% P-value
-#> treatment1  -0.7905  0.3202 -1.418 -0.1629 0.01355
+#>            Estimate Std.Err   2.5%  97.5% P-value
+#> treatment1  -0.5098  0.3211 -1.139 0.1196  0.1124
 
  par(mfrow=c(1,2))
  plot(GLs); 
@@ -990,7 +1026,10 @@ Now with Ghosh-Lin and Cox marginals:
  plot(dr,add=TRUE)
 ```
 
-<img src="figure/cooking-survival-data-unnamed-chunk-16-1.png" alt="Recurrent events: Ghosh-Lin and Cox model."  />
+<img src="figure/cooking-survival-data-unnamed-chunk-17-1.png" alt="Recurrent events: Ghosh-Lin and Cox model."  />
+
+
+
 
 We can also fit and simulate from stratified models:
 
@@ -1009,24 +1048,24 @@ rr <- sim_recurrent_ts(xr,dr,n=n,data=hf)
 rxr <- phreg(Surv(entry,time,status==1)~strata(x)+age+cluster(id),data=rr)
 rdr <- phreg(Surv(entry,time,status==3)~x+strata(Z1)+age+cluster(id),data=rr)
 estimate(xr)
-#>     Estimate Std.Err     2.5%  97.5% P-value
-#> age   0.0273 0.03922 -0.04958 0.1042  0.4864
+#>     Estimate Std.Err     2.5%   97.5% P-value
+#> age -0.01162 0.04044 -0.09087 0.06764  0.7739
 estimate(rxr)
-#>      Estimate Std.Err   2.5%  97.5% P-value
-#> age 0.0002297 0.05522 -0.108 0.1085  0.9967
+#>     Estimate Std.Err    2.5% 97.5% P-value
+#> age -0.00045 0.05686 -0.1119 0.111  0.9937
 estimate(dr)
-#>     Estimate Std.Err     2.5%    97.5% P-value
-#> x   -0.42738 0.18252 -0.78510 -0.06965  0.0192
-#> age  0.09527 0.08586 -0.07301  0.26354  0.2672
-estimate(rdr)
 #>     Estimate Std.Err    2.5%    97.5% P-value
-#> x   -0.48230 0.20942 -0.8928 -0.07185 0.02128
-#> age  0.04296 0.09506 -0.1433  0.22927 0.65130
+#> x   -0.43284 0.18302 -0.7916 -0.07412 0.01803
+#> age  0.09625 0.08768 -0.0756  0.26810 0.27232
+estimate(rdr)
+#>     Estimate Std.Err    2.5%  97.5%  P-value
+#> x   -0.06649  0.1960 -0.4507 0.3177 0.734449
+#> age  0.31483  0.1002  0.1185 0.5112 0.001672
 plot(xr); plot(rxr,add=TRUE)
 plot(dr,add=TRUE,col=2); plot(rdr,add=TRUE,col=2)
 ```
 
-<img src="figure/cooking-survival-data-unnamed-chunk-17-1.png" alt="Recurrent events: stratified two-stage model."  />
+<img src="figure/cooking-survival-data-unnamed-chunk-18-1.png" alt="Recurrent events: stratified two-stage model."  />
 
 ``` r
 ###
@@ -1038,24 +1077,24 @@ rr <- sim_recurrent_ts(glr,dr,n=n,data=hf)
 rxr <- recreg(Event(entry,time,status)~strata(x)+age+cluster(id),data=rr,death.code=3)
 rdr <- phreg(Surv(entry,time,status==3)~x+strata(Z1)+age+cluster(id),data=rr)
 estimate(xr)
-#>     Estimate Std.Err     2.5%  97.5% P-value
-#> age   0.0273 0.03922 -0.04958 0.1042  0.4864
+#>     Estimate Std.Err     2.5%   97.5% P-value
+#> age -0.01162 0.04044 -0.09087 0.06764  0.7739
 estimate(rxr)
-#>     Estimate Std.Err     2.5%  97.5% P-value
-#> age  0.06015 0.06414 -0.06556 0.1859  0.3483
+#>     Estimate Std.Err    2.5%   97.5% P-value
+#> age -0.08981 0.05505 -0.1977 0.01809  0.1028
 estimate(dr)
-#>     Estimate Std.Err     2.5%    97.5% P-value
-#> x   -0.42738 0.18252 -0.78510 -0.06965  0.0192
-#> age  0.09527 0.08586 -0.07301  0.26354  0.2672
-estimate(rdr)
 #>     Estimate Std.Err    2.5%    97.5% P-value
-#> x   -0.48433  0.2076 -0.8913 -0.07738 0.01967
-#> age  0.05767  0.1067 -0.1515  0.26682 0.58887
+#> x   -0.43284 0.18302 -0.7916 -0.07412 0.01803
+#> age  0.09625 0.08768 -0.0756  0.26810 0.27232
+estimate(rdr)
+#>     Estimate Std.Err   2.5%   97.5% P-value
+#> x   -0.52331 0.21209 -0.939 -0.1076 0.01361
+#> age  0.03716 0.09343 -0.146  0.2203 0.69083
 plot(glr); plot(rxr,add=TRUE)
 plot(dr,add=TRUE,col=2); plot(rdr,add=TRUE,col=2)
 ```
 
-<img src="figure/cooking-survival-data-unnamed-chunk-17-2.png" alt="Recurrent events: stratified two-stage model."  />
+<img src="figure/cooking-survival-data-unnamed-chunk-18-2.png" alt="Recurrent events: stratified two-stage model."  />
 
 
 Frailty models (simulations based on the rates/intensities) 
@@ -1073,7 +1112,7 @@ Frailty models (simulations based on the rates/intensities)
  mets:::showfitsim(causes=1,rr,dr,base1,base1,which=1:2)
 ```
 
-<img src="figure/cooking-survival-data-unnamed-chunk-18-1.png" alt="Recurrent events: frailty model simulations."  />
+<img src="figure/cooking-survival-data-unnamed-chunk-19-1.png" alt="Recurrent events: frailty model simulations."  />
 
 ``` r
 
@@ -1082,12 +1121,12 @@ Frailty models (simulations based on the rates/intensities)
 #> 
 #>       status    0    1    2
 #> death                      
-#> 0              41 1123  161
-#> 1             359    0    0
+#> 0              53 1242  175
+#> 1             347    0    0
  mets:::showfitsim(causes=2,rr,dr,base1,base4,which=1:2)
 ```
 
-<img src="figure/cooking-survival-data-unnamed-chunk-18-2.png" alt="Recurrent events: frailty model simulations."  />
+<img src="figure/cooking-survival-data-unnamed-chunk-19-2.png" alt="Recurrent events: frailty model simulations."  />
 
 ``` r
 
@@ -1098,13 +1137,13 @@ Frailty models (simulations based on the rates/intensities)
 #> 
 #>       status   0   1   2   3
 #> death                       
-#> 0             10 832 847 111
+#> 0             12 916 868 114
 #> 1            277   0   0   0
-#> 2            113   0   0   0
+#> 2            111   0   0   0
  mets:::showfitsimList(rr,cumhaz,drl) 
 ```
 
-<img src="figure/cooking-survival-data-unnamed-chunk-18-3.png" alt="Recurrent events: frailty model simulations."  />
+<img src="figure/cooking-survival-data-unnamed-chunk-19-3.png" alt="Recurrent events: frailty model simulations."  />
 
 
 # SessionInfo
