@@ -107,7 +107,10 @@ The variance estimation is based on squared influence functions, with options
 for naive variance (assuming known censoring) and robust variance (accounting 
 for censoring model estimation).
 
-Censoring model may depend on strata (cens.model=~strata(gX)).
+Censoring model may depend on strata (cens.model=~strata(gX)). 
+
+The outcome can also be numeric or a factor and then the estimatingestimating equations are solved with this response without IPCW adjustments. 
+Finally, we may also specify Ydirect that then are used for solving the equations wiht IPCW adjusment.
 }
 \section{References}{
 

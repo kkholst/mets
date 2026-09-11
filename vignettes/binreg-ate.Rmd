@@ -1,7 +1,7 @@
 ---
 title: "Average treatment effect (ATE) for Competing risks and binary outcomes"
 author: Klaus Holst & Thomas Scheike
-date: "2026-08-23"
+date: "2026-09-11"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes
@@ -86,6 +86,7 @@ clust <- 0
 b2 <- binregATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,
 	treat.model=gp.f~dnr+preauto+ttt24,time=40,cens.model=~strata(gp,dnr))
 summary(b2)
+#> binomial regression: outcome= cif model= logit
 #>    n events
 #>  400    137
 #> 
@@ -121,6 +122,7 @@ summary(b2)
 b5 <- binregATE(Event(time,cause)~int+preauto+ttt24,kumar,cause=2,
 		treat.model=int~preauto+ttt24,cens.code=0,time=60)
 summary(b5)
+#> binomial regression: outcome= cif model= logit
 #>    n events
 #>  400    142
 #> 
@@ -189,6 +191,7 @@ with that of wglm and its ate function in the riskRegression package, and they a
 ib2 <- logitIPCWATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,
 	treat.model=gp.f~dnr+preauto+ttt24,time=40,cens.model=~strata(gp,dnr))
 summary(ib2)
+#> binomial regression: outcome= cif model= logit
 #>    n events
 #>  400    137
 #> 
@@ -224,6 +227,7 @@ summary(ib2)
 ib5 <- logitIPCW(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,cens.code=0,
 	 time=60,cens.model=~strata(gp,dnr))
 summary(ib5)
+#> binomial regression: outcome= cif model= logit
 #>    n events
 #>  400    142
 #> 
@@ -246,6 +250,7 @@ summary(ib5)
 
 ibs <- logitIPCW(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,cens.code=0,time=60)
 summary(ibs)
+#> binomial regression: outcome= cif model= logit
 #>    n events
 #>  400    142
 #> 
@@ -401,6 +406,7 @@ kumar$cause2 <- 1*(kumar$cause==2)
 
 b3 <- logitATE(cause2~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24)
 summary(b3)
+#> binomial regression: outcome= cif model= logit
 #>    n events
 #>  400    400
 #> 
@@ -433,6 +439,48 @@ summary(b3)
 #> treat1     0.421615  0.033616  0.355729  0.487500  0.0000
 #> treat:1-0  0.078164  0.053961 -0.027599  0.183926  0.1475
 
+## same as, 
+bb3 <- binregATE(cause2~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24,model="logit")
+summary(bb3)
+#> binomial regression: outcome= numeric model= logit
+#>    n events
+#>  400    400
+#> 
+#>  400 clusters
+#> coeffients:
+#>              Estimate   Std.Err      2.5%     97.5% P-value
+#> (Intercept) -1.219960  0.200830 -1.613580 -0.826341  0.0000
+#> gp.f1        0.387595  0.243738 -0.090123  0.865314  0.1118
+#> dnr          0.633992  0.241410  0.160837  1.107147  0.0086
+#> preauto      0.139356  0.248680 -0.348049  0.626761  0.5752
+#> ttt24        0.449527  0.243475 -0.027675  0.926730  0.0648
+#> 
+#> exp(coeffients):
+#>             Estimate    2.5%  97.5%
+#> (Intercept)  0.29524 0.19917 0.4376
+#> gp.f1        1.47343 0.91382 2.3758
+#> dnr          1.88512 1.17449 3.0257
+#> preauto      1.14953 0.70606 1.8715
+#> ttt24        1.56757 0.97270 2.5262
+#> 
+#> Average Treatment effects (G-formula) :
+#>            Estimate   Std.Err      2.5%     97.5% P-value
+#> treat0     0.316084  0.037954  0.241695  0.390472  0.0000
+#> treat1     0.400809  0.033395  0.335356  0.466262  0.0000
+#> treat:1-0  0.084726  0.052651 -0.018468  0.187919  0.1076
+#> 
+#> Average Treatment effects (double robust) :
+#>            Estimate   Std.Err      2.5%     97.5% P-value
+#> treat0     0.343451  0.042284  0.260577  0.426325  0.0000
+#> treat1     0.421615  0.033616  0.355729  0.487500  0.0000
+#> treat:1-0  0.078164  0.053961 -0.027599  0.183926  0.1475
+
+## same as 
+###dfactor(kumar) <- cause2f~cause2
+###bb3 <- binregATE(cause2f~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24)
+###summary(bb3)
+
+
 ###library(targeted)
 ###b3a <- ate(cause2~gp.f|dnr+preauto+ttt24| dnr+preauto+ttt24,kumar,family=binomial)
 ###summary(b3a)
@@ -449,6 +497,36 @@ Or with continuous response using normal estimating equations
 ``` r
 b3 <- normalATE(time~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24)
 summary(b3)
+#> binomial regression: outcome= rmst model= lin
+#>    n events
+#>  400    400
+#> 
+#>  400 clusters
+#> coeffients:
+#>             Estimate  Std.Err     2.5%    97.5% P-value
+#> (Intercept)  43.4758   4.0796  35.4800  51.4716  0.0000
+#> gp.f1       -27.2211   4.1379 -35.3313 -19.1109  0.0000
+#> dnr           2.9485   4.4768  -5.8259  11.7228  0.5101
+#> preauto      -2.8172   3.6191  -9.9105   4.2760  0.4363
+#> ttt24        -1.9787   4.1285 -10.0704   6.1131  0.6318
+#> 
+#> 
+#> Average Treatment effects (G-formula) :
+#>           Estimate  Std.Err     2.5%    97.5% P-value
+#> treat0     42.3170   3.8362  34.7982  49.8357       0
+#> treat1     15.0958   1.3284  12.4922  17.6994       0
+#> treat:1-0 -27.2211   4.1379 -35.3313 -19.1109       0
+#> 
+#> Average Treatment effects (double robust) :
+#>           Estimate  Std.Err     2.5%    97.5% P-value
+#> treat0     42.3200   4.0417  34.3985  50.2415       0
+#> treat1     15.1545   1.2580  12.6888  17.6201       0
+#> treat:1-0 -27.1655   4.2405 -35.4768 -18.8543       0
+
+## same as, 
+bb3 <- binregATE(time~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24)
+summary(bb3)
+#> binomial regression: outcome= numeric model= lin
 #>    n events
 #>  400    400
 #> 
@@ -506,18 +584,18 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] timereg_2.0.7  survival_3.8-9 mets_1.3.13    colorout_1.3-3
+#> [1] mets_1.3.13    colorout_1.3-3
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] cli_3.6.6              knitr_1.51             rlang_1.3.0           
 #>  [4] xfun_0.60              otel_0.2.0             future.apply_1.20.2   
 #>  [7] listenv_1.0.0          lava_1.9.3             grid_4.5.2            
 #> [10] evaluate_1.0.5         mvtnorm_1.4-2          numDeriv_2016.8-1.1   
-#> [13] compiler_4.5.2         codetools_0.2-20       ucminf_1.2.3          
+#> [13] timereg_2.0.7          compiler_4.5.2         codetools_0.2-20      
 #> [16] Rcpp_1.1.2             future_1.75.0          lattice_0.23-1        
 #> [19] digest_0.6.39          parallelly_1.48.0      parallel_4.5.2        
 #> [22] splines_4.5.2          Matrix_1.7-6           tools_4.5.2           
-#> [25] RcppArmadillo_15.4.2-1 globals_0.19.1
+#> [25] RcppArmadillo_15.4.2-1 globals_0.19.1         survival_3.8-9
 ```
 
 

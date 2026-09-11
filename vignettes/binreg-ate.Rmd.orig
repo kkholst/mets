@@ -253,6 +253,16 @@ kumar$cause2 <- 1*(kumar$cause==2)
 b3 <- logitATE(cause2~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24)
 summary(b3)
 
+## same as, 
+bb3 <- binregATE(cause2~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24,model="logit")
+summary(bb3)
+
+## same as 
+###dfactor(kumar) <- cause2f~cause2
+###bb3 <- binregATE(cause2f~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24)
+###summary(bb3)
+
+
 ###library(targeted)
 ###b3a <- ate(cause2~gp.f|dnr+preauto+ttt24| dnr+preauto+ttt24,kumar,family=binomial)
 ###summary(b3a)
@@ -266,6 +276,10 @@ Or with continuous response using normal estimating equations
 ```{r}
 b3 <- normalATE(time~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24)
 summary(b3)
+
+## same as, 
+bb3 <- binregATE(time~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24)
+summary(bb3)
 ```
 
 

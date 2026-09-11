@@ -126,6 +126,8 @@ IPCW-censoring adjusted. As an alternative to binomial regression,
 When \code{typeATE = "II"}, the estimating equation is augmented with:
 \deqn{ (A/\pi(X)) \int E( O(t) | T \geq t, S(X))/ G_c(t,S(X)) d \hat M_c(s) }
 when estimating the mean outcome for the treated group.
+
+The outcome can also be numeric or a factor and then the estimating equations are solved with this response without IPCW adjustments.
 }
 \section{References}{
 
