@@ -566,7 +566,7 @@ print.binreg  <- function(x,...) {# {{{
 ##' @export
 summary.binreg <- function(object,...) {# {{{
 
-cat(paste("binomial regression: outcome=",object$outcome,"model=",object$model,"\n"))
+cat(paste("outcome=",object$outcome,"link-model=",object$model,"\n"))
 if (!is.null(object$gradient)) { ## write warning if gradient not small 
 gradient <- max(abs(object$gradient))
 if (gradient > 0.000001) { cat("gradient:\n"); print(object$gradient) }

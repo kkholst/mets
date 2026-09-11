@@ -43,14 +43,15 @@ Also works with cluster argument.
 
 data(bmt)
 dfactor(bmt) <- platelet.f~platelet
+dfactor(bmt) <- tcell.f~tcell
 ## logistic modelling of cumulative incidence 
-gg <- binreg_IPTW(Event(time,cause)~platelet.f+age,bmt,
+gg <- binreg_IPTW(Event(time,cause)~platelet.f+age,data=bmt,
 	       treat.model=platelet.f~age,time=30)
 summary(gg)
 head(iid(gg))
 
 ## logistic modelling  
-gg <- binreg_IPTW(tcell~platelet.f+age,bmt,
+gg <- binreg_IPTW(tcell.f~platelet.f+age,data=bmt,
 	       treat.model=platelet.f~age)
 summary(gg)
 }
