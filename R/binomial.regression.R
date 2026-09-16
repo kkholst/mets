@@ -566,7 +566,6 @@ print.binreg  <- function(x,...) {# {{{
 ##' @export
 summary.binreg <- function(object,...) {# {{{
 
-cat(paste(" Regression: outcome=",object$outcome,"link-model=",object$model,"\n"))
 if (!is.null(object$gradient)) { ## write warning if gradient not small 
 gradient <- max(abs(object$gradient))
 if (gradient > 0.000001) { cat("gradient:\n"); print(object$gradient) }
@@ -608,6 +607,8 @@ return(res)
 
 ##' @export
 print.summary.binreg <- function(x,max.strata=5,...) { ## {{{
+
+cat(paste(" Regression: outcome=",x$outcome,"link-model=",x$model,"\n"))
 
   nn <- cbind(x$n, x$nevent)
   rownames(nn) <- levels(x$strata); colnames(nn) <- c("n","events")
