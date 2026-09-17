@@ -575,7 +575,7 @@ cc  <- estimate(coef=object$coef,vcov=object$var)$coefmat
 V=object$var
 
 res <- list(coef=cc,n=object$n,nevent=object$nevent,strata=NULL,
-	    ncluster=object$ncluster,var=V,model=object$model[1])
+	    ncluster=object$ncluster,var=V,model=object$model[1],outcome=object$outcome[1])
 
 if (object$model[1]=="exp" | object$model[1]=="logit") {
 expC <- exp(lava::estimate(coef=coef(object),vcov=object$var)$coefmat[,c(1,3,4),drop=FALSE])
@@ -608,7 +608,7 @@ return(res)
 ##' @export
 print.summary.binreg <- function(x,max.strata=5,...) { ## {{{
 
-cat(paste(" Regression: outcome=",x$outcome,"link-model=",x$model,"\n"))
+cat(paste("Regression: outcome=",x$outcome,"link-model=",x$model,"\n"))
 
   nn <- cbind(x$n, x$nevent)
   rownames(nn) <- levels(x$strata); colnames(nn) <- c("n","events")
