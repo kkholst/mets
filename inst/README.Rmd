@@ -1,5 +1,5 @@
 ---
-output:
+git puoutput:
   github_document
 ---
 
@@ -94,7 +94,7 @@ render_toc <- function(
 ## Table of Contents
 
 ```{r toc, echo=FALSE}
-render_toc("README.Rmd", toc_depth = 2)
+render_toc("README.Rmd", toc_depth = 3)
 ```
 
 ## Installation
