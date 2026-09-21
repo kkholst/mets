@@ -1,36 +1,4 @@
 
-- [Multivariate Event Times (`mets`)
-  <img src="man/figures/logo.png" align="right" height="250" style="float:right; height:250px;"  alt="mets website">](#multivariate-event-times-mets-)
-  - [Installation](#installation)
-  - [Citation](#citation)
-  - [Examples: Twins Polygenic
-    modelling](#examples-twins-polygenic-modelling)
-  - [Examples: Twins Polygenic modelling time-to-events
-    Data](#examples-twins-polygenic-modelling-time-to-events-data)
-  - [Examples: Twins Concordance for time-to-events
-    Data](#examples-twins-concordance-for-time-to-events-data)
-  - [Examples: Cox model, RMST](#examples-cox-model-rmst)
-  - [Examples: Cox model IPTW](#examples-cox-model-iptw)
-  - [Examples: Competing risks regression, Binomial
-    Regression](#examples-competing-risks-regression-binomial-regression)
-  - [Examples: Brier-score for Binomial
-    Regression](#examples-brier-score-for-binomial-regression)
-  - [Examples: Competing risks regression, Fine-Gray/Logistic
-    link](#examples-competing-risks-regression-fine-graylogistic-link)
-  - [Examples: Marginal mean for recurrent
-    events](#examples-marginal-mean-for-recurrent-events)
-  - [Examples: Ghosh-Lin for recurrent
-    events](#examples-ghosh-lin-for-recurrent-events)
-  - [Examples: Fixed time modelling for recurrent
-    events](#examples-fixed-time-modelling-for-recurrent-events)
-  - [Examples: Regression for RMST/Restricted mean survival for survival
-    and competing risks using
-    IPCW](#examples-regression-for-rmstrestricted-mean-survival-for-survival-and-competing-risks-using-ipcw)
-  - [Examples: Average treatment effects (ATE) for survival or competing
-    risks](#examples-average-treatment-effects-ate-for-survival-or-competing-risks)
-  - [Examples: While Alive estimands for recurrent
-    events](#examples-while-alive-estimands-for-recurrent-events)
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 <!-- badges: start-->
@@ -54,6 +22,38 @@ regression) with fast computation of influence functions. Restricted
 mean survival time regression and years lost for competing risks.
 Average treatment effects and G-computation. All functions can be used
 with clusters and will work for large data.
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Citation](#citation)
+- [Examples: Twins Polygenic
+  modelling](#examples:-twins-polygenic-modelling)
+- [Examples: Twins Polygenic modelling time-to-events
+  Data](#examples:-twins-polygenic-modelling-time-to-events-data)
+- [Examples: Twins Concordance for time-to-events
+  Data](#examples:-twins-concordance-for-time-to-events-data)
+- [Examples: Cox model, RMST](#examples:-cox-model,-rmst)
+- [Examples: Cox model IPTW](#examples:-cox-model-iptw)
+- [Examples: Competing risks regression, Binomial
+  Regression](#examples:-competing-risks-regression,-binomial-regression)
+- [Examples: Brier-score for Binomial
+  Regression](#examples:-brier-score-for-binomial-regression)
+- [Examples: Competing risks regression, Fine-Gray/Logistic
+  link](#examples:-competing-risks-regression,-fine-gray/logistic-link)
+- [Examples: Marginal mean for recurrent
+  events](#examples:-marginal-mean-for-recurrent-events)
+- [Examples: Ghosh-Lin for recurrent
+  events](#examples:-ghosh-lin-for-recurrent-events)
+- [Examples: Fixed time modelling for recurrent
+  events](#examples:-fixed-time-modelling-for-recurrent-events)
+- [Examples: Regression for RMST/Restricted mean survival for survival
+  and competing risks using
+  IPCW](#examples:-regression-for-rmst/restricted-mean-survival-for-survival-and-competing-risks--using-ipcw-)
+- [Examples: Average treatment effects (ATE) for survival or competing
+  risks](#examples:-average-treatment-effects-(ate)-for-survival-or-competing-risks)
+- [Examples: While Alive estimands for recurrent
+  events](#examples:-while-alive-estimands-for-recurrent-events)
 
 ## Installation
 
@@ -231,9 +231,9 @@ b0 <- bptwin.time(cancer ~ 1, data=prt0, id="id", zyg="zyg", DZ="DZ", type="cor"
 summary(b0)
 #> 
 #>                Estimate   Std.Err        Z   p-value    
-#> (Intercept)   -1.348188  0.026276 -51.3086 < 2.2e-16 ***
-#> atanh(rho) MZ  0.735992  0.087838   8.3789 < 2.2e-16 ***
-#> atanh(rho) DZ  0.353023  0.068234   5.1737 2.295e-07 ***
+#> (Intercept)   -1.348185  0.026276 -51.3086 < 2.2e-16 ***
+#> atanh(rho) MZ  0.736009  0.087839   8.3790 < 2.2e-16 ***
+#> atanh(rho) DZ  0.353021  0.068234   5.1737 2.295e-07 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
@@ -241,26 +241,26 @@ summary(b0)
 #>  1994/3618   997/1809            
 #> 
 #>                            Estimate 2.5%    97.5%  
-#> Tetrachoric correlation MZ 0.62672  0.51081 0.72024
+#> Tetrachoric correlation MZ 0.62673  0.51083 0.72025
 #> Tetrachoric correlation DZ 0.33905  0.21584 0.45164
 #> 
 #> MZ:
 #>                      Estimate 2.5%    97.5%  
 #> Concordance          0.03504  0.02779 0.04409
-#> Casewise Concordance 0.39458  0.31876 0.47584
-#> Marginal             0.08880  0.08086 0.09743
-#> Rel.Recur.Risk       4.44351  3.50521 5.38182
-#> log(OR)              2.34131  1.87105 2.81157
+#> Casewise Concordance 0.39459  0.31876 0.47585
+#> Marginal             0.08880  0.08086 0.09744
+#> Rel.Recur.Risk       4.44359  3.50527 5.38190
+#> log(OR)              2.34135  1.87109 2.81161
 #> DZ:
 #>                      Estimate 2.5%    97.5%  
 #> Concordance          0.01952  0.01449 0.02625
 #> Casewise Concordance 0.21983  0.16667 0.28415
-#> Marginal             0.08880  0.08086 0.09743
-#> Rel.Recur.Risk       2.47556  1.81096 3.14016
-#> log(OR)              1.23088  0.81020 1.65156
+#> Marginal             0.08880  0.08086 0.09744
+#> Rel.Recur.Risk       2.47555  1.81094 3.14015
+#> log(OR)              1.23087  0.81019 1.65155
 #> 
 #>                          Estimate 2.5%    97.5%  
-#> Broad-sense heritability 0.57533  0.25790 0.89276
+#> Broad-sense heritability 0.57535  0.25792 0.89278
 #> 
 #> 
 #> Event of interest before time 95
@@ -274,9 +274,9 @@ b1 <- bptwin.time(cancer ~ 1, data=prt0, id="id", zyg="zyg", DZ="DZ", type="ace"
 summary(b1)
 #> 
 #>             Estimate  Std.Err        Z p-value    
-#> (Intercept) -2.20664  0.16463 -13.4033  <2e-16 ***
-#> log(var(A))  0.43260  0.39149   1.1050  0.2691    
-#> log(var(C)) -1.98289  2.52342  -0.7858  0.4320    
+#> (Intercept) -2.20664  0.16463 -13.4037  <2e-16 ***
+#> log(var(A))  0.43260  0.39144   1.1051  0.2691    
+#> log(var(C)) -1.98286  2.52294  -0.7859  0.4319    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
@@ -284,29 +284,29 @@ summary(b1)
 #>  1994/3618   997/1809            
 #> 
 #>                    Estimate 2.5%     97.5%   
-#> A                   0.57533  0.25790  0.89276
-#> C                   0.05139 -0.20836  0.31114
-#> E                   0.37328  0.26874  0.47782
-#> MZ Tetrachoric Cor  0.62672  0.51081  0.72024
-#> DZ Tetrachoric Cor  0.33905  0.21584  0.45164
+#> A                   0.57533  0.25794  0.89271
+#> C                   0.05139 -0.20832  0.31110
+#> E                   0.37328  0.26875  0.47782
+#> MZ Tetrachoric Cor  0.62672  0.51082  0.72024
+#> DZ Tetrachoric Cor  0.33905  0.21586  0.45163
 #> 
 #> MZ:
 #>                      Estimate 2.5%    97.5%  
 #> Concordance          0.03504  0.02779 0.04409
 #> Casewise Concordance 0.39458  0.31876 0.47584
 #> Marginal             0.08880  0.08086 0.09743
-#> Rel.Recur.Risk       4.44351  3.50520 5.38182
-#> log(OR)              2.34131  1.87104 2.81157
+#> Rel.Recur.Risk       4.44351  3.50523 5.38179
+#> log(OR)              2.34131  1.87106 2.81155
 #> DZ:
 #>                      Estimate 2.5%    97.5%  
 #> Concordance          0.01952  0.01449 0.02625
-#> Casewise Concordance 0.21983  0.16667 0.28415
+#> Casewise Concordance 0.21983  0.16668 0.28414
 #> Marginal             0.08880  0.08086 0.09743
-#> Rel.Recur.Risk       2.47556  1.81095 3.14017
-#> log(OR)              1.23088  0.81020 1.65156
+#> Rel.Recur.Risk       2.47556  1.81104 3.14008
+#> log(OR)              1.23088  0.81026 1.65151
 #> 
 #>                          Estimate 2.5%    97.5%  
-#> Broad-sense heritability 0.57533  0.25790 0.89276
+#> Broad-sense heritability 0.57533  0.25794 0.89271
 #> 
 #> 
 #> Event of interest before time 95
