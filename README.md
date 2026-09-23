@@ -28,32 +28,32 @@ with clusters and will work for large data.
 - [Installation](#installation)
 - [Citation](#citation)
 - [Examples: Twins Polygenic
-  modelling](#examples:-twins-polygenic-modelling)
+  modelling](#examples-twins-polygenic-modelling)
 - [Examples: Twins Polygenic modelling time-to-events
-  Data](#examples:-twins-polygenic-modelling-time-to-events-data)
+  Data](#examples-twins-polygenic-modelling-time-to-events-data)
 - [Examples: Twins Concordance for time-to-events
-  Data](#examples:-twins-concordance-for-time-to-events-data)
-- [Examples: Cox model, RMST](#examples:-cox-model,-rmst)
-- [Examples: Cox model IPTW](#examples:-cox-model-iptw)
+  Data](#examples-twins-concordance-for-time-to-events-data)
+- [Examples: Cox model, RMST](#examples-cox-model-rmst)
+- [Examples: Cox model IPTW](#examples-cox-model-iptw)
 - [Examples: Competing risks regression, Binomial
-  Regression](#examples:-competing-risks-regression,-binomial-regression)
+  Regression](#examples-competing-risks-regression-binomial-regression)
 - [Examples: Brier-score for Binomial
-  Regression](#examples:-brier-score-for-binomial-regression)
+  Regression](#examples-brier-score-for-binomial-regression)
 - [Examples: Competing risks regression, Fine-Gray/Logistic
-  link](#examples:-competing-risks-regression,-fine-gray/logistic-link)
+  link](#examples-competing-risks-regression-fine-graylogistic-link)
 - [Examples: Marginal mean for recurrent
-  events](#examples:-marginal-mean-for-recurrent-events)
+  events](#examples-marginal-mean-for-recurrent-events)
 - [Examples: Ghosh-Lin for recurrent
-  events](#examples:-ghosh-lin-for-recurrent-events)
+  events](#examples-ghosh-lin-for-recurrent-events)
 - [Examples: Fixed time modelling for recurrent
-  events](#examples:-fixed-time-modelling-for-recurrent-events)
+  events](#examples-fixed-time-modelling-for-recurrent-events)
 - [Examples: Regression for RMST/Restricted mean survival for survival
   and competing risks using
-  IPCW](#examples:-regression-for-rmst/restricted-mean-survival-for-survival-and-competing-risks--using-ipcw-)
+  IPCW](#examples-regression-for-rmstrestricted-mean-survival-for-survival-and-competing-risks-using-ipcw)
 - [Examples: Average treatment effects (ATE) for survival or competing
-  risks](#examples:-average-treatment-effects-(ate)-for-survival-or-competing-risks)
+  risks](#examples-average-treatment-effects-ate-for-survival-or-competing-risks)
 - [Examples: While Alive estimands for recurrent
-  events](#examples:-while-alive-estimands-for-recurrent-events)
+  events](#examples-while-alive-estimands-for-recurrent-events)
 
 ## Installation
 
@@ -506,7 +506,8 @@ IPCW adjustment
 
 ``` r
 data(bmt); bmt$time <- bmt$time+runif(408)*0.001
-# logistic regresion with IPCW binomial regression 
+# logistic regresion with IPCW binomial regression
+
 out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
 summary(out)
 #>    n events
@@ -677,7 +678,8 @@ Similarly, the Fine-Gray model can be estimated using IPCW adjustment
 #>          Estimate    2.5%  97.5%
 #> platelet  0.65418 0.45897 0.9324
 #> age       1.40798 1.20394 1.6466
-## baselines 
+## baselines
+
 plot(fg)
 ```
 
