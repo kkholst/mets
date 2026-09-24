@@ -248,8 +248,8 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
 		 if (outcome[1]=="rmst") model <- "exp"
 		 if (outcome[1]=="rmtl") model <- "exp"
 		 if (outcome[1]=="years-lost") model <- "exp"
+		 if (outcome[1]=="Ydirect") model <- "exp"
 	 }
-
     }  else { ### numeric outcome or factor coded as numeric 
 	    if (!(is.numeric(Y) | is.factor(Y))) stop("must be Event object, numeric, or a factor\n"); 
 	    Yf <- FALSE; nY <- 1

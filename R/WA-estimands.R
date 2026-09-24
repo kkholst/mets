@@ -395,7 +395,8 @@ if (!is.null(trans)) {
 }
 Yr <- rrR[,"ratio__"]
 
-outae <- binreg(formula,rrR,cause=death.code,time=time,cens.code=cens.code,Ydirect=Yr,outcome="rmst",...)
+outae <- binreg(formula,rrR,cause=death.code,time=time,cens.code=cens.code,
+		Ydirect=Yr,outcome="rmst",...)
 
 outae$outcome <- "while-alive-ratio"
 
