@@ -2598,43 +2598,48 @@ if (!is.null(call.id)) {
 }# }}}
 
 ##' @export
-logitATE <- function(formula,data,binreg=TRUE,...)
+logitATE <- function(formula,data,...)
 {# {{{
-   ## use IPCW machine in no-censoring case
-    cl <- match.call()
-    m <- match.call(expand.dots = TRUE)[1:3]
-    special <- c("strata", "cluster", "offset")
-    Terms <- terms(formula, special, data = data)
-    m$formula <- Terms
-    m[[1]] <- as.name("model.frame")
-    m <- eval(m, parent.frame())
-    Y <- model.extract(m, "response")
-    if (inherits(Y,"Event")) {
-    if (binreg) out <- binregATE(formula,data,...) else out <- logitIPCWATE(formula,data,...)
-    } else {
-      response <- all.vars(formula)[1]
-      Ydirect <-  as.numeric(data[,response]) 
-      data$time <- 2
-      data$event <- 1
-      time <- 2
-      Survform <-  update.formula(formula,Event(time,event)~.)
-      n <- nrow(data)
-      if (binreg)
-      out <- binregATE(Survform,data,se=0,cens.weights=rep(1,n),time=time,Ydirect=Ydirect,...)
-      else
-      out <- logitIPCWATE(Survform,data,se=0,cens.weights=rep(1,n),time=time,Ydirect=Ydirect,...)
-    }
+###   ## use IPCW machine in no-censoring case
+###    cl <- match.call()
+###    m <- match.call(expand.dots = TRUE)[1:3]
+###    special <- c("strata", "cluster", "offset")
+###    Terms <- terms(formula, special, data = data)
+###    m$formula <- Terms
+###    m[[1]] <- as.name("model.frame")
+###    m <- eval(m, parent.frame())
+###    Y <- model.extract(m, "response")
+###    if (inherits(Y,"Event")) {
+###    if (binreg) out <- binregATE(formula,data,...) else out <- logitIPCWATE(formula,data,...)
+###    } else {
+###      response <- all.vars(formula)[1]
+###      Ydirect <-  as.numeric(data[,response]) 
+###      data$time <- 2
+###      data$event <- 1
+###      time <- 2
+###      Survform <-  update.formula(formula,Event(time,event)~.)
+###      n <- nrow(data)
+###      if (binreg)
+###      out <- binregATE(Survform,data,se=0,cens.weights=rep(1,n),time=time,Ydirect=Ydirect,...)
+###      else
+###      out <- logitIPCWATE(Survform,data,se=0,cens.weights=rep(1,n),time=time,Ydirect=Ydirect,...)
+###    }
+
+   out <- binregATE(formula,data,...)
 
    return(out)
 }# }}}
 
 ##' @export
-normalATE <- function(formula,data,binreg=TRUE,model="lin",...)
+normalATE <- function(formula,data,...)
 {# {{{
-   if (binreg) 
-   out <- logitATE(formula,data,binreg=binreg,model=model,outcome="rmst",...)
-   else 
-   out <- logitATE(formula,data,binreg=binreg,...)
+###   if (binreg) 
+###   out <- logitATE(formula,data,binreg=binreg,model=model,outcome="rmst",...)
+###   else 
+###   out <- logitATE(formula,data,binreg=binreg,...)
+
+   out <- binregATE(formula,data,...)
+
    return(out)
 }# }}}
 
