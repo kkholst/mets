@@ -2270,7 +2270,20 @@ cif_yearslost <- function(formula,data=data,cens.code=0,times=NULL,...)
     status <- Y[,3]
   }
 
-  x <- phreg(formula,data=data,no.opt=TRUE,no.var=1,Z=as.matrix(status,ncol=1),...)
+  ## recode status so that phreg sees censoring as 0, events as 1
+  status01 <- 1*(status != cens.code)
+  data$.status01. <- status01
+  ph.formula <- if (is.null(entry))
+      update(formula, Surv(exit, .status01.) ~ .)
+  else
+      update(formula, Surv(entry, exit, .status01.) ~ .)
+  ## note: exit/entry must be visible in `data`, or add them as columns as well
+  data$exit <- exit; if (!is.null(entry)) data$entry <- entry
+
+  x <- phreg(ph.formula, data=data, no.opt=TRUE, no.var=1,
+             Z=as.matrix(status,ncol=1), ...)
+
+###  x <- phreg(formula,data=data,no.opt=TRUE,no.var=1,Z=as.matrix(status,ncol=1),...)
   causes <- sort(unique(x$cox.prep$Z[,1]))
   ccc <- which(causes %in% cens.code)
   if (length(ccc)>=1) causes <- causes[-ccc]

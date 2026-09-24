@@ -234,13 +234,11 @@ binreg <- function(formula,data,cause=1,time=NULL,beta=NULL,type=c("II","I"),
 	 if (is.null(cens.weights)) cens.weights <- rep(1,nrow(X))
 
 	 ### setting up survival/competing risks outcomes 
-	 if (!is.null(Ydirect)) Y <-  Ydirect else {
+	 if (!is.null(Ydirect)) { Y <-  Ydirect; outcome <- "Ydirect";} else {
 	     if (outcome[1]=="cif") Y <- c((status %in% cause)*(exit<=time))
 	     else { if (!competing) {
-		     if (outcome[1]=="rmst")
-		     Y <-  c(pmin(exit,time))
-		     else Y <-  c((time-pmin(exit,time)))
-		    } else Y <- c((status %in% cause)*(time-pmin(exit,time)))
+		     if (outcome[1]=="rmst") Y <-  c(pmin(exit,time)) else Y <-  c((time-pmin(exit,time)))
+		    } else { Y <- c((status %in% cause)*(time-pmin(exit,time))); outcome <- "rmtl"; }
 	     }
 	  }
 
