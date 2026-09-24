@@ -1,7 +1,7 @@
 ---
 title: "Mediation Analysis for survival data"
 author: Klaus Holst & Thomas Scheike
-date: "2026-08-23"
+date: "2026-09-24"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes
@@ -119,6 +119,7 @@ exposure and mediator (given the other covariates):
 ``` r
 aaMss2 <- binreg(Event(time,status)~gp+dnr+preauto+ttt24+cluster(id),data=dat,time=50,cause=2)
 summary(aaMss2)
+#> Regression: outcome= cif link-model= logit 
 #>    n events
 #>  200     97
 #> 
@@ -151,6 +152,7 @@ We first look at the probability of relapse at 50 months:
 aaMss <- binreg(Event(time,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
 		time=50,weights=wdata$weights,cause=2)
 summary(aaMss)
+#> Regression: outcome= cif link-model= logit 
 #>    n events
 #>  400    194
 #> 
@@ -173,6 +175,7 @@ summary(aaMss)
 
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
+#> Regression: outcome=  link-model= logit 
 #>    n events
 #>  400    194
 #> 
@@ -209,6 +212,7 @@ aaMss <- aalenMets(Surv(time/100,status==2)~dnr.f0+dnr.f1+preauto+ttt24+cluster(
 		   weights=wdata$weights)
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
+#> Regression: outcome=  link-model= lin 
 #>    n events
 #>  400    196
 #> coeffients:
@@ -241,6 +245,7 @@ summary(aaMss)
 #> ttt24    1.20389 0.77300 1.8750
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
+#> Regression: outcome=  link-model= exp 
 #>    n events
 #>  400    196
 #> coeffients:
@@ -282,6 +287,7 @@ summary(aaMss)
 #> ttt24    1.18892 0.75910 1.8621
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
+#> Regression: outcome=  link-model= exp 
 #>    n events
 #>  400    196
 #> 
@@ -325,6 +331,7 @@ summary(aaMss)
 #> ttt24    1.21086 0.60549 2.4215
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
+#> Regression: outcome=  link-model= exp 
 #>    n events
 #>  400    196
 #> 
@@ -348,6 +355,7 @@ if (runb>0) { bll <- BootmediatorSurv(aaMss,fit,data=dat,k.boot=k.boot); summary
 aaMss <- binreg(Event(ftime,status)~dnr.f0+dnr.f1+preauto+ttt24+cluster(id),data=wdata,
 		time=50,weights=wdata$weights,cens.weights=1,cause=2)
 summary(aaMss)
+#> Regression: outcome= cif link-model= logit 
 #>    n events
 #>  400    196
 #> 
@@ -369,6 +377,7 @@ summary(aaMss)
 #> ttt24        1.23917 0.65130 2.3577
 ll <- mediatorSurv(aaMss,fit,data=dat,wdata=wdata)
 summary(ll)
+#> Regression: outcome=  link-model= logit 
 #>    n events
 #>  400    196
 #> 
@@ -412,6 +421,7 @@ wdata <- medweight(fit,data=tTRACE)
 aaMss <- binreg(Event(time,status)~agecat.40+ agecat.41+ vf+chf+cluster(id),data=wdata,
 		time=7,weights=wdata$weights,cause=9)
 summary(aaMss)
+#> Regression: outcome= cif link-model= logit 
 #>     n events
 #>  4000   2016
 #> 
@@ -441,6 +451,7 @@ summary(aaMss)
 #> chf                   3.21099 2.37400  4.3431
 MultMed <- mediatorSurv(aaMss,fit,data=tTRACE,wdata=wdata)
 summary(MultMed)
+#> Regression: outcome=  link-model= logit 
 #>     n events
 #>  4000   2016
 #> 
@@ -475,6 +486,7 @@ summary(MultMed)
 
 ``` r
 summary(MultMed)
+#> Regression: outcome=  link-model= logit 
 #>     n events
 #>  4000   2016
 #> 
@@ -534,7 +546,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] timereg_2.0.7  survival_3.8-9 mets_1.3.13    colorout_1.3-3
+#> [1] timereg_2.0.7   survival_3.8-11 mets_1.3.13     colorout_1.3-3 
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] cli_3.6.6              knitr_1.51             rlang_1.3.0           

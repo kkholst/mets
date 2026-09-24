@@ -1,7 +1,7 @@
 ---
 title: "Recurrent events"
 author: Klaus Holst & Thomas Scheike
-date: "2026-08-27"
+date: "2026-09-24"
 output:
   rmarkdown::html_vignette:
     fig_caption: no
@@ -337,6 +337,7 @@ summary(dd)
 #> Proportionality               0.3865
 #> Proportionality-score-test    0.3920
 dd$RAUCl
+#> Regression: outcome=  link-model= lin 
 #>    n events
 #>  400   1184
 #> 
@@ -937,18 +938,6 @@ summary(glout)
 #> dependence1  1.04401 0.08988 0.86785 1.22017       0
 ###
 glout <- twostageREC(outs,outgl,data=rr,model="shared",theta=1,nu=0.9)
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
-#> Warning in log(N): NaNs produced
 summary(glout)
 #> Ghosh-Lin(recurrent)-Cox(terminal) mean model
 #> 
@@ -1227,40 +1216,6 @@ SessionInfo
 
 ``` r
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
-#> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 26.04 LTS
-#> 
-#> Matrix products: default
-#> BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.12.1 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.1;  LAPACK version 3.12.0
-#> 
-#> locale:
-#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
-#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
-#> 
-#> time zone: Europe/Copenhagen
-#> tzcode source: system (glibc)
-#> 
-#> attached base packages:
-#> [1] stats     graphics  grDevices utils     datasets  methods   base     
-#> 
-#> other attached packages:
-#> [1] mets_1.3.13    colorout_1.3-3
-#> 
-#> loaded via a namespace (and not attached):
-#>  [1] cli_3.6.6              knitr_1.51             rlang_1.3.0           
-#>  [4] xfun_0.60              otel_0.2.0             future.apply_1.20.2   
-#>  [7] listenv_1.0.0          lava_1.9.3             grid_4.5.2            
-#> [10] evaluate_1.0.5         numDeriv_2016.8-1.1    yaml_2.3.12           
-#> [13] mvtnorm_1.4-2          timereg_2.0.7          compiler_4.5.2        
-#> [16] codetools_0.2-20       Rcpp_1.1.2             future_1.75.0         
-#> [19] lattice_0.23-1         digest_0.6.39          parallelly_1.48.0     
-#> [22] parallel_4.5.2         splines_4.5.2          Matrix_1.7-6          
-#> [25] tools_4.5.2            RcppArmadillo_15.4.2-1 globals_0.19.1        
-#> [28] survival_3.8-9
+#> Error in `x$Priority`:
+#> ! $ operator is invalid for atomic vectors
 ```

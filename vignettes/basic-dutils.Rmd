@@ -1,7 +1,7 @@
 ---
 title: "dUtility data-frame manipulations"
 author: Klaus Holst & Thomas Scheike
-date: "2026-08-27"
+date: "2026-09-24"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes 
@@ -900,5 +900,5 @@ sessionInfo()
 #> [16] Rcpp_1.1.2             future_1.75.0          lattice_0.23-1        
 #> [19] digest_0.6.39          parallelly_1.48.0      parallel_4.5.2        
 #> [22] splines_4.5.2          Matrix_1.7-6           tools_4.5.2           
-#> [25] RcppArmadillo_15.4.2-1 globals_0.19.1         survival_3.8-9
+#> [25] RcppArmadillo_15.4.2-1 globals_0.19.1         survival_3.8-11
 ```

@@ -1,7 +1,7 @@
 ---
 title: "While Alive estimands for Recurrent Events"
 author: Klaus Holst & Thomas Scheike
-date: "2026-08-23"
+date: "2026-09-24"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes
@@ -129,6 +129,7 @@ hfactioncpx12$sex <- rbinom(741,1,0.5)[hfactioncpx12$id]
 
 dd <- WA_reg(Event(entry,time,status)~treatment+age+sex+cluster(id),hfactioncpx12,time=2,death.code=2)
 summary(dd)
+#> Regression: outcome= while-alive-ratio link-model= exp 
 #>    n events
 #>  741     86
 #> 
@@ -207,7 +208,7 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#> [1] lava_1.9.3         prodlim_2026.03.11 timereg_2.0.7      survival_3.8-9    
+#> [1] prodlim_2026.03.11 lava_1.9.3         timereg_2.0.7      survival_3.8-11   
 #> [5] mets_1.3.13        colorout_1.3-3    
 #> 
 #> loaded via a namespace (and not attached):

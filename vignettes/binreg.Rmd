@@ -1,7 +1,7 @@
 ---
 title: "Binomial Regression for Survival and Competing Risks Data"
 author: Klaus Holst & Thomas Scheike
-date: "2026-08-23"
+date: "2026-09-24"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes
@@ -103,6 +103,7 @@ Examples
  # logistic regression with IPCW binomial regression 
  out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
  summary(out)
+#> Regression: outcome= cif link-model= logit 
 #>    n events
 #>  408    160
 #> 
@@ -135,6 +136,7 @@ Further the censoring model can depend on strata
 ``` r
  outs <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50,cens.model=~strata(tcell,platelet))
  summary(outs)
+#> Regression: outcome= cif link-model= logit 
 #>    n events
 #>  408    160
 #> 
@@ -161,6 +163,7 @@ Now for illustrations we consider the absolute risk difference depending on tcel
 ``` r
  outs <- binreg(Event(time,cause)~tcell,bmt,time=50,cens.model=~strata(tcell))
  summary(outs)
+#> Regression: outcome= cif link-model= logit 
 #>    n events
 #>  408    160
 #> 
@@ -268,7 +271,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] timereg_2.0.7  survival_3.8-9 mets_1.3.13    colorout_1.3-3
+#> [1] timereg_2.0.7   survival_3.8-11 mets_1.3.13     colorout_1.3-3 
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] cli_3.6.6              knitr_1.51             rlang_1.3.0           

@@ -2598,7 +2598,7 @@ if (!is.null(call.id)) {
 }# }}}
 
 ##' @export
-logitATE <- function(formula,data,...)
+logitATE <- function(formula,data,model="logit",...)
 {# {{{
 ###   ## use IPCW machine in no-censoring case
 ###    cl <- match.call()
@@ -2625,8 +2625,7 @@ logitATE <- function(formula,data,...)
 ###      out <- logitIPCWATE(Survform,data,se=0,cens.weights=rep(1,n),time=time,Ydirect=Ydirect,...)
 ###    }
 
-   out <- binregATE(formula,data,...)
-
+   out <- binregATE(formula,data,model=model[1],...)
    return(out)
 }# }}}
 

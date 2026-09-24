@@ -1,7 +1,7 @@
 ---
 title: "Average treatment effect (ATE) for Competing risks and binary outcomes"
 author: Klaus Holst & Thomas Scheike
-date: "2026-09-11"
+date: "2026-09-24"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes
@@ -86,7 +86,7 @@ clust <- 0
 b2 <- binregATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,
 	treat.model=gp.f~dnr+preauto+ttt24,time=40,cens.model=~strata(gp,dnr))
 summary(b2)
-#> binomial regression: outcome= cif model= logit
+#> Regression: outcome= cif link-model= logit 
 #>    n events
 #>  400    137
 #> 
@@ -122,7 +122,7 @@ summary(b2)
 b5 <- binregATE(Event(time,cause)~int+preauto+ttt24,kumar,cause=2,
 		treat.model=int~preauto+ttt24,cens.code=0,time=60)
 summary(b5)
-#> binomial regression: outcome= cif model= logit
+#> Regression: outcome= cif link-model= logit 
 #>    n events
 #>  400    142
 #> 
@@ -191,7 +191,7 @@ with that of wglm and its ate function in the riskRegression package, and they a
 ib2 <- logitIPCWATE(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,
 	treat.model=gp.f~dnr+preauto+ttt24,time=40,cens.model=~strata(gp,dnr))
 summary(ib2)
-#> binomial regression: outcome= cif model= logit
+#> Regression: outcome= cif link-model= logit 
 #>    n events
 #>  400    137
 #> 
@@ -227,7 +227,7 @@ summary(ib2)
 ib5 <- logitIPCW(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,cens.code=0,
 	 time=60,cens.model=~strata(gp,dnr))
 summary(ib5)
-#> binomial regression: outcome= cif model= logit
+#> Regression: outcome= cif link-model= logit 
 #>    n events
 #>  400    142
 #> 
@@ -250,7 +250,7 @@ summary(ib5)
 
 ibs <- logitIPCW(Event(time,cause)~gp.f+dnr+preauto+ttt24,kumar,cause=2,cens.code=0,time=60)
 summary(ibs)
-#> binomial regression: outcome= cif model= logit
+#> Regression: outcome= cif link-model= logit 
 #>    n events
 #>  400    142
 #> 
@@ -274,12 +274,14 @@ summary(ibs)
 check <- 0
 if (check==1) {
 require(riskRegression)
-e.wglm <- wglm( regressor.event=~gp.f+dnr+preauto+ttt24, formula.censor = Surv(time,cause==0)~+1, times = 60, data = kumar, product.limit=TRUE,cause=2)
+e.wglm <- wglm( Surv(time,cause)~gp.f+dnr+preauto+ttt24, 
+	       formula.censor = ~+1, 
+	       times = 60, data = kumar, product.limit=TRUE,cause=2)
 summary(e.wglm)$coef
 estimate(ibs)
 
-es.wglm <- wglm( regressor.event=~gp.f+dnr+preauto+ttt24, 
-formula.censor = Surv(time,cause==0)~strata(gp,dnr), times = 60, 
+es.wglm <- wglm( Surv(time,cause)~gp.f+dnr+preauto+ttt24, 
+formula.censor = ~strata(gp,dnr), times = 60, 
 data = kumar, product.limit=TRUE,cause=2)
 summary(es.wglm)$coef
 estimate(ib5)
@@ -403,10 +405,9 @@ The following code runs the analysis (one can also use `binregATE` by coding `ca
 
 ``` r
 kumar$cause2 <- 1*(kumar$cause==2)
-
 b3 <- logitATE(cause2~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24)
 summary(b3)
-#> binomial regression: outcome= cif model= logit
+#> Regression: outcome= numeric link-model= logit 
 #>    n events
 #>  400    400
 #> 
@@ -442,7 +443,7 @@ summary(b3)
 ## same as, 
 bb3 <- binregATE(cause2~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24,model="logit")
 summary(bb3)
-#> binomial regression: outcome= numeric model= logit
+#> Regression: outcome= numeric link-model= logit 
 #>    n events
 #>  400    400
 #> 
@@ -497,7 +498,7 @@ Or with continuous response using normal estimating equations
 ``` r
 b3 <- normalATE(time~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24)
 summary(b3)
-#> binomial regression: outcome= rmst model= lin
+#> Regression: outcome= numeric link-model= lin 
 #>    n events
 #>  400    400
 #> 
@@ -526,7 +527,7 @@ summary(b3)
 ## same as, 
 bb3 <- binregATE(time~gp.f+dnr+preauto+ttt24,kumar,treat.model=gp.f~dnr+preauto+ttt24)
 summary(bb3)
-#> binomial regression: outcome= numeric model= lin
+#> Regression: outcome= numeric link-model= lin 
 #>    n events
 #>  400    400
 #> 
@@ -595,7 +596,7 @@ sessionInfo()
 #> [16] Rcpp_1.1.2             future_1.75.0          lattice_0.23-1        
 #> [19] digest_0.6.39          parallelly_1.48.0      parallel_4.5.2        
 #> [22] splines_4.5.2          Matrix_1.7-6           tools_4.5.2           
-#> [25] RcppArmadillo_15.4.2-1 globals_0.19.1         survival_3.8-9
+#> [25] RcppArmadillo_15.4.2-1 globals_0.19.1         survival_3.8-11
 ```
 
 

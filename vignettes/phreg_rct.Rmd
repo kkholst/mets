@@ -1,7 +1,7 @@
 ---
 title: "Randomization for Cox Type rate models"
 author: Klaus Holst & Thomas Scheike
-date: "2026-08-23"
+date: "2026-09-24"
 output:
   rmarkdown::html_vignette:
     fig_caption: no
@@ -689,21 +689,19 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] lava_1.9.3         prodlim_2026.03.11 timereg_2.0.7      survival_3.8-9    
-#> [5] mets_1.3.13        colorout_1.3-3    
+#> [1] lava_1.9.3      timereg_2.0.7   survival_3.8-11 mets_1.3.13    
+#> [5] colorout_1.3-3 
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] vctrs_0.7.3            cli_3.6.6              knitr_1.51            
-#>  [4] rlang_1.3.0            xfun_0.60              otel_0.2.0            
-#>  [7] data.table_1.18.4      glue_1.8.1             future.apply_1.20.2   
-#> [10] listenv_1.0.0          grid_4.5.2             evaluate_1.0.5        
-#> [13] lifecycle_1.0.5        yaml_2.3.12            mvtnorm_1.4-2         
-#> [16] numDeriv_2016.8-1.1    compiler_4.5.2         codetools_0.2-20      
-#> [19] ucminf_1.2.3           Rcpp_1.1.2             future_1.75.0         
-#> [22] lattice_0.23-1         digest_0.6.39          pillar_1.11.1         
-#> [25] parallelly_1.48.0      parallel_4.5.2         splines_4.5.2         
-#> [28] Matrix_1.7-6           tools_4.5.2            RcppArmadillo_15.4.2-1
-#> [31] globals_0.19.1
+#>  [1] cli_3.6.6              knitr_1.51             rlang_1.3.0           
+#>  [4] xfun_0.60              otel_0.2.0             future.apply_1.20.2   
+#>  [7] listenv_1.0.0          grid_4.5.2             evaluate_1.0.5        
+#> [10] yaml_2.3.12            mvtnorm_1.4-2          numDeriv_2016.8-1.1   
+#> [13] compiler_4.5.2         codetools_0.2-20       ucminf_1.2.3          
+#> [16] Rcpp_1.1.2             future_1.75.0          lattice_0.23-1        
+#> [19] digest_0.6.39          parallelly_1.48.0      parallel_4.5.2        
+#> [22] splines_4.5.2          Matrix_1.7-6           tools_4.5.2           
+#> [25] RcppArmadillo_15.4.2-1 globals_0.19.1
 ```
 
 
