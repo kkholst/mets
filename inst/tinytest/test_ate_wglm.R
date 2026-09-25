@@ -107,6 +107,13 @@ estimate(eCR.wglm)
 ###str(bmt)
 ###library(targeted)
 
+est_bin2 <- cate(
+  response.model = learner_glm(bin~ tcell.f+platelet+age, family = binomial),
+###  treatment.model = learner_glm(tcell.f ~platelet+age, family = binomial),
+  treatment.model = tcell.f ~ platelet+age,
+  cate.model = ~1,
+  data = bmt
+)
 est_bin <- cate(
   response.model = learner_glm(binn~ tcell.f+platelet+age, family = binomial),
 ###  treatment.model = learner_glm(tcell.f ~platelet+age, family = binomial),

@@ -606,7 +606,7 @@ return(res)
 ##' @export
 print.summary.binreg <- function(x,max.strata=5,...) { ## {{{
 
-cat(paste("Regression: outcome=",x$outcome,"link-model=",x$model,"\n"))
+cat(sprintf("Regression: outcome = %s, link = %s\n\n", x$outcome, x$model[1]))
 
   nn <- cbind(x$n, x$nevent)
   rownames(nn) <- levels(x$strata); colnames(nn) <- c("n","events")
