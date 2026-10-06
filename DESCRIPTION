@@ -37,6 +37,7 @@ Suggests:
     prodlim,
     riskRegression,
     rmarkdown,
+    targeted (>= 0.9),
     tinytest (>= 1.4.1),
     ucminf
 VignetteBuilder: knitr
