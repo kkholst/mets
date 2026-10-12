@@ -36,7 +36,7 @@ For the mean of events per time-unit it has been seen that when the sample size 
 one can improve the finite sample properties by employing a transformation such as square or cube-root, and
 thus consider 
 \begin{align*}
- E( (\frac{N(D \wedge t)}{D \wedge t})^.33 ) 
+ E( (\frac{N(D \wedge t)}{D \wedge t})^{.33} )
 \end{align*}
 
 ```{r while-alive}
