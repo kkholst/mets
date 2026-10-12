@@ -77,7 +77,6 @@
 mlogit <- function(formula,data,offset=NULL,weights=NULL,fix.X=FALSE,...)
 {# {{{
   cl <- match.call()
-    m <- match.call(expand.dots = TRUE)[1:3]
     des <- proc_design(
         formula,
         data = data,

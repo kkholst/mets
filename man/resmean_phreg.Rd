@@ -50,6 +50,10 @@ summary(rm1)
 e1 <- estimate(rm1)     ## == rm1$estimate: a "resmean_estimate" list, one per time
 e1
 
+## average time-lost at time 50
+e2 <- estimate(rm1,time=50,function(p) 50-p)
+e2
+
 ## Apply a contrast to every time at once (comparing the 4 strata)
 summary(e1, rbind(c(1, -1, 0, 0)))
 

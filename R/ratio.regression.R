@@ -86,7 +86,7 @@
 ##' pp
 ##' 
 ##' ## Percentage of total cumulative incidence due to cause 1
-##' cifratio <- binregRatio(Event(time,cause)~platelet+tcell+age, bmt, time=30, cause=1, model="cif")
+##' cifratio <- binregRatio(Event(time,cause)~platelet+tcell+age, bmt, time=30, cause=1, outcome="cif")
 ##' summary(cifratio)
 ##' pp <- predict(cifratio, newdata)
 ##' pp
@@ -373,7 +373,7 @@ hessian <- matrix(.Call("XXMatFULL",matrix(D2log,nrow=1),np,PACKAGE="mets")$XXf,
   val$cens.code <- cens.code 
   val$augmentation <- augmentation
   val$model <- model[1]
-  val$outcome <- outcome[1]
+  val$outcome <- paste0(outcome[1],"-ratio",sep="")
   val$Yipcw <- Yipcw
   val$cens.weights <- cens.weights.origsort 
   val$Causes <- Causes

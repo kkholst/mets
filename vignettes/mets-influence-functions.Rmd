@@ -1,7 +1,7 @@
 ---
 title: "Influence functions in METS"
 author: Klaus Holst & Thomas Scheike
-date: "2026-08-24"
+date: "2026-09-24"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes
@@ -271,9 +271,6 @@ We can do Fine-Gray regression and get the influence functions of the baselines 
 #> 7 -0.008306753 -0.0037794022
  ###
  e1 <- estimate(ph1,time=50,all=TRUE)
-#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
-#> |mean|/rms = 0.038). Using lava.options(check.ic = FALSE) disables the warning
-#> globally.
  head(iid(e1))
 #>       platelet           age      strata0       strata1
 #> 2 -0.006372121 -0.0066329508 -0.007295809  0.0031900773
@@ -379,9 +376,6 @@ For recurrent events we can fit  a Ghosh-Lin regression model and get the influe
 #> 6 -0.0037431090  6.077407e-05
  ###
  e1 <- estimate(gls,time=50,all=TRUE)
-#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
-#> |mean|/rms = 0.0003). Using lava.options(check.ic = FALSE) disables the warning
-#> globally.
  head(iid(e1))
 #>               z       strata0       strata1
 #> 1  1.532050e-05  0.0004849534 -6.164305e-07
@@ -414,9 +408,6 @@ For recurrent events we can fit  a Ghosh-Lin regression model and get the influe
 #> 6 -0.0034098234 0.000000000
  ###
  e1 <- estimate(gls,time=50,all=TRUE)
-#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
-#> |mean|/rms = 0.0003). Using lava.options(check.ic = FALSE) disables the warning
-#> globally.
  head(iid(e1))
 #>         strata0     strata1
 #> 1  0.0004826020 0.000000000
@@ -484,9 +475,6 @@ We can estimate marginal mean or cumulative incidence for recurrent events or co
 #> 7 -0.002453013       0
  ###
  e1 <- estimate(ms,time=50,all=TRUE)
-#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
-#> |mean|/rms = 0.019). Using lava.options(check.ic = FALSE) disables the warning
-#> globally.
  head(iid(e1))
 #>             p1 p2
 #> 2 -0.002454943  0
@@ -535,9 +523,6 @@ We can estimate marginal mean or cumulative incidence for recurrent events or co
 #> 7 -0.002453013       0
  ###
  e1 <- estimate(cif1,time=50,all=TRUE)
-#> Warning in check_ic_mean_zero(ic_theta): IC does not have mean zero (max
-#> |mean|/rms = 0.019). Using lava.options(check.ic = FALSE) disables the warning
-#> globally.
  head(iid(e1))
 #>             p1 p2
 #> 2 -0.002454943  0
@@ -580,6 +565,7 @@ The binomial regression or ATE estimation
 
  out <- binreg(Event(time,cause)~tcell+platelet,bmt,time=50)
  summary(out)
+#> Regression: outcome= cif link-model= logit 
 #>    n events
 #>  408    160
 #> 
@@ -617,6 +603,7 @@ The binomial regression or ATE estimation
  out <- binregATE(Event(time,cause)~tcellf+platelet+age,bmt,time=50,
                          treat.model=tcellf~platelet+age)
  summary(out)
+#> Regression: outcome= cif link-model= logit 
 #>    n events
 #>  408    160
 #> 
@@ -919,17 +906,18 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] lava_1.9.3     mets_1.3.13    colorout_1.3-3
+#> [1] lava_1.9.3      timereg_2.0.7   survival_3.8-11 mets_1.3.13    
+#> [5] colorout_1.3-3 
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] cli_3.6.6              knitr_1.51             rlang_1.3.0           
 #>  [4] xfun_0.60              otel_0.2.0             future.apply_1.20.2   
 #>  [7] listenv_1.0.0          grid_4.5.2             evaluate_1.0.5        
-#> [10] mvtnorm_1.4-2          numDeriv_2016.8-1.1    timereg_2.0.7         
-#> [13] compiler_4.5.2         codetools_0.2-20       Rcpp_1.1.2            
-#> [16] future_1.75.0          lattice_0.23-1         digest_0.6.39         
-#> [19] parallelly_1.48.0      parallel_4.5.2         splines_4.5.2         
-#> [22] Matrix_1.7-6           tools_4.5.2            RcppArmadillo_15.4.2-1
-#> [25] globals_0.19.1         survival_3.8-11
+#> [10] yaml_2.3.12            mvtnorm_1.4-2          numDeriv_2016.8-1.1   
+#> [13] compiler_4.5.2         codetools_0.2-20       ucminf_1.2.3          
+#> [16] Rcpp_1.1.2             future_1.75.0          lattice_0.23-1        
+#> [19] digest_0.6.39          parallelly_1.48.0      parallel_4.5.2        
+#> [22] splines_4.5.2          Matrix_1.7-6           tools_4.5.2           
+#> [25] RcppArmadillo_15.4.2-1 globals_0.19.1
 ```
 

@@ -21,14 +21,15 @@
 ##' 
 ##' data(bmt)
 ##' dfactor(bmt) <- platelet.f~platelet
+##' dfactor(bmt) <- tcell.f~tcell
 ##' ## logistic modelling of cumulative incidence 
-##' gg <- binreg_IPTW(Event(time,cause)~platelet.f+age,bmt,
+##' gg <- binreg_IPTW(Event(time,cause)~platelet.f+age,data=bmt,
 ##' 	       treat.model=platelet.f~age,time=30)
 ##' summary(gg)
 ##' head(iid(gg))
 ##' 
 ##' ## logistic modelling  
-##' gg <- binreg_IPTW(tcell~platelet.f+age,bmt,
+##' gg <- binreg_IPTW(tcell.f~platelet.f+age,data=bmt,
 ##' 	       treat.model=platelet.f~age)
 ##' summary(gg)
 ##' @export
@@ -134,26 +135,26 @@ data$ww <- ww
 ###glmw <- suppressWarnings(glm(formula,data,weights=ww,family=family,...))
 argss <- list(...)
 
-if (!inherits(Y, c("Event", "Surv"))) {
-   Yn <- as.numeric(Y)
-   data$event__  <- Yn
-   data$time__  <-  2
-   binreg.formula <-  update.formula(formula,Event(time__,event__)~.)
-   cens.code <- max(Y)+1
-   argss[["cens.code"]]  <- cens.code
-   argss[["time"]] <- 3
-   if (!"cause" %in% names(argss)) {
-        argss[["cause"]] <- max(Yn)  # largest value of Yn
-   } 
-} else {
-	binreg.formula <- formula
-        if (!"cens.code" %in% names(argss)) {
-           argss[["cens.code"]]  <- 0   # default value
-        } 
-}
+###if (!inherits(Y, c("Event", "Surv"))) {
+###   Yn <- as.numeric(Y)
+###   data$event__  <- Yn
+###   data$time__  <-  2
+###   binreg.formula <-  update.formula(formula,Event(time__,event__)~.)
+###   cens.code <- max(Y)+1
+###   argss[["cens.code"]]  <- cens.code
+###   argss[["time"]] <- 3
+###   if (!"cause" %in% names(argss)) {
+###        argss[["cause"]] <- max(Yn)  # largest value of Yn
+###   } 
+###} else {
+###	binreg.formula <- formula
+###        if (!"cens.code" %in% names(argss)) {
+###           argss[["cens.code"]]  <- 0   # default value
+###        } 
+###}
 argss[["weights"]] <- ww
 argss[["data"]] <-  data
-argss[["formula"]] <- binreg.formula
+argss[["formula"]] <- formula
 
 glmw <- do.call("binreg",argss)
 glm.iid <- iid(glmw)

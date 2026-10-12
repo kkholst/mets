@@ -137,7 +137,7 @@ pp <- predict(rmtlratioI, newdata)
 pp
 
 ## Percentage of total cumulative incidence due to cause 1
-cifratio <- binregRatio(Event(time,cause)~platelet+tcell+age, bmt, time=30, cause=1, model="cif")
+cifratio <- binregRatio(Event(time,cause)~platelet+tcell+age, bmt, time=30, cause=1, outcome="cif")
 summary(cifratio)
 pp <- predict(cifratio, newdata)
 pp
