@@ -2573,7 +2573,7 @@ summarize_brier_binregCV <- function(fit,
   times <- names(fit)[!(names(fit) %in% c("call", "rhs", "rhs0"))]
   if (length(times) == 0L) stop("No time points found in fit")
 
-  pdiff <- lava::pairwise.diff
+  pdiff <- lava::pairwise_diff
 
   col_se <- function(cm) grep("^Std", colnames(cm), value = TRUE)[1]
   col_lo <- function(cm) grep("%",    colnames(cm), value = TRUE)[1]
