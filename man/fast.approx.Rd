@@ -13,6 +13,7 @@ fast.approx(
   equal = FALSE,
   type = c("nearest", "right", "left"),
   sorted = FALSE,
+  last.tie = TRUE,
   ...
 )
 }
@@ -28,6 +29,8 @@ or equal (right), number of elements smaller than y otherwise
 the closest value above new.time is returned.}
 
 \item{sorted}{Set to true if new.time is already sorted}
+
+\item{last.tie}{if TRUE takes last tie of time (sorted)}
 
 \item{...}{Optional additional arguments}
 }

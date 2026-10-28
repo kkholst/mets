@@ -8,6 +8,7 @@
 ##'     or equal (right), number of elements smaller than y otherwise
 ##'     the closest value above new.time is returned.
 ##' @param sorted Set to true if new.time is already sorted
+##' @param last.tie if TRUE takes last tie of time (sorted) 
 ##' @param ... Optional additional arguments
 ##' @author Klaus K. Holst
 ##' @examples
@@ -19,34 +20,90 @@
 ##' fast.approx(t,n,type="left")
 ##' @aliases  indexstrata predictCumhaz cpred
 ##' @export
-fast.approx <- function(time,new.time,equal=FALSE,type=c("nearest","right","left"),sorted=FALSE,...) {# {{{
+fast.approx <- function(time, new.time, equal=FALSE, type=c("nearest","right","left"),
+                        sorted=FALSE, last.tie=TRUE, ...) {# {{{
     if (!sorted) {
-        ord <- order(new.time,decreasing=FALSE)
+        ord <- order(new.time, decreasing=FALSE)
         new.time <- new.time[ord]
     }
     A <- NULL
-    if (NCOL(time)>1) {
+    if (NCOL(time) > 1) {
         A <- time
-        time <- A[,1,drop=TRUE]
+        time <- A[, 1, drop=TRUE]
     }
-    if (is.unsorted(time)) warnings("'time' will be sorted")
-    type <- agrep(type[1],c("nearest","right","left"))-1
+    type <- agrep(type[1], c("nearest","right","left")) - 1
+
+    ## original row numbers; stable sort so ties keep their original order
+    ## rows refers to ordered times
+    rows <- seq_along(time)
+    if (is.unsorted(time)) {
+        o <- order(time)
+        time <- time[o]
+###        rows <- rows[o]
+    }
+
+    ## deal with ties: keep last (or first) of each tied group
+    dup <- duplicated(time, fromLast=last.tie)
+    if (any(dup)) {
+        time <- time[!dup]
+        rows <- rows[!dup]
+    }
+
     res <- .Call("FastApprox",
-                 time=sort(time),
+                 time=time,
                  newtime=new.time,
                  equal=equal,
                  type=type,
                  PACKAGE="mets")
+
+    ## map indices back to rows of the original 'time'; keep 0/NA (no match) as is
+    map <- function(i) {
+        ok <- !is.na(i) & i > 0
+        i[ok] <- rows[i[ok]]
+        i
+    }
+    if (equal) res[[1]] <- map(res[[1]]) else res <- map(res)
+
+    ## restore the original order of new.time
     if (!sorted) {
         oord <- order(ord)
-        if (!equal) return(res[oord])
-        res <- lapply(res,function(x) x[oord])
+        res <- if (!equal) res[oord] else lapply(res, function(x) x[oord])
     }
-    if (!is.null(A)) {
-        A[res,,drop=FALSE]
-    }
+
+    if (!is.null(A) && !equal) return(A[res, , drop=FALSE])
     return(res)
 }# }}}
+
+###
+###fast.approx <- function(time,new.time,equal=FALSE,type=c("nearest","right","left"),sorted=FALSE,...) {# {{{
+###    if (!sorted) {
+###        ord <- order(new.time,decreasing=FALSE)
+###        new.time <- new.time[ord]
+###    }
+###    A <- NULL
+###    if (NCOL(time)>1) {
+###        A <- time
+###        time <- A[,1,drop=TRUE]
+###    }
+###    if (is.unsorted(time)) warnings("'time' will be sorted")
+###    type <- agrep(type[1],c("nearest","right","left"))-1
+###    res <- .Call("FastApprox",
+###                 time=sort(time),
+###                 newtime=new.time,
+###                 equal=equal,
+###                 type=type,
+###                 PACKAGE="mets")
+###    if (!sorted) {
+###        oord <- order(ord)
+###        if (!equal) return(res[oord])
+###        res <- lapply(res,function(x) x[oord])
+###    }
+###    if (!is.null(A)) {
+###        A[res,,drop=FALSE]
+###    }
+###    return(res)
+###}# }}}
+###
 
 ##' @export
 predictCumhaz <- function (cum, new.time, type = c("left", "right", "nearest"),tminus=FALSE,tplus=FALSE,return.index=TRUE,...)
